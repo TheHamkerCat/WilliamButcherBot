@@ -1,4 +1,4 @@
-from pyrogram import Client, filters
+from pyrogram import Client, filters, emoji, types
 import random
 import time
 import shutil, psutil
@@ -39,5 +39,13 @@ def stats(client, message):
 
 
 
+
+MESSAGE = "{} Welcome {}!" 
+
+@app.on_message(filters.new_chat_members)
+def welcome(client, message):
+    new_members = [i.mention for i in message.new_chat_members]
+    text = MESSAGE.format(emoji.CROWN, ", ".join(new_members))
+    message.reply_text(text, disable_web_page_preview=True)
 
 app.run()
