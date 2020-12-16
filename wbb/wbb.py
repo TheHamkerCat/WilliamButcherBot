@@ -12,11 +12,11 @@ def random_line(fname):
 
 @app.on_message(filters.command(commands = (["start"])))
 async def start(client, message):
-    await message.reply_text(random_line('start.txt'))
+    await message.reply_text(random_line('wbb/start.txt'))
 
 @app.on_message(filters.command(commands = (["commit"])))
 async def commit(client, message):
-    await message.reply_text(random_line('commit.txt'))
+    await message.reply_text(random_line('wbb/commit.txt'))
 
 
 @app.on_message(filters.command(commands = (["ping"])))

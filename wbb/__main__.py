@@ -1,4 +1,4 @@
-from wbb import app
+from .wbb import app
 
 if __name__ == "__main__":
     app.run()
