@@ -127,3 +127,7 @@ dmypy.json
 *.pyc
 *.session
 *.session-journal
+
+
+#others
+wbb/logs/error.log
