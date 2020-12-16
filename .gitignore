@@ -2,3 +2,4 @@ config.ini
 WilliamButcher.session
 wbb/WilliamButcher.session
 wbb/config.ini
+wbb/__pycache__
