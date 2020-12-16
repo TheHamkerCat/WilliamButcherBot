@@ -11,7 +11,9 @@ import uvloop
 
 loop = asyncio.get_event_loop()
 
+
 HELPABLE = {}
+
 
 async def start_bot():
     await app.start()
@@ -53,9 +55,7 @@ async def main_bot():
         if message.chat.type != "private":
             await message.reply("Message me Privately *winks*")
             return
-        await message.reply(
-            "Hi, try /help"
-        )
+        await message.reply("Hi, try /help")
 
     @app.on_message(cust_filter.command("help"))
     async def help_command(_, message):
@@ -103,20 +103,17 @@ async def main_bot():
 
         if mod_match:
             module = mod_match.group(1)
-            text = "{} **{}**:\n".format(
-                "Here is the help for", HELPABLE[module].__MODULE__
-            ) + HELPABLE[module].__HELP__
+            text = (
+                "{} **{}**:\n".format(
+                    "Here is the help for", HELPABLE[module].__MODULE__
+                )
+                + HELPABLE[module].__HELP__
+            )
 
             await q.message.edit(
                 text=text,
                 reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                "back", callback_data="help_back"
-                            )
-                        ]
-                    ]
+                    [[InlineKeyboardButton("back", callback_data="help_back")]]
                 ),
                 disable_web_page_preview=True,
             )

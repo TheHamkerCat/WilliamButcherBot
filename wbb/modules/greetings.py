@@ -4,7 +4,8 @@ from pyrogram import filters, emoji
 __MODULE__ = "Greetings"
 __HELP__ = "Welcomes Users to the Group"
 
-MESSAGE = "{} Welcome {}!" 
+MESSAGE = "{} Welcome {}!"
+
 
 @app.on_message(filters.new_chat_members)
 async def welcome(client, message):

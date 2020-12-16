@@ -3,6 +3,7 @@ import re
 from wbb.utils import cust_filter, nekobin
 from wbb import app, OWNER_ID
 
+
 @app.on_message(filters.user(OWNER_ID) & cust_filter.command("log"))
 async def logs_chat(client, message):
     keyb = types.InlineKeyboardMarkup(
@@ -35,9 +36,7 @@ async def paste_log_neko(client, query):
         keyb = types.InlineKeyboardMarkup(
             [[types.InlineKeyboardButton("pasted on nekobin", url=f"{data}")]]
         )
-        await query.message.edit_caption(
-            "Successfully Nekofied", reply_markup=keyb
-        )
+        await query.message.edit_caption("Successfully Nekofied", reply_markup=keyb)
     else:
         await client.answer_callback_query(
             query.id, "Sike its not for you!", show_alert=True

@@ -1,6 +1,7 @@
 from pyrogram import Client
 from configparser import ConfigParser
 import logging
+import time
 import os
 
 
@@ -30,18 +31,11 @@ log = logging.getLogger()
 
 config = ConfigParser()
 config.read("config.ini")
-OWNER_ID = config.get("admin", "owner_id")
+OWNER_ID = int(config.get("admin", "owner_id"))
 Command = config.get("prefix", "prefixes").split()
 MOD_LOAD = config.get("mods", "load_modules").split()
 MOD_NOLOAD = config.get("mods", "noload_modules").split()
+bot_start_time = time.time()
 
 
-app = Client(
-    ":memory:"
-)
-
-
-
-
-
-
+app = Client(":memory:")
