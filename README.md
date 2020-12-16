@@ -25,6 +25,9 @@ Just Another Telegram Bot Written In Python Using Pyrogram.
    [admin]
    owner_id = 1243703097
 
+   developer_username = @TheHamkerCat
+   repo_url = github.com/thehamkercat/WilliamButcherBot
+
    [prefix]
    prefixes = /
 
