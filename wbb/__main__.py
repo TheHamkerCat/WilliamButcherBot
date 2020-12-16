@@ -53,7 +53,7 @@ async def main_bot():
     @app.on_message(cust_filter.command("start"))
     async def start(client, message):
         if message.chat.type != "private":
-            await message.reply("Message me Privately *winks*")
+            await message.reply_text((await random_line("wbb/start.txt")))
             return
         await message.reply("Hi, try /help")
 
@@ -76,7 +76,7 @@ async def main_bot():
                     ]
                 ]
             )
-            await message.reply("Contact me at PM.", reply_markup=keyboard)
+            await message.reply("Contact me in PM.", reply_markup=keyboard)
             return
         text, keyboard = await help_parser(message)
         await message.reply(text, reply_markup=keyboard, disable_web_page_preview=True)
@@ -85,7 +85,7 @@ async def main_bot():
         if not keyboard:
             keyboard = InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help"))
         return (
-            "Hi {first_name}. I am {bot_name}, you can use commands with following prefixes{commands}".format(
+            "Hi {first_name}, I am {bot_name}".format(
                 first_name=message.from_user.first_name,
                 bot_name=botinfo.BOT_NAME,
                 commands=", ".join(Command),
