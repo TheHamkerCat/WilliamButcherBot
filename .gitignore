@@ -3,3 +3,7 @@ WilliamButcher.session
 wbb/WilliamButcher.session
 wbb/config.ini
 wbb/__pycache__
+wbb/modules/__pycache__
+wbb/__init__.pyc
+wbb/utils/__pycache__
+wbb/logs/error.log
