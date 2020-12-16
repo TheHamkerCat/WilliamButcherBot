@@ -1,42 +1,75 @@
 PEAK OF LOG FILE] __init__.py:44 INFO: Modules loaded: ['commit', 'greetings', 'log', 'ping', 'stats']
-[12-16 19:12.134] auth.py:81 INFO: Start creating a new auth key on DC2
-[12-16 19:12.134] connection.py:54 INFO: Connecting...
-[12-16 19:12.365] connection.py:65 INFO: Connected! Production DC2 - IPv4 - TCPAbridgedO
-[12-16 19:12.733] auth.py:248 INFO: Done auth key exchange: DhGenOk
-[12-16 19:12.734] connection.py:74 INFO: Disconnected
-[12-16 19:12.736] connection.py:54 INFO: Connecting...
-[12-16 19:12.965] connection.py:65 INFO: Connected! Production DC2 - IPv4 - TCPAbridgedO
-[12-16 19:12.965] session.py:345 INFO: NetworkTask started
-[12-16 19:12.476] msg_id.py:45 INFO: Time synced: 2020-12-16 14:12:53.349668 UTC
-[12-16 19:12.707] session.py:314 INFO: NextSaltTask started
-[12-16 19:12.707] session.py:326 INFO: Next salt in 44m 58s (2020-12-16 19:57:52)
-[12-16 19:12.966] session.py:168 INFO: Session initialized: Layer 117
-[12-16 19:12.967] session.py:169 INFO: Device: CPython 3.7.3 - Pyrogram 1.0.7
-[12-16 19:12.967] session.py:170 INFO: System: Linux 5.4.70-amd64-desktop (EN)
-[12-16 19:12.967] session.py:185 INFO: Session started
-[12-16 19:12.968] session.py:292 INFO: PingTask started
-[12-16 19:12.216] session.py:311 INFO: PingTask stopped
-[12-16 19:12.216] session.py:342 INFO: NextSaltTask stopped
-[12-16 19:12.216] connection.py:74 INFO: Disconnected
-[12-16 19:12.216] session.py:361 INFO: NetworkTask stopped
-[12-16 19:12.216] session.py:216 INFO: Session stopped
-[12-16 19:12.218] auth.py:81 INFO: Start creating a new auth key on DC5
-[12-16 19:12.218] connection.py:54 INFO: Connecting...
-[12-16 19:12.273] connection.py:65 INFO: Connected! Production DC5 - IPv4 - TCPAbridgedO
-[12-16 19:12.996] auth.py:248 INFO: Done auth key exchange: DhGenOk
-[12-16 19:12.996] connection.py:74 INFO: Disconnected
-[12-16 19:12.998] connection.py:54 INFO: Connecting...
-[12-16 19:12.095] connection.py:65 INFO: Connected! Production DC5 - IPv4 - TCPAbridgedO
-[12-16 19:12.096] session.py:345 INFO: NetworkTask started
-[12-16 19:12.386] session.py:314 INFO: NextSaltTask started
-[12-16 19:12.386] session.py:326 INFO: Next salt in 44m 59s (2020-12-16 19:57:54)
-[12-16 19:12.506] session.py:168 INFO: Session initialized: Layer 117
-[12-16 19:12.506] session.py:169 INFO: Device: CPython 3.7.3 - Pyrogram 1.0.7
-[12-16 19:12.506] session.py:170 INFO: System: Linux 5.4.70-amd64-desktop (EN)
-[12-16 19:12.506] session.py:185 INFO: Session started
-[12-16 19:12.506] session.py:292 INFO: PingTask started
-[12-16 19:12.675] dispatcher.py:122 INFO: Started 8 HandlerTasks
-[12-16 19:12.676] syncer.py:88 INFO: Synced ":memory:" in 0.665426 ms
-[12-16 19:13.677] syncer.py:88 INFO: Synced ":memory:" in 0.443935 ms
-[12-16 19:13.679] syncer.py:88 INFO: Synced ":memory:" in 0.419617 ms
-[12-16 19:13.530] idle.py:71 INFO: Stop signal received (2). Exiting...
+[12-16 14:40.533] auth.py:81 INFO: Start creating a new auth key on DC2
+[12-16 14:40.533] connection.py:54 INFO: Connecting...
+[12-16 14:40.872] connection.py:65 INFO: Connected! Production DC2 - IPv4 - TCPAbridgedO
+[12-16 14:40.686] auth.py:248 INFO: Done auth key exchange: DhGenOk
+[12-16 14:40.686] connection.py:74 INFO: Disconnected
+[12-16 14:40.689] connection.py:54 INFO: Connecting...
+[12-16 14:40.024] connection.py:65 INFO: Connected! Production DC2 - IPv4 - TCPAbridgedO
+[12-16 14:40.025] session.py:345 INFO: NetworkTask started
+[12-16 14:40.741] msg_id.py:45 INFO: Time synced: 2020-12-16 14:40:19.548151 UTC
+[12-16 14:40.078] session.py:314 INFO: NextSaltTask started
+[12-16 14:40.078] session.py:326 INFO: Next salt in 44m 58s (2020-12-16 15:25:18)
+[12-16 14:40.433] session.py:168 INFO: Session initialized: Layer 117
+[12-16 14:40.433] session.py:169 INFO: Device: CPython 3.7.3 - Pyrogram 1.0.7
+[12-16 14:40.433] session.py:170 INFO: System: Linux 4.19.0-12-cloud-amd64 (EN)
+[12-16 14:40.433] session.py:185 INFO: Session started
+[12-16 14:40.434] session.py:292 INFO: PingTask started
+[12-16 14:40.822] session.py:311 INFO: PingTask stopped
+[12-16 14:40.822] session.py:342 INFO: NextSaltTask stopped
+[12-16 14:40.822] connection.py:74 INFO: Disconnected
+[12-16 14:40.822] session.py:361 INFO: NetworkTask stopped
+[12-16 14:40.822] session.py:216 INFO: Session stopped
+[12-16 14:40.823] auth.py:81 INFO: Start creating a new auth key on DC5
+[12-16 14:40.823] connection.py:54 INFO: Connecting...
+[12-16 14:40.826] connection.py:65 INFO: Connected! Production DC5 - IPv4 - TCPAbridgedO
+[12-16 14:40.207] auth.py:248 INFO: Done auth key exchange: DhGenOk
+[12-16 14:40.207] connection.py:74 INFO: Disconnected
+[12-16 14:40.209] connection.py:54 INFO: Connecting...
+[12-16 14:40.212] connection.py:65 INFO: Connected! Production DC5 - IPv4 - TCPAbridgedO
+[12-16 14:40.212] session.py:345 INFO: NetworkTask started
+[12-16 14:40.264] session.py:314 INFO: NextSaltTask started
+[12-16 14:40.264] session.py:326 INFO: Next salt in 44m 59s (2020-12-16 15:25:20)
+[12-16 14:40.278] session.py:168 INFO: Session initialized: Layer 117
+[12-16 14:40.278] session.py:169 INFO: Device: CPython 3.7.3 - Pyrogram 1.0.7
+[12-16 14:40.278] session.py:170 INFO: System: Linux 4.19.0-12-cloud-amd64 (EN)
+[12-16 14:40.278] session.py:185 INFO: Session started
+[12-16 14:40.278] session.py:292 INFO: PingTask started
+[12-16 14:40.323] dispatcher.py:122 INFO: Started 5 HandlerTasks
+[12-16 14:40.324] syncer.py:88 INFO: Synced ":memory:" in 0.768661 ms
+[12-16 14:40.048] connection.py:54 INFO: Connecting...
+[12-16 14:40.051] connection.py:65 INFO: Connected! Production DC5 - IPv4 - TCPAbridgedO
+[12-16 14:40.051] session.py:345 INFO: NetworkTask started
+[12-16 14:40.102] session.py:314 INFO: NextSaltTask started
+[12-16 14:40.102] session.py:326 INFO: Next salt in 44m 55s (2020-12-16 15:25:20)
+[12-16 14:40.125] session.py:168 INFO: Session initialized: Layer 117
+[12-16 14:40.125] session.py:169 INFO: Device: CPython 3.7.3 - Pyrogram 1.0.7
+[12-16 14:40.125] session.py:170 INFO: System: Linux 4.19.0-12-cloud-amd64 (EN)
+[12-16 14:40.125] session.py:185 INFO: Session started
+[12-16 14:40.125] session.py:292 INFO: PingTask started
+[12-16 14:40.138] session.py:311 INFO: PingTask stopped
+[12-16 14:40.138] session.py:342 INFO: NextSaltTask stopped
+[12-16 14:40.138] connection.py:74 INFO: Disconnected
+[12-16 14:40.138] session.py:361 INFO: NetworkTask stopped
+[12-16 14:40.138] session.py:216 INFO: Session stopped
+[12-16 14:40.325] syncer.py:88 INFO: Synced ":memory:" in 0.56839 ms
+[12-16 14:41.327] syncer.py:88 INFO: Synced ":memory:" in 0.502586 ms
+[12-16 14:41.328] syncer.py:88 INFO: Synced ":memory:" in 0.509262 ms
+[12-16 14:41.330] syncer.py:88 INFO: Synced ":memory:" in 0.556231 ms
+[12-16 14:42.331] syncer.py:88 INFO: Synced ":memory:" in 0.609398 ms
+[12-16 14:42.333] syncer.py:88 INFO: Synced ":memory:" in 0.58198 ms
+[12-16 14:42.336] syncer.py:88 INFO: Synced ":memory:" in 0.689507 ms
+[12-16 14:43.338] syncer.py:88 INFO: Synced ":memory:" in 0.653505 ms
+[12-16 14:43.340] syncer.py:88 INFO: Synced ":memory:" in 0.59247 ms
+[12-16 14:43.342] syncer.py:88 INFO: Synced ":memory:" in 0.592232 ms
+[12-16 14:44.346] syncer.py:88 INFO: Synced ":memory:" in 0.596046 ms
+[12-16 14:44.348] syncer.py:88 INFO: Synced ":memory:" in 0.634909 ms
+[12-16 14:44.350] syncer.py:88 INFO: Synced ":memory:" in 0.55337 ms
+[12-16 14:45.352] syncer.py:88 INFO: Synced ":memory:" in 0.573874 ms
+[12-16 14:45.354] syncer.py:88 INFO: Synced ":memory:" in 0.652552 ms
+[12-16 14:45.356] syncer.py:88 INFO: Synced ":memory:" in 0.552177 ms
+[12-16 14:46.358] syncer.py:88 INFO: Synced ":memory:" in 0.810385 ms
+[12-16 14:46.407] idle.py:71 INFO: Stop signal received (2). Exiting...
+[12-16 14:46.670] idle.py:71 INFO: Stop signal received (2). Exiting...
+[12-16 14:46.870] idle.py:71 INFO: Stop signal received (2). Exiting...
+[12-16 14:46.990] idle.py:71 INFO: Stop signal received (2). Exiting...

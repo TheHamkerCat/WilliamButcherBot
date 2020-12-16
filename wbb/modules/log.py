@@ -16,7 +16,7 @@ async def logs_chat(client, message):
         ]
     )
     await message.reply_document(
-        "akagi/logs/error.log", caption="✨ **Here are my Logs ~**", reply_markup=keyb
+        "wbb/logs/error.log", caption="✨ **Here are my Logs ~**", reply_markup=keyb
     )
 
 
@@ -30,7 +30,7 @@ logs_create = filters.create(logs_callback)
 
 @app.on_callback_query(logs_create)
 async def paste_log_neko(client, query):
-    if query.from_user.id is OWNER_ID:
+    if query.from_user.id == OWNER_ID:
         f = open("wbb/logs/error.log", "r")
         data = await nekobin.neko(f.read())
         keyb = types.InlineKeyboardMarkup(
@@ -39,5 +39,5 @@ async def paste_log_neko(client, query):
         await query.message.edit_caption("Successfully Nekofied", reply_markup=keyb)
     else:
         await client.answer_callback_query(
-            query.id, "Sike its not for you!", show_alert=True
+            query.id, "'Blue Button Must Press', huh?", show_alert=True
         )
