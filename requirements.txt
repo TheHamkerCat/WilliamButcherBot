@@ -1,2 +1,4 @@
 psutil
 shutil
+pyrogram==1.0.7
+TgCrypto

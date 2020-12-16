@@ -1,0 +1,59 @@
+PEAK OF LOG FILE] __init__.py:42 INFO: Modules loaded: ['commit', 'greetings', 'ping', 'stats']
+[12-16 14:16.948] auth.py:81 INFO: Start creating a new auth key on DC2
+[12-16 14:16.948] connection.py:54 INFO: Connecting...
+[12-16 14:16.181] connection.py:65 INFO: Connected! Production DC2 - IPv4 - TCPAbridgedO
+[12-16 14:17.623] auth.py:248 INFO: Done auth key exchange: DhGenOk
+[12-16 14:17.624] connection.py:74 INFO: Disconnected
+[12-16 14:17.627] connection.py:54 INFO: Connecting...
+[12-16 14:17.862] connection.py:65 INFO: Connected! Production DC2 - IPv4 - TCPAbridgedO
+[12-16 14:17.862] session.py:345 INFO: NetworkTask started
+[12-16 14:17.382] msg_id.py:45 INFO: Time synced: 2020-12-16 09:17:01.268164 UTC
+[12-16 14:17.622] session.py:314 INFO: NextSaltTask started
+[12-16 14:17.623] session.py:326 INFO: Next salt in 44m 58s (2020-12-16 15:02:00)
+[12-16 14:17.943] session.py:168 INFO: Session initialized: Layer 117
+[12-16 14:17.943] session.py:169 INFO: Device: CPython 3.7.3 - Pyrogram 1.0.7
+[12-16 14:17.943] session.py:170 INFO: System: Linux 5.4.70-amd64-desktop (EN)
+[12-16 14:17.943] session.py:185 INFO: Session started
+[12-16 14:17.944] session.py:292 INFO: PingTask started
+[12-16 14:17.212] session.py:311 INFO: PingTask stopped
+[12-16 14:17.212] session.py:342 INFO: NextSaltTask stopped
+[12-16 14:17.212] connection.py:74 INFO: Disconnected
+[12-16 14:17.213] session.py:361 INFO: NetworkTask stopped
+[12-16 14:17.213] session.py:216 INFO: Session stopped
+[12-16 14:17.215] auth.py:81 INFO: Start creating a new auth key on DC5
+[12-16 14:17.215] connection.py:54 INFO: Connecting...
+[12-16 14:17.272] connection.py:65 INFO: Connected! Production DC5 - IPv4 - TCPAbridgedO
+[12-16 14:17.922] auth.py:248 INFO: Done auth key exchange: DhGenOk
+[12-16 14:17.922] connection.py:74 INFO: Disconnected
+[12-16 14:17.924] connection.py:54 INFO: Connecting...
+[12-16 14:17.982] connection.py:65 INFO: Connected! Production DC5 - IPv4 - TCPAbridgedO
+[12-16 14:17.982] session.py:345 INFO: NetworkTask started
+[12-16 14:17.242] session.py:314 INFO: NextSaltTask started
+[12-16 14:17.243] session.py:326 INFO: Next salt in 44m 59s (2020-12-16 15:02:02)
+[12-16 14:17.336] session.py:168 INFO: Session initialized: Layer 117
+[12-16 14:17.337] session.py:169 INFO: Device: CPython 3.7.3 - Pyrogram 1.0.7
+[12-16 14:17.337] session.py:170 INFO: System: Linux 5.4.70-amd64-desktop (EN)
+[12-16 14:17.337] session.py:185 INFO: Session started
+[12-16 14:17.337] session.py:292 INFO: PingTask started
+[12-16 14:17.512] dispatcher.py:122 INFO: Started 8 HandlerTasks
+[12-16 14:17.513] syncer.py:88 INFO: Synced ":memory:" in 0.695229 ms
+[12-16 14:17.514] syncer.py:88 INFO: Synced ":memory:" in 0.599384 ms
+[12-16 14:17.517] syncer.py:88 INFO: Synced ":memory:" in 0.4282 ms
+[12-16 14:18.518] syncer.py:88 INFO: Synced ":memory:" in 0.440359 ms
+[12-16 14:18.520] syncer.py:88 INFO: Synced ":memory:" in 0.711679 ms
+[12-16 14:18.522] syncer.py:88 INFO: Synced ":memory:" in 0.425577 ms
+[12-16 14:19.525] syncer.py:88 INFO: Synced ":memory:" in 0.70262 ms
+[12-16 14:19.526] syncer.py:88 INFO: Synced ":memory:" in 0.418901 ms
+[12-16 14:19.527] syncer.py:88 INFO: Synced ":memory:" in 0.478506 ms
+[12-16 14:20.529] syncer.py:88 INFO: Synced ":memory:" in 0.4282 ms
+[12-16 14:20.530] syncer.py:88 INFO: Synced ":memory:" in 0.533581 ms
+[12-16 14:20.532] syncer.py:88 INFO: Synced ":memory:" in 0.680923 ms
+[12-16 14:21.533] syncer.py:88 INFO: Synced ":memory:" in 0.426531 ms
+[12-16 14:21.535] syncer.py:88 INFO: Synced ":memory:" in 0.423193 ms
+[12-16 14:21.536] syncer.py:88 INFO: Synced ":memory:" in 0.436306 ms
+[12-16 14:22.537] syncer.py:88 INFO: Synced ":memory:" in 0.441074 ms
+[12-16 14:22.539] syncer.py:88 INFO: Synced ":memory:" in 0.504732 ms
+[12-16 14:22.541] syncer.py:88 INFO: Synced ":memory:" in 0.596285 ms
+[12-16 14:23.542] syncer.py:88 INFO: Synced ":memory:" in 0.424623 ms
+[12-16 14:23.544] syncer.py:88 INFO: Synced ":memory:" in 0.546932 ms
+[12-16 14:23.970] idle.py:71 INFO: Stop signal received (2). Exiting...
