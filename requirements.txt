@@ -1,4 +1,5 @@
 psutil
-shutil
+uvloop
+aiohttp
 pyrogram==1.0.7
 TgCrypto
