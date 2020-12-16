@@ -9,8 +9,8 @@ __HELP__ = "Do /repo To Get My Github Repository Link"
 @app.on_message(cust_filter.command(commands=(["repo"])))
 async def commit(client, message):
     await message.reply_text(f'''
-Developer - {DEVELOPER_USERNAME}
+👨‍💻 Developer - {DEVELOPER_USERNAME}
 
-Repo - {REPO_URL}
+🔗 Repo - {REPO_URL}
 
-PRs Are Always Welcomed''')
+❤️ PRs Are Always Welcomed''', disable_web_page_preview=True)
