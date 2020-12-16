@@ -48,4 +48,3 @@ def welcome(client, message):
     text = MESSAGE.format(emoji.CROWN, ", ".join(new_members))
     message.reply_text(text, disable_web_page_preview=True)
 
-app.run()
