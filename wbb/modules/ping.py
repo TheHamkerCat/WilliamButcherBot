@@ -1,10 +1,9 @@
-from wbb import app
-import time
+from wbb import app, Command
 from wbb.utils import cust_filter
 import requests
-import inspect
+import time
 __MODULE__ = "Ping"
-__HELP__ = " - /ping - to check if I am Alive or Not"
+__HELP__ = " /ping - To Get Response Time From All TG Datacenters"
 
 
 

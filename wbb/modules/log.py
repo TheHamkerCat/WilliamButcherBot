@@ -4,6 +4,9 @@ from wbb.utils import cust_filter, nekobin
 from wbb import app, OWNER_ID
 
 
+__MODULE__ = "Logs"
+__HELP__ = "/log - To Get Logs From Last Run [Owner Only]"
+
 @app.on_message(filters.user(OWNER_ID) & cust_filter.command("log"))
 async def logs_chat(client, message):
     keyb = types.InlineKeyboardMarkup(
