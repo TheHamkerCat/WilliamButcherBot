@@ -8,7 +8,6 @@ import importlib
 from wbb.modules import ALL_MODULES
 import uvloop
 
-
 loop = asyncio.get_event_loop()
 
 
@@ -43,7 +42,7 @@ async def start_bot():
     print("+===============+===============+===============+===============+")
     print(bot_modules)
     print("+===============+===============+===============+===============+")
-    print("Bot run successfully as {}!".format(botinfo.BOT_NAME))
+    print("Bot Started Successfully as {}!".format(botinfo.BOT_NAME))
     await idle()
 
 
