@@ -11,7 +11,7 @@ __HELP__ = '''
 
 '''
 
-@app.on_message(cust_filter.command(commands=(["purge"])))
+@app.on_message(cust_filter.command(commands=("purge")))
 async def purge(client, message):
     app.set_parse_mode("markdown")
     if message.chat.type not in (("supergroup", "channel")):

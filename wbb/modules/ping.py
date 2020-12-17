@@ -7,7 +7,7 @@ __HELP__ = " /ping - To Get Response Time From All TG Datacenters"
 
 
 
-@app.on_message(cust_filter.command(commands=(["ping"])))
+@app.on_message(cust_filter.command(commands=("ping")))
 async def ping(client, message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("```Wait, Pinging all Datacenters```")

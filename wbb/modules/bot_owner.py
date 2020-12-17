@@ -1,4 +1,4 @@
-from wbb.utils import cust_filter, nekobin, formater
+from wbb.utils import cust_filter, nekobin, formatter
 from wbb import app, Command, OWNER_ID, bot_start_time, NEOFETCH
 from pyrogram import filters, types
 import re, speedtest, psutil, time, os
@@ -66,7 +66,7 @@ def speed_convert(size):
     return f"{round(size, 2)} {units[zero]}"
 
 
-@app.on_message(filters.user(OWNER_ID) & cust_filter.command(commands=(["speedtest"])))
+@app.on_message(filters.user(OWNER_ID) & cust_filter.command(commands=("speedtest")))
 async def speeeed(client, message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("```Performing A Speedtest!```")
@@ -83,8 +83,9 @@ Latency  - {round((x["latency"]))} ms
 
 #Stats Module
 
-@app.on_message(filters.user(OWNER_ID) & cust_filter.command(commands=(["stats"])))
+@app.on_message(filters.user(OWNER_ID) & cust_filter.command(commands=("stats")))
 async def stats(client, message):
+    bot_uptime = int(time.time() - bot_start_time)
     cpu = psutil.cpu_percent(interval=0.5)
     mem = psutil.virtual_memory().percent
     disk = psutil.disk_usage("/").percent
@@ -104,7 +105,7 @@ async def stats(client, message):
 ```_________________________
 |________|Stats|________|
 |                       |
-|      Uptime: {formater.get_readable_time((time.time() - bot_start_time))}|
+|      Uptime: {formatter.get_readable_time((bot_uptime))}|
 |      CPU: {cpu}%       |
 |      RAM: {mem}%       |
 |      Disk: {disk}%       |
