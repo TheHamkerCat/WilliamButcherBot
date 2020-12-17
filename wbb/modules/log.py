@@ -19,7 +19,7 @@ async def logs_chat(client, message):
         ]
     )
     await message.reply_document(
-        "wbb/logs/error.log", caption="✨ **Here are my Logs ~**", reply_markup=keyb
+        "error.log", caption="**Here are my Logs ~**", reply_markup=keyb
     )
 
 
@@ -34,7 +34,7 @@ logs_create = filters.create(logs_callback)
 @app.on_callback_query(logs_create)
 async def paste_log_neko(client, query):
     if query.from_user.id == OWNER_ID:
-        f = open("wbb/logs/error.log", "r")
+        f = open("error.log", "r")
         data = await nekobin.neko(f.read())
         keyb = types.InlineKeyboardMarkup(
             [[types.InlineKeyboardButton("pasted on nekobin", url=f"{data}")]]
