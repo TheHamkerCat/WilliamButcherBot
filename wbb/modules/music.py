@@ -11,7 +11,7 @@ ydl_opts = {
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'mp3',
-        'preferredquality': '192'
+        'preferredquality': '320'
     }],
     'postprocessor_args': [
         '-ar', '16000'
@@ -28,7 +28,9 @@ async def commit(client, message):
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([link])
     for filename in glob.glob("*.mp3"):
-        m = await message.reply_audio(filename)
-        await m.edit_caption(f"[{filename}]({link})")
-        os.remove(filename)
+        filename_final = filename.split("-")[0]+" - "+filename.split("-")[-2]+".mp3"
+        os.rename(filename, filename_final)
+        m = await message.reply_audio(filename_final)
+        await m.edit_caption(f"[{filename_final}]({link})")
+        os.remove(filename_final)
 
