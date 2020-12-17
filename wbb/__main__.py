@@ -52,7 +52,7 @@ async def main_bot():
     @app.on_message(cust_filter.command("start"))
     async def start(client, message):
         if message.chat.type != "private":
-            await message.reply_text((await random_line("wbb/start.txt")))
+            await message.reply_text((await random_line("wbb/utils/start.txt")))
             return
         await message.reply("Hi, try /help")
 
