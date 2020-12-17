@@ -24,7 +24,7 @@ ydl_opts = {
     'keepvideo': False
 }
 
-@app.on_message(cust_filter.command(commands=(["music"])))
+@app.on_message(cust_filter.command(commands=("music")))
 async def commit(client, message):
     app.set_parse_mode("markdown")
     down = await message.reply_text("```Downloading Media!```")

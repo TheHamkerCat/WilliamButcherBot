@@ -4,7 +4,14 @@ from wbb.utils import cust_filter
 from wbb import app, Command
 from wbb.utils.is_admin import is_admin
 
-@app.on_message(cust_filter.command(commands=(["purge"])))
+
+__MODULE__ = "Admin"
+__HELP__ = '''
+/purge - Purge Messages From The Replied Message To The Last Message [Limit = 100]
+
+'''
+
+@app.on_message(cust_filter.command(commands=("purge")))
 async def purge(client, message):
     app.set_parse_mode("markdown")
     if message.chat.type not in (("supergroup", "channel")):
