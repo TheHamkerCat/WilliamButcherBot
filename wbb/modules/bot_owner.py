@@ -1,7 +1,7 @@
 from wbb.utils import cust_filter, nekobin, formater
 from wbb import app, Command, OWNER_ID, bot_start_time
 from pyrogram import filters, types
-import re, speedtest, psutil, time
+import re, speedtest, psutil, time, os
 
 
 __MODULE__ = "BotOwner"
@@ -85,13 +85,19 @@ Latency  - {round((x["latency"]))} ms
 
 @app.on_message(filters.user(OWNER_ID) & cust_filter.command(commands=(["stats"])))
 async def stats(client, message):
+    neofetch = os.system("neofetch --stdout")
     cpu = psutil.cpu_percent(interval=0.5)
     mem = psutil.virtual_memory().percent
     disk = psutil.disk_usage("/").percent
     stats = (f'''
-```Uptime: {formater.get_readable_time((time.time() - bot_start_time))} 
+```#####-Stats-#####
+Uptime: {formater.get_readable_time((time.time() - bot_start_time))} 
 CPU: {cpu}% 
 RAM: {mem}% 
-Disk: {disk}%```''')
+Disk: {disk}%
+
+####-Neofetch-####
+{neofetch}
+```''')
     await message.reply_text(stats)
 
