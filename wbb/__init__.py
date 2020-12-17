@@ -5,9 +5,9 @@ import time
 import os
 
 
-if os.path.exists("wbb/logs/error.log"):
-    f = open("wbb/logs/error.log", "w")
-    f.write("PEAK OF LOG FILE")
+
+f = open("error.log", "w")
+f.write("PEAK OF LOG FILE")
 
 LOG_FORMAT = (
     "[%(asctime)s.%(msecs)03d] %(filename)s:%(lineno)s %(levelname)s: %(message)s"
@@ -17,7 +17,7 @@ logging.basicConfig(
     level=logging.INFO,
     format=LOG_FORMAT,
     datefmt="%m-%d %H:%M",
-    filename="wbb/logs/error.log",
+    filename="error.log",
     filemode="w",
 )
 

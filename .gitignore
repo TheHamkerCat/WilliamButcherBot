@@ -130,4 +130,4 @@ dmypy.json
 
 
 #others
-wbb/logs/error.log
+error.log
