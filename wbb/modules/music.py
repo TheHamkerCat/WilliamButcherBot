@@ -32,7 +32,6 @@ async def commit(client, message):
     for filename in glob.glob("*.mp3"):
         m = await message.reply_audio(filename)
         await m.edit_caption(f'''
-[YouTube Link]({link})
-CC: [{user_name}](tg://user?id={user_id})''')
+[Source]({link})''')
         os.remove(filename)
 
