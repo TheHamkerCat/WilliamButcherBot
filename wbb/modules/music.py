@@ -22,12 +22,17 @@ ydl_opts = {
 
 @app.on_message(cust_filter.command(commands=(["music"])))
 async def commit(client, message):
+    user_id = message.from_user.id
+    user_name = message.from_user.username
     app.set_parse_mode("markdown")
-    m = await message.reply_text("```Wait, Downloading!```")
+    await message.reply_chat_action("upload_audio")
     link = (message.text.split(None, 1)[1])
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([link])
     for filename in glob.glob("*.mp3"):
-        await message.reply_audio(filename)
+        m = await message.reply_audio(filename)
+        await m.edit_caption(f'''
+[YouTube Link]({link})
+CC: [{user_name}](tg://user?id={user_id})''')
         os.remove(filename)
 
