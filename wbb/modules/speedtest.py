@@ -29,5 +29,5 @@ async def ping(client, message):
     await m.edit(f'''
 ```Download - {speed_convert(y)}
 Upload   - {speed_convert(z)}
-⏳ Latency  - {round((x["latency"]))} ms
+Latency  - {round((x["latency"]))} ms
 ```''')
