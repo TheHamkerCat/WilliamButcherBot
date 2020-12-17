@@ -3,7 +3,7 @@ from wbb.utils import cust_filter
 import requests
 import time
 __MODULE__ = "Ping"
-__HELP__ = " - /ping - to check if I am Alive or Not"
+__HELP__ = " /ping - To Get Response Time From All TG Datacenters"
 
 
 

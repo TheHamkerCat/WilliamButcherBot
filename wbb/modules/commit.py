@@ -3,7 +3,7 @@ from pyrogram import filters
 from wbb.utils import cust_filter, random_line
 
 __MODULE__ = "Commit"
-__HELP__ = "A Funny little module, try /commit uwu"
+__HELP__ = "/commit - To Generate Funny Commit Messages"
 
 
 @app.on_message(cust_filter.command(commands=(["commit"])))

@@ -5,7 +5,7 @@ import speedtest
 
 
 __MODULE__ = "Speedtest"
-__HELP__ = " - /speedtest - to perform a speedtest [only for owner]"
+__HELP__ = " - /speedtest - To Perform A Speedtest [Owner Only]"
 
 
 def speed_convert(size):
@@ -21,7 +21,7 @@ def speed_convert(size):
 @app.on_message(filters.user(OWNER_ID) & cust_filter.command(commands=(["speedtest"])))
 async def speeeed(client, message):
     app.set_parse_mode("markdown")
-    m = await message.reply_text("```Wait, Doing Speedtest!```")
+    m = await message.reply_text("```Performing A Speedtest!```")
     speed = speedtest.Speedtest()
     x = speed.get_best_server()
     y = speed.download()

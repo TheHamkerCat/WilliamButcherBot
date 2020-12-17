@@ -3,14 +3,15 @@ from pyrogram import filters
 from wbb.utils import cust_filter
 
 __MODULE__ = "Repo"
-__HELP__ = "Do /repo To Get My Github Repository Link"
+__HELP__ = "/repo - To Get My Github Repository Link"
 
 
 @app.on_message(cust_filter.command(commands=(["repo"])))
 async def repo(client, message):
+    app.set_parse_mode("markdown")
     await message.reply_text(f'''
-👨‍💻 Developer - @TheHamkerCat
+```👨‍💻 Developer``` - @TheHamkerCat
 
-🔗 Repo - github.com/thehamkercat/WilliamButcherBot
+```🔗 Repo``` - github.com/thehamkercat/WilliamButcherBot
 
-❤️ PRs Are Always Welcomed''', disable_web_page_preview=True)
+```❤️ PRs Are Always Welcomed```''', disable_web_page_preview=True)
