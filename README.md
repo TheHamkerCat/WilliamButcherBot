@@ -1,7 +1,7 @@
 # WilliamButcherBot
 Just Another Telegram Bot Written In Python Using Pyrogram.
 
-<img src="https://i.ibb.co/5WvFvLy/trevor-barclay-butcher2.jpg" width="160" align="right">
+<img src="https://i.ibb.co/HBkLxxT/owen-buckley-owen-buckley-billybutcher-close.jpg" width="160" align="right">
 
 ## Requirements
 
