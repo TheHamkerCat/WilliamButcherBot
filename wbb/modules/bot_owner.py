@@ -1,5 +1,5 @@
 from wbb.utils import cust_filter, nekobin, formater
-from wbb import app, Command, OWNER_ID, bot_start_time
+from wbb import app, Command, OWNER_ID, bot_start_time, NEOFETCH
 from pyrogram import filters, types
 import re, speedtest, psutil, time, os
 
@@ -85,23 +85,31 @@ Latency  - {round((x["latency"]))} ms
 
 @app.on_message(filters.user(OWNER_ID) & cust_filter.command(commands=(["stats"])))
 async def stats(client, message):
-    os.system("neofetch --stdout > neofetch.txt")
-    f = open("neofetch.txt", "r")
-    neofetch = f.read()
-    f.close()
     cpu = psutil.cpu_percent(interval=0.5)
     mem = psutil.virtual_memory().percent
     disk = psutil.disk_usage("/").percent
+    if NEOFETCH == "True":
+        os.system("neofetch --stdout > neofetch.txt")
+        f = open("neofetch.txt", "r")
+        read_file = f.read()
+        neofetch = (f'''
+----------[Neofetch]----------
+
+{read_file}
+''')
+        f.close()
+    else:
+        neofetch = "NeoFetch Is Disabled!"
     stats = (f'''
-```#####- [Stats] -#####
+```_________________________
+|________|Stats|________|
+|                       |
+|      Uptime: {formater.get_readable_time((time.time() - bot_start_time))}|
+|      CPU: {cpu}%       |
+|      RAM: {mem}%       |
+|      Disk: {disk}%       |
+|_______________________|
 
-Uptime: {formater.get_readable_time((time.time() - bot_start_time))} 
-CPU: {cpu}% 
-RAM: {mem}% 
-Disk: {disk}%
-
-
-####- [Neofetch] -####
 
 {neofetch}
 ```''')
