@@ -19,9 +19,9 @@ def speed_convert(size):
 
 
 @app.on_message(filters.user(OWNER_ID) & cust_filter.command(commands=(["speedtest"])))
-async def ping(client, message):
+async def speeeed(client, message):
     app.set_parse_mode("markdown")
-    m = await message.reply_text("Wait, Doing Speedtest!")
+    m = await message.reply_text("```Wait, Doing Speedtest!```")
     speed = speedtest.Speedtest()
     x = speed.get_best_server()
     y = speed.download()

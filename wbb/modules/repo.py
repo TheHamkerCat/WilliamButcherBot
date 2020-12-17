@@ -7,7 +7,7 @@ __HELP__ = "Do /repo To Get My Github Repository Link"
 
 
 @app.on_message(cust_filter.command(commands=(["repo"])))
-async def commit(client, message):
+async def repo(client, message):
     await message.reply_text(f'''
 👨‍💻 Developer - @TheHamkerCat
 
