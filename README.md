@@ -34,7 +34,3 @@ Just Another Telegram Bot Written In Python Using Pyrogram.
    noload_modules =
    ```
 5. Run with `python3 -m wbb`
-
-## License
-
-MIT © 2019-2020
