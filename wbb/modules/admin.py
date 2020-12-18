@@ -1,22 +1,21 @@
 import asyncio
-from pyrogram import Client, filters
 from wbb.utils import cust_filter
-from wbb import app, Command
+from wbb import app
 from wbb.utils.is_admin import is_admin
 
 
 __MODULE__ = "Admin"
 __HELP__ = '''
-/purge - Purge Messages From The Replied Message To The Last Message [Limit = 100]
+/purge - Purge Messages [Limit = 100]
 
 '''
+
 
 @app.on_message(cust_filter.command(commands=("purge")))
 async def purge(client, message):
     app.set_parse_mode("markdown")
     if message.chat.type not in (("supergroup", "channel")):
         return
-    
     admin = await is_admin(message)
 
     if not admin:
@@ -45,7 +44,7 @@ async def purge(client, message):
             )
 
     m = await message.reply_text(
-        f"```Purged!```"
+        "```Purged!```"
     )
     await asyncio.sleep(2)
     await m.delete()

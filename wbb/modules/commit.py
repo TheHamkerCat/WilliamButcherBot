@@ -1,5 +1,4 @@
 from wbb import app
-from pyrogram import filters
 from wbb.utils import cust_filter, random_line
 
 __MODULE__ = "Commit"

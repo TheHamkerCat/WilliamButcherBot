@@ -23,12 +23,21 @@ async def start_bot():
 
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
-        if hasattr(imported_module, "__MODULE__") and imported_module.__MODULE__:
+        if (
+            hasattr(imported_module, "__MODULE__")
+            and imported_module.__MODULE__
+        ):
             if imported_module.__MODULE__.lower() in MOD_NOLOAD:
                 continue
             imported_module.__MODULE__ = imported_module.__MODULE__
-            if hasattr(imported_module, "__HELP__") and imported_module.__HELP__:
-                HELPABLE[imported_module.__MODULE__.lower()] = imported_module
+            if (
+                hasattr(imported_module, "__HELP__")
+                and imported_module.__HELP__
+            ):
+                HELPABLE[
+                    imported_module.__MODULE__.lower()
+                ] = imported_module
+
     bot_modules = ""
     j = 1
     for i in ALL_MODULES:
@@ -45,7 +54,7 @@ async def start_bot():
     print("+===============+===============+===============+===============+")
     print("Bot Started Successfully as {}!".format(botinfo.BOT_NAME))
     await idle()
-    
+
 
 @app.on_message(cust_filter.command("start"))
 async def start(client, message):
@@ -53,6 +62,7 @@ async def start(client, message):
         await message.reply_text((await random_line("wbb/utils/start.txt")))
         return
     await message.reply("Hi, try /help")
+
 
 @app.on_message(cust_filter.command("help"))
 async def help_command(_, message):
