@@ -1,5 +1,5 @@
 from wbb.utils import cust_filter, nekobin, formatter
-from wbb import app, OWNER_ID, bot_start_time, NEOFETCH
+from wbb import app, OWNER_ID, SUDO_USER_ID, bot_start_time, NEOFETCH
 from pyrogram import filters, types
 import re
 import speedtest
@@ -8,18 +8,20 @@ import time
 import os
 
 
-__MODULE__ = "BotOwner"
+__MODULE__ = "Sudoers"
 __HELP__ = '''
 /log - To Get Logs From Last Run.
 /speedtest - To Perform A Speedtest.
-/stats - For Bot Owner To Check System Status.
-
+/stats - To Check System Status.
 '''
+
+SUDOERS = [OWNER_ID, SUDO_USER_ID]
+
 
 # Logs Module
 
 
-@app.on_message(filters.user(OWNER_ID) & cust_filter.command("log"))
+@app.on_message(filters.user(SUDOERS) & cust_filter.command("log"))
 async def logs_chat(client, message):
     keyb = types.InlineKeyboardMarkup(
         [
@@ -31,7 +33,7 @@ async def logs_chat(client, message):
         ]
     )
     await message.reply_document(
-        "error.log", caption="**Here are my Logs ~**", reply_markup=keyb
+        "error.log", reply_markup=keyb
     )
 
 
@@ -45,7 +47,7 @@ logs_create = filters.create(logs_callback)
 
 @app.on_callback_query(logs_create)
 async def paste_log_neko(client, query):
-    if query.from_user.id == OWNER_ID:
+    if query.from_user.id == OWNER_ID or SUDO_USER_ID:
         f = open("error.log", "r")
         data = await nekobin.neko(f.read())
         keyb = types.InlineKeyboardMarkup(
@@ -74,7 +76,7 @@ def speed_convert(size):
 
 
 @app.on_message(
-    filters.user(OWNER_ID) & cust_filter.command(commands=("speedtest"))
+    filters.user(SUDOERS) & cust_filter.command(commands=("speedtest"))
 )
 async def speeeed(client, message):
     app.set_parse_mode("markdown")
@@ -93,7 +95,7 @@ Latency  - {round((x["latency"]))} ms
 
 
 @ app.on_message(
-    filters.user(OWNER_ID) & cust_filter.command(commands=("stats"))
+    filters.user(SUDOERS) & cust_filter.command(commands=("stats"))
 )
 async def stats(client, message):
     bot_uptime = int(time.time() - bot_start_time)
