@@ -115,15 +115,13 @@ async def stats(client, message):
     else:
         neofetch = "NeoFetch Is Disabled!"
     stats = (f'''
-```_________________________
-|________|Stats|________|
-|                       |
-|      Uptime: {formatter.get_readable_time((bot_uptime))}|
-|      CPU: {cpu}%       |
-|      RAM: {mem}%       |
-|      Disk: {disk}%       |
-|_______________________|
+```
+----------[Stats]----------
 
+      Uptime: {formatter.get_readable_time((bot_uptime))}
+      CPU: {cpu}%
+      RAM: {mem}%
+      Disk: {disk}%
 
 {neofetch}
 ```''')
