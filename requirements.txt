@@ -1,8 +1,9 @@
-psutil
-uvloop
-aiohttp
-pyrogram==1.0.7
 TgCrypto
-speedtest-cli
-youtube_dl
+aiohttp
 future
+psutil
+pyrogram
+requests
+speedtest-cli
+uvloop
+youtube_dl
