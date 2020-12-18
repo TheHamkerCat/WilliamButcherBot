@@ -4,7 +4,7 @@ import re
 import importlib
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from wbb import app, MOD_NOLOAD, Command
+from wbb import app, MOD_NOLOAD
 from wbb.utils import random_line, get_info, paginate_modules, cust_filter
 from wbb.utils import botinfo
 from wbb.modules import ALL_MODULES
@@ -100,7 +100,6 @@ async def help_parser(message, keyboard=None):
         "Hi {first_name}, I am {bot_name}".format(
             first_name=message.from_user.first_name,
             bot_name=botinfo.BOT_NAME,
-            commands=", ".join(Command),
         ),
         keyboard,
     )
@@ -137,7 +136,6 @@ async def help_button(c, q):
             text="Hi {first_name}. I am {bot_name}".format(
                 first_name=q.from_user.first_name,
                 bot_name=botinfo.BOT_NAME,
-                commands=", ".join(Command),
             ),
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(curr_page - 1, HELPABLE, "help")
@@ -151,7 +149,6 @@ async def help_button(c, q):
             text="Hi {first_name}. I am {bot_name}".format(
                 first_name=q.from_user.first_name,
                 bot_name=botinfo.BOT_NAME,
-                commands=", ".join(Command),
             ),
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(next_page + 1, HELPABLE, "help")
@@ -164,7 +161,6 @@ async def help_button(c, q):
             text="Hi {first_name}. I am {bot_name}".format(
                 first_name=q.from_user.first_name,
                 bot_name=botinfo.BOT_NAME,
-                commands=", ".join(Command),
             ),
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(0, HELPABLE, "help")
