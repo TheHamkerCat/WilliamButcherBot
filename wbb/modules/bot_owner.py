@@ -1,7 +1,11 @@
 from wbb.utils import cust_filter, nekobin, formatter
-from wbb import app, Command, OWNER_ID, bot_start_time, NEOFETCH
+from wbb import app, OWNER_ID, bot_start_time, NEOFETCH
 from pyrogram import filters, types
-import re, speedtest, psutil, time, os
+import re
+import speedtest
+import psutil
+import time
+import os
 
 
 __MODULE__ = "BotOwner"
@@ -12,7 +16,8 @@ __HELP__ = '''
 
 '''
 
-#Logs Module
+# Logs Module
+
 
 @app.on_message(filters.user(OWNER_ID) & cust_filter.command("log"))
 async def logs_chat(client, message):
@@ -44,17 +49,19 @@ async def paste_log_neko(client, query):
         f = open("error.log", "r")
         data = await nekobin.neko(f.read())
         keyb = types.InlineKeyboardMarkup(
-            [[types.InlineKeyboardButton("pasted on nekobin", url=f"{data}")]]
+            [[types.InlineKeyboardButton("Pasted!", url=f"{data}")]]
         )
-        await query.message.edit_caption("Successfully Nekofied", reply_markup=keyb)
+        await query.message.edit_caption(
+                                            "Successfully Nekofied",
+                                            reply_markup=keyb
+                                        )
     else:
         await client.answer_callback_query(
             query.id, "'Blue Button Must Press', huh?", show_alert=True
         )
 
+# SpeedTest Module
 
-
-#SpeedTest Module
 
 def speed_convert(size):
     power = 2 ** 10
@@ -66,7 +73,9 @@ def speed_convert(size):
     return f"{round(size, 2)} {units[zero]}"
 
 
-@app.on_message(filters.user(OWNER_ID) & cust_filter.command(commands=("speedtest")))
+@app.on_message(
+    filters.user(OWNER_ID) & cust_filter.command(commands=("speedtest"))
+)
 async def speeeed(client, message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("```Performing A Speedtest!```")
@@ -80,10 +89,12 @@ Upload   - {speed_convert(z)}
 Latency  - {round((x["latency"]))} ms
 ```''')
 
+# Stats Module
 
-#Stats Module
 
-@app.on_message(filters.user(OWNER_ID) & cust_filter.command(commands=("stats")))
+@ app.on_message(
+    filters.user(OWNER_ID) & cust_filter.command(commands=("stats"))
+)
 async def stats(client, message):
     bot_uptime = int(time.time() - bot_start_time)
     cpu = psutil.cpu_percent(interval=0.5)
@@ -115,4 +126,3 @@ async def stats(client, message):
 {neofetch}
 ```''')
     await message.reply_text(stats)
-

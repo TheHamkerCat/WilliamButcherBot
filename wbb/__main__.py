@@ -1,12 +1,14 @@
 import asyncio
+import uvloop
 import re
+import importlib
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from wbb import app, MOD_NOLOAD, MOD_LOAD, Command
-from wbb.utils import random_line, get_info, paginate_modules, cust_filter, botinfo
-import importlib
+from wbb import app, MOD_NOLOAD
+from wbb.utils import random_line, get_info, paginate_modules, cust_filter
+from wbb.utils import botinfo
 from wbb.modules import ALL_MODULES
-import uvloop
+
 
 loop = asyncio.get_event_loop()
 
@@ -21,12 +23,21 @@ async def start_bot():
 
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
-        if hasattr(imported_module, "__MODULE__") and imported_module.__MODULE__:
+        if (
+            hasattr(imported_module, "__MODULE__")
+            and imported_module.__MODULE__
+        ):
             if imported_module.__MODULE__.lower() in MOD_NOLOAD:
                 continue
             imported_module.__MODULE__ = imported_module.__MODULE__
-            if hasattr(imported_module, "__HELP__") and imported_module.__HELP__:
-                HELPABLE[imported_module.__MODULE__.lower()] = imported_module
+            if (
+                hasattr(imported_module, "__HELP__")
+                and imported_module.__HELP__
+            ):
+                HELPABLE[
+                    imported_module.__MODULE__.lower()
+                ] = imported_module
+
     bot_modules = ""
     j = 1
     for i in ALL_MODULES:
@@ -43,7 +54,7 @@ async def start_bot():
     print("+===============+===============+===============+===============+")
     print("Bot Started Successfully as {}!".format(botinfo.BOT_NAME))
     await idle()
-    
+
 
 @app.on_message(cust_filter.command("start"))
 async def start(client, message):
@@ -51,6 +62,7 @@ async def start(client, message):
         await message.reply_text((await random_line("wbb/utils/start.txt")))
         return
     await message.reply("Hi, try /help")
+
 
 @app.on_message(cust_filter.command("help"))
 async def help_command(_, message):
@@ -74,7 +86,11 @@ async def help_command(_, message):
         await message.reply("Contact me in PM.", reply_markup=keyboard)
         return
     text, keyboard = await help_parser(message)
-    await message.reply(text, reply_markup=keyboard, disable_web_page_preview=True)
+    await message.reply(
+        text,
+        reply_markup=keyboard,
+        disable_web_page_preview=True
+        )
 
 
 async def help_parser(message, keyboard=None):
@@ -84,10 +100,10 @@ async def help_parser(message, keyboard=None):
         "Hi {first_name}, I am {bot_name}".format(
             first_name=message.from_user.first_name,
             bot_name=botinfo.BOT_NAME,
-            commands=", ".join(Command),
         ),
         keyboard,
     )
+
 
 @app.on_callback_query(filters.regex(r"help_(.*?)"))
 async def help_button(c, q):
@@ -117,10 +133,9 @@ async def help_button(c, q):
     elif prev_match:
         curr_page = int(prev_match.group(1))
         await q.message.edit(
-            text="Hi {first_name}. I am {bot_name}, you can use commands with following prefixes{commands}".format(
+            text="Hi {first_name}. I am {bot_name}".format(
                 first_name=q.from_user.first_name,
                 bot_name=botinfo.BOT_NAME,
-                commands=", ".join(Command),
             ),
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(curr_page - 1, HELPABLE, "help")
@@ -131,10 +146,9 @@ async def help_button(c, q):
     elif next_match:
         next_page = int(next_match.group(1))
         await q.message.edit(
-            text="Hi {first_name}. I am {bot_name}, you can use commands with following prefixes{commands}".format(
+            text="Hi {first_name}. I am {bot_name}".format(
                 first_name=q.from_user.first_name,
                 bot_name=botinfo.BOT_NAME,
-                commands=", ".join(Command),
             ),
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(next_page + 1, HELPABLE, "help")
@@ -144,10 +158,9 @@ async def help_button(c, q):
 
     elif back_match:
         await q.message.edit(
-            text="Hi {first_name}. I am {bot_name}, you can use commands with following prefixes{commands}".format(
+            text="Hi {first_name}. I am {bot_name}".format(
                 first_name=q.from_user.first_name,
                 bot_name=botinfo.BOT_NAME,
-                commands=", ".join(Command),
             ),
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(0, HELPABLE, "help")

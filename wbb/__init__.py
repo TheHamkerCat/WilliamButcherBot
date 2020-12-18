@@ -2,16 +2,16 @@ from pyrogram import Client
 from configparser import ConfigParser
 import logging
 import time
-import os
-
 
 
 f = open("error.log", "w")
 f.write("PEAK OF LOG FILE")
 
 LOG_FORMAT = (
-    "[%(asctime)s.%(msecs)03d] %(filename)s:%(lineno)s %(levelname)s: %(message)s"
-)
+    '''
+    [%(asctime)s.%(msecs)03d] %(filename)s:%(lineno)s
+    %(levelname)s: %(message)s'''
+    )
 
 logging.basicConfig(
     level=logging.INFO,
@@ -39,4 +39,4 @@ MOD_NOLOAD = config.get("mods", "noload_modules").split()
 bot_start_time = time.time()
 
 
-app = Client(":memory:")
+app = Client(":memory:", workers=16)

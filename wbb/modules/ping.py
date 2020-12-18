@@ -1,10 +1,9 @@
-from wbb import app, Command
+from wbb import app
 from wbb.utils import cust_filter
 import requests
-import time
+
 __MODULE__ = "Ping"
 __HELP__ = " /ping - To Get Response Time From All TG Datacenters"
-
 
 
 @app.on_message(cust_filter.command(commands=("ping")))
@@ -14,6 +13,6 @@ async def ping(client, message):
     result = ""
     for i in range(1, 6):
         dc = (f"https://cdn{i}.telesco.pe")
-        ping1 = round(requests.head(dc).elapsed.total_seconds() * 1000)   
+        ping1 = round(requests.head(dc).elapsed.total_seconds() * 1000)
         result += f'```DC{i} - {ping1}ms```'
     await m.edit(result)
