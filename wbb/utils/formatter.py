@@ -1,4 +1,5 @@
-import time, math
+import time
+import math
 
 
 def time_formatter(seconds):
@@ -66,7 +67,10 @@ def get_readable_time(seconds: int) -> str:
     time_suffix_list = ["s", "m", "h", "days"]
     while count < 4:
         count += 1
-        remainder, result = divmod(seconds, 60) if count < 3 else divmod(seconds, 24)
+        if count < 3:
+            remainder, result = divmod(seconds, 60)
+        else:
+            remainder, result = divmod(seconds, 24)
         if seconds == 0 and remainder == 0:
             break
         time_list.append(int(result))
@@ -109,18 +113,6 @@ def extract_time(time_val):
     return bantime
 
 
-def make_time(time_val):
-    if int(time_val) == 0:
-        return "0"
-    if int(time_val) <= 3600:
-        bantime = str(int(time_val / 60)) + "m"
-    elif int(time_val) >= 3600 and time_val <= 86400:
-        bantime = str(int(time_val / 60 / 60)) + "h"
-    elif int(time_val) >= 86400:
-        bantime = str(int(time_val / 24 / 60 / 60)) + "d"
-    return bantime
-
-
 def extract_time_set(time_val):
     if not any(time_val.endswith(unit) for unit in ("m", "h", "d")):
         return False
@@ -128,7 +120,6 @@ def extract_time_set(time_val):
     time_num = time_val[:-1]  # type: str
     if not time_num.isdigit():
         return False
-
     if unit == "d":
         bantime = int(int(time_num) * 24 * 60 * 60)
     elif unit == "h":
@@ -156,7 +147,7 @@ def escape_invalid_curly_brackets(text, valids):  # sourcery skip
                         success = True
                         break
                     if success:
-                        new_text += text[idx : idx + len(v) + 2]
+                        new_text += text[idx: idx + len(v) + 2]
                         idx += len(v) + 2
                         continue
                     else:

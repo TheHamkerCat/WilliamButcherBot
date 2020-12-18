@@ -15,12 +15,15 @@ def command(
     case_sensitive: bool = False,
 ):
     """
-    This is a drop in replacement for the default cust_filter.command that is included
-    in Pyrogram. The Pyrogram one does not support /command@botname type commands,
-    so this custom filter enables that throughout all groups and private chats.
-    This filter works exactly the same as the original command filter even with support for multiple command
-    prefixes and case sensitivity.
-    Command arguments are given to user as message.command
+    This is a drop in replacement for the default
+    cust_filter.command that is included in Pyrogram.
+    The Pyrogram one does not support /command@botname
+    type commands, so this custom filter enables that
+    throughout all groups and private chats. This filter
+    works exactly the same as the original command filter
+    even with support for multiple command prefixes and
+    case sensitivity. Command arguments are given to user
+    as message.command
     """
 
     async def func(flt, _, message: Message):

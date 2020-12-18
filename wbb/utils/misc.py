@@ -1,15 +1,6 @@
-import re
-
-# import requests
 from math import ceil
-
 from pyrogram.types import InlineKeyboardButton
 from wbb import MOD_LOAD, MOD_NOLOAD
-
-
-def cleanhtml(raw_html):
-    cleanr = re.compile("<.*?>")
-    return re.sub(cleanr, "", raw_html)
 
 
 class EqInlineKeyboardButton(InlineKeyboardButton):
@@ -29,7 +20,9 @@ def paginate_modules(page_n, module_dict, prefix, chat=None):
             [
                 EqInlineKeyboardButton(
                     x.__MODULE__,
-                    callback_data="{}_module({})".format(prefix, x.__MODULE__.lower()),
+                    callback_data="{}_module({})".format(
+                        prefix, x.__MODULE__.lower()
+                        ),
                 )
                 for x in module_dict.values()
             ]

@@ -1,12 +1,14 @@
 import asyncio
+import uvloop
 import re
+import importlib
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from wbb import app, MOD_NOLOAD, MOD_LOAD, Command
-from wbb.utils import random_line, get_info, paginate_modules, cust_filter, botinfo
-import importlib
+from wbb import app, MOD_NOLOAD, Command
+from wbb.utils import random_line, get_info, paginate_modules, cust_filter
+from wbb.utils import botinfo
 from wbb.modules import ALL_MODULES
-import uvloop
+
 
 loop = asyncio.get_event_loop()
 
@@ -74,7 +76,11 @@ async def help_command(_, message):
         await message.reply("Contact me in PM.", reply_markup=keyboard)
         return
     text, keyboard = await help_parser(message)
-    await message.reply(text, reply_markup=keyboard, disable_web_page_preview=True)
+    await message.reply(
+        text,
+        reply_markup=keyboard,
+        disable_web_page_preview=True
+        )
 
 
 async def help_parser(message, keyboard=None):
@@ -88,6 +94,7 @@ async def help_parser(message, keyboard=None):
         ),
         keyboard,
     )
+
 
 @app.on_callback_query(filters.regex(r"help_(.*?)"))
 async def help_button(c, q):
@@ -117,7 +124,7 @@ async def help_button(c, q):
     elif prev_match:
         curr_page = int(prev_match.group(1))
         await q.message.edit(
-            text="Hi {first_name}. I am {bot_name}, you can use commands with following prefixes{commands}".format(
+            text="Hi {first_name}. I am {bot_name}".format(
                 first_name=q.from_user.first_name,
                 bot_name=botinfo.BOT_NAME,
                 commands=", ".join(Command),
@@ -131,7 +138,7 @@ async def help_button(c, q):
     elif next_match:
         next_page = int(next_match.group(1))
         await q.message.edit(
-            text="Hi {first_name}. I am {bot_name}, you can use commands with following prefixes{commands}".format(
+            text="Hi {first_name}. I am {bot_name}".format(
                 first_name=q.from_user.first_name,
                 bot_name=botinfo.BOT_NAME,
                 commands=", ".join(Command),
@@ -144,7 +151,7 @@ async def help_button(c, q):
 
     elif back_match:
         await q.message.edit(
-            text="Hi {first_name}. I am {bot_name}, you can use commands with following prefixes{commands}".format(
+            text="Hi {first_name}. I am {bot_name}".format(
                 first_name=q.from_user.first_name,
                 bot_name=botinfo.BOT_NAME,
                 commands=", ".join(Command),
