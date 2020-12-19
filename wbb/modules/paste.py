@@ -29,7 +29,7 @@ async def paste(client, message):
             await m.edit(final_link, disable_web_page_preview=True)
     elif bool(message.reply_to_message) is False:
         await message.reply_text(
-            '''```Reply To A Message With /paste, Just Hitting /paste
-Won't Do Anything Other Than Proving Everyone That
-You Are Obsessed To 'BlueTextMustClickofobia'```'''
-        )
+            "```Reply To A Message With /paste, Just Hitting /paste " +
+            "Won't Do Anything Other Than Proving Everyone That " +
+            "You Are Obsessed To 'BlueTextMustClickofobia'```"
+            )
