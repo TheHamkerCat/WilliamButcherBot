@@ -37,9 +37,9 @@ async def wall(client, message):
     try:
         term = (message.text.split(None, 1)[1])
     except IndexError:
-        await m.edit("```\"/wall\" needs a keyword argument```")
+        await m.edit("`\"/wall\" needs a keyword argument`")
 
-    api = "https://wall.alphacoders.com/api2.0/get.php?auth=" +\
+    api = "https://wall.alphacoders.com/api2.0/get.php?auth=" + \
         "{}&method=search&term={}".format(WALL_API_KEY, term)
 
     json_rep = r.get(api).json()
