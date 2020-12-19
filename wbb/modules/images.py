@@ -6,9 +6,8 @@ from random import randint
 import requests as r
 
 __MODULE__ = "Images"
-__HELP__ = '''/cat - Get Cute Cats Images
-/dog - Get Cute Dogs Images
-'''
+__HELP__ = "/cat - Get Cute Cats Images\n" + \
+           "/dog - Get Cute Dogs Images"
 
 
 @app.on_message(cust_filter.command(commands=("cat")))
@@ -45,14 +44,13 @@ async def wall(client, message):
 
     json_rep = r.get(api).json()
     if not json_rep.get("success"):
-        await m.edit(
-            "FTS! something unusual happened, report to support @Thepirategang"
-            )
+        await m.edit("FTS! something unusual happened, " +
+                     "report to support @Thepirategang")
     else:
         wallpapers = json_rep.get("wallpapers")
         if not wallpapers:
             await m.edit(
-                "Found literally nothing!,You should work on your english.")
+                "Found literally nothing!,You should work on your English.")
             return
         else:
             index = randint(0, len(wallpapers) - 1)
