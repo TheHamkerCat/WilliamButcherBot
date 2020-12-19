@@ -13,7 +13,7 @@ async def rice(client, message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("```Forwarding!```")
     id = message.reply_to_message.from_user.id
-    await message.reply_to_message.forward(-1001490017589)
+    await message.reply_to_message.forward('RiceGallery')
     await m.edit(
         f"[Your](tg://user?id={id}) Rice Forwared"
         " To [Rice Gallery](https://t.me/RiceGallery)",
