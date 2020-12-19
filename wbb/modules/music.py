@@ -18,7 +18,13 @@ ydl_opts = {
 async def music(client, message):
     await message.reply_chat_action("typing")
     app.set_parse_mode("html")
-    link = (message.text.split(None, 1)[1])
+    try:
+        link = (message.text.split(None, 1)[1])
+    except IndexError:
+        await message.reply_text(
+            "<code>\"/music\" needs a keyword argument</code>"
+            )
+
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(link, download=False)
         audio_file = ydl.prepare_filename(info_dict)
@@ -39,9 +45,10 @@ async def music(client, message):
         duration = int(float(info_dict['duration']))
         caption = f"<b><a href=\"{webpage_url}\">{title}</a></b>"
         await message.reply_chat_action("upload_document")
-        await message.reply_audio(audio_file, caption=caption,
-                                  duration=duration, performer=performer,
-                                  title=title, thumb=thumbnail_file)
+        await message.reply_audio(
+            audio_file, caption=caption, duration=duration,
+            performer=performer, title=title, thumb=thumbnail_file
+            )
         os.remove(audio_file)
         os.remove(thumbnail_file)
 

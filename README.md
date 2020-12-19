@@ -26,6 +26,7 @@ Just Another Telegram Bot Written In Python Using Pyrogram.
    owner_id = 1243703097
    sudo_user_id = 79813487
    neofetch = True
+   alpha_coders_wall_api_key = ca45r8c444s55g7t5s3a4esd33hs6t
 
    [prefix]
    prefixes = /
