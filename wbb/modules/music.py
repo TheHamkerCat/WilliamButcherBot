@@ -45,10 +45,9 @@ async def music(client, message):
         duration = int(float(info_dict['duration']))
         caption = f"<b><a href=\"{webpage_url}\">{title}</a></b>"
         await message.reply_chat_action("upload_document")
-        await message.reply_audio(
-            audio_file, caption=caption, duration=duration,
-            performer=performer, title=title, thumb=thumbnail_file
-            )
+        await message.reply_audio(audio_file, caption=caption,
+                                  duration=duration, performer=performer,
+                                  title=title, thumb=thumbnail_file)
         os.remove(audio_file)
         os.remove(thumbnail_file)
 
