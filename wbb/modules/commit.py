@@ -2,7 +2,7 @@ from wbb import app
 from wbb.utils import cust_filter, random_line
 
 __MODULE__ = "Commit"
-__HELP__ = "/commit - To Generate Funny Commit Messages"
+__HELP__ = "/commit - Generate Funny Commit Messages"
 
 
 @app.on_message(cust_filter.command(commands=("commit")))
