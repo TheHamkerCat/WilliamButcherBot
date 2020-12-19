@@ -1,10 +1,13 @@
 from wbb import app
 from wbb.utils import cust_filter
+from pyrogram import filters
+
+
 __MODULE__ = "Rice"
-__HELP__ = "/rice - To Forward Your Linux Rice To DE_WM's Rice Gallery"
+__HELP__ = "/rice - To Forward Your Linux Rice To DE_WM's Rice Gallery only works in [DE_WM](t.me/de_wm)"
 
 
-@app.on_message(cust_filter.command(commands=("rice")))
+@app.on_message(filters.chat('DE_WM') & cust_filter.command(commands=("rice")))
 async def rice(client, message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("```Forwarding!```")
