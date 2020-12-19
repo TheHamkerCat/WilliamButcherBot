@@ -15,7 +15,7 @@ ydl_opts = {
 
 
 @app.on_message(cust_filter.command(commands=("music")))
-async def commit(client, message):
+async def music(client, message):
     await message.reply_chat_action("typing")
     app.set_parse_mode("html")
     link = (message.text.split(None, 1)[1])

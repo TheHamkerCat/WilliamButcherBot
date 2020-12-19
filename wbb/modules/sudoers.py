@@ -7,7 +7,6 @@ import psutil
 import time
 import os
 
-
 __MODULE__ = "Sudoers"
 __HELP__ = '''
 /log - To Get Logs From Last Run.
@@ -61,6 +60,7 @@ async def paste_log_neko(client, query):
         await client.answer_callback_query(
             query.id, "'Blue Button Must Press', huh?", show_alert=True
         )
+
 
 # SpeedTest Module
 

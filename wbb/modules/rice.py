@@ -6,7 +6,7 @@ __HELP__ = "/rice - To Forward Your Linux Rice To DE_WM's Rice Gallery"
 
 
 @app.on_message(cust_filter.command(commands=("rice")))
-async def ping(client, message):
+async def rice(client, message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("```Forwarding!```")
     id = message.reply_to_message.from_user.id
