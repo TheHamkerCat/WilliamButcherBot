@@ -16,7 +16,6 @@ def __list_all_modules():
         and f.endswith(".py")
         and not f.endswith("__init__.py")
         and not f.endswith("__main__.py")
-        and not f.endswith("_DISABLED.py")
     ]
 
     if MOD_LOAD or MOD_NOLOAD:
