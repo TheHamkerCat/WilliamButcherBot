@@ -4,7 +4,8 @@ __MODULE__ = "Rice"
 __HELP__ = "/rice - To Forward Your Linux Rice To DE_WM's Rice Gallery"
 
 
-@app.on_message(cust_filter.command(commands=("rice")))
+@app.on_message(filters.chat('de_wm') & cust_filter.command(commands=("rice")))
+
 async def rice(client, message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("```Forwarding!```")
