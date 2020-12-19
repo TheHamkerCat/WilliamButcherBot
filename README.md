@@ -16,5 +16,5 @@ Just Another Telegram Bot Written In Python Using Pyrogram.
 3. `pip3 install -r requirements.txt`, to install the requirements.
 4. `cp sample_config.ini config.ini`
 
-
+6. Edit `config.ini` with your own values
 5. Run with `python3 -m wbb`
