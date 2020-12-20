@@ -10,12 +10,20 @@ __HELP__ = "/rice - To Forward Your Linux Rice To DE_WM's" \
 
 @app.on_message(filters.chat('DE_WM') & cust_filter.command(commands=("rice")))
 async def rice(client, message):
-    app.set_parse_mode("markdown")
-    m = await message.reply_text("```Forwarding!```")
-    id = message.reply_to_message.from_user.id
-    await message.reply_to_message.forward('RiceGallery')
-    await m.edit(
-        f"[Your](tg://user?id={id}) Rice Forwared"
-        " To [Rice Gallery](https://t.me/RiceGallery)",
-        disable_web_page_preview=True
-    )
+    if bool(message.reply_to_message) is True:
+        app.set_parse_mode("markdown")
+        m = await message.reply_text("```Forwarding!```")
+        id = message.reply_to_message.from_user.id
+        await message.reply_to_message.forward('RiceGallery')
+        await m.edit(
+            f"[Your](tg://user?id={id}) Rice Forwared"
+            " To [Rice Gallery](https://t.me/RiceGallery)",
+            disable_web_page_preview=True
+        )
+
+    elif bool(message.reply_to_message) is False:
+        await message.reply_text(
+            "```Reply To A Message With /rice, Just Hitting /rice " +
+            "Won't Do Anything Other Than Proving Everyone That " +
+            "You Are A Spammer Who Is Obsessed To 'BlueTextMustClickofobia'```"
+            )

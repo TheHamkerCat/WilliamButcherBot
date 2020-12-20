@@ -7,7 +7,8 @@ import requests as r
 
 __MODULE__ = "Images"
 __HELP__ = "/cat - Get Cute Cats Images\n" + \
-           "/dog - Get Cute Dogs Images"
+           "/dog - Get Cute Dogs Images\n" + \
+           "/wall [something] - Get Wallpapers"
 
 
 @app.on_message(cust_filter.command(commands=("cat")))

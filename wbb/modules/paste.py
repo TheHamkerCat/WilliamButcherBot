@@ -31,5 +31,5 @@ async def paste(client, message):
         await message.reply_text(
             "```Reply To A Message With /paste, Just Hitting /paste " +
             "Won't Do Anything Other Than Proving Everyone That " +
-            "You Are Obsessed To 'BlueTextMustClickofobia'```"
+            "You Are A Spammer Who Is Obsessed To 'BlueTextMustClickofobia'```"
             )
