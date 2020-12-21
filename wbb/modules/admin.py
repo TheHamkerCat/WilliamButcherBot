@@ -1,6 +1,3 @@
-import json
-import os
-
 from wbb import OWNER_ID, SUDO_USER_ID, app
 from wbb.utils import cust_filter
 
@@ -38,10 +35,10 @@ async def purge(client, message):
         if (await app.get_chat_member(
                 message.chat.id, message.from_user.id
                 )).can_delete_messages is True \
-                or (await app.get_chat_member(            #Flake8 Hoe
+                or (await app.get_chat_member(            # Flake8 Hoe
                     message.chat.id, message.from_user.id
                     )).status == 'creator' \
-             or message.from_user.id in SUDO:
+                or message.from_user.id in SUDO:
 
             if message.reply_to_message:
                 for a_s_message_id in range(
@@ -65,8 +62,8 @@ async def purge(client, message):
 
             else:
                 await message.reply_text(
-                "Reply To A Message To Delete It, Don't Make Fun Of Yourself!"
-                )
+                    "Reply To A Message To Delete It,"
+                    " Don't Make Fun Of Yourself!")
 
 
 # Kick members
@@ -76,16 +73,11 @@ async def purge(client, message):
 async def kick(client, message):
     username = (message.text.split(None, 2)[1])
     reason = (message.text.split(None, 2)[2])
-    try:
-        can_kick = await check_perms(message, "can_restrict_members")
-    except KeyError:
-        can_kick = "false"
 
     admins = await list_admins(message.chat.id)
 
     if message.from_user.id in admins \
             or message.from_user.id in SUDO:
-            # if can_kick is True:
         if username != "":
             await message.chat.kick_member(username)
             await message.chat.unban_member(username)
