@@ -6,7 +6,7 @@ from wbb.utils import cust_filter
 
 
 __MODULE__ = "Admin"
-__HELP__ = "/purge - Purge Messages [Limit = 100]"
+__HELP__ = "/purge - Purge Messages"
 
 SUDO = [OWNER_ID, SUDO_USER_ID]
 
@@ -20,26 +20,6 @@ async def list_admins(group_id):
         list_of_admins.append(member.user.id)
     return list_of_admins
 
-# Get Permissions Of an Admin
-
-
-async def check_perms(message, permission):
-    permissions = await app.get_chat_member(
-        chat_id=message.chat.id, user_id=message.from_user.id
-        )
-    try:
-        os.remove('permissions.json')
-    except FileNotFoundError:
-        pass
-    f = open("permissions.json", "a")
-    f.write(str(permissions))
-    f.close()
-    with open('permissions.json') as faa:
-        data = json.load(faa)
-    perm = (data[permission])  # ex: permission = can_delete_messages
-    os.remove('permissions.json')
-    return perm
-
 
 # Purge Messages
 
@@ -51,25 +31,18 @@ async def purge(client, message):
         return
 
     admins = await list_admins(message.chat.id)
-    status = await check_perms(message, "status")
 
-    try:
-        can_delete = await check_perms(message, "can_delete_messages")
-    except KeyError:
-        can_delete = "false"
-
-# If user has no permissions to delete messages
-    if status == 'member' or status == 'administrator':
-        if can_delete == 'false' and message.from_user.id not in SUDO:
-            await message.reply_text(
-                "You Are Not Admin, Stop Spamming! else /bun"
-                )
-
-# If user has permissions to delete messages
     if message.from_user.id in admins \
             or message.from_user.id in SUDO:
-        if can_delete is True or status == 'creator' \
+
+        if (await app.get_chat_member(
+                message.chat.id, message.from_user.id
+                )).can_delete_messages is True \
+                or (await app.get_chat_member(            #Flake8 Hoe
+                    message.chat.id, message.from_user.id
+                    )).status == 'creator' \
              or message.from_user.id in SUDO:
+
             if message.reply_to_message:
                 for a_s_message_id in range(
                     message.reply_to_message.message_id,
@@ -90,6 +63,12 @@ async def purge(client, message):
                         revoke=True
                     )
 
+            else:
+                await message.reply_text(
+                "Reply To A Message To Delete It, Don't Make Fun Of Yourself!"
+                )
+
+
 # Kick members
 
 
@@ -97,11 +76,16 @@ async def purge(client, message):
 async def kick(client, message):
     username = (message.text.split(None, 2)[1])
     reason = (message.text.split(None, 2)[2])
+    try:
+        can_kick = await check_perms(message, "can_restrict_members")
+    except KeyError:
+        can_kick = "false"
 
     admins = await list_admins(message.chat.id)
 
     if message.from_user.id in admins \
             or message.from_user.id in SUDO:
+            # if can_kick is True:
         if username != "":
             await message.chat.kick_member(username)
             await message.chat.unban_member(username)
