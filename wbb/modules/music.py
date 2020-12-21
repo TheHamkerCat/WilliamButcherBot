@@ -22,8 +22,7 @@ async def music(client, message):
         link = (message.text.split(None, 1)[1])
     except IndexError:
         await message.reply_text(
-            "<code>\"/music\" needs a keyword argument</code>"
-            )
+            "<code>\"/music\" needs a keyword argument</code>")
 
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(link, download=False)

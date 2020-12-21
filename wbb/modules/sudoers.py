@@ -52,10 +52,8 @@ async def paste_log_neko(client, query):
         keyb = types.InlineKeyboardMarkup(
             [[types.InlineKeyboardButton("Pasted!", url=f"{data}")]]
         )
-        await query.message.edit_caption(
-                                            "Successfully Nekofied",
-                                            reply_markup=keyb
-                                        )
+        await query.message.edit_caption("Successfully Nekofied",
+                                         reply_markup=keyb)
     else:
         await client.answer_callback_query(
             query.id, "'Blue Button Must Press', huh?", show_alert=True

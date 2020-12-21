@@ -5,7 +5,7 @@ from pyrogram import filters
 
 __MODULE__ = "Rice"
 __HELP__ = "/rice - To Forward Your Linux Rice To DE_WM's" \
-            "Rice Gallery only works in [DE_WM](t.me/de_wm)"
+           "Rice Gallery only works in [DE_WM](t.me/de_wm)"
 
 
 @app.on_message(filters.chat('DE_WM') & cust_filter.command(commands=("rice")))
@@ -18,12 +18,10 @@ async def rice(client, message):
         await m.edit(
             f"[Your](tg://user?id={id}) Rice Forwared"
             " To [Rice Gallery](https://t.me/RiceGallery)",
-            disable_web_page_preview=True
-        )
+            disable_web_page_preview=True)
 
     elif bool(message.reply_to_message) is False:
         await message.reply_text(
-            "```Reply To A Message With /rice, Just Hitting /rice " +
-            "Won't Do Anything Other Than Proving Everyone That " +
-            "You Are A Spammer Who Is Obsessed To 'BlueTextMustClickofobia'```"
-            )
+            "Reply To A Message With /rice, Just Hitting /rice "
+            + "Won't Do Anything Other Than Proving Everyone That "
+            + "You Are A Spammer Who Is Obsessed To 'BlueTextMustClickofobia")

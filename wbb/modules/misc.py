@@ -3,9 +3,9 @@ from wbb.utils import cust_filter, random_line
 
 __MODULE__ = "Misc"
 __HELP__ = "/commit - Generate Funny Commit Messages\n" \
-            "/runs - Idk Test Yourself\n" \
-            "/quote - Get Random Linux Quotes\n" \
-            "/id - Get Chat_ID or User_ID"
+           "/runs - Idk Test Yourself\n" \
+           "/quote - Get Random Linux Quotes\n" \
+           "/id - Get Chat_ID or User_ID"
 
 
 @app.on_message(cust_filter.command(commands=("commit")))

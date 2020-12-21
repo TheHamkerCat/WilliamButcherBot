@@ -20,7 +20,6 @@ HELPABLE = {}
 async def start_bot():
     await app.start()
     await get_info(app)
-    from wbb.utils import botinfo
 
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
@@ -90,8 +89,7 @@ async def help_command(_, message):
     await message.reply(
         text,
         reply_markup=keyboard,
-        disable_web_page_preview=True
-        )
+        disable_web_page_preview=True)
 
 
 async def help_parser(message, keyboard=None):

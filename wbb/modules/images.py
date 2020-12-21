@@ -42,8 +42,8 @@ async def wall(client, message):
 
     json_rep = r.get(api).json()
     if not json_rep.get("success"):
-        await m.edit("FTS! something unusual happened, " +
-                     "report to support @Thepirategang")
+        await m.edit("FTS! something unusual happened, "
+                     + "report to support @Thepirategang")
     else:
         wallpapers = json_rep.get("wallpapers")
         if not wallpapers:

@@ -11,6 +11,5 @@ __HELP__ = "/repo - To Get My Github Repository Link" + \
 async def repo(client, message):
     app.set_parse_mode("markdown")
     await message.reply_text(
-        "[Github](https://github.com/thehamkercat/WilliamButcherBot)" +
-        " | [Group](t.me/Thepirategang)", disable_web_page_preview=True
-        )
+        "[Github](https://github.com/thehamkercat/WilliamButcherBot)"
+        + " | [Group](t.me/Thepirategang)", disable_web_page_preview=True)
