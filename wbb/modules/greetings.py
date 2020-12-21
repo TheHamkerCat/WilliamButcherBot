@@ -9,5 +9,4 @@ MESSAGE = "{} Welcome {}!"
 async def welcome(client, message):
     new_members = [i.mention for i in message.new_chat_members]
     text = MESSAGE.format(emoji.CROWN, ",  ".join(new_members))
-    m = await message.reply_text(text, disable_web_page_preview=True)
-    await m.delete()
+    await message.reply_text(text, disable_web_page_preview=True)

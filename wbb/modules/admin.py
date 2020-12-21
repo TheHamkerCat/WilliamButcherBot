@@ -71,42 +71,33 @@ async def purge(client, message):
 
 @app.on_message(cust_filter.command(commands=("kick")))
 async def kick(client, message):
-    username = (message.text.split(None, 2)[1])
-    reason = (message.text.split(None, 2)[2])
+    try:
+        username = (message.text.split(None, 2)[1])
+    except IndexError:
+        username = ""
+    if (await app.get_chat_member(
+        message.chat.id, message.from_user.id)).status == 'creator' \
+        or (await app.get_chat_member(
+            message.chat.id, message.from_user.id)).can_restrict_members \
+            is True or message.from_user.id in SUDO:
 
-    admins = await list_admins(message.chat.id)
-
-    if message.from_user.id in admins \
-            or message.from_user.id in SUDO:
         if username != "":
-            await message.chat.kick_member(username)
-            await message.chat.unban_member(username)
-
-            if reason != "":
-                await message.reply_text(
-                    f"Kicked {username}!"
-                    f"Reason: {reason}")
+            if username in SUDO or (await app.get_users(username)).id in SUDO:
+                await message.reply_text("You Wanna Kick the elevated one?")
             else:
-                await message.reply_text(
-                    f"Kicked {username}!"
-                    f"Reason: Kicked without a reason! lol")
+                await message.chat.kick_member(username)
+                await message.chat.unban_member(username)
+                await message.reply_text(f"Kicked {username}")
 
         else:
-            id = message.reply_to_message.from_user.id
-            await message.reply_to_message.chat.kick_member(id)
-            await message.reply_to_message.chat.unban_member(id)
-
-            if reason != "":
-                await message.reply_text(
-                    f"Kicked {username}!"
-                    f"Reason: {reason}")
+            if username in SUDO or message.reply_to_message.from_user.id \
+             in SUDO:
+                await message.reply_text("You Wanna Kick the elevated one?")
             else:
-                await message.reply_text(
-                    f"Kicked {username}!"
-                    f"Reason: Kicked without a reason! lol")
-    else:
-        await message.reply_text("You Are Not Admin, Stop Spamming! else /bun")
-
+                id = message.reply_to_message.from_user.id
+                await message.reply_to_message.chat.kick_member(id)
+                await message.reply_to_message.chat.unban_member(id)
+                await message.reply_text(f"Kicked {username}")
 
 # Ban members
 
