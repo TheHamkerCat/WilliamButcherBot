@@ -83,7 +83,7 @@ async def kick(client, message):
 
         if username != "":
             if username in SUDO or (await app.get_users(username)).id in SUDO:
-                await message.reply_text("You Wanna Kick the elevated one?")
+                await message.reply_text("You Wanna Kick The Elevated One?")
             else:
                 await message.chat.kick_member(username)
                 await message.chat.unban_member(username)
@@ -92,7 +92,7 @@ async def kick(client, message):
         else:
             if username in SUDO or message.reply_to_message.from_user.id \
              in SUDO:
-                await message.reply_text("You Wanna Kick the elevated one?")
+                await message.reply_text("You Wanna Kick The Elevated One?")
             else:
                 id = message.reply_to_message.from_user.id
                 await message.reply_to_message.chat.kick_member(id)
@@ -104,25 +104,52 @@ async def kick(client, message):
 
 @app.on_message(cust_filter.command(commands=("ban")))
 async def ban(client, message):
-    username = (message.text.split(None, 1)[1])
-    if username != "":
-        await message.chat.kick_member(username)
-        await message.reply_text(f"Banned {username}!")
-    else:
-        id = message.reply_to_message.from_user.id
-        await message.reply_to_message.chat.kick_member(id)
-        await message.reply_text(f"Banned {username}!")
+    try:
+        username = (message.text.split(None, 2)[1])
+    except IndexError:
+        username = ""
+    if (await app.get_chat_member(
+        message.chat.id, message.from_user.id)).status == 'creator' \
+        or (await app.get_chat_member(
+            message.chat.id, message.from_user.id)).can_restrict_members \
+            is True or message.from_user.id in SUDO:
+
+        if username != "":
+            if username in SUDO or (await app.get_users(username)).id in SUDO:
+                await message.reply_text("You Wanna Ban The Elevated One?")
+            else:
+                await message.chat.kick_member(username)
+                await message.reply_text(f"Banned {username}")
+
+        else:
+            if username in SUDO or message.reply_to_message.from_user.id \
+             in SUDO:
+                await message.reply_text("You Wanna Ban The Elevated One?")
+            else:
+                id = message.reply_to_message.from_user.id
+                await message.reply_to_message.chat.kick_member(id)
+                await message.reply_text(f"Banned {username}")
 
 # Unban members
 
 
 @app.on_message(cust_filter.command(commands=("unban")))
 async def unban(client, message):
-    username = (message.text.split(None, 1)[1])
-    if username != "":
-        await message.chat.unban_member(username)
-        await message.reply_text(f"Unbanned {username}!")
-    else:
-        id = message.reply_to_message.from_user.id
-        await message.reply_to_message.chat.unban_member(id)
-        await message.reply_text(f"Unbanned {username}!")
+    try:
+        username = (message.text.split(None, 2)[1])
+    except IndexError:
+        username = ""
+    if (await app.get_chat_member(
+        message.chat.id, message.from_user.id)).status == 'creator' \
+        or (await app.get_chat_member(
+            message.chat.id, message.from_user.id)).can_restrict_members \
+            is True or message.from_user.id in SUDO:
+
+        if username != "":
+            await message.chat.kick_member(username)
+            await message.reply_text(f"Unbanned {username}")
+
+        else:
+            id = message.reply_to_message.from_user.id
+            await message.reply_to_message.chat.kick_member(id)
+            await message.reply_text(f"Unbanned {username}")
