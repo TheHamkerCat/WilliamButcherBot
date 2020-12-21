@@ -3,7 +3,10 @@ from wbb.utils import cust_filter, botinfo
 
 
 __MODULE__ = "Admin"
-__HELP__ = "/purge - Purge Messages"
+__HELP__ = "/purge - Purge Messages\n" \
+            "/kick - Kick A User\n" \
+            "/ban - Ban A User\n" \
+            "/unban - Unban A User"
 
 SUDO = [OWNER_ID, SUDO_USER_ID]
 

@@ -6,9 +6,10 @@ from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from wbb import app, MOD_NOLOAD
 from wbb.utils import get_info, paginate_modules, cust_filter
-from wbb.utils import botinfo
+from wbb.utils import botinfo, formatter
 from wbb.modules import ALL_MODULES
-
+import time
+from wbb import bot_start_time
 
 loop = asyncio.get_event_loop()
 
@@ -59,10 +60,9 @@ async def start_bot():
 @app.on_message(cust_filter.command("start"))
 async def start(client, message):
     bot_uptime = int(time.time() - bot_start_time)
-    if message.chat.type != "private":
-        await message.reply_text(f'Already Online Since {bot_uptime}')
-        return
-    await message.reply("Get Some /help")
+    await message.reply_text(
+        f"Already Online Since {formatter.get_readable_time((bot_uptime))},"
+        " Maybe Try /help")
 
 
 @app.on_message(cust_filter.command("help"))
