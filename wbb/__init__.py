@@ -1,7 +1,7 @@
-from pyrogram import Client
-from configparser import ConfigParser
 import logging
 import time
+from configparser import ConfigParser
+from pyrogram import Client
 
 
 f = open("error.log", "w")
@@ -10,8 +10,7 @@ f.write("PEAK OF LOG FILE")
 LOG_FORMAT = (
     '''
     [%(asctime)s.%(msecs)03d] %(filename)s:%(lineno)s
-    %(levelname)s: %(message)s'''
-    )
+    %(levelname)s: %(message)s''')
 
 logging.basicConfig(
     level=logging.INFO,

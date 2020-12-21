@@ -1,6 +1,7 @@
 from wbb.utils import cust_filter, nekobin, formatter
 from wbb import app, OWNER_ID, SUDO_USER_ID, bot_start_time, NEOFETCH
 from pyrogram import filters, types
+from pyrogram.types import Message
 import re
 import speedtest
 import psutil
@@ -21,7 +22,7 @@ SUDOERS = [OWNER_ID, SUDO_USER_ID]
 
 
 @app.on_message(filters.user(SUDOERS) & cust_filter.command("log"))
-async def logs_chat(client, message):
+async def logs_chat(client, message: Message):
     keyb = types.InlineKeyboardMarkup(
         [
             [
@@ -52,10 +53,8 @@ async def paste_log_neko(client, query):
         keyb = types.InlineKeyboardMarkup(
             [[types.InlineKeyboardButton("Pasted!", url=f"{data}")]]
         )
-        await query.message.edit_caption(
-                                            "Successfully Nekofied",
-                                            reply_markup=keyb
-                                        )
+        await query.message.edit_caption("Successfully Nekofied",
+                                         reply_markup=keyb)
     else:
         await client.answer_callback_query(
             query.id, "'Blue Button Must Press', huh?", show_alert=True
@@ -78,7 +77,7 @@ def speed_convert(size):
 @app.on_message(
     filters.user(SUDOERS) & cust_filter.command(commands=("speedtest"))
 )
-async def speeeed(client, message):
+async def speeeed(client, message: Message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("```Performing A Speedtest!```")
     speed = speedtest.Speedtest()
@@ -97,7 +96,7 @@ Latency  - {round((x["latency"]))} ms
 @ app.on_message(
     filters.user(SUDOERS) & cust_filter.command(commands=("stats"))
 )
-async def stats(client, message):
+async def stats(client, message: Message):
     bot_uptime = int(time.time() - bot_start_time)
     cpu = psutil.cpu_percent(interval=0.5)
     mem = psutil.virtual_memory().percent

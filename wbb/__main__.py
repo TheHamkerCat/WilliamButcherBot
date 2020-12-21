@@ -5,10 +5,11 @@ import importlib
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from wbb import app, MOD_NOLOAD
-from wbb.utils import random_line, get_info, paginate_modules, cust_filter
-from wbb.utils import botinfo
+from wbb.utils import get_info, paginate_modules, cust_filter
+from wbb.utils import botinfo, formatter
 from wbb.modules import ALL_MODULES
-
+import time
+from wbb import bot_start_time
 
 loop = asyncio.get_event_loop()
 
@@ -19,7 +20,6 @@ HELPABLE = {}
 async def start_bot():
     await app.start()
     await get_info(app)
-    from wbb.utils import botinfo
 
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
@@ -58,10 +58,10 @@ async def start_bot():
 
 @app.on_message(cust_filter.command("start"))
 async def start(client, message):
-    if message.chat.type != "private":
-        await message.reply_text((await random_line("wbb/utils/start.txt")))
-        return
-    await message.reply("Hi, try /help")
+    bot_uptime = int(time.time() - bot_start_time)
+    await message.reply_text(
+        f"Already Online Since {formatter.get_readable_time((bot_uptime))},"
+        " Maybe Try /help")
 
 
 @app.on_message(cust_filter.command("help"))
@@ -89,8 +89,7 @@ async def help_command(_, message):
     await message.reply(
         text,
         reply_markup=keyboard,
-        disable_web_page_preview=True
-        )
+        disable_web_page_preview=True)
 
 
 async def help_parser(message, keyboard=None):

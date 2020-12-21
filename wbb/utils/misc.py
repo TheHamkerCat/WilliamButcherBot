@@ -21,8 +21,7 @@ def paginate_modules(page_n, module_dict, prefix, chat=None):
                 EqInlineKeyboardButton(
                     x.__MODULE__,
                     callback_data="{}_module({})".format(
-                        prefix, x.__MODULE__.lower()
-                        ),
+                        prefix, x.__MODULE__.lower()),
                 )
                 for x in module_dict.values()
             ]

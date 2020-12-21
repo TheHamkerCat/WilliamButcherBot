@@ -1,6 +1,7 @@
 from wbb.utils import cust_filter, nekobin
 from wbb import app
 import os
+from pyrogram.types import Message
 
 
 __MODULE__ = "Paste"
@@ -8,7 +9,7 @@ __HELP__ = "/paste - To Paste Replied Text Or Document To Neokobin"
 
 
 @app.on_message(cust_filter.command(commands=("paste")))
-async def paste(client, message):
+async def paste(client, message: Message):
     if bool(message.reply_to_message) is True:
         app.set_parse_mode("markdown")
         if bool(message.reply_to_message.text) is True:
@@ -29,7 +30,6 @@ async def paste(client, message):
             await m.edit(final_link, disable_web_page_preview=True)
     elif bool(message.reply_to_message) is False:
         await message.reply_text(
-            "```Reply To A Message With /paste, Just Hitting /paste " +
-            "Won't Do Anything Other Than Proving Everyone That " +
-            "You Are Obsessed To 'BlueTextMustClickofobia'```"
-            )
+            "Reply To A Message With /paste, Just Hitting /paste "
+            + "Won't Do Anything Other Than Proving Everyone That "
+            + "You Are A Spammer Who Is Obsessed To 'BlueTextMustClickofobia")
