@@ -35,11 +35,8 @@ async def dog(client, message):
 async def wall(client, message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("Searching!")
-    try:
-        term = (message.text.split(None, 1)[1])
-    except IndexError:
-        await m.edit("`\"/wall\" needs a keyword argument`")
-
+    initial_term = (message.text.replace('/wall', ''))
+    term = initial_term.replace(' ', '%20')
     api = "https://wall.alphacoders.com/api2.0/get.php?auth=" + \
         "{}&method=search&term={}".format(WALL_API_KEY, term)
 
