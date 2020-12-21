@@ -194,3 +194,17 @@ async def unban(client, message):
             else:
                 await message.reply_text("This user is already here,"
                                              " don't bully me!")
+
+# Kick members on their own call
+@app.on_message(cust_filter.command(commands=("kickme")))
+async def kickme(client, message):
+    await message.chat.kick_member(message.from_user.id)
+    await message.chat.unban_member(message.from_user.id)
+    await message.reply_text("Joke's on you, i'm into that shit")
+
+# Ban members on their own call
+@app.on_message(cust_filter.command(commands=("kickme")))
+async def kickme(client, message):
+    await message.chat.kick_member(message.from_user.id)
+    await message.chat.unban_member(message.from_user.id)
+    await message.reply_text("Joke's on you, i'm into that shit")
