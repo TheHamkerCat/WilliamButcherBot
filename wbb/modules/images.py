@@ -4,6 +4,8 @@ import urllib.request
 import json
 from random import randint
 import requests as r
+import asyncio
+from pyrogram.types import Message
 
 __MODULE__ = "Images"
 __HELP__ = "/cat - Get Cute Cats Images\n" + \
@@ -11,8 +13,13 @@ __HELP__ = "/cat - Get Cute Cats Images\n" + \
            "/wall [something] - Get Wallpapers"
 
 
+async def delete_message_with_delay(delay, message: Message):
+    await asyncio.sleep(delay)
+    (message).delete()
+
+
 @app.on_message(cust_filter.command(commands=("cat")))
-async def cat(client, message):
+async def cat(client, message: Message):
     with urllib.request.urlopen(
         "https://api.thecatapi.com/v1/images/search"
     ) as url:
@@ -22,7 +29,7 @@ async def cat(client, message):
 
 
 @app.on_message(cust_filter.command(commands=("dog")))
-async def dog(client, message):
+async def dog(client, message: Message):
     with urllib.request.urlopen(
         "https://api.thedogapi.com/v1/images/search"
     ) as url:
@@ -32,7 +39,7 @@ async def dog(client, message):
 
 
 @app.on_message(cust_filter.command(commands=("wall")))
-async def wall(client, message):
+async def wall(client, message: Message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("Searching!")
     initial_term = (message.text.replace('/wall', ''))
@@ -47,7 +54,8 @@ async def wall(client, message):
     else:
         wallpapers = json_rep.get("wallpapers")
         if not wallpapers:
-            await m.edit("404")
+            await m.edit("Found literally nothing!,"
+                         + "You should work on your English.")
             return
         else:
             index = randint(0, len(wallpapers) - 1)
@@ -55,4 +63,4 @@ async def wall(client, message):
             wallpaper = wallpaper.get("url_image")
             wallpaper = wallpaper.replace("\\", "")
             await message.reply_document(wallpaper)
-    await m.delete()
+    await delete_message_with_delay(10, m)

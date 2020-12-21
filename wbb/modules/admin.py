@@ -1,6 +1,6 @@
 from wbb import OWNER_ID, SUDO_USER_ID, app
 from wbb.utils import cust_filter
-
+from pyrogram.types import Message
 
 __MODULE__ = "Admin"
 __HELP__ = "/purge - Purge Messages\n" \
@@ -33,7 +33,7 @@ async def list_members(group_id):
 
 
 @app.on_message(cust_filter.command(commands=("purge")))
-async def purge(client, message):
+async def purge(client, message: Message):
     message_ids = []
     if message.chat.type not in (("supergroup", "channel")):
         return
@@ -43,11 +43,13 @@ async def purge(client, message):
     if message.from_user.id in admins \
             or message.from_user.id in SUDO:
 
-        if (await app.get_chat_member(message.chat.id, message.from_user.id
-            )).can_delete_messages is True \
-                or (await app.get_chat_member(            # Flake8 Hoe
-                    message.chat.id, message.from_user.id
-                        )).status == 'creator' or message.from_user.id in SUDO:
+        chat_id = message.chat.id
+        from_user_id = message.from_user.id
+        if (await app.get_chat_member(chat_id,
+                                      from_user_id)).can_delete_messages \
+                or (await app.get_chat_member(chat_id, from_user_id)).status \
+                == 'creator' \
+                or message.from_user.id in SUDO:
 
             if message.reply_to_message:
                 for a_s_message_id in range(
@@ -79,7 +81,7 @@ async def purge(client, message):
 
 
 @app.on_message(cust_filter.command(commands=("kick")))
-async def kick(client, message):
+async def kick(client, message: Message):
     try:
         username = (message.text.split(None, 2)[1])
     except IndexError:
@@ -122,7 +124,7 @@ async def kick(client, message):
 
 
 @app.on_message(cust_filter.command(commands=("ban")))
-async def ban(client, message):
+async def ban(client, message: Message):
     try:
         username = (message.text.split(None, 2)[1])
     except IndexError:
@@ -162,7 +164,7 @@ async def ban(client, message):
 
 
 @app.on_message(cust_filter.command(commands=("unban")))
-async def unban(client, message):
+async def unban(client, message: Message):
     try:
         username = (message.text.split(None, 2)[1])
     except IndexError:
@@ -195,7 +197,7 @@ async def unban(client, message):
 
 
 @app.on_message(cust_filter.command(commands=("kickme")))
-async def kickme(client, message):
+async def kickme(client, message: Message):
     if message.from_user.id not in SUDO:
         await message.chat.kick_member(message.from_user.id)
         await message.chat.unban_member(message.from_user.id)
@@ -207,7 +209,7 @@ async def kickme(client, message):
 
 
 @app.on_message(cust_filter.command(commands=("banme")))
-async def banme(client, message):
+async def banme(client, message: Message):
     if message.from_user.id not in SUDO:
         await message.chat.kick_member(message.from_user.id)
         await message.reply_text("Banned!, Joke's on you, I'm into that shit")

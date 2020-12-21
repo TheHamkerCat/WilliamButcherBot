@@ -4,6 +4,7 @@ import youtube_dl
 from wbb.utils import cust_filter
 from wbb import app
 import os
+from pyrogram.types import Message
 
 __MODULE__ = "Music"
 __HELP__ = "/music [link] To Download Music From Various Websites"
@@ -15,7 +16,7 @@ ydl_opts = {
 
 
 @app.on_message(cust_filter.command(commands=("music")))
-async def music(client, message):
+async def music(client, message: Message):
     await message.reply_chat_action("typing")
     app.set_parse_mode("html")
     try:

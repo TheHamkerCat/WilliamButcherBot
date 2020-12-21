@@ -4,7 +4,6 @@ from configparser import ConfigParser
 from pyrogram import Client
 
 
-
 f = open("error.log", "w")
 f.write("PEAK OF LOG FILE")
 

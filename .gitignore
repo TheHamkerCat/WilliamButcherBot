@@ -2,7 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+.
 # C extensions
 *.so
 
@@ -135,3 +135,4 @@ dmypy.json
 neofetch.txt
 error.log
 permissions.json
+.vscode
