@@ -1,6 +1,6 @@
-from wbb import app
 from pyrogram import filters, emoji
 from pyrogram.types import Message
+from wbb import app
 
 MESSAGE = "{} Welcome {}!"
 

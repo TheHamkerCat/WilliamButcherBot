@@ -1,6 +1,6 @@
+from pyrogram.types import Message
 from wbb import OWNER_ID, SUDO_USER_ID, app
 from wbb.utils import cust_filter
-from pyrogram.types import Message
 
 __MODULE__ = "Admin"
 __HELP__ = "/purge - Purge Messages\n" \

@@ -1,6 +1,6 @@
+from pyrogram.types import Message
 from wbb import app
 from wbb.utils import cust_filter, random_line
-from pyrogram.types import Message
 
 __MODULE__ = "Misc"
 __HELP__ = "/commit - Generate Funny Commit Messages\n" \
