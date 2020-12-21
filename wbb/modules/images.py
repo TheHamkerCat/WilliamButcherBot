@@ -47,8 +47,7 @@ async def wall(client, message):
     else:
         wallpapers = json_rep.get("wallpapers")
         if not wallpapers:
-            await m.edit(
-                "Found literally nothing!,You should work on your English.")
+            await m.edit("404")
             return
         else:
             index = randint(0, len(wallpapers) - 1)
