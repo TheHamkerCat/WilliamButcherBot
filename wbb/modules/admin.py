@@ -1,5 +1,5 @@
 from wbb import OWNER_ID, SUDO_USER_ID, app
-from wbb.utils import cust_filter, botinfo
+from wbb.utils import cust_filter
 
 
 __MODULE__ = "Admin"
@@ -97,7 +97,7 @@ async def kick(client, message):
                 await message.reply_text("You Wanna Kick The Elevated One?")
             else:
                 if (await app.get_users(username)).id in \
-                await list_members(message.chat.id):
+                 await list_members(message.chat.id):
                     await message.chat.kick_member(username)
                     await message.chat.unban_member(username)
                     await message.reply_text(f"Kicked {username}")
@@ -111,7 +111,7 @@ async def kick(client, message):
                 await message.reply_text("You Wanna Kick The Elevated One?")
             else:
                 if message.reply_to_message.from_user.id in \
-                await list_members(message.chat.id):
+                 await list_members(message.chat.id):
                     id = message.reply_to_message.from_user.id
                     await message.reply_to_message.chat.kick_member(id)
                     await message.reply_to_message.chat.unban_member(id)
@@ -140,7 +140,7 @@ async def ban(client, message):
                 await message.reply_text("You Wanna Ban The Elevated One?")
             else:
                 if (await app.get_users(username)).id in \
-                await list_members(message.chat.id):
+                 await list_members(message.chat.id):
                     await message.chat.kick_member(username)
                     await message.reply_text(f"Banned {username}")
                 else:
@@ -152,7 +152,7 @@ async def ban(client, message):
                 await message.reply_text("You Wanna Ban The Elevated One?")
             else:
                 if (await app.get_users(username)).id in \
-                await list_members(message.chat.id):
+                 await list_members(message.chat.id):
                     id = message.reply_to_message.from_user.id
                     await message.reply_to_message.chat.kick_member(id)
                     await message.reply_text(f"Banned {username}")
@@ -177,34 +177,41 @@ async def unban(client, message):
 
         if username != "":
             if (await app.get_users(username)).id not in \
-            await list_members(message.chat.id):
+             await list_members(message.chat.id):
                 await message.chat.kick_member(username)
                 await message.reply_text(f"Unbanned {username}")
             else:
                 await message.reply_text("This user is already here,"
-                                             " don't bully me!")
-
-
+                                         " don't bully me!")
         else:
             if (await app.get_users(username)).id not in \
-            await list_members(message.chat.id):
+             await list_members(message.chat.id):
                 id = message.reply_to_message.from_user.id
                 await message.reply_to_message.chat.kick_member(id)
                 await message.reply_text(f"Unbanned {username}")
             else:
                 await message.reply_text("This user is already here,"
-                                             " don't bully me!")
+                                         " don't bully me!")
 
 # Kick members on their own call
+
+
 @app.on_message(cust_filter.command(commands=("kickme")))
 async def kickme(client, message):
-    await message.chat.kick_member(message.from_user.id)
-    await message.chat.unban_member(message.from_user.id)
-    await message.reply_text("Joke's on you, i'm into that shit")
+    if message.from_user.id not in SUDO:
+        await message.chat.kick_member(message.from_user.id)
+        await message.chat.unban_member(message.from_user.id)
+        await message.reply_text("Kicked!, Joke's on you, i'm into that shit")
+    else:
+        await message.reply_text("It doesn't works that way mate.")
 
 # Ban members on their own call
-@app.on_message(cust_filter.command(commands=("kickme")))
-async def kickme(client, message):
-    await message.chat.kick_member(message.from_user.id)
-    await message.chat.unban_member(message.from_user.id)
-    await message.reply_text("Joke's on you, i'm into that shit")
+
+
+@app.on_message(cust_filter.command(commands=("banme")))
+async def banme(client, message):
+    if message.from_user.id not in SUDO:
+        await message.chat.kick_member(message.from_user.id)
+        await message.reply_text("Banned!, Joke's on you, I'm into that shit")
+    else:
+        await message.reply_text("It doesn't works that way mate.")
