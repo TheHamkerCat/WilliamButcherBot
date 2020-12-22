@@ -51,8 +51,12 @@ async def dev(client, message: Message):
     app.set_parse_mode("markdown")
     await message.reply_to_message.forward('WBBSupport')
     await app.send_message("WBBSupport",
-                           f"Forwarded By: `{message.from_user.id}` | {message.from_user.mention}\n"
-                           f"Forwarded From: `{message.chat.id}` | {message.chat.title}")
+                           "Forwarded By: `{}` | {}\n"
+                           "Forwarded From: `{}` | {}"
+                           .format(message.from_user.id,
+                                   message.from_user.mention,
+                                   message.chat.id,
+                                   message.chat.title))
     await message.reply_text("Your Message Has Been Forward To Devs,"
                              + " Any Missuse Of This Feature Will Not"
                              + " Be Tolerated And You Will Be"

@@ -7,9 +7,8 @@ from wbb import MOD_LOAD, MOD_NOLOAD, log
 
 
 def __list_all_modules():
-
-# This generates a list of modules in this
-# folder for the * in __main__ to work.
+    # This generates a list of modules in this
+    # folder for the * in __main__ to work.
     mod_paths = glob.glob(dirname(__file__) + "/*.py")
     all_modules = [
         basename(f)[:-3]
