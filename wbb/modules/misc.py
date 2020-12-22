@@ -69,7 +69,7 @@ async def dev(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=('random')))
-async def passwd(client, message: Message):
+async def passwd(_, message: Message):
     app.set_parse_mode('markdown')
     if message.text != "/random":
         length = message.text.replace('/random', '')
