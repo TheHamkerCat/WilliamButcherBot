@@ -72,11 +72,11 @@ async def purge(client, message: Message):
                         message_ids=message_ids,
                         revoke=True
                     )
-
             else:
                 await message.reply_text(
                     "Reply To A Message To Delete It,"
                     " Don't Make Fun Of Yourself!")
+    await message.delete()
 
 
 # Kick members

@@ -1,3 +1,5 @@
+import secrets
+import string
 from pyrogram.types import Message
 from wbb import app
 from wbb.utils import cust_filter, random_line
@@ -61,3 +63,26 @@ async def dev(client, message: Message):  # pylint: disable=W0613
                              + " Any Missuse Of This Feature Will Not"
                              + " Be Tolerated And You Will Be"
                              + " Gbanned instantaneously!")
+
+
+# Password
+
+
+@app.on_message(cust_filter.command(commands=('random')))
+async def passwd(client, message: Message):
+    app.set_parse_mode('markdown')
+    if message.text != "/random":
+        length = message.text.replace('/random', '')
+        try:
+            if 1 < int(length) < 1000:
+                alphabet = string.ascii_letters + string.digits
+                password = ''.join(secrets.choice(alphabet) for i in
+                                   range(int(length)))
+                await message.reply_text(f"`{password}`")
+            else:
+                await message.reply_text('Specify A Length Between 1-1000')
+        except ValueError:
+            await message.reply_text("Strings Won't Work!, Pass A"
+                                     + " Positive Integer Between 1-1000")
+    else:
+        await message.reply_text('"/random" Needs An Argurment')
