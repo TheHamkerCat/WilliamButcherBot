@@ -4,17 +4,17 @@ from wbb.utils import cust_filter
 from wbb.utils.botinfo import BOT_ID
 
 __MODULE__ = "Admin"
-__HELP__ = "/ban    - Ban A User\n" \
-           "/unban  - Unban A User\n" \
-           "/kick   - Kick A User\n" \
-           "/purge  - Purge Messages\n" \
-           "/del    - Delete Replied Message\n" \
-           "/banme  - Bans A User Who Issued The Command\n" \
-           "/kickme - Kicks A User Who Issued The Command\n" \
-           "/demote - Demote A Member\n" \
-           "/promote - Promote A Member\n" \
-           "/pin - Pin A Message\n" \
-           "/unpin - Unpin A Message"
+__HELP__ = '''/ban    - Ban A User
+              /unban  - Unban A User
+              /kick   - Kick A User
+              /purge  - Purge Messages
+              /del    - Delete Replied Message
+              /banme  - Bans A User Who Issued The Command
+              /kickme - Kicks A User Who Issued The Command
+              /demote - Demote A Member
+              /promote - Promote A Member
+              /pin - Pin A Message
+              /unpin - Unpin A Message'''
 
 SUDO = [OWNER_ID, SUDO_USER_ID]
 

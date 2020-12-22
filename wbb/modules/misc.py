@@ -1,17 +1,18 @@
 import secrets
 import string
+from wbb.utils.botinfo import BOT_ID
 from pyrogram.types import Message
 from wbb import app
 from wbb.utils import cust_filter, random_line
 
 __MODULE__ = "Misc"
-__HELP__ = "/commit - Generate Funny Commit Messages\n" \
-           "/runs  - Idk Test Yourself\n" \
-           "/quote - Get Random Linux Quotes\n" \
-           "/id - Get Chat_ID or User_ID\n" \
-           "/dev - Forward Anything To Developers [SPAM = GBAN]\n" \
-           "/random - Generate Random Complex Passwords\n" \
-           "/http - Get Cats Reference Photo For Http Error Codes"
+__HELP__ = '''/commit - Generate Funny Commit Messages
+           /runs  - Idk Test Yourself
+           /quote - Get Random Linux Quotes
+           /id - Get Chat_ID or User_ID
+           /dev - Forward Anything To Developers [SPAM = GBAN]
+           /random - Generate Random Complex Passwords
+           /http - Get Cats Reference Photo For Http Error Codes'''
 
 
 @app.on_message(cust_filter.command(commands=("commit")))
@@ -53,19 +54,25 @@ async def get_id(_, message: Message):
 @app.on_message(cust_filter.command(commands=("dev")))
 async def dev(_, message: Message):
     app.set_parse_mode("markdown")
-    await message.reply_to_message.forward('WBBSupport')
-    await app.send_message("WBBSupport",
-                           "Forwarded By: `{}` | {}\n"
-                           "Forwarded From: `{}` | {}"
-                           .format(message.from_user.id,
-                                   message.from_user.mention,
-                                   message.chat.id,
-                                   message.chat.title))
-    await message.reply_text("Your Message Has Been Forward To Devs,"
-                             + " Any Missuse Of This Feature Will Not"
-                             + " Be Tolerated And You Will Be"
-                             + " Gbanned instantaneously!")
+    if (await app.get_chat_member(
+            message.chat.id,
+            BOT_ID)).can_restrict_members:
 
+        await message.reply_to_message.forward('WBBSupport')
+        await app.send_message("WBBSupport",
+                            "Forwarded By: `{}` | {}\n"
+                            "Forwarded From: `{}` | {}"
+                            .format(message.from_user.id,
+                                    message.from_user.mention,
+                                    message.chat.id,
+                                    message.chat.title))
+        await message.reply_text("Your Message Has Been Forward To Devs,"
+                                + " Any Missuse Of This Feature Will Not"
+                                + " Be Tolerated And You Will Be"
+                                + " Gbanned instantaneously!")
+    else:
+        await message.reply_text("To Use This Feature You Have To Make Me"
+                                 + " Admin")
 # Password
 
 
