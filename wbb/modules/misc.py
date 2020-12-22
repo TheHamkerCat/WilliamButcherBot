@@ -13,6 +13,7 @@ __HELP__ = "/commit - Generate Funny Commit Messages\n" \
            "/random - Generate Random Complex Passwords\n" \
            "/http - Get Cats Reference Photo For Http Error Codes"
 
+
 @app.on_message(cust_filter.command(commands=("commit")))
 async def commit(_, message: Message):
     await message.reply_text((await random_line('wbb/utils/commit.txt')))
@@ -92,10 +93,10 @@ async def random(_, message: Message):
 
 @app.on_message(cust_filter.command(commands=('http')))
 async def http(_, message: Message):
-        if message.text != "/http":
-            code = message.text.replace('/http', '')
-            url = f"https://http.cat/{code}"
-            final = url.replace(' ', '')
-            await message.reply_photo(final)
-        else:
-            await message.reply_text('"/http" Needs An Argument. Ex: `/http 404`')
+    if message.text != "/http":
+        code = message.text.replace('/http', '')
+        url = f"https://http.cat/{code}"
+        final = url.replace(' ', '')
+        await message.reply_photo(final)
+    else:
+        await message.reply_text('"/http" Needs An Argument. Ex: `/http 404`')

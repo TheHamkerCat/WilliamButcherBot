@@ -234,12 +234,11 @@ async def delete(_, message: Message):
             or message.from_user.id in SUDO:        
         if (await app.get_chat_member(chat_id,
                                       from_user_id)).can_delete_messages \
-                or (await app.get_chat_member(chat_id, from_user_id)).status \
-                == 'creator' \
-                or message.from_user.id in SUDO:
-                await message.reply_to_message.delete()
-                await message.delete()
-
+            or (await app.get_chat_member(chat_id, from_user_id)).status \
+            == 'creator' \
+            or message.from_user.id in SUDO:
+            await message.reply_to_message.delete()
+            await message.delete()
     else:
         await message.reply_text("You Don't Have Enough Permissions,"
                                  + " Consider Deleting Yourself!")
