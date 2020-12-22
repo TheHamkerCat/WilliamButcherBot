@@ -1,6 +1,7 @@
 from pyrogram.types import Message
 from wbb import OWNER_ID, SUDO_USER_ID, app
 from wbb.utils import cust_filter
+from wbb.utils.botinfo import BOT_ID
 
 __MODULE__ = "Admin"
 __HELP__ = "/ban    - Ban A User\n" \
@@ -251,20 +252,42 @@ async def promote(_, message: Message):
     chat_id = message.chat.id
     from_user_id = message.from_user.id
 
-    if message.from_user.id in admins \
-            or message.from_user.id in SUDO:
-        if (await app.get_chat_member(chat_id,
-                                      from_user_id)).can_delete_messages \
-            or (await app.get_chat_member(chat_id, from_user_id)).status \
-            == 'creator' \
+    if (await app.get_chat_member(chat_id,
+                                BOT_ID)).can_promote_members:
+        if message.from_user.id in admins \
                 or message.from_user.id in SUDO:
-            if message.text != '/promote':
-                username = message.text.replace('/promote', '')
-                user_id = (await app.get_users(username)).id
-                await message.chat.promote_member(user_id=user_id,
-                                                  can_change_info=True,
-                                                  can_invite_users=True,
-                                                  can_restrict_members=True,
-                                                  can_delete_messages=True,
-                                                  can_pin_messages=True,
-                                                  can_promote_members=True)
+            if (await app.get_chat_member(chat_id,
+                                        from_user_id)).can_promote_members \
+                or (await app.get_chat_member(chat_id, from_user_id)).status \
+                == 'creator' \
+                    or message.from_user.id in SUDO:
+                if message.text != '/promote':
+                    username = message.text.replace('/promote', '')
+                    user_id = (await app.get_users(username)).id
+                    await message.chat.promote_member(user_id=user_id,
+                                                    can_change_info=True,
+                                                    can_invite_users=True,
+                                                    can_restrict_members=True,
+                                                    can_delete_messages=True,
+                                                    can_pin_messages=True,
+                                                    can_promote_members=True)
+                    await message.reply_text('Promoted!')
+                else:
+                    user_id = message.reply_to_message.from_user.id
+                    await message.chat.promote_member(user_id=user_id,
+                                                    can_change_info=True,
+                                                    can_invite_users=True,
+                                                    can_restrict_members=True,
+                                                    can_delete_messages=True,
+                                                    can_pin_messages=True,
+                                                    can_promote_members=True)
+                    await message.reply_text('Promoted!')
+            else:
+                await message.reply_text("Yeah, I Can See You're An Admin,"
+                                        +" But You Don't Have Permissions"
+                                        +" To Promote Someone.")
+        else:
+            await message.reply_text("You're Not An Admin, Want A Good Ban?")
+    else:
+        await message.reply_text("Well, Your Know What?, I'M NOT AN ADMIN!"
+                                 + " MAKE ME ADMIN!")
