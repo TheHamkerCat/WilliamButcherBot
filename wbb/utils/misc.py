@@ -40,13 +40,13 @@ def paginate_modules(page_n, module_dict, prefix, chat=None):
         )
 
     pairs = list(zip(modules[::3], modules[1::3], modules[2::3]))
-    c = 0
-    for x in pairs:
-        for _ in x:
-            c += 1
-    if len(modules) - c == 1:
+    i = 0
+    for m in pairs:
+        for _ in m:
+            i += 1
+    if len(modules) - i == 1:
         pairs.append((modules[-1],))
-    elif len(modules) - c == 2:
+    elif len(modules) - i == 2:
         pairs.append(
             (
                 modules[-2],

@@ -1,7 +1,7 @@
-from wbb.utils import cust_filter, nekobin
-from wbb import app
 import os
 from pyrogram.types import Message
+from wbb.utils import cust_filter, nekobin
+from wbb import app
 
 
 __MODULE__ = "Paste"
@@ -9,7 +9,7 @@ __HELP__ = "/paste - To Paste Replied Text Or Document To Neokobin"
 
 
 @app.on_message(cust_filter.command(commands=("paste")))
-async def paste(client, message: Message):
+async def paste(client, message: Message):  # pylint: disable=W0613
     if bool(message.reply_to_message) is True:
         app.set_parse_mode("markdown")
         if bool(message.reply_to_message.text) is True:
@@ -23,8 +23,8 @@ async def paste(client, message: Message):
         elif bool(message.reply_to_message.document) is True:
             m = await message.reply_text("```Pasting To Nekobin...```")
             await message.reply_to_message.download(file_name='paste.txt')
-            f = open("downloads/paste.txt", "r")
-            paste_link = await nekobin.neko(f.read())
+            i = open("downloads/paste.txt", "r")
+            paste_link = await nekobin.neko(i.read())
             os.remove('downloads/paste.txt')
             final_link = f"[Nekobin]({paste_link})"
             await m.edit(final_link, disable_web_page_preview=True)

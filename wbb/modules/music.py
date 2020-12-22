@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
 from urllib.parse import urlparse
+import os
 import youtube_dl
+from pyrogram.types import Message
 from wbb.utils import cust_filter
 from wbb import app
-import os
-from pyrogram.types import Message
 
 __MODULE__ = "Music"
 __HELP__ = "/music [link] To Download Music From Various Websites"
@@ -16,7 +16,7 @@ ydl_opts = {
 
 
 @app.on_message(cust_filter.command(commands=("music")))
-async def music(client, message: Message):
+async def music(client, message: Message):  # pylint: disable=W0613
     await message.reply_chat_action("typing")
     app.set_parse_mode("html")
     try:

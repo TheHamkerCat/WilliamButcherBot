@@ -1,6 +1,6 @@
+from pyrogram.types import Message
 from wbb import app
 from wbb.utils import cust_filter, random_line
-from pyrogram.types import Message
 
 __MODULE__ = "Misc"
 __HELP__ = "/commit - Generate Funny Commit Messages\n" \
@@ -11,46 +11,52 @@ __HELP__ = "/commit - Generate Funny Commit Messages\n" \
 
 
 @app.on_message(cust_filter.command(commands=("commit")))
-async def commit(client, message: Message):
+async def commit(client, message: Message):  # pylint: disable=W0613
     await message.reply_text((await random_line('wbb/utils/commit.txt')))
 
 
 @app.on_message(cust_filter.command(commands=("runs")))
-async def runs(client, message: Message):
+async def runs(client, message: Message):  # pylint: disable=W0613
     await message.reply_text((await random_line('wbb/utils/runs.txt')))
 
 
 @app.on_message(cust_filter.command(commands=("quote")))
-async def quote(client, message: Message):
+async def quote(client, message: Message):  # pylint: disable=W0613
     await message.reply_text((await random_line('wbb/utils/quotes.txt')))
 
 
 @app.on_message(cust_filter.command(commands=("id")))
-async def id(client, message: Message):
+async def get_id(client, message: Message):  # pylint: disable=W0613
     app.set_parse_mode("markdown")
     if message.text != '/id':
         username = message.text.replace('/id', '')
-        id = (await app.get_users(username)).id
-        msg = f"{username}'s ID is `{id}`"
+        user_id = (await app.get_users(username)).id
+        msg = f"{username}'s ID is `{user_id}`"
         await message.reply_text(msg)
 
     elif message.text == '/id' and not bool(message.reply_to_message):
-        id = message.chat.id
-        msg = f"{message.chat.title}'s ID is `{id}`"
+        chat_id = message.chat.id
+        msg = f"{message.chat.title}'s ID is `{chat_id}`"
         await message.reply_text(msg)
 
     elif message.text == '/id' and bool(message.reply_to_message):
-        id = message.reply_to_message.from_user.id
-        msg = f"{message.reply_to_message.from_user.mention}'s ID is `{id}`"
+        from_user_id = message.reply_to_message.from_user.id
+        from_user_mention = message.reply_to_message.from_user.mention
+        msg = f"{from_user_mention}'s ID is `{from_user_id}`"
         await message.reply_text(msg)
 
 
 @app.on_message(cust_filter.command(commands=("dev")))
-async def dev(client, message: Message):
+async def dev(client, message: Message):  # pylint: disable=W0613
     app.set_parse_mode("markdown")
     await message.reply_to_message.forward('WBBSupport')
     await app.send_message("WBBSupport",
-                           f"Forwarded By ID: `{message.from_user.id}`")
+                           "Forwarded By: `{}` | {}\n"
+                           "Forwarded From: `{}` | {}"
+                           .format(message.from_user.id,
+                                   message.from_user.mention,
+                                   message.chat.id,
+                                   message.chat.title))
     await message.reply_text("Your Message Has Been Forward To Devs,"
                              + " Any Missuse Of This Feature Will Not"
                              + " Be Tolerated And You Will Be"
