@@ -8,9 +8,9 @@ from wbb.utils import cust_filter
 from wbb import app, WALL_API_KEY
 
 __MODULE__ = "Images"
-__HELP__ = "/cat - Get Cute Cats Images\n" + \
-           "/dog - Get Cute Dogs Images\n" + \
-           "/wall [something] - Get Wallpapers"
+__HELP__ = "/cat  - Get Cute Cats Images\n" \
+           "/dog  - Get Cute Dogs Images\n" \
+           "/wall - Get Wallpapers"
 
 
 async def delete_message_with_delay(delay, message: Message):

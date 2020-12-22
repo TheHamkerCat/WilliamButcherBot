@@ -6,7 +6,7 @@ from wbb.utils import cust_filter, random_line
 
 __MODULE__ = "Misc"
 __HELP__ = "/commit - Generate Funny Commit Messages\n" \
-           "/runs - Idk Test Yourself\n" \
+           "/runs  - Idk Test Yourself\n" \
            "/quote - Get Random Linux Quotes\n" \
            "/id - Get Chat_ID or User_ID\n" \
            "/dev - Forward Anything To Developers [SPAM = GBAN]\n" \
@@ -86,7 +86,8 @@ async def random(_, message: Message):
             await message.reply_text("Strings Won't Work!, Pass A"
                                      + " Positive Integer Between 1-1000")
     else:
-        await message.reply_text('"/random" Needs An Argurment. Ex: `/random 5`')
+        await message.reply_text('"/random" Needs An Argurment.'
+                                 ' Ex: `/random 5`')
 
 # http cat search
 

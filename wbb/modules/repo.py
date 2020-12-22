@@ -4,7 +4,7 @@ from wbb.utils import cust_filter
 
 
 __MODULE__ = "Repo"
-__HELP__ = "/repo - To Get My Github Repository Link " + \
+__HELP__ = "/repo - To Get My Github Repository Link " \
            "And Support Group Link"
 
 

@@ -1,4 +1,3 @@
-from wbb.utils.cust_filter import command
 from pyrogram.types import Message
 from wbb import OWNER_ID, SUDO_USER_ID, app
 from wbb.utils import cust_filter
@@ -37,7 +36,7 @@ async def list_members(group_id):
 
 
 @app.on_message(cust_filter.command(commands=("purge")))
-async def purge(client, message: Message):
+async def purge(_, message: Message):
     message_ids = []
     if message.chat.type not in ("supergroup", "channel"):
         return
