@@ -19,7 +19,7 @@ async def delete_message_with_delay(delay, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("cat")))
-async def cat(client, message: Message):  # pylint: disable=W0613
+async def cat(_, message: Message):
     with urllib.request.urlopen(
         "https://api.thecatapi.com/v1/images/search"
     ) as url:
@@ -29,7 +29,7 @@ async def cat(client, message: Message):  # pylint: disable=W0613
 
 
 @app.on_message(cust_filter.command(commands=("dog")))
-async def dog(client, message: Message):  # pylint: disable=W0613
+async def dog(_, message: Message):
     with urllib.request.urlopen(
         "https://api.thedogapi.com/v1/images/search"
     ) as url:
@@ -39,7 +39,7 @@ async def dog(client, message: Message):  # pylint: disable=W0613
 
 
 @app.on_message(cust_filter.command(commands=("wall")))
-async def wall(client, message: Message):  # pylint: disable=W0613
+async def wall(_, message: Message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("Searching!")
     initial_term = (message.text.replace('/wall', ''))

@@ -10,7 +10,7 @@ __HELP__ = "/rice - To Forward Your Linux Rice To DE_WM's" \
 
 
 @app.on_message(filters.chat('DE_WM') & cust_filter.command(commands=("rice")))
-async def rice(client, message: Message):  # pylint: disable=W0613
+async def rice(_, message: Message):
     if bool(message.reply_to_message) is True:
         app.set_parse_mode("markdown")
         user_id = message.reply_to_message.from_user.id

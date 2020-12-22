@@ -22,7 +22,7 @@ SUDOERS = [OWNER_ID, SUDO_USER_ID]
 
 
 @app.on_message(filters.user(SUDOERS) & cust_filter.command("log"))
-async def logs_chat(client, message: Message):  # pylint: disable=W0613
+async def logs_chat(_, message: Message):
     keyb = types.InlineKeyboardMarkup(
         [
             [
@@ -77,8 +77,7 @@ def speed_convert(size):
 @app.on_message(
     filters.user(SUDOERS) & cust_filter.command(commands=("speedtest"))
 )
-async def get_speedtest_result(client,  # pylint: disable=W0613
-                               message: Message):
+async def get_speedtest_result(_, message: Message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("```Performing A Speedtest!```")
     speed = speedtest.Speedtest()
@@ -97,7 +96,7 @@ Latency  - {round((i["latency"]))} ms
 @ app.on_message(
     filters.user(SUDOERS) & cust_filter.command(commands=("stats"))
 )
-async def get_stats(client, message: Message):  # pylint: disable=W0613
+async def get_stats(_, message: Message):
     bot_uptime = int(time.time() - bot_start_time)
     cpu = psutil.cpu_percent(interval=0.5)
     mem = psutil.virtual_memory().percent
