@@ -9,7 +9,7 @@ __HELP__ = "/paste - To Paste Replied Text Or Document To Neokobin"
 
 
 @app.on_message(cust_filter.command(commands=("paste")))
-async def paste(client, message: Message):  # pylint: disable=W0613
+async def paste(_, message: Message):
     if bool(message.reply_to_message) is True:
         app.set_parse_mode("markdown")
         if bool(message.reply_to_message.text) is True:

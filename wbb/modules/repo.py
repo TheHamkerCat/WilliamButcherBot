@@ -9,7 +9,7 @@ __HELP__ = "/repo - To Get My Github Repository Link " + \
 
 
 @app.on_message(cust_filter.command(commands=("repo")))
-async def repo(client, message: Message):  # pylint: disable=W0613
+async def repo(_, message: Message):
     app.set_parse_mode("markdown")
     await message.reply_text(
         "[Github](https://github.com/thehamkercat/WilliamButcherBot)"
