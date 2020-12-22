@@ -4,9 +4,11 @@ ban - Ban A User
 banme - Ban Yourself
 cat - Get Cute Cats Images
 commit - Generate Funny Commit Messages
+del - Delete Replied Message
 dev - Forward Anything To Developers [SPAM = GBAN]
 dog - Get Cute Dogs Images
 help - Help Yourself!
+http - Get Cats Reference Photo For Http Error Codes
 id - Get Chat_ID or User_ID
 kick - Kick A User
 kickme - Kick Yourself
@@ -16,6 +18,7 @@ paste - Paste To Neokobin
 ping - Get Response Time From All TG Datacenters
 purge - Purge Messages
 quote - Get Random Linux Quotes
+random - Generate Random Complex Passwords
 repo - Get My Github Repository Link And Support Group Link
 rice - Forward Your Linux Rice To DE_WM'sRice Gallery only works in DE_WM
 runs - Idk Test Yourself

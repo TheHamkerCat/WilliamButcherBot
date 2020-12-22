@@ -1,3 +1,4 @@
+from wbb.utils.cust_filter import command
 from pyrogram.types import Message
 from wbb import OWNER_ID, SUDO_USER_ID, app
 from wbb.utils import cust_filter
@@ -7,6 +8,7 @@ __HELP__ = "/ban    - Ban A User\n" \
            "/unban  - Unban A User\n" \
            "/kick   - Kick A User\n" \
            "/purge  - Purge Messages\n" \
+           "/del    - Delete Replied Message\n" \
            "/banme  - Bans A User Who Issued The Command\n" \
            "/kickme - Kicks A User Who Issued The Command"
 
@@ -76,6 +78,8 @@ async def purge(client, message: Message):
                 await message.reply_text(
                     "Reply To A Message To Delete It,"
                     " Don't Make Fun Of Yourself!")
+    else:
+        await message.reply_text("Your Don't Have Enough Permissions!")
     await message.delete()
 
 
@@ -105,7 +109,7 @@ async def kick(_, message: Message):
                     await message.reply_text(f"Kicked {username}")
                 else:
                     await message.reply_text("This user isn't here,"
-                                             " don't bully me!")
+                                             " consider kicking yourself.")
 
         else:
             if username in SUDO or message.reply_to_message.from_user.id \
@@ -120,7 +124,7 @@ async def kick(_, message: Message):
                     await message.reply_text(f"Kicked {username}")
                 else:
                     await message.reply_text("This user isn't here,"
-                                             " don't bully me!")
+                                             " consider kicking yourself.")
 
 # Ban members
 
@@ -147,7 +151,7 @@ async def ban(_, message: Message):
                     await message.reply_text(f"Banned {username}")
                 else:
                     await message.reply_text("This user isn't here,"
-                                             " don't bully me!")
+                                             " consider banning yourself.")
         else:
             if username in SUDO or message.reply_to_message.from_user.id \
                     in SUDO:
@@ -160,7 +164,7 @@ async def ban(_, message: Message):
                     await message.reply_text(f"Banned {username}")
                 else:
                     await message.reply_text("This user isn't here,"
-                                             " don't bully me!")
+                                             " consider kicking yourself.")
 
 # Unban members
 
@@ -217,3 +221,25 @@ async def banme(_, message: Message):
         await message.reply_text("Banned!, Joke's on you, I'm into that shit!")
     else:
         await message.reply_text("It doesn't works that way mate.")
+
+# Delete messages
+
+@app.on_message(cust_filter.command(commands=("del")))
+async def delete(_, message: Message):
+    admins = await list_admins(message.chat.id)
+    chat_id = message.chat.id
+    from_user_id = message.from_user.id
+
+    if message.from_user.id in admins \
+            or message.from_user.id in SUDO:        
+        if (await app.get_chat_member(chat_id,
+                                      from_user_id)).can_delete_messages \
+                or (await app.get_chat_member(chat_id, from_user_id)).status \
+                == 'creator' \
+                or message.from_user.id in SUDO:
+                await message.reply_to_message.delete()
+                await message.delete()
+
+    else:
+        await message.reply_text("You Don't Have Enough Permissions,"
+                                 + " Consider Deleting Yourself!")

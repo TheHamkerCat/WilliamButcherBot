@@ -9,8 +9,9 @@ __HELP__ = "/commit - Generate Funny Commit Messages\n" \
            "/runs - Idk Test Yourself\n" \
            "/quote - Get Random Linux Quotes\n" \
            "/id - Get Chat_ID or User_ID\n" \
-           "/dev - Forward Anything To Developers [SPAM = GBAN]"
-
+           "/dev - Forward Anything To Developers [SPAM = GBAN]\n" \
+           "/random - Generate Random Complex Passwords\n" \
+           "/http - Get Cats Reference Photo For Http Error Codes"
 
 @app.on_message(cust_filter.command(commands=("commit")))
 async def commit(_, message: Message):
@@ -64,12 +65,11 @@ async def dev(_, message: Message):
                              + " Be Tolerated And You Will Be"
                              + " Gbanned instantaneously!")
 
-
 # Password
 
 
 @app.on_message(cust_filter.command(commands=('random')))
-async def passwd(_, message: Message):
+async def random(_, message: Message):
     app.set_parse_mode('markdown')
     if message.text != "/random":
         length = message.text.replace('/random', '')
@@ -85,4 +85,17 @@ async def passwd(_, message: Message):
             await message.reply_text("Strings Won't Work!, Pass A"
                                      + " Positive Integer Between 1-1000")
     else:
-        await message.reply_text('"/random" Needs An Argurment')
+        await message.reply_text('"/random" Needs An Argurment. Ex: `/random 5`')
+
+# http cat search
+
+
+@app.on_message(cust_filter.command(commands=('http')))
+async def http(_, message: Message):
+        if message.text != "/http":
+            code = message.text.replace('/http', '')
+            url = f"https://http.cat/{code}"
+            final = url.replace(' ', '')
+            await message.reply_photo(final)
+        else:
+            await message.reply_text('"/http" Needs An Argument. Ex: `/http 404`')
