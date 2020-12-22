@@ -248,6 +248,7 @@ async def delete(_, message: Message):
 
 # Promote Members
 
+
 @app.on_message(cust_filter.command(commands=("promote")))
 async def promote(_, message: Message):
     admins = await list_admins(message.chat.id)
@@ -342,3 +343,43 @@ async def demote(_, message: Message):
     else:
         await message.reply_text("Well, Your Know What?, I'M NOT AN ADMIN!"
                                  + " MAKE ME ADMIN!")
+
+# Pin Messages
+
+
+@app.on_message(cust_filter.command(commands=("pin")))
+async def pin(_, message: Message):
+    admins = await list_admins(message.chat.id)
+    chat_id = message.chat.id
+    from_user_id = message.from_user.id
+
+    if message.from_user.id in admins \
+            or message.from_user.id in SUDO:
+        if (await app.get_chat_member(chat_id,
+                                    from_user_id)).can_pin_messages \
+            or (await app.get_chat_member(chat_id, from_user_id)).status \
+            == 'creator' \
+                or message.from_user.id in SUDO:
+
+            await message.reply_to_message.pin()
+    else:
+        await message.reply_text("You're Not An Admin, Stop Spamming!")
+
+# Unpin Messages
+@app.on_message(cust_filter.command(commands=("unpin")))
+async def unpin(_, message: Message):
+    admins = await list_admins(message.chat.id)
+    chat_id = message.chat.id
+    from_user_id = message.from_user.id
+
+    if message.from_user.id in admins \
+            or message.from_user.id in SUDO:
+        if (await app.get_chat_member(chat_id,
+                                    from_user_id)).can_pin_messages \
+            or (await app.get_chat_member(chat_id, from_user_id)).status \
+            == 'creator' \
+                or message.from_user.id in SUDO:
+
+            await app.unpin_chat_message(chat_id)
+    else:
+        await message.reply_text("You're Not An Admin, Stop Spamming!")
