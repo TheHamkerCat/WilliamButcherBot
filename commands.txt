@@ -1,0 +1,26 @@
+####Send this list to @botfather to set your commands.
+
+ban - Ban A User
+banme - Ban Yourself
+cat - Get Cute Cats Images
+commit - Generate Funny Commit Messages
+dev - Forward Anything To Developers [SPAM = GBAN]
+dog - Get Cute Dogs Images
+help - Help Yourself!
+id - Get Chat_ID or User_ID
+kick - Kick A User
+kickme - Kick Yourself
+log - Get Logs From Last Run.
+music - [link] To Download Music From Various Websites
+paste - Paste To Neokobin
+ping - Get Response Time From All TG Datacenters
+purge - Purge Messages
+quote - Get Random Linux Quotes
+repo - Get My Github Repository Link And Support Group Link
+rice - Forward Your Linux Rice To DE_WM'sRice Gallery only works in DE_WM
+runs - Idk Test Yourself
+start - Start The Bot
+speedtest - To Perform A Speedtest.
+stats  - To Check System Status.
+unban - Unban A User
+wall - Get Wallpapers

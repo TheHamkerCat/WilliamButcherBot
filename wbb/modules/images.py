@@ -15,7 +15,7 @@ __HELP__ = "/cat - Get Cute Cats Images\n" + \
 
 async def delete_message_with_delay(delay, message: Message):
     await asyncio.sleep(delay)
-    (message).delete()
+    await message.delete()
 
 
 @app.on_message(cust_filter.command(commands=("cat")))
@@ -49,18 +49,16 @@ async def wall(client, message: Message):
 
     json_rep = r.get(api).json()
     if not json_rep.get("success"):
-        await m.edit("FTS! something unusual happened, "
-                     + "report to support @Thepirategang")
+        await m.edit("`\"/wall\"` Needs A Keyword Argument!")
     else:
         wallpapers = json_rep.get("wallpapers")
         if not wallpapers:
             await m.edit("Found literally nothing!,"
                          + "You should work on your English.")
             return
-        else:
-            index = randint(0, len(wallpapers) - 1)
-            wallpaper = wallpapers[index]
-            wallpaper = wallpaper.get("url_image")
-            wallpaper = wallpaper.replace("\\", "")
-            await message.reply_document(wallpaper)
+        index = randint(0, len(wallpapers) - 1)
+        wallpaper = wallpapers[index]
+        wallpaper = wallpaper.get("url_image")
+        wallpaper = wallpaper.replace("\\", "")
+        await message.reply_document(wallpaper)
     await delete_message_with_delay(10, m)

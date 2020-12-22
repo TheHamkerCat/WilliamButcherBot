@@ -23,8 +23,8 @@ async def paste(client, message: Message):
         elif bool(message.reply_to_message.document) is True:
             m = await message.reply_text("```Pasting To Nekobin...```")
             await message.reply_to_message.download(file_name='paste.txt')
-            f = open("downloads/paste.txt", "r")
-            paste_link = await nekobin.neko(f.read())
+            i = open("downloads/paste.txt", "r")
+            paste_link = await nekobin.neko(i.read())
             os.remove('downloads/paste.txt')
             final_link = f"[Nekobin]({paste_link})"
             await m.edit(final_link, disable_web_page_preview=True)

@@ -26,22 +26,23 @@ async def quote(client, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("id")))
-async def id(client, message: Message):
+async def get_id(client, message: Message):
     app.set_parse_mode("markdown")
     if message.text != '/id':
         username = message.text.replace('/id', '')
-        id = (await app.get_users(username)).id
-        msg = f"{username}'s ID is `{id}`"
+        user_id = (await app.get_users(username)).id
+        msg = f"{username}'s ID is `{user_id}`"
         await message.reply_text(msg)
 
     elif message.text == '/id' and not bool(message.reply_to_message):
-        id = message.chat.id
-        msg = f"{message.chat.title}'s ID is `{id}`"
+        chat_id = message.chat.id
+        msg = f"{message.chat.title}'s ID is `{chat_id}`"
         await message.reply_text(msg)
 
     elif message.text == '/id' and bool(message.reply_to_message):
-        id = message.reply_to_message.from_user.id
-        msg = f"{message.reply_to_message.from_user.mention}'s ID is `{id}`"
+        from_user_id = message.reply_to_message.from_user.id
+        from_user_mention = message.reply_to_message.from_user.mention
+        msg = f"{from_user_mention}'s ID is `{from_user_id}`"
         await message.reply_text(msg)
 
 
@@ -50,7 +51,8 @@ async def dev(client, message: Message):
     app.set_parse_mode("markdown")
     await message.reply_to_message.forward('WBBSupport')
     await app.send_message("WBBSupport",
-                           f"Forwarded By ID: `{message.from_user.id}`")
+                           f"Forwarded By: `{message.from_user.id}` | {message.from_user.mention}\n"
+                           f"Forwarded From: `{message.chat.id}` | {message.chat.title}")
     await message.reply_text("Your Message Has Been Forward To Devs,"
                              + " Any Missuse Of This Feature Will Not"
                              + " Be Tolerated And You Will Be"

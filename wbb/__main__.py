@@ -105,12 +105,12 @@ async def help_parser(message, keyboard=None):
 
 
 @app.on_callback_query(filters.regex(r"help_(.*?)"))
-async def help_button(c, q):
-    mod_match = re.match(r"help_module\((.+?)\)", q.data)
-    prev_match = re.match(r"help_prev\((.+?)\)", q.data)
-    next_match = re.match(r"help_next\((.+?)\)", q.data)
-    back_match = re.match(r"help_back", q.data)
-    create_match = re.match(r"help_create", q.data)
+async def help_button(client, query):
+    mod_match = re.match(r"help_module\((.+?)\)", query.data)
+    prev_match = re.match(r"help_prev\((.+?)\)", query.data)
+    next_match = re.match(r"help_next\((.+?)\)", query.data)
+    back_match = re.match(r"help_back", query.data)
+    create_match = re.match(r"help_create", query.data)
 
     if mod_match:
         module = mod_match.group(1)
@@ -121,7 +121,7 @@ async def help_button(c, q):
             + HELPABLE[module].__HELP__
         )
 
-        await q.message.edit(
+        await query.message.edit(
             text=text,
             reply_markup=InlineKeyboardMarkup(
                 [[InlineKeyboardButton("back", callback_data="help_back")]]
@@ -131,9 +131,9 @@ async def help_button(c, q):
 
     elif prev_match:
         curr_page = int(prev_match.group(1))
-        await q.message.edit(
+        await query.message.edit(
             text="Hi {first_name}. I am {bot_name}".format(
-                first_name=q.from_user.first_name,
+                first_name=query.from_user.first_name,
                 bot_name=botinfo.BOT_NAME,
             ),
             reply_markup=InlineKeyboardMarkup(
@@ -144,9 +144,9 @@ async def help_button(c, q):
 
     elif next_match:
         next_page = int(next_match.group(1))
-        await q.message.edit(
+        await query.message.edit(
             text="Hi {first_name}. I am {bot_name}".format(
-                first_name=q.from_user.first_name,
+                first_name=query.from_user.first_name,
                 bot_name=botinfo.BOT_NAME,
             ),
             reply_markup=InlineKeyboardMarkup(
@@ -156,9 +156,9 @@ async def help_button(c, q):
         )
 
     elif back_match:
-        await q.message.edit(
+        await query.message.edit(
             text="Hi {first_name}. I am {bot_name}".format(
-                first_name=q.from_user.first_name,
+                first_name=query.from_user.first_name,
                 bot_name=botinfo.BOT_NAME,
             ),
             reply_markup=InlineKeyboardMarkup(
@@ -168,12 +168,12 @@ async def help_button(c, q):
         )
 
     elif create_match:
-        text, keyboard = await help_parser(q)
-        await q.message.edit(
+        text, keyboard = await help_parser(query)
+        await query.message.edit(
             text=text, reply_markup=keyboard, disable_web_page_preview=True
         )
 
-    return await c.answer_callback_query(q.id)
+    return await client.answer_callback_query(query.id)
 
 
 if __name__ == "__main__":

@@ -48,8 +48,8 @@ logs_create = filters.create(logs_callback)
 @app.on_callback_query(logs_create)
 async def paste_log_neko(client, query):
     if query.from_user.id == OWNER_ID or SUDO_USER_ID:
-        f = open("error.log", "r")
-        data = await nekobin.neko(f.read())
+        j = open("error.log", "r")
+        data = await nekobin.neko(j.read())
         keyb = types.InlineKeyboardMarkup(
             [[types.InlineKeyboardButton("Pasted!", url=f"{data}")]]
         )
@@ -77,17 +77,17 @@ def speed_convert(size):
 @app.on_message(
     filters.user(SUDOERS) & cust_filter.command(commands=("speedtest"))
 )
-async def speeeed(client, message: Message):
+async def get_speedtest_result(client, message: Message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("```Performing A Speedtest!```")
     speed = speedtest.Speedtest()
-    x = speed.get_best_server()
-    y = speed.download()
-    z = speed.upload()
+    i = speed.get_best_server()
+    j = speed.download()
+    k = speed.upload()
     await m.edit(f'''
-```Download - {speed_convert(y)}
-Upload   - {speed_convert(z)}
-Latency  - {round((x["latency"]))} ms
+```Download - {speed_convert(j)}
+Upload   - {speed_convert(k)}
+Latency  - {round((i["latency"]))} ms
 ```''')
 
 # Stats Module
@@ -96,21 +96,21 @@ Latency  - {round((x["latency"]))} ms
 @ app.on_message(
     filters.user(SUDOERS) & cust_filter.command(commands=("stats"))
 )
-async def stats(client, message: Message):
+async def get_stats(client, message: Message):
     bot_uptime = int(time.time() - bot_start_time)
     cpu = psutil.cpu_percent(interval=0.5)
     mem = psutil.virtual_memory().percent
     disk = psutil.disk_usage("/").percent
     if NEOFETCH == "True":
         os.system("neofetch --stdout > neofetch.txt")
-        f = open("neofetch.txt", "r")
-        read_file = f.read()
+        i = open("neofetch.txt", "r")
+        read_file = i.read()
         neofetch = (f'''
 ----------[Neofetch]----------
 
 {read_file}
 ''')
-        f.close()
+        i.close()
     else:
         neofetch = "NeoFetch Is Disabled!"
     stats = (f'''
