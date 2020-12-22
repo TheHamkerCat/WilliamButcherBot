@@ -36,7 +36,7 @@ async def list_members(group_id):
 
 
 @app.on_message(cust_filter.command(commands=("purge")))
-async def purge(_, message: Message):
+async def purge(client, message: Message):
     message_ids = []
     if message.chat.type not in ("supergroup", "channel"):
         return
@@ -223,6 +223,7 @@ async def banme(_, message: Message):
 
 # Delete messages
 
+
 @app.on_message(cust_filter.command(commands=("del")))
 async def delete(_, message: Message):
     admins = await list_admins(message.chat.id)
@@ -230,14 +231,40 @@ async def delete(_, message: Message):
     from_user_id = message.from_user.id
 
     if message.from_user.id in admins \
-            or message.from_user.id in SUDO:        
+            or message.from_user.id in SUDO:
         if (await app.get_chat_member(chat_id,
                                       from_user_id)).can_delete_messages \
             or (await app.get_chat_member(chat_id, from_user_id)).status \
             == 'creator' \
-            or message.from_user.id in SUDO:
+                or message.from_user.id in SUDO:
             await message.reply_to_message.delete()
             await message.delete()
     else:
         await message.reply_text("You Don't Have Enough Permissions,"
                                  + " Consider Deleting Yourself!")
+
+# Promote Members
+
+@app.on_message(cust_filter.command(commands=("promote")))
+async def promote(_, message: Message):
+    admins = await list_admins(message.chat.id)
+    chat_id = message.chat.id
+    from_user_id = message.from_user.id
+
+    if message.from_user.id in admins \
+            or message.from_user.id in SUDO:
+        if (await app.get_chat_member(chat_id,
+                                      from_user_id)).can_delete_messages \
+            or (await app.get_chat_member(chat_id, from_user_id)).status \
+            == 'creator' \
+                or message.from_user.id in SUDO:
+            if message.text != '/promote':
+                username = message.text.replace('/promote', '')
+                user_id = (await app.get_users(username)).id
+                await message.chat.promote_member(user_id=user_id,
+                                                  can_change_info=True,
+                                                  can_invite_users=True,
+                                                  can_restrict_members=True,
+                                                  can_delete_messages=True,
+                                                  can_pin_messages=True,
+                                                  can_promote_members=True)
