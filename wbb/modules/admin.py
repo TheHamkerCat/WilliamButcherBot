@@ -83,7 +83,7 @@ async def purge(client, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("kick")))
-async def kick(client, message: Message):
+async def kick(client, message: Message):  # pylint: disable=W0613
     try:
         username = (message.text.split(None, 2)[1])
     except IndexError:
@@ -126,7 +126,7 @@ async def kick(client, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("ban")))
-async def ban(client, message: Message):
+async def ban(client, message: Message):  # pylint: disable=W0613
     try:
         username = (message.text.split(None, 2)[1])
     except IndexError:
@@ -166,7 +166,7 @@ async def ban(client, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("unban")))
-async def unban(client, message: Message):
+async def unban(client, message: Message):  # pylint: disable=W0613
     try:
         username = (message.text.split(None, 2)[1])
     except IndexError:
@@ -199,7 +199,7 @@ async def unban(client, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("kickme")))
-async def kickme(client, message: Message):
+async def kickme(client, message: Message):  # pylint: disable=W0613
     if message.from_user.id not in SUDO:
         await message.chat.kick_member(message.from_user.id)
         await message.chat.unban_member(message.from_user.id)
@@ -211,7 +211,7 @@ async def kickme(client, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("banme")))
-async def banme(client, message: Message):
+async def banme(client, message: Message):  # pylint: disable=W0613
     if message.from_user.id not in SUDO:
         await message.chat.kick_member(message.from_user.id)
         await message.reply_text("Banned!, Joke's on you, I'm into that shit!")

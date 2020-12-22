@@ -16,7 +16,7 @@ ydl_opts = {
 
 
 @app.on_message(cust_filter.command(commands=("music")))
-async def music(client, message: Message):
+async def music(client, message: Message):  # pylint: disable=W0613
     await message.reply_chat_action("typing")
     app.set_parse_mode("html")
     try:

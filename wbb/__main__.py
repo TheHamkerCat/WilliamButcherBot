@@ -57,7 +57,7 @@ async def start_bot():
 
 
 @app.on_message(cust_filter.command("start"))
-async def start(client, message):
+async def start(client, message):  # pylint: disable=W0613
     bot_uptime = int(time.time() - bot_start_time)
     await message.reply_text(
         f"Already Online Since {formatter.get_readable_time((bot_uptime))},"

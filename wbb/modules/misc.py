@@ -11,22 +11,22 @@ __HELP__ = "/commit - Generate Funny Commit Messages\n" \
 
 
 @app.on_message(cust_filter.command(commands=("commit")))
-async def commit(client, message: Message):
+async def commit(client, message: Message):  # pylint: disable=W0613
     await message.reply_text((await random_line('wbb/utils/commit.txt')))
 
 
 @app.on_message(cust_filter.command(commands=("runs")))
-async def runs(client, message: Message):
+async def runs(client, message: Message):  # pylint: disable=W0613
     await message.reply_text((await random_line('wbb/utils/runs.txt')))
 
 
 @app.on_message(cust_filter.command(commands=("quote")))
-async def quote(client, message: Message):
+async def quote(client, message: Message):  # pylint: disable=W0613
     await message.reply_text((await random_line('wbb/utils/quotes.txt')))
 
 
 @app.on_message(cust_filter.command(commands=("id")))
-async def get_id(client, message: Message):
+async def get_id(client, message: Message):  # pylint: disable=W0613
     app.set_parse_mode("markdown")
     if message.text != '/id':
         username = message.text.replace('/id', '')
@@ -47,7 +47,7 @@ async def get_id(client, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("dev")))
-async def dev(client, message: Message):
+async def dev(client, message: Message):  # pylint: disable=W0613
     app.set_parse_mode("markdown")
     await message.reply_to_message.forward('WBBSupport')
     await app.send_message("WBBSupport",
