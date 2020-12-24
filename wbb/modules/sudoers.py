@@ -9,11 +9,10 @@ from wbb.utils import cust_filter, nekobin, formatter
 from wbb import app, OWNER_ID, SUDO_USER_ID, bot_start_time, NEOFETCH
 
 __MODULE__ = "Sudoers"
-__HELP__ = '''
-/log - To Get Logs From Last Run.
+__HELP__ = '''/log - To Get Logs From Last Run.
 /speedtest - To Perform A Speedtest.
-/stats - To Check System Status.
-'''
+/stats - To Check System Status.'''
+
 
 SUDOERS = [OWNER_ID, SUDO_USER_ID]
 

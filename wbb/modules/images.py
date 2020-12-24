@@ -6,11 +6,12 @@ import requests as r
 from pyrogram.types import Message
 from wbb.utils import cust_filter
 from wbb import app, WALL_API_KEY
+from pyrogram import filters
 
 __MODULE__ = "Images"
-__HELP__ = "/cat - Get Cute Cats Images\n" + \
-           "/dog - Get Cute Dogs Images\n" + \
-           "/wall [something] - Get Wallpapers"
+__HELP__ = '''/cat  - Get Cute Cats Images
+/dog  - Get Cute Dogs Images
+/wall - Get Wallpapers'''
 
 
 async def delete_message_with_delay(delay, message: Message):
@@ -18,7 +19,7 @@ async def delete_message_with_delay(delay, message: Message):
     await message.delete()
 
 
-@app.on_message(cust_filter.command(commands=("cat")))
+@app.on_message(cust_filter.command(commands=("cat")) & ~filters.edited)
 async def cat(_, message: Message):
     with urllib.request.urlopen(
         "https://api.thecatapi.com/v1/images/search"
@@ -28,7 +29,7 @@ async def cat(_, message: Message):
     await message.reply_photo(cat_url)
 
 
-@app.on_message(cust_filter.command(commands=("dog")))
+@app.on_message(cust_filter.command(commands=("dog")) & ~filters.edited)
 async def dog(_, message: Message):
     with urllib.request.urlopen(
         "https://api.thedogapi.com/v1/images/search"
@@ -38,7 +39,7 @@ async def dog(_, message: Message):
     await message.reply_photo(dog_url)
 
 
-@app.on_message(cust_filter.command(commands=("wall")))
+@app.on_message(cust_filter.command(commands=("wall")) & ~filters.edited)
 async def wall(_, message: Message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("Searching!")
@@ -56,7 +57,11 @@ async def wall(_, message: Message):
             await m.edit("Found literally nothing!,"
                          + "You should work on your English.")
             return
-        index = randint(0, len(wallpapers) - 1)
+        if len(wallpapers) > 10:
+            selection = 10
+        else:
+            selection = len(wallpapers)
+        index = randint(0, selection - 1)
         wallpaper = wallpapers[index]
         wallpaper = wallpaper.get("url_image")
         wallpaper = wallpaper.replace("\\", "")

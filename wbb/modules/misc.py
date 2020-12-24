@@ -1,31 +1,38 @@
+import secrets
+import string
+from wbb.utils.botinfo import BOT_ID
 from pyrogram.types import Message
 from wbb import app
 from wbb.utils import cust_filter, random_line
+from pyrogram import filters
+
 
 __MODULE__ = "Misc"
-__HELP__ = "/commit - Generate Funny Commit Messages\n" \
-           "/runs - Idk Test Yourself\n" \
-           "/quote - Get Random Linux Quotes\n" \
-           "/id - Get Chat_ID or User_ID\n" \
-           "/dev - Forward Anything To Developers [SPAM = GBAN]"
+__HELP__ = '''/commit - Generate Funny Commit Messages
+/runs  - Idk Test Yourself
+/quote - Get Random Linux Quotes
+/id - Get Chat_ID or User_ID
+/dev - Forward Anything To Developers [SPAM = GBAN]
+/random - Generate Random Complex Passwords
+/http - Get Cats Reference Photo For Http Error Codes'''
 
 
-@app.on_message(cust_filter.command(commands=("commit")))
+@app.on_message(cust_filter.command(commands=("commit")) & ~filters.edited)
 async def commit(_, message: Message):
     await message.reply_text((await random_line('wbb/utils/commit.txt')))
 
 
-@app.on_message(cust_filter.command(commands=("runs")))
+@app.on_message(cust_filter.command(commands=("runs")) & ~filters.edited)
 async def runs(_, message: Message):
     await message.reply_text((await random_line('wbb/utils/runs.txt')))
 
 
-@app.on_message(cust_filter.command(commands=("quote")))
+@app.on_message(cust_filter.command(commands=("quote")) & ~filters.edited)
 async def quote(_, message: Message):
     await message.reply_text((await random_line('wbb/utils/quotes.txt')))
 
 
-@app.on_message(cust_filter.command(commands=("id")))
+@app.on_message(cust_filter.command(commands=("id")) & ~filters.edited)
 async def get_id(_, message: Message):
     app.set_parse_mode("markdown")
     if message.text != '/id':
@@ -46,18 +53,60 @@ async def get_id(_, message: Message):
         await message.reply_text(msg)
 
 
-@app.on_message(cust_filter.command(commands=("dev")))
+@app.on_message(cust_filter.command(commands=("dev")) & ~filters.edited)
 async def dev(_, message: Message):
     app.set_parse_mode("markdown")
-    await message.reply_to_message.forward('WBBSupport')
-    await app.send_message("WBBSupport",
-                           "Forwarded By: `{}` | {}\n"
-                           "Forwarded From: `{}` | {}"
-                           .format(message.from_user.id,
-                                   message.from_user.mention,
-                                   message.chat.id,
-                                   message.chat.title))
-    await message.reply_text("Your Message Has Been Forward To Devs,"
-                             + " Any Missuse Of This Feature Will Not"
-                             + " Be Tolerated And You Will Be"
-                             + " Gbanned instantaneously!")
+    if (await app.get_chat_member(
+            message.chat.id,
+            BOT_ID)).can_restrict_members:
+
+        await message.reply_to_message.forward('WBBSupport')
+        await app.send_message("WBBSupport",
+                               "Forwarded By: `{}` | {}\n"
+                               "Forwarded From: `{}` | {}"
+                               .format(message.from_user.id,
+                                       message.from_user.mention,
+                                       message.chat.id,
+                                       message.chat.title))
+        await message.reply_text("Your Message Has Been Forward To Devs,"
+                                 + " Any Missuse Of This Feature Will Not"
+                                 + " Be Tolerated And You Will Be"
+                                 + " Gbanned instantaneously!")
+    else:
+        await message.reply_text("To Use This Feature You Have To Make Me"
+                                 + " Admin")
+# Password
+
+
+@app.on_message(cust_filter.command(commands=('random')) & ~filters.edited)
+async def random(_, message: Message):
+    app.set_parse_mode('markdown')
+    if message.text != "/random":
+        length = message.text.replace('/random', '')
+        try:
+            if 1 < int(length) < 1000:
+                alphabet = string.ascii_letters + string.digits
+                password = ''.join(secrets.choice(alphabet) for i in
+                                   range(int(length)))
+                await message.reply_text(f"`{password}`")
+            else:
+                await message.reply_text('Specify A Length Between 1-1000')
+        except ValueError:
+            await message.reply_text("Strings Won't Work!, Pass A"
+                                     + " Positive Integer Between 1-1000")
+    else:
+        await message.reply_text('"/random" Needs An Argurment.'
+                                 ' Ex: `/random 5`')
+
+# http cat search
+
+
+@app.on_message(cust_filter.command(commands=('http')) & ~filters.edited)
+async def http(_, message: Message):
+    if message.text != "/http":
+        code = message.text.replace('/http', '')
+        url = f"https://http.cat/{code}"
+        final = url.replace(' ', '')
+        await message.reply_photo(final)
+    else:
+        await message.reply_text('"/http" Needs An Argument. Ex: `/http 404`')
