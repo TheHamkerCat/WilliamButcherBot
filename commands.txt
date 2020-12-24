@@ -5,7 +5,6 @@ banme - Ban Yourself
 cat - Get Cute Cats Images
 commit - Generate Funny Commit Messages
 del - Delete Replied Message
-demote - Demote A Member
 dev - Forward Anything To Developers [SPAM = GBAN]
 dog - Get Cute Dogs Images
 google - Search For Something On Google
