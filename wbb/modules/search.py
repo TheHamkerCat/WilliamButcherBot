@@ -46,11 +46,14 @@ async def google(_, message: Message):
         gresults = await GoogleSearch().async_search(text, 1)
         result = ""
         for i in range(4):
-            title = gresults["titles"][i].replace("\n", " ")
-            source = gresults["links"][i]
-            description = gresults["descriptions"][i]
-            result += f"[{title}]({source})\n"
-            result += f"`{description}`\n\n"
+            try:
+                title = gresults["titles"][i].replace("\n", " ")
+                source = gresults["links"][i]
+                description = gresults["descriptions"][i]
+                result += f"[{title}]({source})\n"
+                result += f"`{description}`\n\n"
+            except IndexError:
+                pass
         await message.reply_text(result, disable_web_page_preview=True)
     else:
         await message.reply_text('"/google" Needs An Argument')
@@ -61,16 +64,19 @@ async def google(_, message: Message):
 @app.on_message(cust_filter.command(commands=("so")) & ~filters.edited)
 async def stack(_, message: Message):
     gett = message.text.replace("/so ", '')
-    text = gett + ' site:stackoverflow.com'
+    text = gett + ' "site:stackoverflow.com"'
     if gett != '':
         gresults = await GoogleSearch().async_search(text, 1)
         result = ""
         for i in range(4):
-            title = gresults["titles"][i].replace("\n", " ")
-            source = gresults["links"][i]
-            description = gresults["descriptions"][i]
-            result += f"[{title}]({source})\n"
-            result += f"`{description}`\n\n"
+            try:
+                title = gresults["titles"][i].replace("\n", " ")
+                source = gresults["links"][i]
+                description = gresults["descriptions"][i]
+                result += f"[{title}]({source})\n"
+                result += f"`{description}`\n\n"
+            except IndexError:
+                pass
         await message.reply_text(result, disable_web_page_preview=True)
     else:
         await message.reply_text('"/so" Needs An Argument')
@@ -81,16 +87,19 @@ async def stack(_, message: Message):
 @app.on_message(cust_filter.command(commands=("gh")) & ~filters.edited)
 async def github(_, message: Message):
     gett = message.text.replace("/gh ", '')
-    text = gett + ' site:github.com'
+    text = gett + ' "site:github.com"'
     if gett != '':
         gresults = await GoogleSearch().async_search(text, 1)
         result = ""
         for i in range(4):
-            title = gresults["titles"][i].replace("\n", " ")
-            source = gresults["links"][i]
-            description = gresults["descriptions"][i]
-            result += f"[{title}]({source})\n"
-            result += f"`{description}`\n\n"
+            try:
+                title = gresults["titles"][i].replace("\n", " ")
+                source = gresults["links"][i]
+                description = gresults["descriptions"][i]
+                result += f"[{title}]({source})\n"
+                result += f"`{description}`\n\n"
+            except IndexError:
+                pass
         await message.reply_text(result, disable_web_page_preview=True)
     else:
         await message.reply_text('"/gh" Needs An Argument')
