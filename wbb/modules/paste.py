@@ -2,13 +2,13 @@ import os
 from pyrogram.types import Message
 from wbb.utils import cust_filter, nekobin
 from wbb import app
-
+from pyrogram import filters
 
 __MODULE__ = "Paste"
 __HELP__ = "/paste - To Paste Replied Text Or Document To Neokobin"
 
 
-@app.on_message(cust_filter.command(commands=("paste")))
+@app.on_message(cust_filter.command(commands=("paste")) & ~filters.edited)
 async def paste(_, message: Message):
     if bool(message.reply_to_message) is True:
         app.set_parse_mode("markdown")

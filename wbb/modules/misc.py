@@ -4,6 +4,8 @@ from wbb.utils.botinfo import BOT_ID
 from pyrogram.types import Message
 from wbb import app
 from wbb.utils import cust_filter, random_line
+from pyrogram import filters
+
 
 __MODULE__ = "Misc"
 __HELP__ = '''/commit - Generate Funny Commit Messages
@@ -15,22 +17,22 @@ __HELP__ = '''/commit - Generate Funny Commit Messages
 /http - Get Cats Reference Photo For Http Error Codes'''
 
 
-@app.on_message(cust_filter.command(commands=("commit")))
+@app.on_message(cust_filter.command(commands=("commit")) & ~filters.edited)
 async def commit(_, message: Message):
     await message.reply_text((await random_line('wbb/utils/commit.txt')))
 
 
-@app.on_message(cust_filter.command(commands=("runs")))
+@app.on_message(cust_filter.command(commands=("runs")) & ~filters.edited)
 async def runs(_, message: Message):
     await message.reply_text((await random_line('wbb/utils/runs.txt')))
 
 
-@app.on_message(cust_filter.command(commands=("quote")))
+@app.on_message(cust_filter.command(commands=("quote")) & ~filters.edited)
 async def quote(_, message: Message):
     await message.reply_text((await random_line('wbb/utils/quotes.txt')))
 
 
-@app.on_message(cust_filter.command(commands=("id")))
+@app.on_message(cust_filter.command(commands=("id")) & ~filters.edited)
 async def get_id(_, message: Message):
     app.set_parse_mode("markdown")
     if message.text != '/id':
@@ -51,7 +53,7 @@ async def get_id(_, message: Message):
         await message.reply_text(msg)
 
 
-@app.on_message(cust_filter.command(commands=("dev")))
+@app.on_message(cust_filter.command(commands=("dev")) & ~filters.edited)
 async def dev(_, message: Message):
     app.set_parse_mode("markdown")
     if (await app.get_chat_member(
@@ -76,7 +78,7 @@ async def dev(_, message: Message):
 # Password
 
 
-@app.on_message(cust_filter.command(commands=('random')))
+@app.on_message(cust_filter.command(commands=('random')) & ~filters.edited)
 async def random(_, message: Message):
     app.set_parse_mode('markdown')
     if message.text != "/random":
@@ -99,7 +101,7 @@ async def random(_, message: Message):
 # http cat search
 
 
-@app.on_message(cust_filter.command(commands=('http')))
+@app.on_message(cust_filter.command(commands=('http')) & ~filters.edited)
 async def http(_, message: Message):
     if message.text != "/http":
         code = message.text.replace('/http', '')
