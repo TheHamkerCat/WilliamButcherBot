@@ -5,16 +5,16 @@ from wbb.utils.botinfo import BOT_ID
 
 __MODULE__ = "Admin"
 __HELP__ = '''/ban    - Ban A User
-              /unban  - Unban A User
-              /kick   - Kick A User
-              /purge  - Purge Messages
-              /del    - Delete Replied Message
-              /banme  - Bans A User Who Issued The Command
-              /kickme - Kicks A User Who Issued The Command
-              /demote - Demote A Member
-              /promote - Promote A Member
-              /pin - Pin A Message
-              /unpin - Unpin A Message'''
+/unban  - Unban A User
+/kick   - Kick A User
+/purge  - Purge Messages
+/del    - Delete Replied Message
+/banme  - Bans A User Who Issued The Command
+/kickme - Kicks A User Who Issued The Command
+/demote - Demote A Member
+/promote - Promote A Member
+/pin - Pin A Message
+/unpin - Unpin A Message'''
 
 SUDO = [OWNER_ID, SUDO_USER_ID]
 

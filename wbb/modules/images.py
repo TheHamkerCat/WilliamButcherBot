@@ -9,8 +9,8 @@ from wbb import app, WALL_API_KEY
 
 __MODULE__ = "Images"
 __HELP__ = '''/cat  - Get Cute Cats Images
-           /dog  - Get Cute Dogs Images
-           /wall - Get Wallpapers'''
+/dog  - Get Cute Dogs Images
+/wall - Get Wallpapers'''
 
 
 async def delete_message_with_delay(delay, message: Message):
@@ -56,7 +56,11 @@ async def wall(_, message: Message):
             await m.edit("Found literally nothing!,"
                          + "You should work on your English.")
             return
-        index = randint(0, len(wallpapers) - 1)
+        if len(wallpapers) > 10:
+            selection = 10
+        else:
+            selection = len(wallpapers)
+        index = randint(0, selection - 1)
         wallpaper = wallpapers[index]
         wallpaper = wallpaper.get("url_image")
         wallpaper = wallpaper.replace("\\", "")

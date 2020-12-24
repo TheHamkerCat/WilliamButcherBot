@@ -7,12 +7,12 @@ from wbb.utils import cust_filter, random_line
 
 __MODULE__ = "Misc"
 __HELP__ = '''/commit - Generate Funny Commit Messages
-           /runs  - Idk Test Yourself
-           /quote - Get Random Linux Quotes
-           /id - Get Chat_ID or User_ID
-           /dev - Forward Anything To Developers [SPAM = GBAN]
-           /random - Generate Random Complex Passwords
-           /http - Get Cats Reference Photo For Http Error Codes'''
+/runs  - Idk Test Yourself
+/quote - Get Random Linux Quotes
+/id - Get Chat_ID or User_ID
+/dev - Forward Anything To Developers [SPAM = GBAN]
+/random - Generate Random Complex Passwords
+/http - Get Cats Reference Photo For Http Error Codes'''
 
 
 @app.on_message(cust_filter.command(commands=("commit")))

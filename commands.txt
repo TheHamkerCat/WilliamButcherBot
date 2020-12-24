@@ -5,6 +5,7 @@ banme - Ban Yourself
 cat - Get Cute Cats Images
 commit - Generate Funny Commit Messages
 del - Delete Replied Message
+demote - Demote A Member
 dev - Forward Anything To Developers [SPAM = GBAN]
 dog - Get Cute Dogs Images
 help - Help Yourself!
@@ -15,7 +16,9 @@ kickme - Kick Yourself
 log - Get Logs From Last Run.
 music - [link] To Download Music From Various Websites
 paste - Paste To Neokobin
+pin - Pin The Replied Message
 ping - Get Response Time From All TG Datacenters
+promote - Promote A Member
 purge - Purge Messages
 quote - Get Random Linux Quotes
 random - Generate Random Complex Passwords
@@ -26,4 +29,5 @@ start - Start The Bot
 speedtest - To Perform A Speedtest.
 stats  - To Check System Status.
 unban - Unban A User
+unpin - Unpin The Last Pinned Message.
 wall - Get Wallpapers
