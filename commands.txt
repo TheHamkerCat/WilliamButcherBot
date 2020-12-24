@@ -5,9 +5,10 @@ banme - Ban Yourself
 cat - Get Cute Cats Images
 commit - Generate Funny Commit Messages
 del - Delete Replied Message
-demote - Demote A Member
 dev - Forward Anything To Developers [SPAM = GBAN]
 dog - Get Cute Dogs Images
+google - Search For Something On Google
+gh - Search For Something On Github
 help - Help Yourself!
 http - Get Cats Reference Photo For Http Error Codes
 id - Get Chat_ID or User_ID
@@ -27,7 +28,10 @@ rice - Forward Your Linux Rice To DE_WM'sRice Gallery only works in DE_WM
 runs - Idk Test Yourself
 start - Start The Bot
 speedtest - To Perform A Speedtest.
+so - Search For Something On StackOverflow
 stats  - To Check System Status.
+succ - Sends Succ Image For A Given Word
+ud - Search For Something In Urban Dictionary
 unban - Unban A User
 unpin - Unpin The Last Pinned Message.
 wall - Get Wallpapers

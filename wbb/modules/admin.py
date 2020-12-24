@@ -12,7 +12,6 @@ __HELP__ = '''/ban    - Ban A User
 /del    - Delete Replied Message
 /banme  - Bans A User Who Issued The Command
 /kickme - Kicks A User Who Issued The Command
-/demote - Demote A Member
 /promote - Promote A Member
 /pin - Pin A Message
 /unpin - Unpin A Message'''
@@ -303,60 +302,6 @@ async def promote(_, message: Message):
         await message.reply_text("Well, Your Know What?, I'M NOT AN ADMIN!"
                                  + " MAKE ME ADMIN!")
 
-# Demote Members
-
-
-@app.on_message(cust_filter.command(commands=("demote")) & ~filters.edited)
-async def demote(_, message: Message):
-    admins = await list_admins(message.chat.id)
-    chat_id = message.chat.id
-    from_user_id = message.from_user.id
-
-    if (await app.get_chat_member(chat_id,
-                                  BOT_ID)).can_promote_members:
-        if message.from_user.id in admins \
-                or message.from_user.id in SUDO:
-            if (await app.get_chat_member(chat_id,
-                                          from_user_id)).can_promote_members \
-                or (await app.get_chat_member(chat_id, from_user_id)).status \
-                == 'creator' \
-                    or message.from_user.id in SUDO:
-
-                if message.text != '/demote':
-                    username = message.text.replace('/demote', '')
-                    user_id = (await app.get_users(username)).id
-                    await message.chat.promote_member(
-                        user_id=user_id,
-                        can_change_info=False,
-                        can_invite_users=False,
-                        can_restrict_members=False,
-                        can_delete_messages=False,
-                        can_pin_messages=False,
-                        can_promote_members=False)
-                    await message.reply_text('Promoted!')
-
-                else:
-                    user_id = message.reply_to_message.from_user.id
-                    await message.chat.promote_member(
-                        user_id=user_id,
-                        can_change_info=False,
-                        can_invite_users=False,
-                        can_restrict_members=False,
-                        can_delete_messages=False,
-                        can_pin_messages=False,
-                        can_promote_members=False)
-                    await message.reply_text('Demoted!')
-
-            else:
-                await message.reply_text("Yeah, I Can See You're An Admin,"
-                                         + " But You Don't Have Permissions"
-                                         + " To Demote Someone.")
-        else:
-            await message.reply_text("You're Not An Admin, Want A Good Ban?")
-    else:
-        await message.reply_text("Well, Your Know What?, I'M NOT AN ADMIN!"
-                                 + " MAKE ME ADMIN!")
-
 # Pin Messages
 
 
@@ -394,7 +339,6 @@ async def unpin(_, message: Message):
             or (await app.get_chat_member(chat_id, from_user_id)).status \
             == 'creator' \
                 or message.from_user.id in SUDO:
-
-            await app.unpin_chat_message(chat_id)
+            await app.unpin_all_chat_messages(chat_id)
     else:
         await message.reply_text("You're Not An Admin, Stop Spamming!")
