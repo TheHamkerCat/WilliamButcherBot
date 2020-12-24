@@ -60,16 +60,16 @@ async def dev(_, message: Message):
 
         await message.reply_to_message.forward('WBBSupport')
         await app.send_message("WBBSupport",
-                            "Forwarded By: `{}` | {}\n"
-                            "Forwarded From: `{}` | {}"
-                            .format(message.from_user.id,
-                                    message.from_user.mention,
-                                    message.chat.id,
-                                    message.chat.title))
+                               "Forwarded By: `{}` | {}\n"
+                               "Forwarded From: `{}` | {}"
+                               .format(message.from_user.id,
+                                       message.from_user.mention,
+                                       message.chat.id,
+                                       message.chat.title))
         await message.reply_text("Your Message Has Been Forward To Devs,"
-                                + " Any Missuse Of This Feature Will Not"
-                                + " Be Tolerated And You Will Be"
-                                + " Gbanned instantaneously!")
+                                 + " Any Missuse Of This Feature Will Not"
+                                 + " Be Tolerated And You Will Be"
+                                 + " Gbanned instantaneously!")
     else:
         await message.reply_text("To Use This Feature You Have To Make Me"
                                  + " Admin")
