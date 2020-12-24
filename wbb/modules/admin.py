@@ -394,7 +394,6 @@ async def unpin(_, message: Message):
             or (await app.get_chat_member(chat_id, from_user_id)).status \
             == 'creator' \
                 or message.from_user.id in SUDO:
-
             await app.unpin_all_chat_messages(chat_id)
     else:
         await message.reply_text("You're Not An Admin, Stop Spamming!")
