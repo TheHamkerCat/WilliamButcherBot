@@ -10,12 +10,12 @@ __HELP__ = "/succ - Sends Succ Image For A Given Argument"
 hack = ['https://i.ibb.co/YLLhCtt/i.png', 'https://i.ibb.co/DMzyLMZ/e.jpg',
         'https://i.ibb.co/sqngHGt/d.jpg', 'https://i.ibb.co/b1Y1rGf/a.jpg']
 
-kemeest = "https://i.ibb.co/bB4pqNN/i.jpg"
-educ = "https://i.ibb.co/LCB3yTX/q.jpg"
-health = "https://i.ibb.co/TKHxkH4/m.jpg"
-nhealth = "https://i.ibb.co/dBVBzJY/p.jpg"
-feminism = "https://i.ibb.co/PNhPJR1/o.jpg"
-security = "https://i.ibb.co/ctf3MGM/c.jpg"
+kemeest = "'https://i.ibb.co/bB4pqNN/i.jpg'"
+educ = "'https://i.ibb.co/LCB3yTX/q.jpg'"
+health = "'https://i.ibb.co/TKHxkH4/m.jpg'"
+nhealth = "'https://i.ibb.co/dBVBzJY/p.jpg'"
+feminism = "'https://i.ibb.co/PNhPJR1/o.jpg'"
+security = "'https://i.ibb.co/ctf3MGM/c.jpg'"
 
 
 def suck(text):
