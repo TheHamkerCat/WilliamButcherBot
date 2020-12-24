@@ -43,7 +43,7 @@ async def dog(_, message: Message):
 async def wall(_, message: Message):
     app.set_parse_mode("markdown")
     m = await message.reply_text("Searching!")
-    initial_term = (message.text.replace('/wall', ''))
+    initial_term = (message.text.replace('/wall ', ''))
     term = initial_term.replace(' ', '%20')
     api = "https://wall.alphacoders.com/api2.0/get.php?auth=" + \
         "{}&method=search&term={}".format(WALL_API_KEY, term)

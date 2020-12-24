@@ -7,3 +7,4 @@ requests
 speedtest-cli
 uvloop
 youtube_dl
+search_engine_parser
