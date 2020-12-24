@@ -31,6 +31,7 @@ start - Start The Bot
 speedtest - To Perform A Speedtest.
 so - Search For Something On StackOverflow
 stats  - To Check System Status.
+succ - Sends Succ Image For A Given Word
 ud - Search For Something In Urban Dictionary
 unban - Unban A User
 unpin - Unpin The Last Pinned Message.
