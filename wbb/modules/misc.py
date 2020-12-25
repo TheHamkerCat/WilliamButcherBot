@@ -4,10 +4,8 @@ from pyrogram import filters
 from pyrogram.types import Message
 from cryptography.fernet import Fernet
 from wbb.utils.botinfo import BOT_ID
-from wbb import app
+from wbb import app, FERNET_ENCRYPTION_KEY
 from wbb.utils import cust_filter, random_line
-
-
 
 __MODULE__ = "Misc"
 __HELP__ = '''/commit - Generate Funny Commit Messages
@@ -127,7 +125,7 @@ async def encrypt(_, message: Message):
     else:
         text = message.reply_to_message.text
         text_in_bytes = bytes(text, 'utf-8')
-        cipher_suite = Fernet('ycFcPQA8nrtRZNXFhS1IZYlBF_2FBY61vil5WG37NFE=')
+        cipher_suite = Fernet(FERNET_ENCRYPTION_KEY)
         encrypted_text = cipher_suite.encrypt(text_in_bytes)
         bytes_in_text = encrypted_text.decode("utf-8")
         await message.reply_text(bytes_in_text)
@@ -138,11 +136,11 @@ async def encrypt(_, message: Message):
 @app.on_message(cust_filter.command(commands=('decrypt')) & ~filters.edited)
 async def decrypt(_, message: Message):
     if message.reply_to_message is False:
-        await message.reply_text('Reply To A Message With Decryption Key To Decrypt It.')
+        await message.reply_text('Reply To A Message To Decrypt It.')
     else:
         text = message.reply_to_message.text
         text_in_bytes = bytes(text, 'utf-8')
-        cipher_suite = Fernet('ycFcPQA8nrtRZNXFhS1IZYlBF_2FBY61vil5WG37NFE=')
+        cipher_suite = Fernet(FERNET_ENCRYPTION_KEY)
         decoded_text = cipher_suite.decrypt(text_in_bytes)
         bytes_in_text = decoded_text.decode("utf-8")
         await message.reply_text(bytes_in_text)
