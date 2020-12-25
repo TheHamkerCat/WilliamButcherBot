@@ -24,4 +24,4 @@ async def rice(_, message: Message):
         await message.reply_text(
             "Reply To A Message With /rice, Just Hitting /rice "
             + "Won't Do Anything Other Than Proving Everyone That "
-            + "You Are A Spammer Who Is Obsessed To 'BlueTextMustClickofobia")
+            + "You Are A Spammer Who Is Obsessed To 'BlueTextMustClickofobia'")

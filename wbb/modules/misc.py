@@ -1,10 +1,12 @@
 import secrets
 import string
-from wbb.utils.botinfo import BOT_ID
+from pyrogram import filters
 from pyrogram.types import Message
+from cryptography.fernet import Fernet
+from wbb.utils.botinfo import BOT_ID
 from wbb import app
 from wbb.utils import cust_filter, random_line
-from pyrogram import filters
+
 
 
 __MODULE__ = "Misc"
@@ -14,7 +16,9 @@ __HELP__ = '''/commit - Generate Funny Commit Messages
 /id - Get Chat_ID or User_ID
 /dev - Forward Anything To Developers [SPAM = GBAN]
 /random - Generate Random Complex Passwords
-/http - Get Cats Reference Photo For Http Error Codes'''
+/http - Get Cats Reference Photo For Http Error Codes
+/encrypt - Encrypt Text [Can Only Be Decrypted By This Bot]
+/decrypt - Decrypt Text'''
 
 
 @app.on_message(cust_filter.command(commands=("commit")) & ~filters.edited)
@@ -110,3 +114,35 @@ async def http(_, message: Message):
         await message.reply_photo(final)
     else:
         await message.reply_text('"/http" Needs An Argument. Ex: `/http 404`')
+
+
+# Encrypt
+
+
+@app.on_message(cust_filter.command(commands=('encrypt')) & ~filters.edited)
+async def encrypt(_, message: Message):
+    app.set_parse_mode('markdown')
+    if message.reply_to_message is False:
+        await message.reply_text('Reply To A Message To Encrypt It.')
+    else:
+        text = message.reply_to_message.text
+        text_in_bytes = bytes(text, 'utf-8')
+        cipher_suite = Fernet('ycFcPQA8nrtRZNXFhS1IZYlBF_2FBY61vil5WG37NFE=')
+        encrypted_text = cipher_suite.encrypt(text_in_bytes)
+        bytes_in_text = encrypted_text.decode("utf-8")
+        await message.reply_text(bytes_in_text)
+
+# Decrypt
+
+
+@app.on_message(cust_filter.command(commands=('decrypt')) & ~filters.edited)
+async def decrypt(_, message: Message):
+    if message.reply_to_message is False:
+        await message.reply_text('Reply To A Message With Decryption Key To Decrypt It.')
+    else:
+        text = message.reply_to_message.text
+        text_in_bytes = bytes(text, 'utf-8')
+        cipher_suite = Fernet('ycFcPQA8nrtRZNXFhS1IZYlBF_2FBY61vil5WG37NFE=')
+        decoded_text = cipher_suite.decrypt(text_in_bytes)
+        bytes_in_text = decoded_text.decode("utf-8")
+        await message.reply_text(bytes_in_text)
