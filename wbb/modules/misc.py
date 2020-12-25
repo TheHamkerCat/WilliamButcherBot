@@ -120,7 +120,7 @@ async def http(_, message: Message):
 @app.on_message(cust_filter.command(commands=('encrypt')) & ~filters.edited)
 async def encrypt(_, message: Message):
     app.set_parse_mode('markdown')
-    if message.reply_to_message is False:
+    if not message.reply_to_message:
         await message.reply_text('Reply To A Message To Encrypt It.')
     else:
         text = message.reply_to_message.text
