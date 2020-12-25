@@ -1,3 +1,4 @@
+import wikipedia
 from search_engine_parser import GoogleSearch
 from pyrogram.types import Message
 from pyrogram import filters
@@ -9,7 +10,8 @@ __MODULE__ = "Search"
 __HELP__ = '''/ud - Search For Something In Urban Dictionary
 /google - Search For Something On google
 /so - Search For Something On StackOverflow
-/gh - Search For Something On Github'''
+/gh - Search For Something On Github
+/wiki - Search For Something On Wikipedia'''
 
 # ud -  urbandictionary
 
@@ -103,3 +105,26 @@ async def github(_, message: Message):
         await message.reply_text(result, disable_web_page_preview=True)
     else:
         await message.reply_text('"/gh" Needs An Argument')
+
+# Wikipedia
+
+
+@app.on_message(cust_filter.command(commands=("wiki")) & ~filters.edited)
+async def wiki(_, message: Message):
+    query = message.text.replace("/wiki", '')
+    limit = 5
+    if message.reply_to_message:
+        query = message.reply_to_message.text
+    if not query:
+        await message.reply_text('Reply To A Message Or Give An Argument')
+        return
+    wikipedia.set_lang("en")
+    results = wikipedia.search(query)
+    output = "```Found These Topics```"
+    for i, j in enumerate(results, start=1):
+        page = wikipedia.page(j)
+        url = page.url
+        output += f"[{j}]({url})\n"
+        if i == limit:
+            break
+    await message.reply_text(output, disable_web_page_preview=True)

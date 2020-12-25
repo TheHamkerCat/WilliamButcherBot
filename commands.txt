@@ -4,9 +4,11 @@ ban - Ban A User
 banme - Ban Yourself
 cat - Get Cute Cats Images
 commit - Generate Funny Commit Messages
+decrypt - Decrypt Text
 del - Delete Replied Message
 dev - Forward Anything To Developers [SPAM = GBAN]
 dog - Get Cute Dogs Images
+encrypt - Encrypt Text
 google - Search For Something On Google
 gh - Search For Something On Github
 help - Help Yourself!
@@ -35,3 +37,4 @@ ud - Search For Something In Urban Dictionary
 unban - Unban A User
 unpin - Unpin The Last Pinned Message.
 wall - Get Wallpapers
+wiki - Search For Something On Wikipedia
