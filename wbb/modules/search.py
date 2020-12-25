@@ -121,10 +121,10 @@ async def wiki(_, message: Message):
     wikipedia.set_lang("en")
     results = wikipedia.search(query)
     output = "```Found These Topics```"
-    for i, s in enumerate(results, start=1):
-        page = wikipedia.page(s)
+    for i, j in enumerate(results, start=1):
+        page = wikipedia.page(j)
         url = page.url
-        output += f"[{s}]({url})\n"
+        output += f"[{j}]({url})\n"
         if i == limit:
             break
     await message.reply_text(output, disable_web_page_preview=True)

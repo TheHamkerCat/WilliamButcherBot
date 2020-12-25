@@ -1,8 +1,10 @@
 import requests
+from pyrogram import filters
 from pyrogram.types import Message
 from wbb import app
 from wbb.utils import cust_filter
-from pyrogram import filters
+
+
 __MODULE__ = "Ping"
 __HELP__ = " /ping - To Get Response Time From All TG Datacenters"
 
