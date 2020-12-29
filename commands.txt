@@ -14,6 +14,7 @@ gh - Search For Something On Github
 help - Help Yourself!
 http - Get Cats Reference Photo For Http Error Codes
 id - Get Chat_ID or User_ID
+ipinfo - Get Info About An Ip Address
 kick - Kick A User
 kickme - Kick Yourself
 log - Get Logs From Last Run.
@@ -38,3 +39,4 @@ unban - Unban A User
 unpin - Unpin The Last Pinned Message.
 wall - Get Wallpapers
 wiki - Search For Something On Wikipedia
+yt - Search For Something On YouTube

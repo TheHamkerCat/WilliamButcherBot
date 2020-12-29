@@ -1,3 +1,4 @@
+import ipinfo
 import secrets
 import string
 from pyrogram import filters
@@ -16,7 +17,8 @@ __HELP__ = '''/commit - Generate Funny Commit Messages
 /random - Generate Random Complex Passwords
 /http - Get Cats Reference Photo For Http Error Codes
 /encrypt - Encrypt Text [Can Only Be Decrypted By This Bot]
-/decrypt - Decrypt Text'''
+/decrypt - Decrypt Text
+/ipinfo - Get Info About An Ip Address'''
 
 
 @app.on_message(cust_filter.command(commands=("commit")) & ~filters.edited)
@@ -144,3 +146,28 @@ async def decrypt(_, message: Message):
         decoded_text = cipher_suite.decrypt(text_in_bytes)
         bytes_in_text = decoded_text.decode("utf-8")
         await message.reply_text(bytes_in_text)
+
+# Ipinfo
+
+
+@app.on_message(cust_filter.command(commands=('ipinfo')) & ~filters.edited)
+async def ipaddrinfo(_, message: Message):
+    app.set_parse_mode('markdown')
+    ipaddr = message.text.replace("/ipinfo", "")
+    if ipaddr != "":
+        handler = ipinfo.getHandler()
+        details = handler.getDetails(ipaddr)
+        await message.reply_text(f'''`IP - {details.ip}
+City - {details.city}
+Region - {details.region}
+Country - {details.country}
+Location - {details.loc}
+ORG - {details.org}
+Postal - {details.postal}
+Timezone - {details.timezone}`''')
+
+    else:
+        await message.reply_text('`/ipinfo` Requires An IP As Argument'
+                                +'. Ex - `/ipinfo 1.1.1.1`')
+
+
