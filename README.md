@@ -1,5 +1,6 @@
 # WilliamButcherBot
 Just Another Telegram Bot Written In Python Using Pyrogram.
+[![Python](http://forthebadge.com/images/badges/made-with-python.svg)](https://python.org)
 
 <img src="https://i.ibb.co/HBkLxxT/owen-buckley-owen-buckley-billybutcher-close.jpg" width="160" align="right">
 
