@@ -9,6 +9,7 @@ from wbb import app
                 & ~filters.forwarded
                 & ~filters.edited)
 async def rice(_, message: Message):
+    app.set_parse_mode("markdown")
     """Forward media and media_group messages which starts with [RICE] with
     space and description in DE_WM group to RiceGallery channel
     edited or forwarded messages won't be forwarded
