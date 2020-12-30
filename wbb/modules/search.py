@@ -129,7 +129,6 @@ async def wiki(_, message: Message):
         output += f"[{j}]({url})\n"
         if i == limit:
             break
-    await m.delete()
     await message.reply_text(output, disable_web_page_preview=True)
 
 # YouTube
