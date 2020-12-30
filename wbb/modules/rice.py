@@ -34,18 +34,6 @@ async def rice(_, message: Message):
         ),
         quote=True
     )
-    return
-    if message.media_group_id:
-        message_id = message.message_id
-        media_group = await app.get_media_group(RICE_GROUP, message_id)
-        reply = await app.forward_messages(
-            RICE_CHANNEL, RICE_GROUP,
-            [m.message_id for m in media_group])
-    else:
-        reply = await message.forward(RICE_CHANNEL)
-    link = reply.link
-    reply_text = (f"Successfully forwarded to [Rice Gallery]({link})")
-    await message.reply_text(reply_text, disable_web_page_preview=True)
 
 
 @app.on_callback_query(filters.regex("forward"))
