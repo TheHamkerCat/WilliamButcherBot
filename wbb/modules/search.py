@@ -1,4 +1,5 @@
 import wikipedia
+from youtube_search import YoutubeSearch
 from search_engine_parser import GoogleSearch
 from pyrogram.types import Message
 from pyrogram import filters
@@ -8,10 +9,11 @@ from wbb.utils import cust_filter
 
 __MODULE__ = "Search"
 __HELP__ = '''/ud - Search For Something In Urban Dictionary
-/google - Search For Something On google
+/google - Search For Something On Google
 /so - Search For Something On StackOverflow
 /gh - Search For Something On Github
-/wiki - Search For Something On Wikipedia'''
+/wiki - Search For Something On Wikipedia
+/yt - Search For Something On YouTube'''
 
 # ud -  urbandictionary
 
@@ -128,3 +130,22 @@ async def wiki(_, message: Message):
         if i == limit:
             break
     await message.reply_text(output, disable_web_page_preview=True)
+
+# YouTube
+
+
+@app.on_message(cust_filter.command(commands=("yt")) & ~filters.edited)
+async def ytsearch(_, message: Message):
+    m = await message.reply_text("Searching....")
+    query = message.text.replace("/yt", '')
+    results = YoutubeSearch(query, max_results=4).to_dict()
+    i = 0
+    text = ""
+    while i < 4:
+        text += f"Title - {results[i]['title']}\n"
+        text += f"Duration - {results[i]['duration']}\n"
+        text += f"Views - {results[i]['views']}\n"
+        text += f"Channel - {results[i]['channel']}\n"
+        text += f"https://youtube.com{results[i]['url_suffix']}\n\n"
+        i += 1
+    await m.edit(text, disable_web_page_preview=True)
