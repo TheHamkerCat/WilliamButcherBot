@@ -113,7 +113,6 @@ async def github(_, message: Message):
 
 @app.on_message(cust_filter.command(commands=("wiki")) & ~filters.edited)
 async def wiki(_, message: Message):
-    m = message.reply_text('Searching...')
     query = message.text.replace("/wiki", '')
     limit = 5
     if message.reply_to_message:

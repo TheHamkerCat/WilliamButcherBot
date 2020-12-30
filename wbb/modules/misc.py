@@ -169,5 +169,3 @@ Timezone - {details.timezone}`''')
     else:
         await message.reply_text('`/ipinfo` Requires An IP As Argument'
                                 +'. Ex - `/ipinfo 1.1.1.1`')
-
-
