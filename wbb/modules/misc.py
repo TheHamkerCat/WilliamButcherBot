@@ -1,5 +1,7 @@
 import secrets
 import string
+import requests
+import re
 import ipinfo
 from pyrogram import filters
 from pyrogram.types import Message
@@ -18,7 +20,8 @@ __HELP__ = '''/commit - Generate Funny Commit Messages
 /http - Get Cats Reference Photo For Http Error Codes
 /encrypt - Encrypt Text [Can Only Be Decrypted By This Bot]
 /decrypt - Decrypt Text
-/ipinfo - Get Info About An Ip Address'''
+/ipinfo - Get Info About An Ip Address
+/cheat - Get Programming Related Help'''
 
 
 @app.on_message(cust_filter.command(commands=("commit")) & ~filters.edited)
@@ -169,3 +172,20 @@ Timezone - {details.timezone}`''')
     else:
         await message.reply_text('`/ipinfo` Requires An IP As Argument'
                                  + '. Ex - `/ipinfo 1.1.1.1`')
+
+
+@app.on_message(cust_filter.command(commands=("cheat")) & ~filters.edited)
+async def cheat(_, message: Message):
+    text = message.text.replace("/cheat ", "")
+    ftext = text.split()
+    try:
+        language = ftext[0]
+    except IndexError:
+        await message.reply_text("/cheat [language] [query]")
+    try:
+        query = ftext[1]
+    except IndexError:
+        await message.reply_text("/cheat [language] [query]")
+    r = requests.get(f"http://cht.sh/{language}/{query}?QT")
+    reply =  r.text
+    await message.reply_text(f"`{reply}`")
