@@ -1,5 +1,5 @@
 from pyrogram import filters
-from pyrogram.types import Message
+from pyrogram.types import Message, ChatPermissions
 from wbb import OWNER_ID, SUDO_USER_ID, app
 from wbb.utils import cust_filter
 from wbb.utils.botinfo import BOT_ID
@@ -14,7 +14,9 @@ __HELP__ = '''/ban    - Ban A User
 /kickme - Kicks A User Who Issued The Command
 /promote - Promote A Member
 /pin - Pin A Message
-/unpin - Unpin A Message'''
+/unpin - Unpin A Message
+/mute - Mute A User
+/unmute - Unmute A User'''
 
 SUDO = [OWNER_ID, SUDO_USER_ID]
 
@@ -342,3 +344,40 @@ async def unpin(_, message: Message):
             await app.unpin_all_chat_messages(chat_id)
     else:
         await message.reply_text("You're Not An Admin, Stop Spamming!")
+
+
+@app.on_message(cust_filter.command(commands=("mute")) & ~filters.edited)
+async def mute(_, message: Message):
+    chat_id = message.chat.id
+    admins = await list_admins(chat_id)
+    from_user_id = message.from_user.id
+    username = message.text.replace("/mute", "")
+
+    if from_user_id in admins or from_user_id in SUDO:
+        if username != "":
+            victim = username
+        else:
+            victim = message.reply_to_message.from_user.id
+        await message.chat.restrict_member(victim,
+                                           permissions=ChatPermissions())
+        await message.reply_text("Muted!")
+    else:
+        await message.reply_text("Get Yourself An Admin Tag!")
+
+
+@app.on_message(cust_filter.command(commands=("unmute")) & ~filters.edited)
+async def unmute(_, message: Message):
+    chat_id = message.chat.id
+    admins = await list_admins(chat_id)
+    from_user_id = message.from_user.id
+    username = message.text.replace("/unmute", "")
+
+    if from_user_id in admins or from_user_id in SUDO:
+        if username != "":
+            victim = username
+        else:
+            victim = message.reply_to_message.from_user.id
+        await message.chat.unban_member(victim)
+        await message.reply_text("Unmuted!")
+    else:
+        await message.reply_text("Get Yourself An Admin Tag!")
