@@ -1,7 +1,6 @@
 import secrets
 import string
 import requests
-import re
 import ipinfo
 from pyrogram import filters
 from pyrogram.types import Message
@@ -187,5 +186,5 @@ async def cheat(_, message: Message):
     except IndexError:
         await message.reply_text("/cheat [language] [query]")
     r = requests.get(f"http://cht.sh/{language}/{query}?QT")
-    reply =  r.text
+    reply = r.text
     await message.reply_text(f"`{reply}`")
