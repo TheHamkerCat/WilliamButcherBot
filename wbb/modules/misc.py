@@ -211,7 +211,7 @@ async def weather(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("tr")) & ~filters.edited)
-async def tr(_, message: Message): 
+async def tr(_, message: Message):
     lang = message.text.replace("/tr", "")
     flang = lang.replace(" ", "")
 

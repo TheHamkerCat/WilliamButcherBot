@@ -1,4 +1,3 @@
-import html
 from pyrogram import filters
 from pyrogram.types import Message, ChatPermissions
 from wbb import OWNER_ID, SUDO_USER_ID, app
@@ -369,6 +368,8 @@ async def mute(_, message: Message):
         await message.reply_text("Get Yourself An Admin Tag!")
 
 # Unmute members
+
+
 @app.on_message(cust_filter.command(commands=("unmute")) & ~filters.edited)
 async def unmute(_, message: Message):
     chat_id = message.chat.id
