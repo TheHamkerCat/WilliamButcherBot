@@ -36,6 +36,7 @@ speedtest - To Perform A Speedtest.
 so - Search For Something On StackOverflow
 stats  - To Check System Status.
 succ - Sends Succ Image For A Given Word
+tr - Translate A Message
 ud - Search For Something In Urban Dictionary
 unban - Unban A User
 unmute - Unmute A User

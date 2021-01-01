@@ -1,3 +1,4 @@
+import html
 from pyrogram import filters
 from pyrogram.types import Message, ChatPermissions
 from wbb import OWNER_ID, SUDO_USER_ID, app
@@ -16,7 +17,8 @@ __HELP__ = '''/ban    - Ban A User
 /pin - Pin A Message
 /unpin - Unpin A Message
 /mute - Mute A User
-/unmute - Unmute A User'''
+/unmute - Unmute A User
+/report - Report To All Admins'''
 
 SUDO = [OWNER_ID, SUDO_USER_ID]
 
@@ -345,6 +347,8 @@ async def unpin(_, message: Message):
     else:
         await message.reply_text("You're Not An Admin, Stop Spamming!")
 
+# Mute members
+
 
 @app.on_message(cust_filter.command(commands=("mute")) & ~filters.edited)
 async def mute(_, message: Message):
@@ -364,7 +368,7 @@ async def mute(_, message: Message):
     else:
         await message.reply_text("Get Yourself An Admin Tag!")
 
-
+# Unmute members
 @app.on_message(cust_filter.command(commands=("unmute")) & ~filters.edited)
 async def unmute(_, message: Message):
     chat_id = message.chat.id

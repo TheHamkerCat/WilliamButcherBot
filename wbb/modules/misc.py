@@ -4,6 +4,7 @@ import requests
 import ipinfo
 from pyrogram import filters
 from pyrogram.types import Message
+from googletrans import Translator
 from cryptography.fernet import Fernet
 from wbb.utils.botinfo import BOT_ID
 from wbb import app, FERNET_ENCRYPTION_KEY
@@ -21,7 +22,8 @@ __HELP__ = '''/commit - Generate Funny Commit Messages
 /decrypt - Decrypt Text
 /ipinfo - Get Info About An Ip Address
 /cheat - Get Programming Related Help
-/weather - To Get Weather Info'''
+/weather - To Get Weather Info
+/tr - Translate A Message'''
 
 
 @app.on_message(cust_filter.command(commands=("commit")) & ~filters.edited)
@@ -173,6 +175,8 @@ Timezone - {details.timezone}`''')
         await message.reply_text('`/ipinfo` Requires An IP As Argument'
                                  + '. Ex - `/ipinfo 1.1.1.1`')
 
+# Cheat.sh
+
 
 @app.on_message(cust_filter.command(commands=("cheat")) & ~filters.edited)
 async def cheat(_, message: Message):
@@ -190,6 +194,8 @@ async def cheat(_, message: Message):
     reply = r.text
     await message.reply_text(f"`{reply}`")
 
+# Weather
+
 
 @app.on_message(cust_filter.command(commands=("weather")) & ~filters.edited)
 async def weather(_, message: Message):
@@ -200,3 +206,21 @@ async def weather(_, message: Message):
         await message.reply_text(f"`{data}`")
     else:
         await message.reply_text("/weather [city]")
+
+# Translate
+
+
+@app.on_message(cust_filter.command(commands=("tr")) & ~filters.edited)
+async def tr(_, message: Message): 
+    lang = message.text.replace("/tr", "")
+    flang = lang.replace(" ", "")
+
+    if message.reply_to_message and flang != "":
+        text = message.reply_to_message.text
+        i = Translator().translate(text, dest=flang)
+        await message.reply_text(i.text)
+    else:
+        await message.reply_text("Reply to a message with /tr [language code]"
+                                 + "\nGet supported language list from here -"
+                                 + " https://py-googletrans.readthedocs.io/en"
+                                 + "/latest/#googletrans-languages")
