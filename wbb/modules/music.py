@@ -66,7 +66,7 @@ def get_file_extension_from_url(url):
 async def song(_, message: Message):
     text = message.text.replace("/song ", "")
     query = text.replace(" ", "%20")
-    r = requests.get(f"{JSMAPI}{query}")  # ex- JSMAPI=http://127.0.0.1:5000/result/?query=
+    r = requests.get(f"{JSMAPI}{query}")
     import wget
     import os
     i = 0
@@ -74,13 +74,11 @@ async def song(_, message: Message):
         sname = r.json()[i]['song']
         slink = r.json()[i]['media_url']
         ssingers = r.json()[i]['singers']
-        syear = r.json()[i]['year']
         sduration = r.json()[i]['duration']
         file = wget.download(slink)
         ffile = file.replace("mp4", "m4a")
         os.rename(file, ffile)
-        await message.reply_audio(audio=ffile, title=sname, 
+        await message.reply_audio(audio=ffile, title=sname,
                                   performer=ssingers, duration=int(sduration))
         i += 1
         os.remove(ffile)
-
