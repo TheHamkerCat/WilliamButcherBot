@@ -1,12 +1,11 @@
 from __future__ import unicode_literals
 from urllib.parse import urlparse
 import os
-import requests
 import youtube_dl
 from pyrogram import filters
 from pyrogram.types import Message
 from wbb.utils import cust_filter
-from wbb import app, JSMAPI
+from wbb import app
 
 __MODULE__ = "Music"
 __HELP__ = "/music [link] To Download Music From Various Websites"
@@ -58,27 +57,3 @@ def get_file_extension_from_url(url):
     url_path = urlparse(url).path
     basename = os.path.basename(url_path)
     return basename.split(".")[-1]
-
-# Song
-
-
-@app.on_message(cust_filter.command(commands=("song")) & ~filters.edited)
-async def song(_, message: Message):
-    text = message.text.replace("/song ", "")
-    query = text.replace(" ", "%20")
-    r = requests.get(f"{JSMAPI}{query}")
-    import wget
-    import os
-    i = 0
-    while i < 2:
-        sname = r.json()[i]['song']
-        slink = r.json()[i]['media_url']
-        ssingers = r.json()[i]['singers']
-        sduration = r.json()[i]['duration']
-        file = wget.download(slink)
-        ffile = file.replace("mp4", "m4a")
-        os.rename(file, ffile)
-        await message.reply_audio(audio=ffile, title=sname,
-                                  performer=ssingers, duration=int(sduration))
-        i += 1
-        os.remove(ffile)

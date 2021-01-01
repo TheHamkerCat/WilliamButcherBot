@@ -1,12 +1,14 @@
 import os
 import re
+import requests
 import time
+import wget
 from pyrogram import filters, types
 from pyrogram.types import Message
 import speedtest
 import psutil
 from wbb.utils import cust_filter, nekobin, formatter
-from wbb import app, OWNER_ID, SUDO_USER_ID, bot_start_time, NEOFETCH
+from wbb import app, OWNER_ID, SUDO_USER_ID, bot_start_time, NEOFETCH, JSMAPI
 
 __MODULE__ = "Sudoers"
 __HELP__ = '''/log - To Get Logs From Last Run.
@@ -92,7 +94,7 @@ Latency  - {round((i["latency"]))} ms
 # Stats Module
 
 
-@ app.on_message(
+@app.on_message(
     filters.user(SUDOERS) & cust_filter.command(commands=("stats"))
 )
 async def get_stats(_, message: Message):
@@ -124,3 +126,28 @@ async def get_stats(_, message: Message):
 {neofetch}
 ```''')
     await message.reply_text(stats)
+
+# Song
+
+
+@app.on_message(
+    filters.user(SUDOERS) & cust_filter.command(commands=("song"))
+)
+async def song(_, message: Message):
+    text = message.text.replace("/song ", "")
+    query = text.replace(" ", "%20")
+    r = requests.get(f"{JSMAPI}{query}")
+
+    i = 0
+    while i < 2:
+        sname = r.json()[i]['song']
+        slink = r.json()[i]['media_url']
+        ssingers = r.json()[i]['singers']
+        sduration = r.json()[i]['duration']
+        file = wget.download(slink)
+        ffile = file.replace("mp4", "m4a")
+        os.rename(file, ffile)
+        await message.reply_audio(audio=ffile, title=sname,
+                                  performer=ssingers, duration=int(sduration))
+        i += 1
+        os.remove(ffile)
