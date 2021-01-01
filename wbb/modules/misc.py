@@ -20,7 +20,8 @@ __HELP__ = '''/commit - Generate Funny Commit Messages
 /encrypt - Encrypt Text [Can Only Be Decrypted By This Bot]
 /decrypt - Decrypt Text
 /ipinfo - Get Info About An Ip Address
-/cheat - Get Programming Related Help'''
+/cheat - Get Programming Related Help
+/weather - To Get Weather Info'''
 
 
 @app.on_message(cust_filter.command(commands=("commit")) & ~filters.edited)
@@ -188,3 +189,14 @@ async def cheat(_, message: Message):
     r = requests.get(f"http://cht.sh/{language}/{query}?QT")
     reply = r.text
     await message.reply_text(f"`{reply}`")
+
+
+@app.on_message(cust_filter.command(commands=("weather")) & ~filters.edited)
+async def weather(_, message: Message):
+    city = message.text.replace("/weather ", "")
+    if city != "":
+        r = requests.get(f"https://wttr.in/{city}?mnTC0")
+        data = r.text
+        await message.reply_text(f"`{data}`")
+    else:
+        await message.reply_text("/weather [city]")
