@@ -1,14 +1,21 @@
+"""
+ Thanks to @dashezup for this module
+ Repo - https://github.com/dashezup/tgbot
+
+A Pyrogram Smart Plugin to verify if new members are human
+# the bot must be admin in the chat
+# should not be lesser than 30 or the user may be banned if he didn't
+# press the verification button
+"""
+
+
 import asyncio
 from datetime import datetime
 from pyrogram import filters
-from wbb import app, WELCOME_DELAY_KICK_SEC_STR
+from wbb import app, WELCOME_DELAY_KICK_SEC
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.types import ChatPermissions
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
-
-# Thanks to @dashezup for this module
-# Repo - https://github.com/dashezup/tgbot
-WELCOME_DELAY_KICK_SEC = int(WELCOME_DELAY_KICK_SEC_STR)
 
 
 @app.on_message(filters.new_chat_members)
