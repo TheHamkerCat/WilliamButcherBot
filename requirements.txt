@@ -10,3 +10,4 @@ youtube_dl
 search_engine_parser
 wikipedia
 ipinfo
+googletrans==4.0.0-rc1

@@ -62,7 +62,8 @@ async def callback_query_forward_rice(_, callback_query):
                   f"<b>Approver</b>: {approver.mention()}\n"
                   f"<b>Forwarded</b>: "
                   f"<a href=\"{link}\">Rice Gallery</a>")
-    await m_rice.reply_text(reply_text, disable_web_page_preview=True)
+    await m_rice.reply_text(reply_text, parse_mode="html",
+                            disable_web_page_preview=True)
 
 
 @app.on_callback_query(filters.regex("ignore"))

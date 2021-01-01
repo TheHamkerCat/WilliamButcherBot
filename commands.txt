@@ -3,6 +3,7 @@
 ban - Ban A User
 banme - Ban Yourself
 cat - Get Cute Cats Images
+cheat - Get Programming Related Help
 commit - Generate Funny Commit Messages
 decrypt - Decrypt Text
 del - Delete Replied Message
@@ -19,6 +20,7 @@ kick - Kick A User
 kickme - Kick Yourself
 log - Get Logs From Last Run.
 music - [link] To Download Music From Various Websites
+mute - Mute A User
 paste - Paste To Neokobin
 pin - Pin The Replied Message
 ping - Get Response Time From All TG Datacenters
@@ -34,9 +36,12 @@ speedtest - To Perform A Speedtest.
 so - Search For Something On StackOverflow
 stats  - To Check System Status.
 succ - Sends Succ Image For A Given Word
+tr - Translate A Message
 ud - Search For Something In Urban Dictionary
 unban - Unban A User
+unmute - Unmute A User
 unpin - Unpin The Last Pinned Message.
 wall - Get Wallpapers
+weather - Get Weather Info
 wiki - Search For Something On Wikipedia
 yt - Search For Something On YouTube
