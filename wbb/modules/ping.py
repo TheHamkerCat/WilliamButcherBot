@@ -17,5 +17,5 @@ async def ping(_, message: Message):
     for i in range(1, 6):
         datacenter = (f"https://cdn{i}.telesco.pe")
         ping1 = round(requests.head(datacenter).elapsed.total_seconds() * 1000)
-        result += f'```DC{i} - {ping1}ms```'
+        result += f'`DC{i} - {ping1}ms`\n'
     await j.edit(result)
