@@ -32,12 +32,14 @@ async def rice(_, message: Message):
                 ]
             ]
         ),
-        quote=True
+        quote=True,
+        parse_mode="markdown"
     )
 
 
 @app.on_callback_query(filters.regex("forward"))
 async def callback_query_forward_rice(_, callback_query):
+    app.set_parse_mode("html")
     approver = callback_query.from_user
     group_chat = callback_query.message.chat
     approver_status = (await group_chat.get_member(approver.id)).status
@@ -57,13 +59,11 @@ async def callback_query_forward_rice(_, callback_query):
         reply = await m_rice.forward(RICE_CHANNEL)
         link = reply.link
     await callback_query.message.delete()
-    print(reply)
     reply_text = (f"<b>OP</b>: {m_rice.from_user.mention()}\n"
                   f"<b>Approver</b>: {approver.mention()}\n"
                   f"<b>Forwarded</b>: "
                   f"<a href=\"{link}\">Rice Gallery</a>")
-    await m_rice.reply_text(reply_text, parse_mode="html",
-                            disable_web_page_preview=True)
+    await m_rice.reply_text(reply_text, disable_web_page_preview=True)
 
 
 @app.on_callback_query(filters.regex("ignore"))
