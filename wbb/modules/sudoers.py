@@ -169,11 +169,10 @@ async def upload(_, message: Message):
     if len(message.command) != 2:
         await message.reply_text("/upload requires one argument")
         return
-        
+
     url = message.command[1]
     data = BytesIO(requests.get(url).content)
     data.name = url.split("/")[-1]
     m = await message.reply_text("Uploading.....")
     await message.reply_document(data)
     await m.delete()
-
