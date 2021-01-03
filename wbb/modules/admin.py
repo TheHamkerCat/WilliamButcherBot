@@ -16,8 +16,7 @@ __HELP__ = '''/ban    - Ban A User
 /pin - Pin A Message
 /unpin - Unpin A Message
 /mute - Mute A User
-/unmute - Unmute A User
-/report - Report To All Admins'''
+/unmute - Unmute A User'''
 
 SUDO = [OWNER_ID, SUDO_USER_ID]
 
