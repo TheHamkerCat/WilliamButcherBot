@@ -158,6 +158,7 @@ async def song(_, message: Message):
         await m.delete()
     else:
         await message.reply_text("/song requires an argument.")
+
 # Upload
 
 
@@ -165,13 +166,14 @@ async def song(_, message: Message):
     filters.user(SUDOERS) & cust_filter.command(commands=("upload"))
 )
 async def upload(_, message: Message):
-    urli = message.text.replace("/upload", "")
-    url = urli.replace(" ", "")
-    if url != "":
-        data = BytesIO(requests.get(url).content)
-        data.name = url.split("/")[-1]
-        m = await message.reply_text("Uploading.....")
-        await message.reply_document(data)
-        await m.delete()
-    else:
-        await message.reply_text("/upload requires an argument")
+    if len(message.command) != 2:
+        await message.reply_text("/upload requires one argument")
+        return
+        
+    url = message.command[1]
+    data = BytesIO(requests.get(url).content)
+    data.name = url.split("/")[-1]
+    m = await message.reply_text("Uploading.....")
+    await message.reply_document(data)
+    await m.delete()
+
