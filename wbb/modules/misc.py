@@ -2,7 +2,6 @@ import secrets
 import string
 import requests
 import ipinfo
-import os
 from pyrogram import filters
 from pyrogram.types import Message
 from googletrans import Translator

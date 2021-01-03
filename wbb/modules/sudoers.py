@@ -148,12 +148,11 @@ async def song(_, message: Message):
             sname = r.json()[i]['song']
             slink = r.json()[i]['media_url']
             ssingers = r.json()[i]['singers']
-            sduration = r.json()[i]['duration']
             file = wget.download(slink)
             ffile = file.replace("mp4", "m4a")
             os.rename(file, ffile)
             await message.reply_audio(audio=ffile, title=sname,
-                                      performer=ssingers, duration=int(sduration))
+                                      performer=ssingers)
             i += 1
             os.remove(ffile)
         await m.delete()
