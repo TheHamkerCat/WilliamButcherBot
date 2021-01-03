@@ -65,6 +65,5 @@ async def reddit(_, message: Message):
 
     caps = f"<b>Title</b>: {title}\n"
     caps += f"<b>Subreddit: </b>r/{rpage}\n"
-    caps += f"<b>PostLink:</b> {plink}"    
+    caps += f"<b>PostLink:</b> {plink}"
     await message.reply_photo(photo=memeu, caption=(caps))
-

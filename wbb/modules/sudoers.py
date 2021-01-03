@@ -3,7 +3,6 @@ import re
 import requests
 import time
 import wget
-from io import BytesIO
 from pyrogram import filters, types
 from pyrogram.types import Message
 import speedtest
