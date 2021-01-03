@@ -3,6 +3,7 @@ import re
 import requests
 import time
 import wget
+from io import BytesIO
 from pyrogram import filters, types
 from pyrogram.types import Message
 import speedtest
@@ -14,7 +15,8 @@ __MODULE__ = "Sudoers"
 __HELP__ = '''/log - To Get Logs From Last Run.
 /speedtest - To Perform A Speedtest.
 /stats - To Check System Status.
-/song - To Download Songs From JioSaavn'''
+/song - To Download Songs From JioSaavn
+/upload - To Upload Files Via Direct Link'''
 
 
 SUDOERS = [OWNER_ID, SUDO_USER_ID]
@@ -135,20 +137,40 @@ async def get_stats(_, message: Message):
     filters.user(SUDOERS) & cust_filter.command(commands=("song"))
 )
 async def song(_, message: Message):
-    text = message.text.replace("/song ", "")
-    query = text.replace(" ", "%20")
-    r = requests.get(f"{JSMAPI}{query}")
+    text = message.text.replace("/song", "")
+    query = text.replace(" ", "")
+    if text != "":
+        m = await message.reply_text("Searching...")
+        r = requests.get(f"{JSMAPI}{query}")
 
-    i = 0
-    while i < 2:
-        sname = r.json()[i]['song']
-        slink = r.json()[i]['media_url']
-        ssingers = r.json()[i]['singers']
-        sduration = r.json()[i]['duration']
-        file = wget.download(slink)
-        ffile = file.replace("mp4", "m4a")
-        os.rename(file, ffile)
-        await message.reply_audio(audio=ffile, title=sname,
-                                  performer=ssingers, duration=int(sduration))
-        i += 1
-        os.remove(ffile)
+        i = 0
+        while i < 2:
+            sname = r.json()[i]['song']
+            slink = r.json()[i]['media_url']
+            ssingers = r.json()[i]['singers']
+            sduration = r.json()[i]['duration']
+            file = wget.download(slink)
+            ffile = file.replace("mp4", "m4a")
+            os.rename(file, ffile)
+            await message.reply_audio(audio=ffile, title=sname,
+                                      performer=ssingers, duration=int(sduration))
+            i += 1
+            os.remove(ffile)
+        await m.delete()
+    else:
+        await message.reply_text("/song requires an argument.")
+# Upload
+
+
+@app.on_message(
+    filters.user(SUDOERS) & cust_filter.command(commands=("upload"))
+)
+async def upload(_, message: Message):
+    urli = message.text.replace("/upload", "")
+    url = urli.replace(" ", "")
+    if url != "":
+        data = BytesIO(requests.get(url).content)
+        data.name = url.split("/")[-1]
+        await message.reply_document(data)
+    else:
+        await message.reply_text("/upload requires an argument")
