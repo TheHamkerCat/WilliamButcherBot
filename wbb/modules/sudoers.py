@@ -171,6 +171,8 @@ async def upload(_, message: Message):
     if url != "":
         data = BytesIO(requests.get(url).content)
         data.name = url.split("/")[-1]
+        m = await message.reply_text("Uploading.....")
         await message.reply_document(data)
+        await m.delete()
     else:
         await message.reply_text("/upload requires an argument")
