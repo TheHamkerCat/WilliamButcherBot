@@ -42,7 +42,6 @@ ud - Search For Something In Urban Dictionary
 unban - Unban A User
 unmute - Unmute A User
 unpin - Unpin The Last Pinned Message.
-upload - Upload Files Via Direct Link
 wall - Get Wallpapers
 weather - Get Weather Info
 wiki - Search For Something On Wikipedia
