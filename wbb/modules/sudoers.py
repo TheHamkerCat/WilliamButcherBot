@@ -14,8 +14,7 @@ __MODULE__ = "Sudoers"
 __HELP__ = '''/log - To Get Logs From Last Run.
 /speedtest - To Perform A Speedtest.
 /stats - To Check System Status.
-/song - To Download Songs From JioSaavn
-/upload - To Upload Files Via Direct Link'''
+/song - To Download Songs From JioSaavn'''
 
 SUDOERS = [OWNER_ID, SUDO_USER_ID]
 
