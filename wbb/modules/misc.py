@@ -69,8 +69,8 @@ async def dev(_, message: Message):
             message.chat.id,
             BOT_ID)).can_restrict_members:
 
-        await message.reply_to_message.forward('WBBSupport')
-        await app.send_message("WBBSupport",
+        await message.reply_to_message.forward('TheHamkerChat')
+        await app.send_message("TheHamkerChat",
                                "Forwarded By: `{}` | {}\n"
                                "Forwarded From: `{}` | {}"
                                .format(message.from_user.id,
