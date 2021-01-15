@@ -8,7 +8,7 @@ RICE_CHANNEL = "RiceGallery"
 
 
 @app.on_message(filters.chat(RICE_GROUP)
-                & (filters.photo | filters.video)
+                & (filters.photo | filters.video | filters.document)
                 & filters.regex(r"^\[RICE\] ")
                 & ~filters.forwarded
                 & ~filters.edited)
