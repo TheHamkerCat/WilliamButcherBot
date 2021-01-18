@@ -1,13 +1,11 @@
 ####Send this list to @botfather to set your commands.
 
 ban - Ban A User
-banme - Ban Yourself
 cat - Get Cute Cats Images
 cheat - Get Programming Related Help
 commit - Generate Funny Commit Messages
 decrypt - Decrypt Text
 del - Delete Replied Message
-dev - Forward Anything To Developers [SPAM = GBAN]
 dog - Get Cute Dogs Images
 encrypt - Encrypt Text
 google - Search For Something On Google
@@ -17,11 +15,10 @@ http - Get Cats Reference Photo For Http Error Codes
 id - Get Chat_ID or User_ID
 ipinfo - Get Info About An Ip Address
 kick - Kick A User
-kickme - Kick Yourself
 log - Get Logs From Last Run.
 music - [link] To Download Music From Various Websites
 mute - Mute A User
-paste - Paste To Neokobin
+paste - Paste To Nekobin
 pin - Pin The Replied Message
 ping - Get Response Time From All TG Datacenters
 promote - Promote A Member
@@ -42,7 +39,6 @@ ud - Search For Something In Urban Dictionary
 unban - Unban A User
 unmute - Unmute A User
 unpin - Unpin The Last Pinned Message.
-upload - Upload Files Via Direct Link
 wall - Get Wallpapers
 weather - Get Weather Info
 wiki - Search For Something On Wikipedia
