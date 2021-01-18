@@ -1,4 +1,4 @@
-import requests as r
+import random
 from pyrogram.types import Message
 from pyrogram import filters
 from wbb import app
@@ -27,7 +27,7 @@ def suck(text):
             'femnnism': f'message.reply_photo({feminism})',
             'tehc': 'message.reply_photo("https://i.ibb.co/gdSvHSr/n.jpg")',
             'stonks': 'message.reply_photo("https://i.ibb.co/TtZ144x/h.png")',
-            'sekuriti': f'message.reply_photo({security})',
+            'sekuriti': 'message.reply_photo({security})',
             'phijiks': 'message.reply_photo("https://i.ibb.co/Zz4wBnc/g.png")',
             'welth': 'message.reply_photo("https://i.ibb.co/JxFm4pW/k.jpg")',
             'smrt': 'message.reply_photo("https://i.ibb.co/7bVkyC7/l.jpg")',
@@ -38,29 +38,11 @@ def suck(text):
 @app.on_message(cust_filter.command(commands=("succ")) & ~filters.edited)
 def succ(_, message: Message):
     result = suck(message.text.replace('/succ ', ''))
+    print(result)
     if result is None:
         message.reply_text('''"/succ" Needs And Argument
 Args - `komidi, kemist, ejucation, helth, nothelth,
 femnnism, tehc, hacc, stonks, sekuriti,
 phijiks, welth, smrt`''')
+    print(random)
     exec(result)
-
-
-@app.on_message(cust_filter.command(commands=("reddit")) & ~filters.edited)
-async def reddit(_, message: Message):
-    app.set_parse_mode('html')
-    if len(message.command) != 2:
-        await message.reply_text("/reddit needs an argument")
-    subreddit = message.command[1]
-    res = r.get(f"https://meme-api.herokuapp.com/gimme/{subreddit}")
-    res = res.json()
-
-    rpage = res.get(str("subreddit"))  # Subreddit
-    title = res.get(str("title"))  # Post title
-    memeu = res.get(str("url"))  # meme pic url
-    plink = res.get(str("postLink"))
-
-    caps = f"<b>Title</b>: {title}\n"
-    caps += f"<b>Subreddit: </b>r/{rpage}\n"
-    caps += f"<b>PostLink:</b> {plink}"
-    await message.reply_photo(photo=memeu, caption=(caps))

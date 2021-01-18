@@ -1,5 +1,6 @@
 from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import InputMediaPhoto, InputMediaVideo
 from wbb import app
 
 RICE_GROUP = "DE_WM"
@@ -7,7 +8,7 @@ RICE_CHANNEL = "RiceGallery"
 
 
 @app.on_message(filters.chat(RICE_GROUP)
-                & filters.media
+                & (filters.photo | filters.video | filters.document)
                 & filters.regex(r"^\[RICE\] ")
                 & ~filters.forwarded
                 & ~filters.edited)
@@ -17,7 +18,7 @@ async def rice(_, message: Message):
     edited or forwarded messages won't be forwarded
     """
     await message.reply_text(
-        "**Waiting for admin to approve**",
+        "**Waiting for admin to approve...**",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -39,44 +40,55 @@ async def rice(_, message: Message):
 
 @app.on_callback_query(filters.regex("forward"))
 async def callback_query_forward_rice(_, callback_query):
-    app.set_parse_mode("html")
-    approver = callback_query.from_user
-    group_chat = callback_query.message.chat
-    approver_status = (await group_chat.get_member(approver.id)).status
+    app.set_parse_mode("markdown")
+    u_approver = callback_query.from_user
+    c_group = callback_query.message.chat
+    approver_status = (await c_group.get_member(u_approver.id)).status
     if not (approver_status in ("creator", "administrator")):
         await callback_query.answer("Only admin can approve this!")
         return
     await callback_query.answer("Successfully approved")
-    m_rice = callback_query.message.reply_to_message
-    if m_rice.media_group_id:
-        message_id = m_rice.message_id
+    m_op = callback_query.message.reply_to_message
+    u_op = m_op.from_user
+    arg_caption = f"{m_op.caption}\nOP: [{u_op.first_name}]({m_op.link})"
+    if m_op.media_group_id:
+        message_id = m_op.message_id
         media_group = await app.get_media_group(RICE_GROUP, message_id)
-        reply = await app.forward_messages(
-            RICE_CHANNEL, RICE_GROUP,
-            [m.message_id for m in media_group])
-        link = reply[0].link
+        arg_media = []
+        for m in media_group:
+            if m.photo and m.caption:
+                arg_media.append(InputMediaPhoto(m.photo.file_id,
+                                                 caption=arg_caption))
+            elif m.photo:
+                arg_media.append(InputMediaPhoto(m.photo.file_id))
+            elif m.video and m.caption:
+                arg_media.append(InputMediaVideo(m.video.file_id,
+                                                 caption=arg_caption))
+            elif m.video:
+                arg_media.append(InputMediaVideo(m.video.file_id))
+        m_cp = await app.send_media_group(RICE_CHANNEL, arg_media)
+        link = m_cp[0].link
     else:
-        reply = await m_rice.forward(RICE_CHANNEL)
-        link = reply.link
+        m_cp = await m_op.copy(RICE_CHANNEL, caption=arg_caption)
+        link = m_cp.link
     await callback_query.message.delete()
-    reply_text = (f"<b>OP</b>: {m_rice.from_user.mention()}\n"
-                  f"<b>Approver</b>: {approver.mention()}\n"
-                  f"<b>Forwarded</b>: "
-                  f"<a href=\"{link}\">Rice Gallery</a>")
-    await m_rice.reply_text(reply_text, disable_web_page_preview=True)
+    reply_text = (f"**OP**: {u_op.mention()}\n"
+                  f"**Approver**: {u_approver.mention()}\n"
+                  f"**Forwarded**: [Rice Gallery]({link})")
+    await m_op.reply_text(reply_text, disable_web_page_preview=True)
 
 
 @app.on_callback_query(filters.regex("ignore"))
 async def callback_query_ignore_rice(_, callback_query):
-    m_rice = callback_query.message.reply_to_message
-    group_chat = callback_query.message.chat
-    from_user = callback_query.from_user
-    from_user_status = (await group_chat.get_member(from_user.id)).status
-    rice_op = callback_query.message.reply_to_message.from_user
-    if from_user.id == rice_op.id:
+    c_group = callback_query.message.chat
+    u_disprover = callback_query.from_user
+    disprover_status = (await c_group.get_member(u_disprover.id)).status
+    m_op = callback_query.message.reply_to_message
+    u_op = m_op.from_user
+    if u_disprover.id == u_op.id:
         await callback_query.answer("Ok, this rice won't be forwarded")
-    elif from_user_status in ("creator", "administrator"):
-        await m_rice.reply_text(f"{from_user.mention} ignored this rice")
+    elif disprover_status in ("creator", "administrator"):
+        await m_op.reply_text(f"{u_disprover.mention} ignored this rice")
     else:
         await callback_query.answer("Only admin or OP could ignore it")
         return

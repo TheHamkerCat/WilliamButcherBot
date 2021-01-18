@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+import random
+=======
+>>>>>>> e647a639869a680a683779300e53e30ca5c6af79
 import requests as r
 from pyrogram.types import Message
 from pyrogram import filters

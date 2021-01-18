@@ -13,4 +13,4 @@ async def repo(_, message: Message):
     app.set_parse_mode("markdown")
     await message.reply_text(
         "[Github](https://github.com/thehamkercat/WilliamButcherBot)"
-        + " | [Group](t.me/WBBSupport)", disable_web_page_preview=True)
+        + " | [Group](t.me/TheHamkerChat)", disable_web_page_preview=True)
