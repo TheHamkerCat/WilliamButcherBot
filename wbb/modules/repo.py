@@ -10,7 +10,6 @@ __HELP__ = "/repo - To Get My Github Repository Link " \
 
 @app.on_message(cust_filter.command(commands=("repo")) & ~filters.edited)
 async def repo(_, message: Message):
-    app.set_parse_mode("markdown")
     await message.reply_text(
         "[Github](https://github.com/thehamkercat/WilliamButcherBot)"
         + " | [Group](t.me/TheHamkerChat)", disable_web_page_preview=True)

@@ -79,8 +79,7 @@ def speed_convert(size):
     filters.user(SUDOERS) & cust_filter.command(commands=("speedtest"))
 )
 async def get_speedtest_result(_, message: Message):
-    app.set_parse_mode("markdown")
-    m = await message.reply_text("```Performing A Speedtest!```")
+    m = await message.reply_text("`Performing A Speedtest!`")
     speed = speedtest.Speedtest()
     i = speed.get_best_server()
     j = speed.download()
@@ -122,7 +121,6 @@ async def get_stats(_, message: Message):
       CPU: {cpu}%
       RAM: {mem}%
       Disk: {disk}%
-
 {neofetch}
 ```''')
     await message.reply_text(stats)
@@ -134,24 +132,24 @@ async def get_stats(_, message: Message):
     filters.user(SUDOERS) & cust_filter.command(commands=("song"))
 )
 async def song(_, message: Message):
-    text = message.text.replace("/song", "")
-    query = text.replace(" ", "")
-    if text != "":
-        m = await message.reply_text("Searching...")
-        r = requests.get(f"{JSMAPI}{query}")
-
-        i = 0
-        while i < 2:
-            sname = r.json()[i]['song']
-            slink = r.json()[i]['media_url']
-            ssingers = r.json()[i]['singers']
-            file = wget.download(slink)
-            ffile = file.replace("mp4", "m4a")
-            os.rename(file, ffile)
-            await message.reply_audio(audio=ffile, title=sname,
-                                      performer=ssingers)
-            i += 1
-            os.remove(ffile)
-        await m.delete()
-    else:
+    if len(message.command) < 2:
         await message.reply_text("/song requires an argument.")
+        return
+    text = message.text.split(None, 1)[1]
+    query = text.replace(" ", "%20")
+    m = await message.reply_text("Searching...")
+    try:
+        r = requests.get(f"{JSMAPI}{query}")
+    except Exception as e:
+        await m.edit(str(e))
+        return
+    sname = r.json()[0]['song']
+    slink = r.json()[0]['media_url']
+    ssingers = r.json()[0]['singers']
+    file = wget.download(slink)
+    ffile = file.replace("mp4", "m4a")
+    os.rename(file, ffile)
+    await message.reply_audio(audio=ffile, title=sname,
+                              performer=ssingers)
+    os.remove(ffile)
+    await m.delete()

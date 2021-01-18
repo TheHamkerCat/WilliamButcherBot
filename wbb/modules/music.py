@@ -19,8 +19,7 @@ ydl_opts = {
 @app.on_message(cust_filter.command(commands=("music")) & ~filters.edited)
 async def music(_, message: Message):
     if len(message.command) != 2:
-        await message.reply_text(
-            "`/music` needs a link as argument")
+        await message.reply_text("`/music` needs a link as argument")
         return
     link = message.text.split(None, 1)[1]
     m = await message.reply_text(f"Downloading {link}",
