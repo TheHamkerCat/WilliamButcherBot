@@ -14,7 +14,6 @@ __HELP__ = '''/commit - Generate Funny Commit Messages
 /runs  - Idk Test Yourself
 /quote - Get Random Linux Quotes
 /id - Get Chat_ID or User_ID
-/dev - Forward Anything To Developers [SPAM = GBAN]
 /random - Generate Random Complex Passwords
 /http - Get Cats Reference Photo For Http Error Codes
 /encrypt - Encrypt Text [Can Only Be Decrypted By This Bot]
