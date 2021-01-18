@@ -28,7 +28,7 @@ def suck(text):
             'femnnism': f'message.reply_photo({feminism})',
             'tehc': 'message.reply_photo("https://i.ibb.co/gdSvHSr/n.jpg")',
             'stonks': 'message.reply_photo("https://i.ibb.co/TtZ144x/h.png")',
-            'sekuriti': 'message.reply_photo({security})',
+            'sekuriti': f'message.reply_photo({security})',
             'phijiks': 'message.reply_photo("https://i.ibb.co/Zz4wBnc/g.png")',
             'welth': 'message.reply_photo("https://i.ibb.co/JxFm4pW/k.jpg")',
             'smrt': 'message.reply_photo("https://i.ibb.co/7bVkyC7/l.jpg")',
@@ -39,13 +39,11 @@ def suck(text):
 @app.on_message(cust_filter.command(commands=("succ")) & ~filters.edited)
 def succ(_, message: Message):
     result = suck(message.text.replace('/succ ', ''))
-    print(result)
     if result is None:
         message.reply_text('''"/succ" Needs And Argument
 Args - `komidi, kemist, ejucation, helth, nothelth,
 femnnism, tehc, hacc, stonks, sekuriti,
 phijiks, welth, smrt`''')
-    print(random)
     exec(result)
 
 
