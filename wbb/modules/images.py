@@ -41,19 +41,19 @@ async def dog(_, message: Message):
 
 @app.on_message(cust_filter.command(commands=("wall")) & ~filters.edited)
 async def wall(_, message: Message):
-    app.set_parse_mode("markdown")
-    if len(message.command) > 2:
+    if len(message.command) < 2:
         await message.reply_text("/wall needs an argument")
         return
-    m = await message.reply_text("Searching!")
     initial_term = message.text.split(None, 1)[1]
+    m = await message.reply_text("Searching!")
+
     term = initial_term.replace(' ', '%20')
     api = "https://wall.alphacoders.com/api2.0/get.php?auth=" + \
         "{}&method=search&term={}".format(WALL_API_KEY, term)
 
     json_rep = r.get(api).json()
     if not json_rep.get("success"):
-        await m.edit("`\"/wall\"` Needs A Keyword Argument!")
+        await m.edit("Something happened! Shit.")
     else:
         wallpapers = json_rep.get("wallpapers")
         if not wallpapers:
@@ -69,4 +69,4 @@ async def wall(_, message: Message):
         wallpaper = wallpaper.get("url_image")
         wallpaper = wallpaper.replace("\\", "")
         await message.reply_document(wallpaper)
-    await delete_message_with_delay(5, m)
+        await m.delete()
