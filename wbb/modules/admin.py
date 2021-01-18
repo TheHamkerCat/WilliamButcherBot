@@ -123,7 +123,7 @@ async def kick(_, message: Message):
                     user_id = message.reply_to_message.from_user.id
                     await message.reply_to_message.chat.kick_member(user_id)
                     await message.reply_to_message.chat.unban_member(user_id)
-                    await message.reply_text(f"Kicked!")
+                    await message.reply_text("Kicked!")
                 else:
                     await message.reply_text("This user isn't here.")
 
@@ -159,7 +159,7 @@ async def ban(_, message: Message):
                         await list_members(message.chat.id):
                     user_id = message.reply_to_message.from_user.id
                     await message.reply_to_message.chat.kick_member(user_id)
-                    await message.reply_text(f"Banned!")
+                    await message.reply_text("Banned!")
                 else:
                     await message.reply_text("This user isn't here.")
 
@@ -190,7 +190,7 @@ async def unban(_, message: Message):
                     await list_members(message.chat.id):
                 user_id = message.reply_to_message.from_user.id
                 await message.chat.unban_member(user_id)
-                await message.reply_text(f"Unbanned!")
+                await message.reply_text("Unbanned!")
             else:
                 await message.reply_text("This user is already here.")
 

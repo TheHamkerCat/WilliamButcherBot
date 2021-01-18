@@ -6,7 +6,6 @@ from pyrogram import filters
 from pyrogram.types import Message
 from googletrans import Translator
 from cryptography.fernet import Fernet
-from wbb.utils.botinfo import BOT_ID
 from wbb import app, FERNET_ENCRYPTION_KEY
 from wbb.utils import cust_filter, random_line
 
@@ -153,7 +152,7 @@ Timezone - {details.timezone}`''')
 
 @app.on_message(cust_filter.command(commands=("cheat")) & ~filters.edited)
 async def cheat(_, message: Message):
-    text =  message.text.split(None, 1)[1]
+    text = message.text.split(None, 1)[1]
     ftext = text.split()
     try:
         language = ftext[0]
@@ -174,7 +173,7 @@ async def cheat(_, message: Message):
 
 @app.on_message(cust_filter.command(commands=("weather")) & ~filters.edited)
 async def weather(_, message: Message):
-    city =  message.text.split(None, 1)[1]
+    city = message.text.split(None, 1)[1]
     if len(message.command) != 2:
         await message.reply_text("/weather [city]")
         return
@@ -187,12 +186,14 @@ async def weather(_, message: Message):
 
 @app.on_message(cust_filter.command(commands=("tr")) & ~filters.edited)
 async def tr(_, message: Message):
-    lang =  message.text.split(None, 1)[1]
+    lang = message.text.split(None, 1)[1]
     if not message.reply_to_message or lang == "":
-        await message.reply_text("Reply to a message with /tr [language code]"
-                         + "\nGet supported language list from here -"
-                         + " https://py-googletrans.readthedocs.io/en"
-                         + "/latest/#googletrans-languages")
+        await message.reply_text(
+            "Reply to a message with /tr [language code]"
+            + "\nGet supported language list from here -"
+            + " https://py-googletrans.readthedocs.io/en"
+            + "/latest/#googletrans-languages"
+        )
         return
     text = message.reply_to_message.text
     i = Translator().translate(text, dest=lang)
