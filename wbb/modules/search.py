@@ -20,106 +20,107 @@ __HELP__ = '''/ud - Search For Something In Urban Dictionary
 
 @app.on_message(cust_filter.command(commands=("ud")) & ~filters.edited)
 async def urbandict(_, message: Message):
-    text = message.text.replace("/ud ", '')
-    api = "http://api.urbandictionary.com/v0/define?term="
-    if text != '':
-        try:
-            results = get(f"{api}{text}").json()
-            reply_text = f'Definition: {results["list"][0]["definition"]}'
-            reply_text += f'\n\nExample: {results["list"][0]["example"]}'
-        except IndexError:
-            reply_text = ("Sorry could not find any matching results!")
-        ignore_chars = "[]"
-        reply = reply_text
-        for chars in ignore_chars:
-            reply = reply.replace(chars, "")
-        if len(reply) >= 4096:
-            reply = reply[:4096]
-        await message.reply_text(reply)
-
-    else:
+    if len(message.command) < 2:
         await message.reply_text('"/ud" Needs An Argument.')
+        return
+    text = message.text.split(None, 1)[1]
+    api = "http://api.urbandictionary.com/v0/define?term="
+
+    try:
+        results = get(f"{api}{text}").json()
+        reply_text = f'Definition: {results["list"][0]["definition"]}'
+        reply_text += f'\n\nExample: {results["list"][0]["example"]}'
+    except IndexError:
+        reply_text = ("Sorry could not find any matching results!")
+    ignore_chars = "[]"
+    reply = reply_text
+    for chars in ignore_chars:
+        reply = reply.replace(chars, "")
+    if len(reply) >= 4096:
+        reply = reply[:4096]
+    await message.reply_text(reply)
 
 # google
 
 
 @app.on_message(cust_filter.command(commands=("google")) & ~filters.edited)
 async def google(_, message: Message):
-    text = message.text.replace("/google ", '')
-    if text != '':
-        gresults = await GoogleSearch().async_search(text, 1)
-        result = ""
-        for i in range(4):
-            try:
-                title = gresults["titles"][i].replace("\n", " ")
-                source = gresults["links"][i]
-                description = gresults["descriptions"][i]
-                result += f"[{title}]({source})\n"
-                result += f"`{description}`\n\n"
-            except IndexError:
-                pass
-        await message.reply_text(result, disable_web_page_preview=True)
-    else:
+    if len(message.command) < 2:
         await message.reply_text('"/google" Needs An Argument')
+        return
+    text = message.text.split(None, 1)[1]
+    gresults = await GoogleSearch().async_search(text, 1)
+    result = ""
+    for i in range(4):
+        try:
+            title = gresults["titles"][i].replace("\n", " ")
+            source = gresults["links"][i]
+            description = gresults["descriptions"][i]
+            result += f"[{title}]({source})\n"
+            result += f"`{description}`\n\n"
+        except IndexError:
+            pass
+    await message.reply_text(result, disable_web_page_preview=True)
+
 
 # StackOverflow [This is also a google search with some added args]
 
 
 @app.on_message(cust_filter.command(commands=("so")) & ~filters.edited)
 async def stack(_, message: Message):
-    gett = message.text.replace("/so ", '')
-    text = gett + ' "site:stackoverflow.com"'
-    if gett != '':
-        gresults = await GoogleSearch().async_search(text, 1)
-        result = ""
-        for i in range(4):
-            try:
-                title = gresults["titles"][i].replace("\n", " ")
-                source = gresults["links"][i]
-                description = gresults["descriptions"][i]
-                result += f"[{title}]({source})\n"
-                result += f"`{description}`\n\n"
-            except IndexError:
-                pass
-        await message.reply_text(result, disable_web_page_preview=True)
-    else:
+    if len(message.command) < 2:
         await message.reply_text('"/so" Needs An Argument')
+        return
+    gett = message.text.split(None, 1)[1]
+    text = gett + ' "site:stackoverflow.com"'
+    gresults = await GoogleSearch().async_search(text, 1)
+    result = ""
+    for i in range(4):
+        try:
+            title = gresults["titles"][i].replace("\n", " ")
+            source = gresults["links"][i]
+            description = gresults["descriptions"][i]
+            result += f"[{title}]({source})\n"
+            result += f"`{description}`\n\n"
+        except IndexError:
+            pass
+    await message.reply_text(result, disable_web_page_preview=True)
+
 
 # Github [This is also a google search with some added args]
 
 
 @app.on_message(cust_filter.command(commands=("gh")) & ~filters.edited)
 async def github(_, message: Message):
-    gett = message.text.replace("/gh ", '')
-    text = gett + ' "site:github.com"'
-    if gett != '':
-        gresults = await GoogleSearch().async_search(text, 1)
-        result = ""
-        for i in range(4):
-            try:
-                title = gresults["titles"][i].replace("\n", " ")
-                source = gresults["links"][i]
-                description = gresults["descriptions"][i]
-                result += f"[{title}]({source})\n"
-                result += f"`{description}`\n\n"
-            except IndexError:
-                pass
-        await message.reply_text(result, disable_web_page_preview=True)
-    else:
+    if len(message.command) < 2:
         await message.reply_text('"/gh" Needs An Argument')
+        return
+    gett = message.text.split(None, 1)[1]
+    text = gett + ' "site:github.com"'
+    gresults = await GoogleSearch().async_search(text, 1)
+    result = ""
+    for i in range(4):
+        try:
+            title = gresults["titles"][i].replace("\n", " ")
+            source = gresults["links"][i]
+            description = gresults["descriptions"][i]
+            result += f"[{title}]({source})\n"
+            result += f"`{description}`\n\n"
+        except IndexError:
+            pass
+    await message.reply_text(result, disable_web_page_preview=True)
+
 
 # Wikipedia
 
 
 @app.on_message(cust_filter.command(commands=("wiki")) & ~filters.edited)
 async def wiki(_, message: Message):
-    query = message.text.replace("/wiki", '')
-    limit = 5
-    if message.reply_to_message:
-        query = message.reply_to_message.text
-    if not query:
-        await message.reply_text('Reply To A Message Or Give An Argument')
+    if len(message.command) < 2:
+        await message.reply_text('/wiki Needs An Argument')
         return
+    query = message.text.split(None, 1)[1]
+    limit = 5
     wikipedia.set_lang("en")
     results = wikipedia.search(query)
     output = "```Found These Topics```"
@@ -136,10 +137,11 @@ async def wiki(_, message: Message):
 
 @app.on_message(cust_filter.command(commands=("yt")) & ~filters.edited)
 async def ytsearch(_, message: Message):
-    m = await message.reply_text("Searching....")
-    query = message.text.replace("/yt", '')
-    if query == "":
+    if len(message.command) < 2:
         await message.reply_text("/yt needs an argument")
+        return
+    query = message.text.split(None, 1)[1]
+    m = await message.reply_text("Searching....")
     results = YoutubeSearch(query, max_results=4).to_dict()
     i = 0
     text = ""
