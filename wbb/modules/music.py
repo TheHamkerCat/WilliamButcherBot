@@ -16,9 +16,9 @@ ydl_opts = {
 }
 
 
-@app.on_message(cust_filter.command(commands =("music")) & ~filters.edited)
+@app.on_message(cust_filter.command(commands=("music")) & ~filters.edited)
 async def music(_, message: Message):
-    if len(message.command)!= 2:
+    if len(message.command) != 2:
         await message.reply_text(
             "`/music` needs a link as argument")
         return
@@ -39,8 +39,8 @@ async def music(_, message: Message):
                 audio_file_weba = basename + ".weba"
                 os.rename(audio_file, audio_file_weba)
                 audio_file = audio_file_weba
-    except:
-        await m.edit("The link is probably incorrect")
+    except Exception as e:
+        await m.edit(str(e))
         return
         # info
     title = info_dict['title']
@@ -51,8 +51,8 @@ async def music(_, message: Message):
     await m.delete()
     await message.reply_chat_action("upload_document")
     await message.reply_audio(audio_file, caption=caption,
-                                  duration=duration, performer=performer,
-                                  title=title, thumb=thumbnail_file)
+                              duration=duration, performer=performer,
+                              title=title, thumb=thumbnail_file)
     os.remove(audio_file)
     os.remove(thumbnail_file)
 

@@ -1,4 +1,3 @@
-import random
 import requests as r
 from pyrogram.types import Message
 from pyrogram import filters

@@ -6,7 +6,6 @@ from os.path import dirname, basename, isfile
 from wbb import MOD_LOAD, MOD_NOLOAD, log
 
 
-
 def __list_all_modules():
     # This generates a list of modules in this
     # folder for the * in __main__ to work.
