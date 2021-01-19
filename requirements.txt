@@ -9,8 +9,6 @@ uvloop
 youtube_dl
 youtube_search
 search_engine_parser
-wikipedia
 wget
-ipinfo
 cryptography
 googletrans==4.0.0-rc1
