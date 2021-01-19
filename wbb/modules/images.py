@@ -10,7 +10,6 @@ from wbb import app, WALL_API_KEY
 
 __MODULE__ = "Images"
 __HELP__ = '''/cat  - Get Cute Cats Images
-/dog  - Get Cute Dogs Images
 /wall - Get Wallpapers'''
 
 
@@ -27,16 +26,6 @@ async def cat(_, message: Message):
         data = json.loads(url.read().decode())
     cat_url = (data[0]['url'])
     await message.reply_photo(cat_url)
-
-
-@app.on_message(cust_filter.command(commands=("dog")) & ~filters.edited)
-async def dog(_, message: Message):
-    with urllib.request.urlopen(
-        "https://api.thedogapi.com/v1/images/search"
-    ) as url:
-        data = json.loads(url.read().decode())
-    dog_url = (data[0]['url'])
-    await message.reply_photo(dog_url)
 
 
 @app.on_message(cust_filter.command(commands=("wall")) & ~filters.edited)

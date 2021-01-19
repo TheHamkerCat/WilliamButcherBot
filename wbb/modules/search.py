@@ -1,4 +1,3 @@
-import wikipedia
 from youtube_search import YoutubeSearch
 from search_engine_parser import GoogleSearch
 from pyrogram.types import Message
@@ -10,9 +9,6 @@ from wbb.utils import cust_filter
 __MODULE__ = "Search"
 __HELP__ = '''/ud - Search For Something In Urban Dictionary
 /google - Search For Something On Google
-/so - Search For Something On StackOverflow
-/gh - Search For Something On Github
-/wiki - Search For Something On Wikipedia
 /yt - Search For Something On YouTube'''
 
 # ud -  urbandictionary
@@ -62,75 +58,6 @@ async def google(_, message: Message):
             pass
     await message.reply_text(result, disable_web_page_preview=True)
 
-
-# StackOverflow [This is also a google search with some added args]
-
-
-@app.on_message(cust_filter.command(commands=("so")) & ~filters.edited)
-async def stack(_, message: Message):
-    if len(message.command) < 2:
-        await message.reply_text('"/so" Needs An Argument')
-        return
-    gett = message.text.split(None, 1)[1]
-    text = gett + ' "site:stackoverflow.com"'
-    gresults = await GoogleSearch().async_search(text, 1)
-    result = ""
-    for i in range(4):
-        try:
-            title = gresults["titles"][i].replace("\n", " ")
-            source = gresults["links"][i]
-            description = gresults["descriptions"][i]
-            result += f"[{title}]({source})\n"
-            result += f"`{description}`\n\n"
-        except IndexError:
-            pass
-    await message.reply_text(result, disable_web_page_preview=True)
-
-
-# Github [This is also a google search with some added args]
-
-
-@app.on_message(cust_filter.command(commands=("gh")) & ~filters.edited)
-async def github(_, message: Message):
-    if len(message.command) < 2:
-        await message.reply_text('"/gh" Needs An Argument')
-        return
-    gett = message.text.split(None, 1)[1]
-    text = gett + ' "site:github.com"'
-    gresults = await GoogleSearch().async_search(text, 1)
-    result = ""
-    for i in range(4):
-        try:
-            title = gresults["titles"][i].replace("\n", " ")
-            source = gresults["links"][i]
-            description = gresults["descriptions"][i]
-            result += f"[{title}]({source})\n"
-            result += f"`{description}`\n\n"
-        except IndexError:
-            pass
-    await message.reply_text(result, disable_web_page_preview=True)
-
-
-# Wikipedia
-
-
-@app.on_message(cust_filter.command(commands=("wiki")) & ~filters.edited)
-async def wiki(_, message: Message):
-    if len(message.command) < 2:
-        await message.reply_text('/wiki Needs An Argument')
-        return
-    query = message.text.split(None, 1)[1]
-    limit = 5
-    wikipedia.set_lang("en")
-    results = wikipedia.search(query)
-    output = "```Found These Topics```"
-    for i, j in enumerate(results, start=1):
-        page = wikipedia.page(j)
-        url = page.url
-        output += f"[{j}]({url})\n"
-        if i == limit:
-            break
-    await message.reply_text(output, disable_web_page_preview=True)
 
 # YouTube
 
