@@ -34,11 +34,6 @@ async def runs(_, message: Message):
     await message.reply_text((await random_line('wbb/utils/runs.txt')))
 
 
-@app.on_message(cust_filter.command(commands=("quote")) & ~filters.edited)
-async def quote(_, message: Message):
-    await message.reply_text((await random_line('wbb/utils/quotes.txt')))
-
-
 @app.on_message(cust_filter.command(commands=("id")) & ~filters.edited)
 async def get_id(_, message: Message):
     if len(message.command) != 1:
@@ -81,19 +76,6 @@ async def random(_, message: Message):
         await message.reply_text("Strings Won't Work!, Pass A"
                                  + " Positive Integer Between 1-1000")
 
-# http cat search
-
-
-@app.on_message(cust_filter.command(commands=('http')) & ~filters.edited)
-async def http(_, message: Message):
-    if len(message.command) != 2:
-        await message.reply_text('"/http" Needs An Argument. Ex: `/http 404`')
-        return
-    code = message.text.split(None, 1)[1]
-    url = f"https://http.cat/{code}"
-    final = url.replace(' ', '')
-    await message.reply_photo(final)
-
 # Encrypt
 
 
@@ -123,27 +105,6 @@ async def decrypt(_, message: Message):
     decoded_text = cipher_suite.decrypt(text_in_bytes)
     bytes_in_text = decoded_text.decode("utf-8")
     await message.reply_text(bytes_in_text)
-
-# Ipinfo
-
-
-@app.on_message(cust_filter.command(commands=('ipinfo')) & ~filters.edited)
-async def ipaddrinfo(_, message: Message):
-    if len(message.command) != 2:
-        await message.reply_text('`/ipinfo` Requires An IP As Argument'
-                                 + '. Ex - `/ipinfo 1.1.1.1`')
-        return
-    ipaddr = message.text.split(None, 1)[1]
-    handler = ipinfo.getHandler()
-    details = handler.getDetails(ipaddr)
-    await message.reply_text(f'''`IP - {details.ip}
-City - {details.city}
-Region - {details.region}
-Country - {details.country}
-Location - {details.loc}
-ORG - {details.org}
-Postal - {details.postal}
-Timezone - {details.timezone}`''')
 
 
 # Cheat.sh
