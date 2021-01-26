@@ -9,11 +9,8 @@ del - Delete Replied Message
 dog - Get Cute Dogs Images
 encrypt - Encrypt Text
 google - Search For Something On Google
-gh - Search For Something On Github
 help - Help Yourself!
-http - Get Cats Reference Photo For Http Error Codes
 id - Get Chat_ID or User_ID
-ipinfo - Get Info About An Ip Address
 kick - Kick A User
 log - Get Logs From Last Run.
 music - [link] To Download Music From Various Websites
@@ -23,14 +20,11 @@ pin - Pin The Replied Message
 ping - Get Response Time From All TG Datacenters
 promote - Promote A Member
 purge - Purge Messages
-quote - Get Random Linux Quotes
 random - Generate Random Complex Passwords
 repo - Get My Github Repository Link And Support Group Link
 rice - Forward Your Linux Rice To DE_WM'sRice Gallery only works in DE_WM
 runs - Idk Test Yourself
-start - Start The Bot
 speedtest - To Perform A Speedtest.
-so - Search For Something On StackOverflow
 song - To Download Songs From JioSaavn
 stats  - To Check System Status.
 succ - Sends Succ Image For A Given Word
@@ -38,8 +32,6 @@ tr - Translate A Message
 ud - Search For Something In Urban Dictionary
 unban - Unban A User
 unmute - Unmute A User
-unpin - Unpin The Last Pinned Message.
 wall - Get Wallpapers
 weather - Get Weather Info
-wiki - Search For Something On Wikipedia
 yt - Search For Something On YouTube
