@@ -91,74 +91,81 @@ async def purge(client, message: Message):
 
 @app.on_message(cust_filter.command(commands=("kick")) & ~filters.edited)
 async def kick(_, message: Message):
-    if (await app.get_chat_member(
-        message.chat.id, message.from_user.id)).status == 'creator' \
-        or (await app.get_chat_member(
-            message.chat.id, message.from_user.id)).can_restrict_members \
-            is True or message.from_user.id in SUDO:
+    try:
+        if (await app.get_chat_member(
+            message.chat.id, message.from_user.id)).status == 'creator' \
+            or (await app.get_chat_member(
+                message.chat.id, message.from_user.id)).can_restrict_members \
+                is True or message.from_user.id in SUDO:
 
-        if len(message.command) == 2:
-            username = (message.text.split(None, 1)[1])
-            if (await app.get_users(username)).id in SUDO:
-                await message.reply_text("You Wanna Kick The Elevated One?")
-            else:
-                if (await app.get_users(username)).id in \
-                        await list_members(message.chat.id):
-                    await message.chat.kick_member(username)
-                    await message.chat.unban_member(username)
-                    await message.reply_text(f"Kicked {username}")
+            if len(message.command) == 2:
+                username = (message.text.split(None, 1)[1])
+                if (await app.get_users(username)).id in SUDO:
+                    await message.reply_text("You Wanna Kick The Elevated One?")
                 else:
-                    await message.reply_text("This user isn't here,"
-                                             " consider kicking yourself.")
+                    if (await app.get_users(username)).id in \
+                            await list_members(message.chat.id):
+                        await message.chat.kick_member(username)
+                        await message.chat.unban_member(username)
+                        await message.reply_text(f"Kicked {username}")
+                    else:
+                        await message.reply_text("This user isn't here,"
+                                                 " consider kicking yourself.")
 
-        if len(message.command) == 1 and message.reply_to_message:
-            if message.reply_to_message.from_user.id in SUDO:
-                await message.reply_text("You Wanna Kick The Elevated One?")
-            else:
-                if message.reply_to_message.from_user.id in \
-                        await list_members(message.chat.id):
-                    user_id = message.reply_to_message.from_user.id
-                    await message.reply_to_message.chat.kick_member(user_id)
-                    await message.reply_to_message.chat.unban_member(user_id)
-                    await message.reply_text("Kicked!")
+            if len(message.command) == 1 and message.reply_to_message:
+                if message.reply_to_message.from_user.id in SUDO:
+                    await message.reply_text("You Wanna Kick The Elevated One?")
                 else:
-                    await message.reply_text("This user isn't here.")
+                    if message.reply_to_message.from_user.id in \
+                            await list_members(message.chat.id):
+                        user_id = message.reply_to_message.from_user.id
+                        await message.reply_to_message.chat.kick_member(user_id)
+                        await message.reply_to_message.chat.unban_member(user_id)
+                        await message.reply_text("Kicked!")
+                    else:
+                        await message.reply_text("This user isn't here.")
+    
+    except Exception as e:
+        await message.reply_text(str(e))
 
 # Ban members
 
 
 @app.on_message(cust_filter.command(commands=("ban")) & ~filters.edited)
 async def ban(_, message: Message):
-    if (await app.get_chat_member(
-        message.chat.id, message.from_user.id)).status == 'creator' \
-        or (await app.get_chat_member(
-            message.chat.id, message.from_user.id)).can_restrict_members \
-            is True or message.from_user.id in SUDO:
+    try:
+        if (await app.get_chat_member(
+            message.chat.id, message.from_user.id)).status == 'creator' \
+            or (await app.get_chat_member(
+                message.chat.id, message.from_user.id)).can_restrict_members \
+                is True or message.from_user.id in SUDO:
 
-        if len(message.command) == 2:
-            username = (message.text.split(None, 1)[1])
-            if (await app.get_users(username)).id in SUDO:
-                await message.reply_text("You Wanna Ban The Elevated One?")
-            else:
-                if (await app.get_users(username)).id in \
-                        await list_members(message.chat.id):
-                    await message.chat.kick_member(username)
-                    await message.reply_text(f"Banned! {username}")
+            if len(message.command) == 2:
+                username = (message.text.split(None, 1)[1])
+                if (await app.get_users(username)).id in SUDO:
+                    await message.reply_text("You Wanna Ban The Elevated One?")
                 else:
-                    await message.reply_text("This user isn't here,"
-                                             " consider banning yourself.")
+                    if (await app.get_users(username)).id in \
+                            await list_members(message.chat.id):
+                        await message.chat.kick_member(username)
+                        await message.reply_text(f"Banned! {username}")
+                    else:
+                        await message.reply_text("This user isn't here,"
+                                                 " consider banning yourself.")
 
-        if len(message.command) == 1 and message.reply_to_message:
-            if message.reply_to_message.from_user.id in SUDO:
-                await message.reply_text("You Wanna Ban The Elevated One?")
-            else:
-                if message.reply_to_message.from_user.id in \
-                        await list_members(message.chat.id):
-                    user_id = message.reply_to_message.from_user.id
-                    await message.reply_to_message.chat.kick_member(user_id)
-                    await message.reply_text("Banned!")
+            if len(message.command) == 1 and message.reply_to_message:
+                if message.reply_to_message.from_user.id in SUDO:
+                    await message.reply_text("You Wanna Ban The Elevated One?")
                 else:
-                    await message.reply_text("This user isn't here.")
+                    if message.reply_to_message.from_user.id in \
+                            await list_members(message.chat.id):
+                        user_id = message.reply_to_message.from_user.id
+                        await message.reply_to_message.chat.kick_member(user_id)
+                        await message.reply_text("Banned!")
+                    else:
+                        await message.reply_text("This user isn't here.")
+    except Exception as e:
+        await message.reply_text(str(e))
 
 
 # Unban members
@@ -166,30 +173,33 @@ async def ban(_, message: Message):
 
 @app.on_message(cust_filter.command(commands=("unban")) & ~filters.edited)
 async def unban(_, message: Message):
-    if (await app.get_chat_member(
-        message.chat.id, message.from_user.id)).status == 'creator' \
-        or (await app.get_chat_member(
-            message.chat.id, message.from_user.id)).can_restrict_members \
-            is True or message.from_user.id in SUDO:
+    try:
+        if (await app.get_chat_member(
+            message.chat.id, message.from_user.id)).status == 'creator' \
+            or (await app.get_chat_member(
+                message.chat.id, message.from_user.id)).can_restrict_members \
+                is True or message.from_user.id in SUDO:
 
-        if len(message.command) == 2:
-            username = (message.text.split(None, 1)[1])
-            if (await app.get_users(username)).id not in \
-                    await list_members(message.chat.id):
-                await message.chat.unban_member(username)
-                await message.reply_text(f"Unbanned! {username}")
-            else:
-                await message.reply_text("This user is already here,"
-                                         " consider banning yourself.")
+            if len(message.command) == 2:
+                username = (message.text.split(None, 1)[1])
+                if (await app.get_users(username)).id not in \
+                        await list_members(message.chat.id):
+                    await message.chat.unban_member(username)
+                    await message.reply_text(f"Unbanned! {username}")
+                else:
+                    await message.reply_text("This user is already here,"
+                                             " consider banning yourself.")
 
-        if len(message.command) == 1 and message.reply_to_message:
-            if message.reply_to_message.from_user.id not in \
-                    await list_members(message.chat.id):
-                user_id = message.reply_to_message.from_user.id
-                await message.chat.unban_member(user_id)
-                await message.reply_text("Unbanned!")
-            else:
-                await message.reply_text("This user is already here.")
+            if len(message.command) == 1 and message.reply_to_message:
+                if message.reply_to_message.from_user.id not in \
+                        await list_members(message.chat.id):
+                    user_id = message.reply_to_message.from_user.id
+                    await message.chat.unban_member(user_id)
+                    await message.reply_text("Unbanned!")
+                else:
+                    await message.reply_text("This user is already here.")
+    except Exception as e:
+        await message.reply_text(str(e))
 
 
 # Delete messages
@@ -197,91 +207,99 @@ async def unban(_, message: Message):
 
 @app.on_message(cust_filter.command(commands=("del")))
 async def delete(_, message: Message):
-    admins = await list_admins(message.chat.id)
-    chat_id = message.chat.id
-    from_user_id = message.from_user.id
+    try:
+        admins = await list_admins(message.chat.id)
+        chat_id = message.chat.id
+        from_user_id = message.from_user.id
 
-    if message.from_user.id in admins \
-            or message.from_user.id in SUDO:
-        if (await app.get_chat_member(chat_id,
-                                      from_user_id)).can_delete_messages \
-            or (await app.get_chat_member(chat_id, from_user_id)).status \
-            == 'creator' \
+        if message.from_user.id in admins \
                 or message.from_user.id in SUDO:
-            await message.reply_to_message.delete()
-            await message.delete()
-    else:
-        await message.reply_text("You Don't Have Enough Permissions,"
-                                 + " Consider Deleting Yourself!")
+            if (await app.get_chat_member(chat_id,
+                                          from_user_id)).can_delete_messages \
+                or (await app.get_chat_member(chat_id, from_user_id)).status \
+                == 'creator' \
+                    or message.from_user.id in SUDO:
+                await message.reply_to_message.delete()
+                await message.delete()
+        else:
+            await message.reply_text("You Don't Have Enough Permissions,"
+                                     + " Consider Wiping Yourself Off The Existence!")
+    except Exception as e:
+        await message.reply_text(str(e))
 
 # Promote Members
 
 
 @app.on_message(cust_filter.command(commands=("promote")) & ~filters.edited)
 async def promote(_, message: Message):
-    admins = await list_admins(message.chat.id)
-    chat_id = message.chat.id
-    from_user_id = message.from_user.id
+    try:
+        admins = await list_admins(message.chat.id)
+        chat_id = message.chat.id
+        from_user_id = message.from_user.id
 
-    if (await app.get_chat_member(chat_id,
-                                  BOT_ID)).can_promote_members:
-        if message.from_user.id in admins \
-                or message.from_user.id in SUDO:
-            if (await app.get_chat_member(chat_id,
-                                          from_user_id)).can_promote_members \
-                or (await app.get_chat_member(chat_id, from_user_id)).status \
-                == 'creator' \
+        if (await app.get_chat_member(chat_id,
+                                      BOT_ID)).can_promote_members:
+            if message.from_user.id in admins \
                     or message.from_user.id in SUDO:
+                if (await app.get_chat_member(chat_id,
+                                              from_user_id)).can_promote_members \
+                    or (await app.get_chat_member(chat_id, from_user_id)).status \
+                    == 'creator' \
+                        or message.from_user.id in SUDO:
 
-                if message.text != '/promote':
-                    username = message.text.replace('/promote', '')
-                    user_id = (await app.get_users(username)).id
-                    await message.chat.promote_member(
-                        user_id=user_id,
-                        can_change_info=True,
-                        can_invite_users=True,
-                        can_delete_messages=True)
-                    await message.reply_text('Promoted!')
+                    if message.text != '/promote':
+                        username = message.text.replace('/promote', '')
+                        user_id = (await app.get_users(username)).id
+                        await message.chat.promote_member(
+                            user_id=user_id,
+                            can_change_info=True,
+                            can_invite_users=True,
+                            can_delete_messages=True)
+                        await message.reply_text('Promoted!')
 
+                    else:
+                        user_id = message.reply_to_message.from_user.id
+                        await message.chat.promote_member(
+                            user_id=user_id,
+                            can_change_info=True,
+                            can_invite_users=True,
+                            can_delete_messages=True)
+                        await message.reply_text('Promoted!')
                 else:
-                    user_id = message.reply_to_message.from_user.id
-                    await message.chat.promote_member(
-                        user_id=user_id,
-                        can_change_info=True,
-                        can_invite_users=True,
-                        can_delete_messages=True)
-                    await message.reply_text('Promoted!')
-
+                    await message.reply_text("Yeah, I Can See You're An Admin,"
+                                             + " But You Don't Have Permissions"
+                                             + " To Promote Someone.")
             else:
-                await message.reply_text("Yeah, I Can See You're An Admin,"
-                                         + " But You Don't Have Permissions"
-                                         + " To Promote Someone.")
+                await message.reply_text("You're Not An Admin, Want A Good Ban?")
         else:
-            await message.reply_text("You're Not An Admin, Want A Good Ban?")
-    else:
-        await message.reply_text("Well, Your Know What?, I'M NOT AN ADMIN!"
-                                 + " MAKE ME ADMIN!")
+            await message.reply_text("Well, Your Know What?, I'M NOT AN ADMIN!"
+                                     + " MAKE ME ADMIN!")
+    except Exception as e:
+        await message.reply_text(str(e))
 
 # Pin Messages
 
 
 @app.on_message(cust_filter.command(commands=("pin")) & ~filters.edited)
 async def pin(_, message: Message):
-    admins = await list_admins(message.chat.id)
-    chat_id = message.chat.id
-    from_user_id = message.from_user.id
+    try:
+        admins = await list_admins(message.chat.id)
+        chat_id = message.chat.id
+        from_user_id = message.from_user.id
 
-    if message.from_user.id in admins \
-            or message.from_user.id in SUDO:
-        if (await app.get_chat_member(chat_id,
-                                      from_user_id)).can_pin_messages \
-            or (await app.get_chat_member(chat_id, from_user_id)).status \
-            == 'creator' \
+        if message.from_user.id in admins \
                 or message.from_user.id in SUDO:
+            if (await app.get_chat_member(chat_id,
+                                          from_user_id)).can_pin_messages \
+                or (await app.get_chat_member(chat_id, from_user_id)).status \
+                == 'creator' \
+                    or message.from_user.id in SUDO:
 
-            await message.reply_to_message.pin(disable_notification=True)
-    else:
-        await message.reply_text("You're Not An Admin, Stop Spamming!")
+                await message.reply_to_message.pin(disable_notification=True)
+        else:
+            await message.reply_text("You're Not An Admin, Stop Spamming!")
+    except Exception as e:
+        await message.reply_text(str(e))
 
 
 # Mute members
@@ -289,41 +307,47 @@ async def pin(_, message: Message):
 
 @app.on_message(cust_filter.command(commands=("mute")) & ~filters.edited)
 async def mute(_, message: Message):
-    chat_id = message.chat.id
-    from_user_id = message.from_user.id
-    if not message.reply_to_message:
-        await message.reply_text("Reply To A User's Message!")
-        return
+    try:
+        chat_id = message.chat.id
+        from_user_id = message.from_user.id
+        if not message.reply_to_message:
+            await message.reply_text("Reply To A User's Message!")
+            return
 
-    if (await app.get_chat_member(chat_id,
-                                  from_user_id)).can_restrict_members \
-        or (await app.get_chat_member(chat_id, from_user_id)).status \
-        == 'creator' \
-            or message.from_user.id in SUDO:
-        victim = message.reply_to_message.from_user.id
-        await message.chat.restrict_member(victim,
-                                           permissions=ChatPermissions())
-        await message.reply_text("Muted!")
-    else:
-        await message.reply_text("Get Yourself An Admin Tag!")
+        if (await app.get_chat_member(chat_id,
+                                      from_user_id)).can_restrict_members \
+            or (await app.get_chat_member(chat_id, from_user_id)).status \
+            == 'creator' \
+                or message.from_user.id in SUDO:
+            victim = message.reply_to_message.from_user.id
+            await message.chat.restrict_member(victim,
+                                               permissions=ChatPermissions())
+            await message.reply_text("Muted!")
+        else:
+            await message.reply_text("Get Yourself An Admin Tag!")
+    except Exception as e:
+        await message.reply_text(str(e))
 
 # Unmute members
 
 
 @app.on_message(cust_filter.command(commands=("unmute")) & ~filters.edited)
 async def unmute(_, message: Message):
-    chat_id = message.chat.id
-    from_user_id = message.from_user.id
-    if not message.reply_to_message:
-        await message.reply_text("Reply To A User's Message!")
-        return
-    if (await app.get_chat_member(chat_id,
-                                  from_user_id)).can_restrict_members \
-        or (await app.get_chat_member(chat_id, from_user_id)).status \
-        == 'creator' \
-            or message.from_user.id in SUDO:
-        victim = message.reply_to_message.from_user.id
-        await message.chat.unban_member(victim)
-        await message.reply_text("Unmuted!")
-    else:
-        await message.reply_text("Get Yourself An Admin Tag!")
+    try:
+        chat_id = message.chat.id
+        from_user_id = message.from_user.id
+        if not message.reply_to_message:
+            await message.reply_text("Reply To A User's Message!")
+            return
+        if (await app.get_chat_member(chat_id,
+                                      from_user_id)).can_restrict_members \
+            or (await app.get_chat_member(chat_id, from_user_id)).status \
+            == 'creator' \
+                or message.from_user.id in SUDO:
+            victim = message.reply_to_message.from_user.id
+            await message.chat.unban_member(victim)
+            await message.reply_text("Unmuted!")
+        else:
+            await message.reply_text("Get Yourself An Admin Tag!")
+    except Exception as e:
+        await message.reply_text(str(e))

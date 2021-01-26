@@ -45,22 +45,25 @@ async def urbandict(_, message: Message):
 
 @app.on_message(cust_filter.command(commands=("google")) & ~filters.edited)
 async def google(_, message: Message):
-    if len(message.command) < 2:
-        await message.reply_text('"/google" Needs An Argument')
-        return
-    text = message.text.split(None, 1)[1]
-    gresults = await GoogleSearch().async_search(text, 1)
-    result = ""
-    for i in range(4):
-        try:
-            title = gresults["titles"][i].replace("\n", " ")
-            source = gresults["links"][i]
-            description = gresults["descriptions"][i]
-            result += f"[{title}]({source})\n"
-            result += f"`{description}`\n\n"
-        except IndexError:
-            pass
-    await message.reply_text(result, disable_web_page_preview=True)
+    try:
+        if len(message.command) < 2:
+            await message.reply_text('"/google" Needs An Argument')
+            return
+        text = message.text.split(None, 1)[1]
+        gresults = await GoogleSearch().async_search(text, 1)
+        result = ""
+        for i in range(4):
+            try:
+                title = gresults["titles"][i].replace("\n", " ")
+                source = gresults["links"][i]
+                description = gresults["descriptions"][i]
+                result += f"[{title}]({source})\n"
+                result += f"`{description}`\n\n"
+            except IndexError:
+                pass
+        await message.reply_text(result, disable_web_page_preview=True)
+    except Exception as e:
+        await message.reply_text(str(e))
 
 
 # StackOverflow [This is also a google search with some added args]
@@ -92,23 +95,26 @@ async def stack(_, message: Message):
 
 @app.on_message(cust_filter.command(commands=("gh")) & ~filters.edited)
 async def github(_, message: Message):
-    if len(message.command) < 2:
-        await message.reply_text('"/gh" Needs An Argument')
-        return
-    gett = message.text.split(None, 1)[1]
-    text = gett + ' "site:github.com"'
-    gresults = await GoogleSearch().async_search(text, 1)
-    result = ""
-    for i in range(4):
-        try:
-            title = gresults["titles"][i].replace("\n", " ")
-            source = gresults["links"][i]
-            description = gresults["descriptions"][i]
-            result += f"[{title}]({source})\n"
-            result += f"`{description}`\n\n"
-        except IndexError:
-            pass
-    await message.reply_text(result, disable_web_page_preview=True)
+    try:
+        if len(message.command) < 2:
+            await message.reply_text('"/gh" Needs An Argument')
+            return
+        gett = message.text.split(None, 1)[1]
+        text = gett + ' "site:github.com"'
+        gresults = await GoogleSearch().async_search(text, 1)
+        result = ""
+        for i in range(4):
+            try:
+                title = gresults["titles"][i].replace("\n", " ")
+                source = gresults["links"][i]
+                description = gresults["descriptions"][i]
+                result += f"[{title}]({source})\n"
+                result += f"`{description}`\n\n"
+            except IndexError:
+                pass
+        await message.reply_text(result, disable_web_page_preview=True)
+    except Exception as e:
+        await message.reply_text(str(e))
 
 
 # Wikipedia
@@ -116,40 +122,46 @@ async def github(_, message: Message):
 
 @app.on_message(cust_filter.command(commands=("wiki")) & ~filters.edited)
 async def wiki(_, message: Message):
-    if len(message.command) < 2:
-        await message.reply_text('/wiki Needs An Argument')
-        return
-    query = message.text.split(None, 1)[1]
-    limit = 5
-    wikipedia.set_lang("en")
-    results = wikipedia.search(query)
-    output = "```Found These Topics```"
-    for i, j in enumerate(results, start=1):
-        page = wikipedia.page(j)
-        url = page.url
-        output += f"[{j}]({url})\n"
-        if i == limit:
-            break
-    await message.reply_text(output, disable_web_page_preview=True)
+    try:
+        if len(message.command) < 2:
+            await message.reply_text('/wiki Needs An Argument')
+            return
+        query = message.text.split(None, 1)[1]
+        limit = 5
+        wikipedia.set_lang("en")
+        results = wikipedia.search(query)
+        output = "```Found These Topics```"
+        for i, j in enumerate(results, start=1):
+            page = wikipedia.page(j)
+            url = page.url
+            output += f"[{j}]({url})\n"
+            if i == limit:
+                break
+        await message.reply_text(output, disable_web_page_preview=True)
+    except Exception as e:
+        await message.reply_text(str(e))
 
 # YouTube
 
 
 @app.on_message(cust_filter.command(commands=("yt")) & ~filters.edited)
 async def ytsearch(_, message: Message):
-    if len(message.command) < 2:
-        await message.reply_text("/yt needs an argument")
-        return
-    query = message.text.split(None, 1)[1]
-    m = await message.reply_text("Searching....")
-    results = YoutubeSearch(query, max_results=4).to_dict()
-    i = 0
-    text = ""
-    while i < 4:
-        text += f"Title - {results[i]['title']}\n"
-        text += f"Duration - {results[i]['duration']}\n"
-        text += f"Views - {results[i]['views']}\n"
-        text += f"Channel - {results[i]['channel']}\n"
-        text += f"https://youtube.com{results[i]['url_suffix']}\n\n"
-        i += 1
-    await m.edit(text, disable_web_page_preview=True)
+    try:
+        if len(message.command) < 2:
+            await message.reply_text("/yt needs an argument")
+            return
+        query = message.text.split(None, 1)[1]
+        m = await message.reply_text("Searching....")
+        results = YoutubeSearch(query, max_results=4).to_dict()
+        i = 0
+        text = ""
+        while i < 4:
+            text += f"Title - {results[i]['title']}\n"
+            text += f"Duration - {results[i]['duration']}\n"
+            text += f"Views - {results[i]['views']}\n"
+            text += f"Channel - {results[i]['channel']}\n"
+            text += f"https://youtube.com{results[i]['url_suffix']}\n\n"
+            i += 1
+        await m.edit(text, disable_web_page_preview=True)
+    except Exception as e:
+        await message.reply_text(str(e))
