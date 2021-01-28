@@ -116,30 +116,6 @@ async def github(_, message: Message):
         await message.reply_text(str(e))
 
 
-# Wikipedia
-
-
-@app.on_message(cust_filter.command(commands=("wiki")) & ~filters.edited)
-async def wiki(_, message: Message):
-    try:
-        if len(message.command) < 2:
-            await message.reply_text('/wiki Needs An Argument')
-            return
-        query = message.text.split(None, 1)[1]
-        limit = 5
-        wikipedia.set_lang("en")
-        results = wikipedia.search(query)
-        output = "```Found These Topics```"
-        for i, j in enumerate(results, start=1):
-            page = wikipedia.page(j)
-            url = page.url
-            output += f"[{j}]({url})\n"
-            if i == limit:
-                break
-        await message.reply_text(output, disable_web_page_preview=True)
-    except Exception as e:
-        await message.reply_text(str(e))
-
 # YouTube
 
 
