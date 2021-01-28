@@ -124,7 +124,6 @@ async def kick(_, message: Message):
                         await message.reply_text("Kicked!")
                     else:
                         await message.reply_text("This user isn't here.")
-    
     except Exception as e:
         await message.reply_text(str(e))
 
