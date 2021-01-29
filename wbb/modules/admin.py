@@ -246,8 +246,8 @@ async def promote(_, message: Message):
                     == 'creator' \
                         or message.from_user.id in SUDO:
 
-                    if message.text != '/promote':
-                        username = message.text.replace('/promote', '')
+                    if not message.reply_to_message:
+                        username = message.text.split(None, 1)[1]
                         user_id = (await app.get_users(username)).id
                         await message.chat.promote_member(
                             user_id=user_id,
