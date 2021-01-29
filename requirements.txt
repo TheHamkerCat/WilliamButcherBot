@@ -2,6 +2,7 @@ TgCrypto
 aiohttp
 future
 psutil
+pillow
 pyrogram
 requests
 speedtest-cli
