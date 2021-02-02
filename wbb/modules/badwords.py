@@ -1,1 +1,1 @@
-listOfBadWords = ["fucku", "fuck", "fuckyou", "shit"]
+listOfBadWords = ["fuck you", "fuck", "fuckyou", "shit", "motherfucker"]
