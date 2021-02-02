@@ -157,3 +157,14 @@ async def tr(_, message: Message):
     text = message.reply_to_message.text
     i = Translator().translate(text, dest=lang)
     await message.reply_text(i.text)
+
+
+@app.on_message(filters.command('bun'))
+async def bunn(_, message):
+    if message.reply_to_message:
+        await message.reply_to_message.reply_sticker('CAACAgUAAx0CWIlO9AABARyRYBhyjKXFATVhu7AGQwip3TzSFiMAAuMBAAJ7usBUIu2xBtXTmuweBA')
+        await app.send_message(message.chat.id, text="Eat Bun")
+        return
+    if not message.reply_to_message:
+        await message.reply_sticker('CAACAgUAAx0CWIlO9AABARyRYBhyjKXFATVhu7AGQwip3TzSFiMAAuMBAAJ7usBUIu2xBtXTmuweBA')
+        await app.send_message(message.chat.id, text="Eat Bun")
