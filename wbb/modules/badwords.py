@@ -1,0 +1,1 @@
+listOfBadWords = ["fucku", "fuck", "fuckyou", "shit"]

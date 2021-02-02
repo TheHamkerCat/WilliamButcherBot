@@ -3,6 +3,7 @@ import string
 import requests
 from pyrogram import filters
 from pyrogram.types import Message
+from badwords import listOfBadWords as badWords
 from googletrans import Translator
 from cryptography.fernet import Fernet
 from wbb import app, FERNET_ENCRYPTION_KEY
@@ -157,3 +158,11 @@ async def tr(_, message: Message):
     text = message.reply_to_message.text
     i = Translator().translate(text, dest=lang)
     await message.reply_text(i.text)
+
+@app.on_message(filters.all)
+async def badwordsfilter2(_, message):
+    badMsg = message.text.split(' ')
+    for badWord in badMsg:
+        if badWord in bad_words:
+            await message.delete()
+            await message.reply_text(f"NoU {word}")
