@@ -141,6 +141,18 @@ async def weather(_, message: Message):
     data = r.text
     await message.reply_text(f"`{data}`")
 
+# Abuse Filter
+
+
+@app.on_message(filters.all)
+async def badwordsfilter2(_, message):
+    badMsg = message.text.split(' ')
+    for badWord in badMsg:
+        if badWord in bad_words:
+            await message.delete()
+            await message.reply_text(f"NoU {word}")
+ 
+
 # Translate
 
 
@@ -158,11 +170,3 @@ async def tr(_, message: Message):
     text = message.reply_to_message.text
     i = Translator().translate(text, dest=lang)
     await message.reply_text(i.text)
-
-@app.on_message(filters.all)
-async def badwordsfilter2(_, message):
-    badMsg = message.text.split(' ')
-    for badWord in badMsg:
-        if badWord in bad_words:
-            await message.delete()
-            await message.reply_text(f"NoU {word}")
