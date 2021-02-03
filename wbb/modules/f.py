@@ -36,7 +36,7 @@ async def end_callback(_, CallbackQuery):
 
 @app.on_callback_query(filters.regex("delete"))
 async def del_callback(_, CallbackQuery):
-    admins = await list_admins(CallbackQuery.chat.id)
+    admins = await list_admins(CallbackQuery.message.chat.id)
     if CallbackQuery.from_user.id not in admins:
         return
     global i, m
