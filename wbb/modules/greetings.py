@@ -58,7 +58,6 @@ async def callback_query_welcome_button(_, callback_query):
         await callback_query.answer("Congrats, captcha passed!")
         await button_message.chat.unban_member(pending_user_id)
         await button_message.delete()
-        await join_message.delete()
     else:
         await callback_query.answer("This is not for you")
 
