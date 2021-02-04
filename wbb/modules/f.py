@@ -17,8 +17,9 @@ keyboard = InlineKeyboardMarkup(
 
 @app.on_message(filters.command("f"))
 async def f(_, message):
-    global i, m
+    global i, m, pressers
     i = 0
+    pressers = []
     try:
         await m.delete()
     except:
