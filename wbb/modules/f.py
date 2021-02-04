@@ -18,6 +18,11 @@ keyboard = InlineKeyboardMarkup(
 @app.on_message(filters.command("f"))
 async def f(_, message):
     global i, m
+    i = 0
+    try:
+        await m.delete()
+    except:
+        pass
     admins = await list_admins(message.chat.id)
     if message.from_user.id not in admins:
         return
