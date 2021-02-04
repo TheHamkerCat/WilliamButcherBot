@@ -8,8 +8,8 @@ pressers = []
 keyboard = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton("F", callback_data="f"),
-                InlineKeyboardButton("Delete", callback_data="delete")
+                InlineKeyboardButton("F", callback_data="ff"),
+                InlineKeyboardButton("Delete", callback_data="deletef")
                 ]
             ]
         )
@@ -30,8 +30,8 @@ async def f(_, message):
     m = await app.send_message(message.chat.id, text=f"Press F To Pay Respect.\nRespect = `{i}`", reply_markup=keyboard)
 
 
-@app.on_callback_query(filters.regex("f"))
-async def end_callback(_, CallbackQuery):
+@app.on_callback_query(filters.regex("ff"))
+async def end_callbacc(_, CallbackQuery):
     global i, m, pressers
     i += 1
     user_id = CallbackQuery.from_user.id
@@ -46,8 +46,8 @@ async def end_callback(_, CallbackQuery):
     await app.answer_callback_query(CallbackQuery.id, "Respect +", show_alert=True)
 
 
-@app.on_callback_query(filters.regex("delete"))
-async def del_callback(_, CallbackQuery):
+@app.on_callback_query(filters.regex("deletef"))
+async def del_callbacc(_, CallbackQuery):
     admins = await list_admins(CallbackQuery.message.chat.id)
     if CallbackQuery.from_user.id not in admins:
         return
