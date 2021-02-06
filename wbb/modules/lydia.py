@@ -6,7 +6,7 @@ from wbb.utils.botinfo import BOT_ID
 from wbb import LYDIA_API
 
 __MODULE__ = 'Lydia'
-__HELP__ = "Lydia AI Chatbot"
+__HELP__ = "Lydia AI Chatbot\n /addchatbot - To Turn On Lydia\n /rmchatbot - To Turn Off Lydia"
 
 CoffeeHouseAPI = API(str(LYDIA_API))
 api_ = LydiaAI(CoffeeHouseAPI)
@@ -34,16 +34,12 @@ async def remove_chat(_, message):
         await message.reply_text('ChatBot Turned Off!')
 
 
-@app.on_message(~filters.edited & ~filters.private)
+@app.on_message(~filters.edited & ~filters.private & filters.text & filters.reply & ~filters.forwarded)
 async def chat_bot(_, message):
     global api_, chats, ses
     if message.chat.id not in chats:
         return
-    if not message.reply_to_message:
-        return
     if not message.reply_to_message.from_user.id == BOT_ID:
-        return
-    if not message.text:
         return
     await app.send_chat_action(message.chat.id, "typing")
     query = message.text

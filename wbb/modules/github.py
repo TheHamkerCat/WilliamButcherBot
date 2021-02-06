@@ -3,7 +3,7 @@ from pyrogram import filters
 from wbb import app
 
 __MODULE__ = 'Github'
-__HELP__ = "Get information about a GitHub user."
+__HELP__ = "Get information about a GitHub user.\n /github [username]"
 
 
 @app.on_message(filters.command('github'))
