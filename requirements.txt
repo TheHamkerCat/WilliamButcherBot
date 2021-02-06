@@ -8,6 +8,7 @@ requests
 speedtest-cli
 uvloop
 youtube_dl
+coffeehouse
 youtube_search
 search_engine_parser
 wget
