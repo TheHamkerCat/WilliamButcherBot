@@ -27,7 +27,7 @@ async def add_chat(_, message):
 @app.on_message(filters.command('rmchatbot'))
 async def remove_chat(_, message):
     global chats
-    if message.chats.id not in chats:
+    if message.chat.id not in chats:
         await message.reply_text("ChatBot Is Already Off")
     else:
         chats.remove(message.chat.id)
