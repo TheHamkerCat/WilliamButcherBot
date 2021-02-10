@@ -5,7 +5,9 @@ import youtube_dl
 from pyrogram import filters
 from pyrogram.types import Message
 from wbb.utils import cust_filter
-from wbb import app, OWNER_ID
+from wbb import app, OWNER_ID, SUDO_USER_ID
+
+SUDOERS = [OWNER_ID, SUDO_USER_ID]
 
 __MODULE__ = "Music"
 __HELP__ = "/music [link] To Download Music From Various Websites"
@@ -21,7 +23,7 @@ ydl_opts = {
 }
 
 
-@app.on_message(cust_filter.command(commands=("music")) & ~filters.edited & filters.user(OWNER_ID))
+@app.on_message(cust_filter.command(commands=("music")) & ~filters.edited & filters.user(SUDOERS))
 async def music(_, message: Message):
     if len(message.command) != 2:
         await message.reply_text("`/music` needs a link as argument")
