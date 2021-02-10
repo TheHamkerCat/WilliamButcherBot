@@ -39,12 +39,8 @@ async def music(_, message: Message):
             # .webm -> .weba
             basename = audio_file.rsplit(".", 1)[-2]
             thumbnail_url = info_dict['thumbnail']
-            thumbnail_file = basename + "." + \
-                get_file_extension_from_url(thumbnail_url)
-            if info_dict['ext'] == 'webm':
-                audio_file_weba = basename + ".mp3"
-                os.rename(audio_file, audio_file_weba)
-                audio_file = audio_file_weba
+            thumbnail_file = basename + "." + get_file_extension_from_url(thumbnail_url)
+            audio_file = basename + ".mp3"
     except Exception as e:
         await m.edit(str(e))
         return
