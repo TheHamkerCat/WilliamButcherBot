@@ -11,8 +11,13 @@ __MODULE__ = "Music"
 __HELP__ = "/music [link] To Download Music From Various Websites"
 
 ydl_opts = {
-    'format': 'bestaudio',
-    'writethumbnail': True
+    'format': 'bestaudio/best',
+    'writethumbnail': True,
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '192'
+    }]
 }
 
 
@@ -35,7 +40,7 @@ async def music(_, message: Message):
             thumbnail_file = basename + "." + \
                 get_file_extension_from_url(thumbnail_url)
             if info_dict['ext'] == 'webm':
-                audio_file_weba = basename + ".weba"
+                audio_file_weba = basename + ".mp3"
                 os.rename(audio_file, audio_file_weba)
                 audio_file = audio_file_weba
     except Exception as e:
