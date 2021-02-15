@@ -20,12 +20,20 @@ __HELP__ = '''/commit - Generate Funny Commit Messages
 /ipinfo - Get Info About An Ip Address
 /cheat - Get Programming Related Help
 /weather - To Get Weather Info
-/tr - Translate A Message'''
+/tr - Translate A Message
+#RTFM - Check it lol'''
 
 
 @app.on_message(cust_filter.command(commands=("commit")) & ~filters.edited)
 async def commit(_, message: Message):
     await message.reply_text((await random_line('wbb/utils/commit.txt')))
+
+@app.on_message(filters.command("RTFM", "#"))
+async def rtfm(_, message):
+    if not message.reply_to_message:
+        await message.reply_text("Reply To A Message lol")
+        return
+    await message.reply_to_message.reply_text("Are You Lost? READ THE FUCKING DOCS!")
 
 
 @app.on_message(cust_filter.command(commands=("runs")) & ~filters.edited)
