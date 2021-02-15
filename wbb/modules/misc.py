@@ -30,6 +30,7 @@ async def commit(_, message: Message):
 
 @app.on_message(filters.command("RTFM", "#"))
 async def rtfm(_, message):
+    await message.delete()
     if not message.reply_to_message:
         await message.reply_text("Reply To A Message lol")
         return
