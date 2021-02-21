@@ -2,6 +2,9 @@ from __future__ import unicode_literals
 from urllib.parse import urlparse
 import os
 import youtube_dl
+import aiohttp
+import json
+import wget
 from pyrogram import filters
 from pyrogram.types import Message
 from wbb.utils import cust_filter
@@ -57,6 +60,44 @@ async def music(_, message: Message):
                               title=title, thumb=thumbnail_file)
     os.remove(audio_file)
     os.remove(thumbnail_file)
+
+# Convert seconds to mm:ss
+def convert_seconds(seconds):
+    seconds = seconds % (24 * 3600)
+    seconds %= 3600
+    minutes = seconds // 60
+    seconds %= 60
+    return "%02d:%02d" % (minutes, seconds)
+
+
+
+@app.on_message(filters.command("deezer"))
+async def deezer(_, message):
+    if len(message.command) < 2:
+        await message.reply_text("/deezer [song_name]")
+    name = message.text.split(None, 1)[1]
+    m = await message.reply_text(f"Searching `{name}` On Deezer.")
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                f"http://52.0.6.104:8000/deezer/{name}/1"
+            ) as resp:
+                r = json.loads(await resp.text())
+        title = r[0]["title"]
+        artist = r[0]["artist"]
+        url = r[0]["url"]
+        await m.edit("Downloading")
+        song = wget.download(url)
+        await m.edit("Uploading")
+        await message.reply_audio(audio=song, title=title,
+                              performer=artist)
+        await m.delete()
+    except Exception as e:
+        print(str(e))
+        await m.edit(
+            "Found Literally Nothing, You Should Work On Your English!"
+        )
+        return
 
 
 def get_file_extension_from_url(url):
