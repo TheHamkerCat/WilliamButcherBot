@@ -89,8 +89,7 @@ async def help_command(_, message):
     await message.reply_photo(
         caption=text,
         photo="https://hamker.me/z/b8vzvds.png",
-        reply_markup=keyboard,
-        disable_web_page_preview=True)
+        reply_markup=keyboard)
 
 
 async def help_parser(message, keyboard=None):
