@@ -86,8 +86,9 @@ async def help_command(_, message):
         await message.reply("Contact me in PM.", reply_markup=keyboard)
         return
     text, keyboard = await help_parser(message)
-    await message.reply(
-        text,
+    await message.reply_photo(
+        caption=text,
+        photo="https://hamker.me/z/b8vzvds.png",
         reply_markup=keyboard,
         disable_web_page_preview=True)
 
