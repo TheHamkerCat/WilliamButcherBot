@@ -15,7 +15,7 @@ from pyrogram import filters
 from wbb import app, WELCOME_DELAY_KICK_SEC
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.types import ChatPermissions
-from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
+from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant, ChatAdminRequired
 
 
 @app.on_message(filters.new_chat_members)
@@ -25,7 +25,13 @@ async def welcome(_, message: Message):
     text = (f"Welcome, {', '.join(new_members)}\n**Are you human?**\n"
             "You will be removed from this chat if you are not verified "
             f"in {WELCOME_DELAY_KICK_SEC} seconds")
-    await message.chat.restrict_member(message.from_user.id, ChatPermissions())
+    try:
+        await message.chat.restrict_member(message.from_user.id, ChatPermissions())
+    except ChatAdminRequired:
+        msg = "Yeah, I Can't Verify Newly Joined Members, Make Sure I'm Admin."
+        await message.reply_text(msg)
+        return
+
     button_message = await message.reply(
         text,
         reply_markup=InlineKeyboardMarkup(
