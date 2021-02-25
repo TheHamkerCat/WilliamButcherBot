@@ -17,7 +17,6 @@ from wbb.utils.errors import capture_err
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.types import ChatPermissions
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant, ChatAdminRequired
-from pyrogram.errors.exceptions.forbidden_403 import 
 
 @app.on_message(filters.new_chat_members)
 @capture_err
