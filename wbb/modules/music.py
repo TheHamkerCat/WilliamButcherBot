@@ -9,6 +9,7 @@ from pyrogram import filters
 from pyrogram.types import Message
 from wbb.utils import cust_filter
 from wbb import app, OWNER_ID, SUDO_USER_ID
+from wbb.utils.errors import capture_err
 
 SUDOERS = [OWNER_ID, SUDO_USER_ID]
 
@@ -27,6 +28,7 @@ ydl_opts = {
 
 
 @app.on_message(cust_filter.command(commands=("music")) & ~filters.edited & filters.user(SUDOERS))
+@capture_err
 async def music(_, message: Message):
     if len(message.command) != 2:
         await message.reply_text("`/music` needs a link as argument")

@@ -7,6 +7,7 @@ from googletrans import Translator
 from cryptography.fernet import Fernet
 from wbb import app, FERNET_ENCRYPTION_KEY
 from wbb.utils import cust_filter, random_line
+from wbb.utils.errors import capture_err
 
 __MODULE__ = "Misc"
 __HELP__ = '''/commit - Generate Funny Commit Messages
@@ -25,10 +26,12 @@ __HELP__ = '''/commit - Generate Funny Commit Messages
 
 
 @app.on_message(cust_filter.command(commands=("commit")) & ~filters.edited)
+@capture_err
 async def commit(_, message: Message):
     await message.reply_text((await random_line('wbb/utils/commit.txt')))
 
 @app.on_message(filters.command("RTFM", "#"))
+@capture_err
 async def rtfm(_, message):
     await message.delete()
     if not message.reply_to_message:
@@ -38,11 +41,13 @@ async def rtfm(_, message):
 
 
 @app.on_message(cust_filter.command(commands=("runs")) & ~filters.edited)
+@capture_err
 async def runs(_, message: Message):
     await message.reply_text((await random_line('wbb/utils/runs.txt')))
 
 
 @app.on_message(cust_filter.command(commands=("id")) & ~filters.edited)
+@capture_err
 async def get_id(_, message: Message):
     if len(message.command) != 1:
         username = message.text.split(None, 1)[1]
@@ -65,6 +70,7 @@ async def get_id(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=('random')) & ~filters.edited)
+@capture_err
 async def random(_, message: Message):
     if len(message.command) != 2:
         await message.reply_text('"/random" Needs An Argurment.'
@@ -88,6 +94,7 @@ async def random(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=('encrypt')) & ~filters.edited)
+@capture_err
 async def encrypt(_, message: Message):
     if not message.reply_to_message:
         await message.reply_text('Reply To A Message To Encrypt It.')
@@ -103,6 +110,7 @@ async def encrypt(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=('decrypt')) & ~filters.edited)
+@capture_err
 async def decrypt(_, message: Message):
     if not message.reply_to_message:
         await message.reply_text('Reply To A Message To Decrypt It.')
@@ -119,6 +127,7 @@ async def decrypt(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("cheat")) & ~filters.edited)
+@capture_err
 async def cheat(_, message: Message):
     text = message.text.split(None, 1)[1]
     ftext = text.split()
@@ -140,6 +149,7 @@ async def cheat(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("weather")) & ~filters.edited)
+@capture_err
 async def weather(_, message: Message):
     city = message.text.split(None, 1)[1]
     if len(message.command) != 2:
@@ -153,6 +163,7 @@ async def weather(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("tr")) & ~filters.edited)
+@capture_err
 async def tr(_, message: Message):
     lang = message.text.split(None, 1)[1]
     if not message.reply_to_message or lang == "":
@@ -169,6 +180,7 @@ async def tr(_, message: Message):
 
 
 @app.on_message(filters.command('bun'))
+@capture_err
 async def bunn(_, message):
     if message.reply_to_message:
         await message.reply_to_message.reply_sticker('CAACAgUAAx0CWIlO9AABARyRYBhyjKXFATVhu7AGQwip3TzSFiMAAuMBAAJ7usBUIu2xBtXTmuweBA')

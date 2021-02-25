@@ -3,6 +3,7 @@ from pyrogram.types import Message, ChatPermissions
 from wbb import OWNER_ID, SUDO_USER_ID, app
 from wbb.utils import cust_filter
 from wbb.utils.botinfo import BOT_ID
+from wbb.utils.errors import capture_err
 
 __MODULE__ = "Admin"
 __HELP__ = '''/ban - Ban A User
@@ -40,6 +41,7 @@ async def list_members(group_id):
 
 
 @app.on_message(cust_filter.command(commands=("purge")) & ~filters.edited)
+@capture_err
 async def purge(client, message: Message):
     message_ids = []
     if message.chat.type not in ("supergroup", "channel"):
@@ -90,6 +92,7 @@ async def purge(client, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("kick")) & ~filters.edited)
+@capture_err
 async def kick(_, message: Message):
     try:
         if (await app.get_chat_member(
@@ -131,6 +134,7 @@ async def kick(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("ban")) & ~filters.edited)
+@capture_err
 async def ban(_, message: Message):
     try:
         if (await app.get_chat_member(
@@ -171,6 +175,7 @@ async def ban(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("unban")) & ~filters.edited)
+@capture_err
 async def unban(_, message: Message):
     try:
         if (await app.get_chat_member(
@@ -205,6 +210,7 @@ async def unban(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("del")))
+@capture_err
 async def delete(_, message: Message):
     try:
         admins = await list_admins(message.chat.id)
@@ -230,6 +236,7 @@ async def delete(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("promote")) & ~filters.edited)
+@capture_err
 async def promote(_, message: Message):
     try:
         admins = await list_admins(message.chat.id)
@@ -280,6 +287,7 @@ async def promote(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("pin")) & ~filters.edited)
+@capture_err
 async def pin(_, message: Message):
     try:
         admins = await list_admins(message.chat.id)
@@ -305,6 +313,7 @@ async def pin(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("mute")) & ~filters.edited)
+@capture_err
 async def mute(_, message: Message):
     try:
         chat_id = message.chat.id
@@ -331,6 +340,7 @@ async def mute(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("unmute")) & ~filters.edited)
+@capture_err
 async def unmute(_, message: Message):
     try:
         chat_id = message.chat.id

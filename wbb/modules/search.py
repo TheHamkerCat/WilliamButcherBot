@@ -5,6 +5,7 @@ from pyrogram import filters
 from requests import get
 from wbb import app
 from wbb.utils import cust_filter
+from wbb.utils.errors import capture_err
 
 __MODULE__ = "Search"
 __HELP__ = '''/ud - Search For Something In Urban Dictionary
@@ -15,6 +16,7 @@ __HELP__ = '''/ud - Search For Something In Urban Dictionary
 
 
 @app.on_message(cust_filter.command(commands=("ud")) & ~filters.edited)
+@capture_err
 async def urbandict(_, message: Message):
     if len(message.command) < 2:
         await message.reply_text('"/ud" Needs An Argument.')
@@ -40,6 +42,7 @@ async def urbandict(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("google")) & ~filters.edited)
+@capture_err
 async def google(_, message: Message):
     try:
         if len(message.command) < 2:
@@ -66,6 +69,7 @@ async def google(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("so")) & ~filters.edited)
+@capture_err
 async def stack(_, message: Message):
     try:
         if len(message.command) < 2:
@@ -93,6 +97,7 @@ async def stack(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("gh")) & ~filters.edited)
+@capture_err
 async def github(_, message: Message):
     try:
         if len(message.command) < 2:
@@ -120,6 +125,7 @@ async def github(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("yt")) & ~filters.edited)
+@capture_err
 async def ytsearch(_, message: Message):
     try:
         if len(message.command) < 2:

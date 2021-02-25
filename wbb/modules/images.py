@@ -7,6 +7,7 @@ from pyrogram import filters
 from pyrogram.types import Message
 from wbb.utils import cust_filter
 from wbb import app, WALL_API_KEY
+from wbb.utils.errors import capture_err
 
 __MODULE__ = "Images"
 __HELP__ = '''/cat  - Get Cute Cats Images
@@ -19,6 +20,7 @@ async def delete_message_with_delay(delay, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("cat")) & ~filters.edited)
+@capture_err
 async def cat(_, message: Message):
     with urllib.request.urlopen(
         "https://api.thecatapi.com/v1/images/search"
@@ -29,6 +31,7 @@ async def cat(_, message: Message):
 
 
 @app.on_message(cust_filter.command(commands=("wall")) & ~filters.edited)
+@capture_err
 async def wall(_, message: Message):
     if len(message.command) < 2:
         await message.reply_text("/wall needs an argument")

@@ -2,6 +2,7 @@ from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.types import InputMediaPhoto, InputMediaVideo
 from wbb import app
+from wbb.utils.errors import capture_err
 
 RICE_GROUP = "DE_WM"
 RICE_CHANNEL = "RiceGallery"
@@ -12,6 +13,7 @@ RICE_CHANNEL = "RiceGallery"
                 & filters.regex(r"^\[RICE\] ")
                 & ~filters.forwarded
                 & ~filters.edited)
+@capture_err
 async def rice(_, message: Message):
     """Forward media and media_group messages which has caption starts
     with [RICE] with space and description in RICE_GROUP to RICE_CHANNEL

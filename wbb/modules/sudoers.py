@@ -8,6 +8,7 @@ from pyrogram.types import Message
 import speedtest
 import psutil
 from wbb.utils import cust_filter, nekobin, formatter
+from wbb.utils.errors import capture_err
 from wbb import app, OWNER_ID, SUDO_USER_ID, bot_start_time, NEOFETCH, JSMAPI
 
 __MODULE__ = "Sudoers"
@@ -23,6 +24,7 @@ SUDOERS = [OWNER_ID, SUDO_USER_ID]
 
 
 @app.on_message(filters.user(SUDOERS) & cust_filter.command("log"))
+@capture_err
 async def logs_chat(_, message: Message):
     keyb = types.InlineKeyboardMarkup(
         [
@@ -78,6 +80,7 @@ def speed_convert(size):
 @app.on_message(
     filters.user(SUDOERS) & cust_filter.command(commands=("speedtest"))
 )
+@capture_err
 async def get_speedtest_result(_, message: Message):
     m = await message.reply_text("`Performing A Speedtest!`")
     speed = speedtest.Speedtest()
@@ -96,6 +99,7 @@ Latency  - {round((i["latency"]))} ms
 @app.on_message(
     filters.user(SUDOERS) & cust_filter.command(commands=("stats"))
 )
+@capture_err
 async def get_stats(_, message: Message):
     bot_uptime = int(time.time() - bot_start_time)
     cpu = psutil.cpu_percent(interval=0.5)
@@ -131,6 +135,7 @@ async def get_stats(_, message: Message):
 @app.on_message(
     filters.user(SUDOERS) & cust_filter.command(commands=("song"))
 )
+@capture_err
 async def song(_, message: Message):
     if len(message.command) < 2:
         await message.reply_text("/song requires an argument.")

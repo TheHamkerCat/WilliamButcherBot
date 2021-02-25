@@ -3,9 +3,11 @@ from pyrogram.types import Message
 from pyrogram import filters
 from wbb import app
 from wbb.utils import cust_filter
+from wbb.utils.errors import capture_err
 
 __MODULE__ = "Succ"
-__HELP__ = "/succ - Sends Succ Image For A Given Argument"
+__HELP__ = """/succ - Sends Succ Image For A Given Argument
+/reddit [query] - results something from reddit"""
 
 hack = [
     "https://i.ibb.co/YLLhCtt/i.png",
@@ -43,6 +45,7 @@ def suck(text):
 
 
 @app.on_message(cust_filter.command(commands=("succ")) & ~filters.edited)
+@capture_err
 def succ(_, message: Message):
     if len(message.command) != 2:
         message.reply_text(
@@ -63,6 +66,7 @@ phijiks, welth, smrt`"""
 
 
 @app.on_message(cust_filter.command(commands=("reddit")) & ~filters.edited)
+@capture_err
 async def reddit(_, message: Message):
     app.set_parse_mode("html")
     if len(message.command) != 2:

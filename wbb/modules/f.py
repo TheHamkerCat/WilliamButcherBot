@@ -2,6 +2,8 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from wbb import app
 from pyrogram import filters
 from wbb.modules.admin import list_admins
+from wbb.utils.errors import capture_err
+
 i = 0
 m = None
 pressers = []
@@ -16,6 +18,7 @@ keyboard = InlineKeyboardMarkup(
 
 
 @app.on_message(filters.command("f"))
+@capture_err
 async def f(_, message):
     global i, m, pressers
     i = 0
