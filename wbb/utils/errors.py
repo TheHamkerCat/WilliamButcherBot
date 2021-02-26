@@ -1,7 +1,7 @@
 import sys
 import traceback
 from functools import wraps
-from wbb import app, OWNER_ID
+from wbb import app, LOG_GROUP_ID
 
 def split_limits(text):
     if len(text) < 2048:
@@ -41,7 +41,7 @@ def capture_err(func):
             )
             for x in error_feedback:
                 await app.send_message(
-                    OWNER_ID,
+                    LOG_GROUP_ID,
                     x
                 )
             raise err

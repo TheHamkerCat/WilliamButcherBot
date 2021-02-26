@@ -139,6 +139,9 @@ async def cheat(_, message: Message):
         query = ftext[1]
         r = requests.get(f"http://cht.sh/{language}/{query}?QT")
         reply = r.text
+        if not reply:
+            await message.reply_text("Found Literally Nothing!")
+            return
         await message.reply_text(f"`{reply}`")
     except Exception as e:
         await message.reply_text(str(e))
