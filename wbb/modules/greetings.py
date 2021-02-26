@@ -23,6 +23,9 @@ from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 async def welcome(_, message: Message):
     """Mute new member and send message with button"""
     for member in message.new_chat_members:
+        if member.is_bot:
+            continue # ignore bots
+            
         text = (f"Welcome, {(member.mention())}\n**Are you human?**\n"
             "You will be removed from this chat if you are not verified "
             f"in {WELCOME_DELAY_KICK_SEC} seconds")
