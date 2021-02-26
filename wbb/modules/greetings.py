@@ -14,9 +14,10 @@ from datetime import datetime
 from pyrogram import filters
 from wbb import app, WELCOME_DELAY_KICK_SEC
 from wbb.utils.errors import capture_err
+from wbb.modules.admin import list_admins
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.types import ChatPermissions
-from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant, ChatAdminRequired
+from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 
 @app.on_message(filters.new_chat_members)
 @capture_err
@@ -26,6 +27,8 @@ async def welcome(_, message: Message):
     text = (f"Welcome, {', '.join(new_members)}\n**Are you human?**\n"
             "You will be removed from this chat if you are not verified "
             f"in {WELCOME_DELAY_KICK_SEC} seconds")
+    if message.from_user.id in await list_admins(message.chat.id):
+        return
     await message.chat.restrict_member(message.from_user.id, ChatPermissions())
 
     button_message = await message.reply(
