@@ -209,7 +209,7 @@ async def json_fetch(_, message):
             await message.reply_text(data)
         else:
             neko_link = await neko(data)
-            await message.reply_text(f"[OUTPUT_TOO_LONG]({neko_link})", disable_web_page_preview=False)
+            await message.reply_text(f"[OUTPUT_TOO_LONG]({neko_link})", disable_web_page_preview=True)
     except Exception as e:
         await message.reply_text(str(e))
         print(str(e))
