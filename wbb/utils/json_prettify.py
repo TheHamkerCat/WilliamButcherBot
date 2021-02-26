@@ -9,6 +9,12 @@ async def json_object_prettify(objecc):
 
 async def json_prettify(data):
     output = ""
-    for key , value in data.items():
-        output += f"**{key}:** `{value}`\n"
+    try:
+        for key , value in data.items():
+            output += f"**{key}:** `{value}`\n"
+    except:
+        for datas in data:
+            for key , value in datas.items():
+                output += f"**{key}:** `{value}`\n"
+            output += "------------------------\n"
     return output
