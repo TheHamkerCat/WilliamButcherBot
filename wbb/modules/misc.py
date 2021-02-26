@@ -182,7 +182,10 @@ async def tr(_, message):
             + "/latest/#googletrans-languages"
         )
         return
-    text = message.reply_to_message.text or message.reply_to_message.caption
+    if message.reply_to_message.text:
+        text = message.reply_to_message.text
+    elif message.reply_to_message.caption:
+        text = message.reply_to_message.caption
     i = Translator().translate(text, dest=lang)
     await message.reply_text(i.text)
 
