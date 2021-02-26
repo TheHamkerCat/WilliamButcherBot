@@ -43,4 +43,4 @@ MOD_LOAD = config.get("mods", "load_modules").split()
 MOD_NOLOAD = config.get("mods", "noload_modules").split()
 bot_start_time = time.time()
 
-app = Client(":memory:", workers=16)
+app = Client("wbb", workers=16)
