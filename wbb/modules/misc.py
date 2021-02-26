@@ -75,7 +75,7 @@ async def random(_, message: Message):
     if len(message.command) != 2:
         await message.reply_text('"/random" Needs An Argurment.'
                                  ' Ex: `/random 5`')
-        random
+        return
     length = message.text.split(None, 1)[1]
 
     try:
@@ -129,21 +129,20 @@ async def decrypt(_, message: Message):
 @app.on_message(cust_filter.command(commands=("cheat")) & ~filters.edited)
 @capture_err
 async def cheat(_, message: Message):
+    if len(message.command) < 3:
+        await message.reply_text("/cheat [language] [query]")
+        return
     text = message.text.split(None, 1)[1]
-    ftext = text.split()
     try:
+        ftext = text.split()
         language = ftext[0]
-    except IndexError:
-        await message.reply_text("/cheat [language] [query]")
-        return
-    try:
         query = ftext[1]
-    except IndexError:
-        await message.reply_text("/cheat [language] [query]")
-        return
-    r = requests.get(f"http://cht.sh/{language}/{query}?QT")
-    reply = r.text
-    await message.reply_text(f"`{reply}`")
+        r = requests.get(f"http://cht.sh/{language}/{query}?QT")
+        reply = r.text
+        await message.reply_text(f"`{reply}`")
+    except Exception as e:
+        await message.reply_text(str(e))
+        print(str(e))
 
 # Weather
 
