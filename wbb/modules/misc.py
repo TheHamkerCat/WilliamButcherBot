@@ -184,10 +184,13 @@ async def tr(_, message):
         return
     if message.reply_to_message.text:
         text = message.reply_to_message.text
+        i = Translator().translate(text, dest=lang)
+        await message.reply_text(i.text)
     elif message.reply_to_message.caption:
         text = message.reply_to_message.caption
-    i = Translator().translate(text, dest=lang)
-    await message.reply_text(i.text)
+        i = Translator().translate(text, dest=lang)
+        await message.reply_text(i.text)
+
 
 
 fetch_limit = 0
