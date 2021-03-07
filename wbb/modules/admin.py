@@ -260,7 +260,10 @@ async def promote(_, message: Message):
                             user_id=user_id,
                             can_change_info=True,
                             can_invite_users=True,
-                            can_delete_messages=True)
+                            can_delete_messages=True,
+                            can_restrict_members=False,
+                            can_pin_messages=True,
+                            can_promote_members=True)
                         await message.reply_text('Promoted!')
 
                     else:
@@ -269,7 +272,10 @@ async def promote(_, message: Message):
                             user_id=user_id,
                             can_change_info=True,
                             can_invite_users=True,
-                            can_delete_messages=True)
+                            can_delete_messages=True,
+                            can_restrict_members=False, 
+                            can_pin_messages=True, 
+                            can_promote_members=True)
                         await message.reply_text('Promoted!')
                 else:
                     await message.reply_text("Yeah, I Can See You're An Admin,"
