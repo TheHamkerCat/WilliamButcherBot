@@ -212,6 +212,9 @@ async def unban(_, message: Message):
 @app.on_message(cust_filter.command(commands=("del")))
 @capture_err
 async def delete(_, message: Message):
+    if not message.reply_to_message:
+        await message.reply_text("Reply To A Message To Delete It")
+        return
     try:
         admins = await list_admins(message.chat.id)
         chat_id = message.chat.id
@@ -253,7 +256,7 @@ async def promote(_, message: Message):
                     == 'creator' \
                         or message.from_user.id in SUDO:
 
-                    if not message.reply_to_message:
+                    if not message.reply_to_message and len(message.command) == 2:
                         username = message.text.split(None, 1)[1]
                         user_id = (await app.get_users(username)).id
                         await message.chat.promote_member(
@@ -266,7 +269,7 @@ async def promote(_, message: Message):
                             can_promote_members=True)
                         await message.reply_text('Promoted!')
 
-                    else:
+                    elif message.reply_to_message:
                         user_id = message.reply_to_message.from_user.id
                         await message.chat.promote_member(
                             user_id=user_id,
@@ -277,6 +280,8 @@ async def promote(_, message: Message):
                             can_pin_messages=True, 
                             can_promote_members=True)
                         await message.reply_text('Promoted!')
+                    else:
+                        await message.reply_text("Reply To A User's Message Or Give A Username To Promote.")
                 else:
                     await message.reply_text("Yeah, I Can See You're An Admin,"
                                              + " But You Don't Have Permissions"
@@ -295,6 +300,9 @@ async def promote(_, message: Message):
 @app.on_message(cust_filter.command(commands=("pin")) & ~filters.edited)
 @capture_err
 async def pin(_, message: Message):
+    if not message.reply_to_message:
+        await message.reply_text("Reply To A Message To Pin.")
+        return
     try:
         admins = await list_admins(message.chat.id)
         chat_id = message.chat.id
