@@ -3,18 +3,20 @@ from urllib.parse import urlparse
 import os
 import youtube_dl
 import aiohttp
-import json
-import wget
+import aiofiles
+import os
+from random import randint
 from pyrogram import filters
 from pyrogram.types import Message
-from wbb.utils import cust_filter
-from wbb import app, OWNER_ID, SUDO_USER_ID
+from wbb import app, OWNER_ID, SUDO_USER_ID, 
+from wbb.utils.fetch import fetch
 from wbb.utils.errors import capture_err
+
 
 SUDOERS = [OWNER_ID, SUDO_USER_ID]
 
 __MODULE__ = "Music"
-__HELP__ = "/music [link] To Download Music From Various Websites"
+__HELP__ = "/ytmusic [link] To Download Music From Various Websites Including Youtube"
 
 ydl_opts = {
     'format': 'bestaudio/best',
@@ -27,7 +29,9 @@ ydl_opts = {
 }
 
 
-@app.on_message(cust_filter.command(commands=("music")) & ~filters.edited & filters.user(SUDOERS))
+# Ytmusic
+
+@app.on_message(filters.command("ytmusic") & ~filters.edited & filters.user(SUDOERS))
 @capture_err
 async def music(_, message: Message):
     if len(message.command) != 2:
@@ -68,3 +72,45 @@ def get_file_extension_from_url(url):
     url_path = urlparse(url).path
     basename = os.path.basename(url_path)
     return basename.split(".")[-1]
+
+
+# Funtion To Download Song
+@capture_err
+async def download_song(url):
+    song_name = f"{randint(6969, 6999)}.mp3"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            if resp.status == 200:
+                f = await aiofiles.open(song_name, mode='wb')
+                await f.write(await resp.read())
+                await f.close()
+    return song_name
+
+
+# Jiosaavn Music
+
+
+@app.on_message(filters.command("song"))
+@capture_err
+async def jssong(_, message: Message):
+    if len(message.command) < 2:
+        await message.reply_text("/song requires an argument.")
+        return
+    text = message.text.split(None, 1)[1]
+    query = text.replace(" ", "%20")
+    m = await message.reply_text("Searching...")
+    try:
+        r = await fetch(f"{JSMAPI}{query}")
+    except Exception as e:
+        await m.edit(str(e))
+        return
+    sname = r.json()[0]['song']
+    slink = r.json()[0]['media_url']
+    ssingers = r.json()[0]['singers']
+    file = wget.download(slink)
+    ffile = file.replace("mp4", "m4a")
+    os.rename(file, ffile)
+    await message.reply_audio(audio=ffile, title=sname,
+                              performer=ssingers)
+    os.remove(ffile)
+    await m.delete()

@@ -1,7 +1,14 @@
-import logging
-import time
-from configparser import ConfigParser
+import sys
+sys.path.insert(0, '..')
+from config import (
+        bot_token, api_id, api_hash, OWNER_ID,
+        sudo_users_id as SUDO_USER_ID, log_group_id as LOG_GROUP_ID,
+        fernet_encryption_key as FERNET_ENCRYPTION_KEY,
+        captcha_delay_in_seconds as WELCOME_DELAY_KICK_SEC
+        )
 from pyrogram import Client
+import time
+import logging
 
 
 f = open("error.log", "w")
@@ -28,19 +35,11 @@ logging.getLogger("").addHandler(console)
 
 log = logging.getLogger()
 
-config = ConfigParser()
-config.read("config.ini")
-OWNER_ID = int(config.get("admin", "owner_id"))
-SUDO_USER_ID = int(config.get("admin", "sudo_user_id"))
-LOG_GROUP_ID = int(config.get("admin", "log_group_id"))
-NEOFETCH = config.get("admin", "neofetch")
-WALL_API_KEY = config.get("admin", "alpha_coders_wall_api_key")
-FERNET_ENCRYPTION_KEY = config.get("admin", "fernet_encryption_key")
-WELCOME_DELAY_KICK_SEC = int(config.get("admin", "captcha_delay_in_seconds"))
-JSMAPI = config.get("admin", "jio_saavn_api")
-Command = config.get("prefix", "prefixes").split()
-MOD_LOAD = config.get("mods", "load_modules").split()
-MOD_NOLOAD = config.get("mods", "noload_modules").split()
+
+SUDOERS = SUDO_USER_ID
+SUDOERS.append(OWNER_ID)
+MOD_LOAD = None
+MOD_NOLOAD = None
 bot_start_time = time.time()
 
-app = Client("wbb", workers=16)
+app = Client("wbb", bot_token=bot_token, api_id=api_id, api_hash=api_hash)

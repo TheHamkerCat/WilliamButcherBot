@@ -1,5 +1,6 @@
 TgCrypto
 aiohttp
+aiofiles
 future
 psutil
 pillow
@@ -8,9 +9,7 @@ requests
 speedtest-cli
 uvloop
 youtube_dl
-coffeehouse
 youtube_search
 search_engine_parser
-wget
 cryptography
 googletrans==4.0.0-rc1
