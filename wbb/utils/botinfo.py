@@ -18,3 +18,5 @@ async def get_info(app):
     BOT_DC_ID = getme.dc_id
     try:
         await app.send_message(LOG_GROUP_ID, text=f"{BOT_NAME} Started!")
+    except:
+        pass

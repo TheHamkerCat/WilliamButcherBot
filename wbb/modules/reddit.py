@@ -1,17 +1,15 @@
 import requests as r
-from pyrogram.types import Message
 from pyrogram import filters
 from wbb import app
-from wbb.utils import cust_filter
 from wbb.utils.errors import capture_err
 
 
 __MODULE__ = "Reddit"
 __HELP__ = "/reddit [query] - results something from reddit"
 
-@app.on_message(cust_filter.command(commands=("reddit")) & ~filters.edited)
+@app.on_message(filters.command("reddit") & ~filters.edited)
 @capture_err
-async def reddit(_, message: Message):
+async def reddit(_, message):
     if len(message.command) != 2:
         await message.reply_text("/reddit needs an argument")
         return

@@ -2,11 +2,10 @@ import secrets
 import string
 import requests
 from pyrogram import filters
-from pyrogram.types import Message
 from googletrans import Translator
 from cryptography.fernet import Fernet
 from wbb import app, FERNET_ENCRYPTION_KEY
-from wbb.utils import cust_filter, random_line
+from wbb.utils import random_line
 from wbb.utils.errors import capture_err
 from wbb.utils.json_prettify import json_prettify
 from wbb.utils.fetch import fetch
@@ -27,10 +26,11 @@ __HELP__ = '''/commit - Generate Funny Commit Messages
 #RTFM - Check it lol'''
 
 
-@app.on_message(cust_filter.command(commands=("commit")) & ~filters.edited)
+@app.on_message(filters.command("commit") & ~filters.edited)
 @capture_err
-async def commit(_, message: Message):
+async def commit(_, message):
     await message.reply_text((await random_line('wbb/utils/commit.txt')))
+
 
 @app.on_message(filters.command("RTFM", "#"))
 @capture_err
@@ -42,15 +42,15 @@ async def rtfm(_, message):
     await message.reply_to_message.reply_text("Are You Lost? READ THE FUCKING DOCS!")
 
 
-@app.on_message(cust_filter.command(commands=("runs")) & ~filters.edited)
+@app.on_message(filters.command("runs") & ~filters.edited)
 @capture_err
-async def runs(_, message: Message):
+async def runs(_, message):
     await message.reply_text((await random_line('wbb/utils/runs.txt')))
 
 
-@app.on_message(cust_filter.command(commands=("id")) & ~filters.edited)
+@app.on_message(filters.command("id") & ~filters.edited)
 @capture_err
-async def get_id(_, message: Message):
+async def get_id(_, message):
     if len(message.command) != 1:
         username = message.text.split(None, 1)[1]
         user_id = (await app.get_users(username)).id
@@ -71,9 +71,9 @@ async def get_id(_, message: Message):
 # Random
 
 
-@app.on_message(cust_filter.command(commands=('random')) & ~filters.edited)
+@app.on_message(filters.command('random') & ~filters.edited)
 @capture_err
-async def random(_, message: Message):
+async def random(_, message):
     if len(message.command) != 2:
         await message.reply_text('"/random" Needs An Argurment.'
                                  ' Ex: `/random 5`')
@@ -95,9 +95,9 @@ async def random(_, message: Message):
 # Encrypt
 
 
-@app.on_message(cust_filter.command(commands=('encrypt')) & ~filters.edited)
+@app.on_message(filters.command('encrypt') & ~filters.edited)
 @capture_err
-async def encrypt(_, message: Message):
+async def encrypt(_, message):
     if not message.reply_to_message:
         await message.reply_text('Reply To A Message To Encrypt It.')
         return
@@ -111,9 +111,9 @@ async def encrypt(_, message: Message):
 # Decrypt
 
 
-@app.on_message(cust_filter.command(commands=('decrypt')) & ~filters.edited)
+@app.on_message(filters.command('decrypt') & ~filters.edited)
 @capture_err
-async def decrypt(_, message: Message):
+async def decrypt(_, message):
     if not message.reply_to_message:
         await message.reply_text('Reply To A Message To Decrypt It.')
         return
@@ -128,9 +128,9 @@ async def decrypt(_, message: Message):
 # Cheat.sh
 
 
-@app.on_message(cust_filter.command(commands=("cheat")) & ~filters.edited)
+@app.on_message(filters.command("cheat") & ~filters.edited)
 @capture_err
-async def cheat(_, message: Message):
+async def cheat(_, message):
     if len(message.command) < 3:
         await message.reply_text("/cheat [language] [query]")
         return
@@ -152,9 +152,9 @@ async def cheat(_, message: Message):
 # Weather
 
 
-@app.on_message(cust_filter.command(commands=("weather")) & ~filters.edited)
+@app.on_message(filters.command("weather") & ~filters.edited)
 @capture_err
-async def weather(_, message: Message):
+async def weather(_, message):
     if len(message.command) != 2:
         await message.reply_text("/weather [city]")
         return
@@ -167,7 +167,7 @@ async def weather(_, message: Message):
 # Translate
 
 
-@app.on_message(cust_filter.command(commands=("tr")) & ~filters.edited)
+@app.on_message(filters.command("tr") & ~filters.edited)
 @capture_err
 async def tr(_, message):
     if len(message.command) != 2:

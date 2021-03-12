@@ -1,23 +1,23 @@
 from youtube_search import YoutubeSearch
 from search_engine_parser import GoogleSearch
-from pyrogram.types import Message
 from pyrogram import filters
 from requests import get
 from wbb import app
-from wbb.utils import cust_filter
 from wbb.utils.errors import capture_err
 
 __MODULE__ = "Search"
 __HELP__ = '''/ud - Search For Something In Urban Dictionary
 /google - Search For Something On Google
+/so - Search For Something On Stack OverFlow
+/gh - Search For Something On GitHub
 /yt - Search For Something On YouTube'''
 
 # ud -  urbandictionary
 
 
-@app.on_message(cust_filter.command(commands=("ud")) & ~filters.edited)
+@app.on_message(filters.command("ud") & ~filters.edited)
 @capture_err
-async def urbandict(_, message: Message):
+async def urbandict(_, message):
     if len(message.command) < 2:
         await message.reply_text('"/ud" Needs An Argument.')
         return
@@ -41,9 +41,9 @@ async def urbandict(_, message: Message):
 # google
 
 
-@app.on_message(cust_filter.command(commands=("google")) & ~filters.edited)
+@app.on_message(filters.command("google") & ~filters.edited)
 @capture_err
-async def google(_, message: Message):
+async def google(_, message):
     try:
         if len(message.command) < 2:
             await message.reply_text('"/google" Needs An Argument')
@@ -68,9 +68,9 @@ async def google(_, message: Message):
 # StackOverflow [This is also a google search with some added args]
 
 
-@app.on_message(cust_filter.command(commands=("so")) & ~filters.edited)
+@app.on_message(filters.command("so") & ~filters.edited)
 @capture_err
-async def stack(_, message: Message):
+async def stack(_, message):
     try:
         if len(message.command) < 2:
             await message.reply_text('"/so" Needs An Argument')
@@ -96,9 +96,9 @@ async def stack(_, message: Message):
 # Github [This is also a google search with some added args]
 
 
-@app.on_message(cust_filter.command(commands=("gh")) & ~filters.edited)
+@app.on_message(filters.command("gh") & ~filters.edited)
 @capture_err
-async def github(_, message: Message):
+async def github(_, message):
     try:
         if len(message.command) < 2:
             await message.reply_text('"/gh" Needs An Argument')
@@ -124,9 +124,9 @@ async def github(_, message: Message):
 # YouTube
 
 
-@app.on_message(cust_filter.command(commands=("yt")) & ~filters.edited)
+@app.on_message(filters.command("yt") & ~filters.edited)
 @capture_err
-async def ytsearch(_, message: Message):
+async def ytsearch(_, message):
     try:
         if len(message.command) < 2:
             await message.reply_text("/yt needs an argument")

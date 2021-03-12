@@ -1,7 +1,6 @@
 from pyrogram import filters
-from pyrogram.types import Message, ChatPermissions
+from pyrogram.types import ChatPermissions
 from wbb import OWNER_ID, SUDO_USER_ID, app
-from wbb.utils import cust_filter
 from wbb.utils.botinfo import BOT_ID
 from wbb.utils.errors import capture_err
 
@@ -40,9 +39,9 @@ async def list_members(group_id):
 # Purge Messages
 
 
-@app.on_message(cust_filter.command(commands=("purge")) & ~filters.edited)
+@app.on_message(filters.command("purge") & ~filters.edited)
 @capture_err
-async def purge(client, message: Message):
+async def purge(client, message):
     message_ids = []
     if message.chat.type not in ("supergroup", "channel"):
         return
@@ -91,9 +90,9 @@ async def purge(client, message: Message):
 # Kick members
 
 
-@app.on_message(cust_filter.command(commands=("kick")) & ~filters.edited)
+@app.on_message(filters.command("kick") & ~filters.edited)
 @capture_err
-async def kick(_, message: Message):
+async def kick(_, message):
     try:
         if (await app.get_chat_member(
             message.chat.id, message.from_user.id)).status == 'creator' \
@@ -133,9 +132,9 @@ async def kick(_, message: Message):
 # Ban members
 
 
-@app.on_message(cust_filter.command(commands=("ban")) & ~filters.edited)
+@app.on_message(filters.command("ban") & ~filters.edited)
 @capture_err
-async def ban(_, message: Message):
+async def ban(_, message):
     try:
         if (await app.get_chat_member(
             message.chat.id, message.from_user.id)).status == 'creator' \
@@ -174,9 +173,9 @@ async def ban(_, message: Message):
 # Unban members
 
 
-@app.on_message(cust_filter.command(commands=("unban")) & ~filters.edited)
+@app.on_message(filters.command("unban") & ~filters.edited)
 @capture_err
-async def unban(_, message: Message):
+async def unban(_, message):
     try:
         if (await app.get_chat_member(
             message.chat.id, message.from_user.id)).status == 'creator' \
@@ -209,9 +208,9 @@ async def unban(_, message: Message):
 # Delete messages
 
 
-@app.on_message(cust_filter.command(commands=("del")))
+@app.on_message(filters.command("del"))
 @capture_err
-async def delete(_, message: Message):
+async def delete(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply To A Message To Delete It")
         return
@@ -238,9 +237,9 @@ async def delete(_, message: Message):
 # Promote Members
 
 
-@app.on_message(cust_filter.command(commands=("promote")) & ~filters.edited)
+@app.on_message(filters.command("promote") & ~filters.edited)
 @capture_err
-async def promote(_, message: Message):
+async def promote(_, message):
     try:
         admins = await list_admins(message.chat.id)
         chat_id = message.chat.id
@@ -297,9 +296,9 @@ async def promote(_, message: Message):
 # Pin Messages
 
 
-@app.on_message(cust_filter.command(commands=("pin")) & ~filters.edited)
+@app.on_message(filters.command("pin") & ~filters.edited)
 @capture_err
-async def pin(_, message: Message):
+async def pin(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply To A Message To Pin.")
         return
@@ -326,9 +325,9 @@ async def pin(_, message: Message):
 # Mute members
 
 
-@app.on_message(cust_filter.command(commands=("mute")) & ~filters.edited)
+@app.on_message(filters.command("mute") & ~filters.edited)
 @capture_err
-async def mute(_, message: Message):
+async def mute(_, message):
     try:
         chat_id = message.chat.id
         from_user_id = message.from_user.id
@@ -353,9 +352,9 @@ async def mute(_, message: Message):
 # Unmute members
 
 
-@app.on_message(cust_filter.command(commands=("unmute")) & ~filters.edited)
+@app.on_message(filters.command("unmute") & ~filters.edited)
 @capture_err
-async def unmute(_, message: Message):
+async def unmute(_, message):
     try:
         chat_id = message.chat.id
         from_user_id = message.from_user.id

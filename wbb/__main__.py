@@ -6,7 +6,7 @@ import uvloop
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from wbb import app, MOD_NOLOAD
-from wbb.utils import get_info, paginate_modules, cust_filter
+from wbb.utils import get_info, paginate_modules
 from wbb.utils import botinfo, formatter
 from wbb.modules import ALL_MODULES
 from wbb import bot_start_time
@@ -56,7 +56,7 @@ async def start_bot():
     await idle()
 
 
-@app.on_message(cust_filter.command("start"))
+@app.on_message(filters.command("start"))
 async def start(_, message):
     bot_uptime = int(time.time() - bot_start_time)
     await message.reply_text(
@@ -64,7 +64,7 @@ async def start(_, message):
         " Maybe Try /help")
 
 
-@app.on_message(cust_filter.command("help"))
+@app.on_message(filters.command("help"))
 async def help_command(_, message):
     if message.chat.type != "private":
         if len(message.command) >= 2 and message.command[1] == "help":
