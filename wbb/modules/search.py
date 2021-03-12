@@ -24,8 +24,9 @@ async def urbandict(_, message):
     text = message.text.split(None, 1)[1]
     try:
         results = await fetch(f"{ARQ}ud?query={text}")
-        reply_text = f"""Definition: {results["list"][0]["definition"]}
-Example: {results["list"][0]["example"]}"""
+        reply_text = f"""**Definition:** __{results["list"][0]["definition"]}__
+
+**Example:** __{results["list"][0]["example"]}__"""
     except IndexError:
         reply_text = ("Sorry could not find any matching results!")
     ignore_chars = "[]"

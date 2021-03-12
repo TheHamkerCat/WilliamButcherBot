@@ -16,11 +16,11 @@ __MODULE__ = "Misc"
 __HELP__ = '''/commit - Generate Funny Commit Messages
 /runs  - Idk Test Yourself
 /id - Get Chat_ID or User_ID
-/random - Generate Random Complex Passwords
+/random [Length] - Generate Random Complex Passwords
 /encrypt - Encrypt Text [Can Only Be Decrypted By This Bot]
 /decrypt - Decrypt Text
-/cheat - Get Programming Related Help
-/weather - To Get Weather Info
+/cheat [Language] [Query] - Get Programming Related Help
+/weather [City] - To Get Weather Info
 /tr [en] - Translate A Message
 /json [URL] - Get Response From An API or Something. 
 #RTFM - Check it lol'''
@@ -184,7 +184,11 @@ async def tr(_, message):
         return
     if message.reply_to_message.text:
         text = message.reply_to_message.text
-        i = Translator().translate(text, dest=lang)
+        try:
+            i = Translator().translate(text, dest=lang)
+        except ValueError:
+            await message.reply_text("[ERROR]: LANGUAGE NOT FOUND")
+            return
         await message.reply_text(i.text)
     elif message.reply_to_message.caption:
         text = message.reply_to_message.caption

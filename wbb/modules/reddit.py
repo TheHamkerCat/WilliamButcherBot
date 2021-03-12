@@ -1,4 +1,3 @@
-import requests as r
 from pyrogram import filters
 from wbb import app, ARQ
 from wbb.utils.errors import capture_err

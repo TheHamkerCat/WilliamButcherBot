@@ -13,8 +13,9 @@ from wbb.utils.errors import capture_err
 
 
 __MODULE__ = "Music"
-__HELP__ = """/ytmusic [link] To Download Music From Various Websites Including Youtube
-/saavn [query] To Download Music From Saavn."""
+__HELP__ = """/ytmusic [link] To Download Music From Various Websites Including Youtube.
+/saavn [query] To Download Music From Saavn.
+/deezer [query] To Download Music From Deezer."""
 
 ydl_opts = {
     'format': 'bestaudio/best',
@@ -107,5 +108,34 @@ async def jssong(_, message):
     await m.edit("Uploading") 
     await message.reply_audio(audio=song, title=sname,
                               performer=ssingers)
+    os.remove(song)
+    await m.delete()
+
+
+# Deezer Music
+
+
+@app.on_message(filters.command("deezer"))
+@capture_err
+async def jssong(_, message):
+    if len(message.command) < 2:
+        await message.reply_text("/deezer requires an argument.")
+        return
+    text = message.text.split(None, 1)[1]
+    query = text.replace(" ", "%20")
+    m = await message.reply_text("Searching...")
+    try:
+        r = await fetch(f"{ARQ}deezer?query={query}&count=1")
+    except Exception as e:
+        await m.edit(str(e))
+        return
+    title = r[0]['title']
+    url = r[0]['url']
+    artist = r[0]['artist']
+    await m.edit("Downloading") 
+    song = await download_song(url)
+    await m.edit("Uploading") 
+    await message.reply_audio(audio=song, title=title,
+                              performer=artist)
     os.remove(song)
     await m.delete()
