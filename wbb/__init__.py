@@ -4,8 +4,8 @@ from config import (
         bot_token, api_id, api_hash, OWNER_ID,
         sudo_users_id as SUDO_USER_ID, log_group_id as LOG_GROUP_ID,
         fernet_encryption_key as FERNET_ENCRYPTION_KEY,
-        captcha_delay_in_seconds as WELCOME_DELAY_KICK_SEC
-        )
+        captcha_delay_in_seconds as WELCOME_DELAY_KICK_SEC,
+        ARQ_API_BASE_URL as ARQ)
 from pyrogram import Client
 import time
 import logging

@@ -107,10 +107,8 @@ async def jssong(_, message: Message):
     sname = r.json()[0]['song']
     slink = r.json()[0]['media_url']
     ssingers = r.json()[0]['singers']
-    file = wget.download(slink)
-    ffile = file.replace("mp4", "m4a")
-    os.rename(file, ffile)
+    song = await download_song(slink)
     await message.reply_audio(audio=ffile, title=sname,
                               performer=ssingers)
-    os.remove(ffile)
+    os.remove(song)
     await m.delete()

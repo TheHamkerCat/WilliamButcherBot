@@ -1,13 +1,13 @@
-bot_token = "1455226296:AAE4qFS3nF-0Tncj4UONh28hS6_9WIuTLjw"
+bot_token = "1455:AAE4qFS3nF-0Tn"
 
-api_id = 1437102
+api_id = 69
 
 
-api_hash = "e46b6c854d2bf58ac4f871dc56f31150"
+api_hash = "e46b6c854d2bf580"
 
 OWNER_ID = 1243703097
 
-sudo_users_id = [354169, 5646514, 6865463]
+sudo_users_id = [354165569, 564426514, 686215463]
 
 log_group_id = -1001337393587
 
