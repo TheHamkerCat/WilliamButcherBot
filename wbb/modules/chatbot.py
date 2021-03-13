@@ -46,11 +46,11 @@ async def chatbot_status(_, message):
         await message.reply_text("/chatbot [ON|OFF]")
 
 
-@app.on_message(filters.chat(active_chats) & filters.text
-        & filters.reply
-        & ~filters.bot)
+@app.on_message(filters.text & filters.reply & ~filters.bot)
 @capture_err
 async def chatbot_talk(_, message):
+    if message.chat.id not in active_chats:
+        return
     if message.reply_to_message.from_user.id != BOT_ID:
         return
     query = message.text
