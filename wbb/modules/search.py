@@ -1,6 +1,5 @@
 from search_engine_parser import GoogleSearch
 from pyrogram import filters
-from requests import get
 from wbb import app, ARQ
 from wbb.utils.errors import capture_err
 from wbb.utils.fetch import fetch

@@ -1,6 +1,5 @@
 import secrets
 import string
-import requests
 import aiohttp
 from pyrogram import filters
 from googletrans import Translator

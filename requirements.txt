@@ -5,7 +5,6 @@ future
 psutil
 pillow
 pyrogram
-requests
 speedtest-cli
 uvloop
 youtube_dl
