@@ -17,3 +17,4 @@ captcha_delay_in_seconds = 300
 
 # Leave This As It Is
 ARQ_API_BASE_URL = "https://thearq.tech/"
+LUNA_API = "https://lunabot.tech/?query="
