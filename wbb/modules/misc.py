@@ -1,6 +1,7 @@
 import secrets
 import string
 import requests
+import aiohttp
 from pyrogram import filters
 from googletrans import Translator
 from cryptography.fernet import Fernet
@@ -125,6 +126,13 @@ async def decrypt(_, message):
     await message.reply_text(bytes_in_text)
 
 
+async def fetch_text(url):
+    async with aiohttp.ClientSession(headers={"user-agent":"curl"}) as session:
+        async with session.get(url) as resp:
+            data = await resp.text()
+    return data
+
+
 # Cheat.sh
 
 
@@ -140,7 +148,7 @@ async def cheat(_, message):
         ftext = text.split()
         language = ftext[0]
         query = ftext[1]
-        data = requests.get(f"http://cht.sh/{language}/{query}?QT").text
+        data = await fetch_text(f"http://cht.sh/{language}/{query}?QT")
         if not data:
             await m.edit("Found Literally Nothing!")
             return
@@ -160,8 +168,7 @@ async def weather(_, message):
         return
     city = message.text.split(None, 1)[1]
     m = await message.reply_text("Fetching Data")
-    r = requests.get(f"https://wttr.in/{city}?mnTC0")
-    data = r.text
+    data = await fetch_text(f"https://wttr.in/{city}?mnTC0")
     await m.edit(f"`{data}`")
 
 # Translate

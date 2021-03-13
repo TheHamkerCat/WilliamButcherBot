@@ -54,7 +54,6 @@ async def music(_, message):
         return
         # info
     title = info_dict['title']
-    webpage_url = info_dict['webpage_url']
     performer = info_dict['uploader']
     duration = int(float(info_dict['duration']))
     await m.delete()
@@ -97,12 +96,12 @@ async def jssong(_, message):
     m = await message.reply_text("Searching...")
     try:
         r = await fetch(f"{ARQ}saavn?query={query}")
+        sname = r[0]['song']
+        slink = r[0]['media_url']
+        ssingers = r[0]['singers']
     except Exception as e:
         await m.edit(str(e))
         return
-    sname = r[0]['song']
-    slink = r[0]['media_url']
-    ssingers = r[0]['singers']
     await m.edit("Downloading") 
     song = await download_song(slink)
     await m.edit("Uploading") 
@@ -126,12 +125,12 @@ async def jssong(_, message):
     m = await message.reply_text("Searching...")
     try:
         r = await fetch(f"{ARQ}deezer?query={query}&count=1")
+        title = r[0]['title']
+        url = r[0]['url']
+        artist = r[0]['artist']
     except Exception as e:
         await m.edit(str(e))
         return
-    title = r[0]['title']
-    url = r[0]['url']
-    artist = r[0]['artist']
     await m.edit("Downloading") 
     song = await download_song(url)
     await m.edit("Uploading") 
