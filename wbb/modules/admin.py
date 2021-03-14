@@ -13,9 +13,16 @@ __HELP__ = '''/ban - Ban A User
 /promote - Promote A Member
 /pin - Pin A Message
 /mute - Mute A User
-/unmute - Unmute A User'''
+/unmute - Unmute A User
+/ban_ghosts - Ban Deleted Accounts'''
 
 
+async def list_admins(group_id):
+    list_of_admins = []
+    async for member in app.iter_chat_members(
+            group_id, filter="administrators"):
+        list_of_admins.append(member.user.id)
+    return list_of_admins
 
 
 async def member_permissions(chat_id, user_id):
