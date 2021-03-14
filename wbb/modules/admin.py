@@ -109,10 +109,10 @@ async def kick(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" in permissions or from_user_id in SUDO:
+        if "can_restrict_members" in permissions or from_user_id in SUDOERS:
             if len(message.command) == 2:
                 username = message.text.split(None, 1)[1]
-                if (await app.get_users(username)).id in SUDO:
+                if (await app.get_users(username)).id in SUDOERS:
                     await message.reply_text("You Wanna Kick The Elevated One?")
                 else:
                     if (await app.get_users(username)).id in \
@@ -126,7 +126,7 @@ async def kick(_, message):
 
             if len(message.command) == 1 and message.reply_to_message:
                 user_id = message.reply_to_message.from_user.id
-                if user_id in SUDO:
+                if user_id in SUDOERS:
                     await message.reply_text("You Wanna Kick The Elevated One?")
                 else:
                     if user_id in await list_members(chat_id):
@@ -148,10 +148,10 @@ async def ban(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" in permissions or from_user_id in SUDO:
+        if "can_restrict_members" in permissions or from_user_id in SUDOERS:
             if len(message.command) == 2:
                 username = message.text.split(None, 1)[1]
-                if (await app.get_users(username)).id in SUDO:
+                if (await app.get_users(username)).id in SUDOERS:
                     await message.reply_text("You Wanna Ban The Elevated One?")
                 else:
                     if (await app.get_users(username)).id in \
@@ -164,7 +164,7 @@ async def ban(_, message):
 
             if len(message.command) == 1 and message.reply_to_message:
                 user_id = message.reply_to_message.from_user.id
-                if user_id in SUDO:
+                if user_id in SUDOERS:
                     await message.reply_text("You Wanna Ban The Elevated One?")
                 else:
                     if user_id in await list_members(chat_id):
@@ -186,7 +186,7 @@ async def unban(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" in permissions or from_user_id in sudo:
+        if "can_restrict_members" in permissions or from_user_id in SUDOERS:
             if len(message.command) == 2:
                 username = message.text.split(None, 1)[1]
                 if (await app.get_users(username)).id not in \
@@ -222,7 +222,7 @@ async def delete(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_delete_messages" in permissions or from_user_id in sudo:
+        if "can_delete_messages" in permissions or from_user_id in SUDOERS:
             await message.reply_to_message.delete()
             await message.delete()
         else:
@@ -241,7 +241,7 @@ async def promote(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_promote_members" in permissions or from_user_id in sudo:
+        if "can_promote_members" in permissions or from_user_id in SUDOERS:
             if len(message.command) == 2:
                 username = message.text.split(None, 1)[1]
                 user_id = (await app.get_users(username)).id
@@ -287,7 +287,7 @@ async def pin(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_pin_messages" in permissions or from_user_id in sudo:
+        if "can_pin_messages" in permissions or from_user_id in SUDOERS:
             await message.reply_to_message.pin(disable_notification=True)
         else:
             await message.reply_text("You're Not An Admin, Stop Spamming!")
@@ -308,7 +308,7 @@ async def mute(_, message):
         chat_id = message.chat.id
         from_user_id = message.from_user.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" in permissions or from_user_id in sudo:
+        if "can_restrict_members" in permissions or from_user_id in SUDOERS:
             user_id = message.reply_to_message.from_user.id
             await message.chat.restrict_member(user_id,
                                                permissions=ChatPermissions())
@@ -331,7 +331,7 @@ async def unmute(_, message):
         chat_id = message.chat.id
         from_user_id = message.from_user.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" in permissions or from_user_id in sudo:
+        if "can_restrict_members" in permissions or from_user_id in SUDOERS:
             user_id = message.reply_to_message.from_user.id
             await message.chat.unban_member(user_id)
             await message.reply_text("Unmuted!")
@@ -350,7 +350,7 @@ async def ban_deleted_accounts(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" in permissions or from_user_id in SUDO:
+        if "can_restrict_members" in permissions or from_user_id in SUDOERS:
             deleted_users = []
             banned_users = 0
             async for i in app.iter_chat_members(chat_id):
