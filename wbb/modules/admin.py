@@ -338,7 +338,7 @@ async def unmute(_, message):
 
 
 @app.on_message(filters.command("ban_ghosts"))
-async def ban_deleted_accounts(_, message)
+async def ban_deleted_accounts(_, message):
     try:
         from_user_id = message.from_user.id
         chat_id = message.chat.id
