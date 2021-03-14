@@ -1,7 +1,6 @@
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from wbb import app
 from pyrogram import filters
-from wbb.modules.admin import list_admins
 from wbb.utils.errors import capture_err
 
 i = 0
@@ -27,9 +26,6 @@ async def f(_, message):
         await m.delete()
     except:
         pass
-    admins = await list_admins(message.chat.id)
-    if message.from_user.id not in admins:
-        return
     m = await app.send_message(message.chat.id, text=f"Press F To Pay Respect.\nRespect = `{i}`", reply_markup=keyboard)
 
 
@@ -51,10 +47,8 @@ async def end_callbacc(_, CallbackQuery):
 
 @app.on_callback_query(filters.regex("deletef"))
 async def del_callbacc(_, CallbackQuery):
-    admins = await list_admins(CallbackQuery.message.chat.id)
-    if CallbackQuery.from_user.id not in admins:
-        return
     global i, m, pressers
     pressers = []
     i = 0
+    await app.send_message(CallbackQuery.message.chat.id, text=f"{CallbackQuery.from_user.id} Deleted F's")
     await m.delete()
