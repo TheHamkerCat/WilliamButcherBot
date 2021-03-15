@@ -116,7 +116,7 @@ async def kick(_, message):
                     await message.reply_text("You Wanna Kick The Elevated One?")
                 else:
                     if (await app.get_users(username)).id in \
-                            await list_members(chat_):
+                            await list_members(chat_id):
                         await message.chat.kick_member(username)
                         await message.chat.unban_member(username)
                         await message.reply_text(f"Kicked {username}")
