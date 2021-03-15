@@ -13,12 +13,16 @@ async def reddit(_, message):
         await message.reply_text("/reddit needs an argument")
         return
     subreddit = message.text.split(None, 1)[1]
-    res = await fetch(f"{ARQ}reddit?query={subreddit}")
-    sreddit = res["subreddit"]
-    title = res["title"]
-    image = res["url"]
-    link = res["postLink"]
-    caption = f"""**Title:** `{title}`
+    try:
+        res = await fetch(f"{ARQ}reddit?query={subreddit}")
+        sreddit = res["subreddit"]
+        title = res["title"]
+        image = res["url"]
+        link = res["postLink"]
+        caption = f"""**Title:** `{title}`
 **Subreddit:** {sreddit}
 **PostLink:** {link}"""
-    await message.reply_photo(photo=image, caption=caption)
+        await message.reply_photo(photo=image, caption=caption)
+    except Exception as e:
+        print(str(e))
+        await message.reply_text(str(e))
