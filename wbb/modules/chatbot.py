@@ -1,4 +1,4 @@
-from wbb import app, LUNA_API
+from wbb import app, ARQ
 from wbb.utils.fetch import fetch
 from wbb.utils.errors import capture_err
 from wbb.utils.botinfo import BOT_ID
@@ -54,7 +54,7 @@ async def chatbot_talk(_, message):
     if message.reply_to_message.from_user.id != BOT_ID:
         return
     query = message.text
-    response = await fetch(f"{LUNA_API}{query}")
+    response = await fetch(f"{ARQ}luna?query={query}")
     response = response['response']
     await app.send_chat_action(message.chat.id, "typing")
     await message.reply_text(response)
