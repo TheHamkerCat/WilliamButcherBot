@@ -3,8 +3,9 @@ from config import (
         sudo_users_id as SUDO_USER_ID, log_group_id as LOG_GROUP_ID,
         fernet_encryption_key as FERNET_ENCRYPTION_KEY,
         captcha_delay_in_seconds as WELCOME_DELAY_KICK_SEC,
-        ARQ_API_BASE_URL as ARQ, LUNA_API)
+        ARQ_API_BASE_URL as ARQ_API)
 from pyrogram import Client
+from Python_ARQ import ARQ
 import time
 import logging
 
@@ -41,3 +42,4 @@ MOD_NOLOAD = []
 bot_start_time = time.time()
 
 app = Client("wbb", bot_token=bot_token, api_id=api_id, api_hash=api_hash)
+arq = ARQ(ARQ_API)

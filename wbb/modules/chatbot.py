@@ -1,4 +1,4 @@
-from wbb import app, ARQ
+from wbb import app, arq 
 from wbb.utils.fetch import fetch
 from wbb.utils.errors import capture_err
 from wbb.utils.botinfo import BOT_ID
@@ -9,7 +9,6 @@ __MODULE__ = "ChatBot"
 __HELP__ = "/chatbot [ON|OFF] To Enable Or Disable ChatBot In Your Chat."
 
 active_chats = []
-
 
 # Enabled | Disable Chatbot
 
@@ -46,6 +45,8 @@ async def chatbot_status(_, message):
         await message.reply_text("/chatbot [ON|OFF]")
 
 
+
+
 @app.on_message(filters.text & filters.reply & ~filters.bot)
 @capture_err
 async def chatbot_talk(_, message):
@@ -54,7 +55,7 @@ async def chatbot_talk(_, message):
     if message.reply_to_message.from_user.id != BOT_ID:
         return
     query = message.text
-    response = await fetch(f"{ARQ}luna?query={query}")
-    response = response['response']
+    luna = await arq.luna(query)
+    response = luna.response
     await app.send_chat_action(message.chat.id, "typing")
     await message.reply_text(response)

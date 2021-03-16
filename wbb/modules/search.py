@@ -1,6 +1,6 @@
 from search_engine_parser import GoogleSearch
 from pyrogram import filters
-from wbb import app, ARQ
+from wbb import app, arq
 from wbb.utils.errors import capture_err
 from wbb.utils.fetch import fetch
 
@@ -22,10 +22,10 @@ async def urbandict(_, message):
         return
     text = message.text.split(None, 1)[1]
     try:
-        results = await fetch(f"{ARQ}ud?query={text}")
-        reply_text = f"""**Definition:** __{results["list"][0]["definition"]}__
+        results = await arq.urbandict(text, 1)
+        reply_text = f"""**Definition:** __{results[0].definition}__
 
-**Example:** __{results["list"][0]["example"]}__"""
+**Example:** __{results[0].example}__"""
     except IndexError:
         reply_text = ("Sorry could not find any matching results!")
     ignore_chars = "[]"
@@ -131,15 +131,15 @@ async def ytsearch(_, message):
             return
         query = message.text.split(None, 1)[1]
         m = await message.reply_text("Searching....")
-        results = await fetch(f"{ARQ}youtube?query={query}&count=3")
+        results = await arq.youtube(query, 3)
         i = 0
         text = ""
         while i < 3:
-            text += f"Title - {results[i]['title']}\n"
-            text += f"Duration - {results[i]['duration']}\n"
-            text += f"Views - {results[i]['views']}\n"
-            text += f"Channel - {results[i]['channel']}\n"
-            text += f"https://youtube.com{results[i]['url_suffix']}\n\n"
+            text += f"Title - {results[i].title}\n"
+            text += f"Duration - {results[i].duration}\n"
+            text += f"Views - {results[i].views}\n"
+            text += f"Channel - {results[i].channel}\n"
+            text += f"https://youtube.com{results[i].url_suffix}\n\n"
             i += 1
         await m.edit(text, disable_web_page_preview=True)
     except Exception as e:

@@ -7,7 +7,7 @@ import aiofiles
 import os
 from random import randint
 from pyrogram import filters
-from wbb import app, SUDOERS, ARQ
+from wbb import app, SUDOERS, arq 
 from wbb.utils.fetch import fetch
 from wbb.utils.errors import capture_err
 
@@ -95,10 +95,10 @@ async def jssong(_, message):
     query = text.replace(" ", "%20")
     m = await message.reply_text("Searching...")
     try:
-        r = await fetch(f"{ARQ}saavn?query={query}")
-        sname = r[0]['song']
-        slink = r[0]['media_url']
-        ssingers = r[0]['singers']
+        songs = await arq.saavn(query)
+        sname = songs[0].song
+        slink = songs[0].media_url
+        ssingers = songs[0].singers
     except Exception as e:
         await m.edit(str(e))
         return
@@ -124,10 +124,10 @@ async def jssong(_, message):
     query = text.replace(" ", "%20")
     m = await message.reply_text("Searching...")
     try:
-        r = await fetch(f"{ARQ}deezer?query={query}&count=1")
-        title = r[0]['title']
-        url = r[0]['url']
-        artist = r[0]['artist']
+        songs = await arq.deezer(query, 1)
+        title = songs[0].title
+        url = songs[0].url
+        artist = songs[0].artist
     except Exception as e:
         await m.edit(str(e))
         return

@@ -1,10 +1,11 @@
 from pyrogram import filters
-from wbb import app, ARQ
+from wbb import app, arq
 from wbb.utils.errors import capture_err
 from wbb.utils.fetch import fetch
 
 __MODULE__ = "Reddit"
 __HELP__ = "/reddit [query] - results something from reddit"
+
 
 @app.on_message(filters.command("reddit") & ~filters.edited)
 @capture_err
@@ -14,11 +15,11 @@ async def reddit(_, message):
         return
     subreddit = message.text.split(None, 1)[1]
     try:
-        res = await fetch(f"{ARQ}reddit?query={subreddit}")
-        sreddit = res["subreddit"]
-        title = res["title"]
-        image = res["url"]
-        link = res["postLink"]
+        reddit = await arq.reddit(subreddit)
+        sreddit = reddit.subreddit
+        title = reddit.title
+        image = reddit.url
+        link = reddit.postLink
         caption = f"""**Title:** `{title}`
 **Subreddit:** {sreddit}
 **PostLink:** {link}"""

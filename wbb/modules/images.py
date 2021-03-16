@@ -3,7 +3,7 @@ import json
 import asyncio
 from random import randint
 from pyrogram import filters
-from wbb import app, ARQ
+from wbb import app, arq
 from wbb.utils.errors import capture_err
 from wbb.utils.fetch import fetch
 
@@ -38,22 +38,16 @@ async def wall(_, message):
     initial_term = message.text.split(None, 1)[1]
     m = await message.reply_text("Searching!")
     term = initial_term.replace(' ', '%20')
-    json_rep = await fetch(f"{ARQ}wall?query={term}")
-    if not json_rep.get("success"):
-        await m.edit("Something happened! Shit.")
+    wallpapers = await arq.wall(term)
+    if not wallpapers:
+        await m.edit("Found literally nothing!,"
+                     + "You should work on your English.")
+        return
+    if len(wallpapers) > 10:
+        selection = 10
     else:
-        wallpapers = json_rep.get("wallpapers")
-        if not wallpapers:
-            await m.edit("Found literally nothing!,"
-                         + "You should work on your English.")
-            return
-        if len(wallpapers) > 10:
-            selection = 10
-        else:
-            selection = len(wallpapers)
-        index = randint(0, selection - 1)
-        wallpaper = wallpapers[index]
-        wallpaper = wallpaper.get("url_image")
-        wallpaper = wallpaper.replace("\\", "")
-        await message.reply_document(wallpaper)
-        await m.delete()
+        selection = len(wallpapers)
+    index = randint(0, selection - 1)
+    wallpaper = wallpapers[index].url_image
+    await message.reply_document(wallpaper)
+    await m.delete()
