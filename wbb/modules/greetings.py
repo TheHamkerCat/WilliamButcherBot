@@ -30,6 +30,10 @@ async def welcome(_, message: Message):
             "You will be removed from this chat if you are not verified "
             f"in {WELCOME_DELAY_KICK_SEC} seconds")
         await message.chat.restrict_member(member.id, ChatPermissions())
+        user = await app.get_users(member.id)
+        name_length = len(str(user.first_name) + str(user.last_name))
+        if name_lenth > 50:
+            await message.reply_text("[ERROR: MAX_NAME_LENGH_EXCEEDED]: Your Name Is Too Long And Weird, Change It!")
 
         button_message = await message.reply(
             text,
