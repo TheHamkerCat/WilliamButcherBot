@@ -1,6 +1,7 @@
 from pyrogram import filters
 from wbb import app
 from wbb.utils.errors import capture_err
+from wbb.utils.fetch import fetch
 
 __MODULE__ = "Repo"
 __HELP__ = "/repo - To Get My Github Repository Link " \
@@ -10,6 +11,18 @@ __HELP__ = "/repo - To Get My Github Repository Link " \
 @app.on_message(filters.command("repo") & ~filters.edited)
 @capture_err
 async def repo(_, message):
-    await message.reply_text(
-        "[Github](https://github.com/thehamkercat/WilliamButcherBot)"
-        + " | [Group](t.me/TheHamkerChat)", disable_web_page_preview=True)
+    users = await fetch("https://api.github.com/repos/thehamkercat/williambutcherbot/contributors")
+    list_of_users = ""
+    count = 1    
+    for user in users:
+        list_of_users += f"**{count}.** __{user['login']}__"
+        count += 1
+
+    text = """[Github](https://github.com/thehamkercat/WilliamButcherBot) | [Group](t.me/PatheticProgrammers)
+
+```----------------
+| Contributors |
+----------------```
+
+{list_of_users}"""
+    await app.send_message(message.chat.id, text=text, disable_web_page_preview=True)
