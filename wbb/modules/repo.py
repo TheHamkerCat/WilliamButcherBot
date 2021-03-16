@@ -15,7 +15,7 @@ async def repo(_, message):
     list_of_users = ""
     count = 1    
     for user in users:
-        list_of_users += f"**{count}.** __{user['login']}__"
+        list_of_users += f"**{count}.** [{user['login']}]({user['html_url']})"
         count += 1
 
     text = """[Github](https://github.com/thehamkercat/WilliamButcherBot) | [Group](t.me/PatheticProgrammers)
