@@ -38,8 +38,9 @@ async def wall(_, message):
     initial_term = message.text.split(None, 1)[1]
     m = await message.reply_text("Searching!")
     term = initial_term.replace(' ', '%20')
-    wallpapers = await arq.wall(term)
-    if not wallpapers:
+    try:
+        wallpapers = await arq.wall(term)
+    except KeyError:
         await m.edit("Found literally nothing!,"
                      + "You should work on your English.")
         return
