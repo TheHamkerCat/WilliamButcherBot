@@ -99,16 +99,17 @@ async def jssong(_, message):
         sname = songs[0].song
         slink = songs[0].media_url
         ssingers = songs[0].singers
+        await m.edit("Downloading") 
+        song = await download_song(slink)
+        await m.edit("Uploading")
+        await message.reply_audio(audio=song, title=sname,
+                                  performer=ssingers)
+        os.remove(song)
+        await m.delete()
     except Exception as e:
         await m.edit(str(e))
         return
-    await m.edit("Downloading") 
-    song = await download_song(slink)
-    await m.edit("Uploading") 
-    await message.reply_audio(audio=song, title=sname,
-                              performer=ssingers)
-    os.remove(song)
-    await m.delete()
+
 
 
 # Deezer Music
@@ -128,13 +129,14 @@ async def jssong(_, message):
         title = songs[0].title
         url = songs[0].url
         artist = songs[0].artist
+        await m.edit("Downloading") 
+        song = await download_song(url)
+        await m.edit("Uploading") 
+        await message.reply_audio(audio=song, title=title,
+                                  performer=artist)
+        os.remove(song)
+        await m.delete()
     except Exception as e:
         await m.edit(str(e))
         return
-    await m.edit("Downloading") 
-    song = await download_song(url)
-    await m.edit("Uploading") 
-    await message.reply_audio(audio=song, title=title,
-                              performer=artist)
-    os.remove(song)
-    await m.delete()
+
