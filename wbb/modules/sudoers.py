@@ -44,7 +44,7 @@ logs_create = filters.create(logs_callback)
 
 @app.on_callback_query(logs_create)
 async def paste_log_neko(client, query):
-    if query.from_user.id == OWNER_ID or SUDO_USER_ID:
+    if query.from_user.id in SUDOERS:
         j = open("error.log", "r")
         data = await nekobin.neko(j.read())
         keyb = types.InlineKeyboardMarkup(
