@@ -1,11 +1,5 @@
 from wbb import app, db
-from wbb.utils.errors import capture_err
 from pyrogram import filters
-
-__MODULE__ = "Music"
-__HELP__ = """/ytmusic [link] To Download Music From Various Websites Including Youtube.
-/saavn [query] To Download Music From Saavn.
-/deezer [query] To Download Music From Deezer."""
 
 
 notes = db.notes # Notes collection
