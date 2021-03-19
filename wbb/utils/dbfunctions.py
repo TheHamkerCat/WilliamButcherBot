@@ -7,6 +7,7 @@ warnsdb = db.warns
 
 """ Notes functions """
 
+
 async def _get_notes(chat_id: int) -> Dict[str, int]:
     _notes = await notesdb.find_one({"chat_id": chat_id})
     _notes = {} if not _notes else _notes["notes"]
@@ -30,7 +31,8 @@ async def save_note(chat_id: int, name: str, note: dict):
     )
 
 
-async def get_note_names(chat_id: int) -> List[str]: return [note for note in await _get_notes(chat_id)]
+async def get_note_names(
+    chat_id: int) -> List[str]: return [note for note in await _get_notes(chat_id)]
 
 
 async def get_note(chat_id: int, name: str) -> Union[bool, dict]:
@@ -40,12 +42,12 @@ async def get_note(chat_id: int, name: str) -> Union[bool, dict]:
     return _notes[name] if name in _notes else False
 
 
-async def delete_note(chat_id: int, name:str) -> bool:
+async def delete_note(chat_id: int, name: str) -> bool:
     notesd = await _get_notes(chat_id)
     name = name.lower()
     name = name.strip()
     if name in notesd:
-        del notesd[name]    
+        del notesd[name]
         await notesdb.update_one(
             {"chat_id": chat_id},
             {
@@ -118,3 +120,29 @@ async def delete_filter(chat_id: int, name: str) -> bool:
 """ Warn functions """
 
 
+async def add_warn(chat_id: int, user_id: int) -> int:
+    warns = await get_warns(chat_id, user_id)
+    if warns < 3:
+        warns += 1
+        await warnsdb.update_one(
+            {"chat_id": chat_id},
+            {"$set": {{"warns": {user_id: warns}}}},
+            upsert=True
+        )
+    return warns
+
+async def get_warns(chat_id: int, user_id: int) -> int:
+    warns = await warnsdb.find_one({"chat_id": chat_id})
+    warns = 0 if not warns else warns[user_id]
+    return warns
+
+
+async def remove_warns(chat_id: int, user_id: int) -> bool:
+    warns = await get_warns(chat_id, user_id)
+    warns = 0
+    await warnsdb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {{"warns": {user_id: warns}}}},
+        upsert=True
+    )
+    return True
