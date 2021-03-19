@@ -3,7 +3,6 @@ from pyrogram import filters
 from wbb import app
 from wbb.utils.errors import capture_err
 
-
 __MODULE__ = 'Github'
 __HELP__ = "Get information about a GitHub user.\n /github [username]"
 

@@ -95,3 +95,4 @@ async def callback_query_ignore_rice(_, callback_query):
         await callback_query.answer("Only admin or OP could ignore it")
         return
     await callback_query.message.delete()
+

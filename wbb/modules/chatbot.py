@@ -13,7 +13,7 @@ active_chats = []
 # Enabled | Disable Chatbot
 
 
-@app.on_message(filters.command("chatbot"))
+@app.on_message(filters.command("chatbot") & ~filters.edited)
 @capture_err
 async def chatbot_status(_, message):
     global active_chats
@@ -47,7 +47,8 @@ async def chatbot_status(_, message):
 
 
 
-@app.on_message(filters.text & filters.reply & ~filters.bot)
+@app.on_message(filters.text & filters.reply & ~filters.bot &
+        ~filters.via_bot & ~filters.forwarded, group=2)
 @capture_err
 async def chatbot_talk(_, message):
     if message.chat.id not in active_chats:
@@ -59,3 +60,4 @@ async def chatbot_talk(_, message):
     response = luna.response
     await app.send_chat_action(message.chat.id, "typing")
     await message.reply_text(response)
+

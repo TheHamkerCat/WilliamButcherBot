@@ -12,3 +12,5 @@ youtube_dl
 search_engine_parser
 cryptography
 googletrans==4.0.0-rc1
+motor
+dnspython

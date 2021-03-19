@@ -15,5 +15,7 @@ fernet_encryption_key = "iKMq0WZMnJKjMQxZWKtv-cplMuF_LoyshXj0XbTGGWM="
 
 captcha_delay_in_seconds = 300
 
+mongo_db_uri = "mongodb+srv://username:password@cluster0.ksiis.mongodb.net/YourDataBaseName?retryWrites=true&w=majority"
+
 # Leave This As It Is
 ARQ_API_BASE_URL = "https://thearq.tech"

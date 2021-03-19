@@ -4,8 +4,9 @@ from pyrogram import filters, types
 import speedtest
 import psutil
 from wbb.utils import nekobin, formatter
-from wbb.utils.errors import capture_err
 from wbb import app, SUDOERS, bot_start_time
+from wbb.utils.errors import capture_err
+
 
 __MODULE__ = "Sudoers"
 __HELP__ = '''/log - To Get Logs From Last Run.
@@ -44,7 +45,7 @@ logs_create = filters.create(logs_callback)
 
 @app.on_callback_query(logs_create)
 async def paste_log_neko(client, query):
-    if query.from_user.id == OWNER_ID or SUDO_USER_ID:
+    if query.from_user.id in SUDOERS:
         j = open("error.log", "r")
         data = await nekobin.neko(j.read())
         keyb = types.InlineKeyboardMarkup(

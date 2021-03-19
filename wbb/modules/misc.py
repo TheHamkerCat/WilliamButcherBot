@@ -6,11 +6,10 @@ from googletrans import Translator
 from cryptography.fernet import Fernet
 from wbb import app, FERNET_ENCRYPTION_KEY
 from wbb.utils import random_line
-from wbb.utils.errors import capture_err
 from wbb.utils.json_prettify import json_prettify
 from wbb.utils.fetch import fetch
 from wbb.utils.nekobin import neko
-
+from wbb.utils.errors import capture_err
 
 __MODULE__ = "Misc"
 __HELP__ = '''/commit - Generate Funny Commit Messages
@@ -27,13 +26,11 @@ __HELP__ = '''/commit - Generate Funny Commit Messages
 
 
 @app.on_message(filters.command("commit") & ~filters.edited)
-@capture_err
 async def commit(_, message):
     await message.reply_text((await random_line('wbb/utils/commit.txt')))
 
 
 @app.on_message(filters.command("RTFM", "#"))
-@capture_err
 async def rtfm(_, message):
     await message.delete()
     if not message.reply_to_message:
@@ -43,7 +40,6 @@ async def rtfm(_, message):
 
 
 @app.on_message(filters.command("runs") & ~filters.edited)
-@capture_err
 async def runs(_, message):
     await message.reply_text((await random_line('wbb/utils/runs.txt')))
 
@@ -232,7 +228,6 @@ async def json_fetch(_, message):
     
 
 @app.on_message(filters.command('bun'))
-@capture_err
 async def bunn(_, message):
     if message.reply_to_message:
         await message.reply_to_message.reply_sticker('CAACAgUAAx0CWIlO9AABARyRYBhyjKXFATVhu7AGQwip3TzSFiMAAuMBAAJ7usBUIu2xBtXTmuweBA')

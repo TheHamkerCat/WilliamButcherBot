@@ -11,7 +11,6 @@ from wbb import app, SUDOERS, arq
 from wbb.utils.fetch import fetch
 from wbb.utils.errors import capture_err
 
-
 __MODULE__ = "Music"
 __HELP__ = """/ytmusic [link] To Download Music From Various Websites Including Youtube.
 /saavn [query] To Download Music From Saavn.
@@ -85,7 +84,7 @@ async def download_song(url):
 # Jiosaavn Music
 
 
-@app.on_message(filters.command("saavn"))
+@app.on_message(filters.command("saavn") & ~filters.edited)
 @capture_err
 async def jssong(_, message):
     if len(message.command) < 2:
@@ -115,9 +114,9 @@ async def jssong(_, message):
 # Deezer Music
 
 
-@app.on_message(filters.command("deezer"))
+@app.on_message(filters.command("deezer") & ~filters.edited)
 @capture_err
-async def jssong(_, message):
+async def deezsong(_, message):
     if len(message.command) < 2:
         await message.reply_text("/deezer requires an argument.")
         return
