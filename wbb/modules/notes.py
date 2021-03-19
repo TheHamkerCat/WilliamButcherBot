@@ -6,7 +6,6 @@ from wbb.utils.dbfunctions import (
         )
 from wbb.utils.errors import capture_err
 from wbb.modules.admin import member_permissions
-from typing import Dict, List, Union
 from pyrogram import filters
 
 
@@ -19,7 +18,7 @@ __HELP__ = """/notes To Get All The Notes In The Chat.
 
 @app.on_message(filters.command("save") & ~filters.edited & ~filters.private)
 @capture_err
-async def save_note(_, message):
+async def save_notee(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
         await message.reply_text("Usage:\nReply to a text or sticker with /save [NOTE_NAME] to save it.")
     
@@ -58,7 +57,7 @@ async def get_notes(_, message):
 
 @app.on_message(filters.command("get") & ~filters.edited & ~filters.private)
 @capture_err
-async def get_note(_, message):
+async def get_one_note(_, message):
     if len(message.command) < 2:
         await message.reply_text("**Usage**\n__/get [NOTE_NAME]__")
     else:

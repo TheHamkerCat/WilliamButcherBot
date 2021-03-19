@@ -1,4 +1,6 @@
 from wbb import db
+from typing import Dict, List, Union
+
 
 notesdb = db.notes
 filtersdb = db.filters
@@ -65,7 +67,7 @@ async def delete_note(chat_id: int, name: str) -> bool:
 
 
 async def _get_filters(chat_id: int) -> Dict[str, int]:
-    _filters = await filtesdb.find_one({"chat_id": chat_id})
+    _filters = await filtersdb.find_one({"chat_id": chat_id})
     _filters = {} if not _filters else _filters["filters"]
     return _filters
 
@@ -115,34 +117,3 @@ async def delete_filter(chat_id: int, name: str) -> bool:
         )
         return True
     return False
-
-
-""" Warn functions """
-
-
-async def add_warn(chat_id: int, user_id: int) -> int:
-    warns = await get_warns(chat_id, user_id)
-    if warns < 3:
-        warns += 1
-        await warnsdb.update_one(
-            {"chat_id": chat_id},
-            {"$set": {{"warns": {user_id: warns}}}},
-            upsert=True
-        )
-    return warns
-
-async def get_warns(chat_id: int, user_id: int) -> int:
-    warns = await warnsdb.find_one({"chat_id": chat_id})
-    warns = 0 if not warns else warns[user_id]
-    return warns
-
-
-async def remove_warns(chat_id: int, user_id: int) -> bool:
-    warns = await get_warns(chat_id, user_id)
-    warns = 0
-    await warnsdb.update_one(
-        {"chat_id": chat_id},
-        {"$set": {{"warns": {user_id: warns}}}},
-        upsert=True
-    )
-    return True

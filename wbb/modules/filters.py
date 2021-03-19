@@ -5,7 +5,6 @@ from wbb.utils.dbfunctions import (
         get_filters_names, get_filter,
         delete_filter
         )
-from typing import Dict, List, Union
 from pyrogram import filters
 from wbb.utils.errors import capture_err
 
@@ -18,7 +17,7 @@ __HELP__ = """/filters To Get All The Filters In The Chat.
 
 @app.on_message(filters.command("filter") & ~filters.edited & ~filters.private)
 @capture_err
-async def save_filter(_, message):
+async def save_filters(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
         await message.reply_text("Usage:\nReply to a text or sticker with /filter [FILTER_NAME] to save it.")
 
