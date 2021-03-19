@@ -9,17 +9,17 @@ __HELP__ = """/filters To Get All The Filters In The Chat.
 /stop [FILTER_NAME] To Stop A Filter."""
 
 
-db = db.filters # Filters collection
+db = db.filters  # Filters collection
 
 
 @app.on_message(filters.command("filter") & ~filters.edited & ~filters.private)
 async def save_filter(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
         await message.reply_text("Usage:\nReply to a text or sticker with /filter [FILTER_NAME] to save it.")
-    
+
     elif not message.reply_to_message.text and not message.reply_to_message.sticker:
         await message.reply_text("__**You can only save text or stickers in filters.**__")
-    
+
     elif len(await member_permissions(message.chat.id, message.from_user.id)) < 1:
         await message.reply_text("**You don't have enough permissions**")
     else:
@@ -52,10 +52,10 @@ async def get_filterss(_, message):
 async def del_filter(_, message):
     if len(message.command) < 2:
         await message.reply_text("**Usage**\n__/stop [FILTER_NAME]__")
-    
+
     elif len(await member_permissions(message.chat.id, message.from_user.id)) < 1:
         await message.reply_text("**You don't have enough permissions**")
-    
+
     else:
         name = message.text.split(None, 1)[1].strip()
         if not name:
@@ -67,6 +67,28 @@ async def del_filter(_, message):
             await message.reply_text(f"**Deleted filter {name} successfully.**")
         else:
             await message.reply_text(f"**No such filter.**")
+
+
+@app.on_message(filters.text & ~filters.edited &
+                ~filters.private & ~filters.via_bot &
+                ~filters.forwarded, group=1)
+async def filters_re(_, message):
+    if message.text[0] != "/":
+        text = message.text.lower().strip().split(" ")
+        if text:
+            chat_id = message.chat.id
+            list_of_filters = await get_filters_names(chat_id)
+            for word in text:
+                if word in list_of_filters:
+                    _filter = await get_filter(chat_id, word)
+                    data_type = _filter['type']
+                    data = _filter['data']
+                    if data_type == "text":
+                        await message.reply_text(data)
+                    else:
+                        await message.reply_sticker(data)
+                    return
+
 
 # Functions
 
@@ -94,7 +116,8 @@ async def save_filter(chat_id: int, name: str, _filter: dict):
     )
 
 
-async def get_filters_names(chat_id: int) -> List[str]: return [_filter for _filter in await _get_filters(chat_id)]
+async def get_filters_names(
+    chat_id: int) -> List[str]: return [_filter for _filter in await _get_filters(chat_id)]
 
 
 async def get_filter(chat_id: int, name: str) -> Union[bool, dict]:
@@ -104,12 +127,12 @@ async def get_filter(chat_id: int, name: str) -> Union[bool, dict]:
     return _filters[name] if name in _filters else False
 
 
-async def delete_filter(chat_id: int, name:str) -> bool:
+async def delete_filter(chat_id: int, name: str) -> bool:
     filtersd = await _get_filters(chat_id)
     name = name.lower()
     name = name.strip()
-    if _filter in filtersd:
-        del filtersd[name]    
+    if name in filtersd:
+        del filtersd[name]
         await db.update_one(
             {"chat_id": chat_id},
             {
