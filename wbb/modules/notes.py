@@ -1,5 +1,13 @@
 from wbb import app, db
+from wbb.modules.admin import member_permissions
+from typing import Dict, List, Union
 from pyrogram import filters
+
+__MODULE__ = "Notes"
+__HELP__ = """/notes To Get All The Notes In The Chat.
+/save [NOTE_NAME] To Save A Note (Can be a sticker or text).
+/get [NOTE_NAME] To Get A Note.
+/delete [NOTE_NAME] To Delete A Note."""
 
 
 notes = db.notes # Notes collection
@@ -9,80 +17,129 @@ notes = db.notes # Notes collection
 async def save_note(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
         await message.reply_text("Usage:\nReply to a text or sticker with /save [NOTE_NAME] to save it.")
-        return
-    print("passed return 1")
-    if not message.reply_to_message.text and not message.reply_to_message.sticker:
+    
+    elif not message.reply_to_message.text and not message.reply_to_message.sticker:
         await message.reply_text("__**You can only save text or stickers in notes.**__")
-        return
-    print("passed return 2")
-    note_name = message.text.split(None, 1)[1]
-    note_type = "text" if message.reply_to_message.text else "sticker"
-    note_data = message.reply_to_message.text.markdown if note_type == "text" else message.reply_to_message.sticker.file_id
-    chat_id = message.chat.id
-    current_note = {
-            "name": note_name,
-            "type": note_type,
-            "data": note_data
-            }
-    notes_cursor = notes.find({"chat_id": chat_id}) # Cursor object of all notes in a chat
-
-    for notes_list in await notes_cursor.to_list(length=1):
-        chat_notes = notes_list['notes']
-    chat_notes.append(current_note)
-
-    await note.update_one(
-            {"chat_id": chat_id},
-            {"$set": {"notes": chat_notes}},
-            upsert=True
-            )
-    await message.reply_text(f"__**Saved note {note_name}.**__")
+    
+    elif len(await member_permissions(message.chat.id, message.from_user.id)) < 1:
+        await message.reply_text("**You don't have enough permissions**")
+    else:
+        name = message.text.split(None, 1)[1].strip()
+        if not name:
+            await message.reply_text("**Usage**\n__/save [NOTE_NAME]__")
+            return
+        _type = "text" if message.reply_to_message.text else "sticker"
+        note = {
+            "type": _type,
+            "data": message.reply_to_message.text.markdown if _type == "text" else message.reply_to_message.sticker.file_id
+        }
+        await save_note(message.chat.id, name, note)
+        await message.reply_text(f"__**Saved note {name}.**__")
 
 
 @app.on_message(filters.command("notes") & ~filters.edited & ~filters.private)
 async def get_notes(_, message):
-    chat_id = message.chat.id
-    notes_cursor = notes.find({"chat_id": chat_id}) # Cursor object of all notes in a chat
+    _notes = await get_note_names(message.chat.id)
 
-    for notes_list in await notes_cursor.to_list(length=1):
-        note = notes_list['notes']
-    try:
-        if len(note) == 0:
-            await message.reply_text("__**No notes in this chat.**__")
-            return
-    except UnboundLocalError:
-            await message.reply_text("__**No notes in this chat.**__")
-            return
-    msg = ""
-    for note in notes:
-        msg += f"`{note['name']}`\n"
-    await message.reply_text(msg)
+    if not _notes:
+        await message.reply_text("**No notes in this chat.**")
+    else:
+        msg = f"List of notes in {message.chat.title}\n"
+        for note in _notes:
+            msg += f"**-** `{note}`\n"
+        await message.reply_text(msg)
 
 
 @app.on_message(filters.command("get") & ~filters.edited & ~filters.private)
 async def get_note(_, message):
     if len(message.command) < 2:
         await message.reply_text("**Usage**\n__/get [NOTE_NAME]__")
-        return
-    note_name = message.text.split(None, 1)[1]
-    chat_id = message.chat.id  
-    notes_cursor = notes.find({"chat_id": chat_id}) # Cursor object of all notes in a chat
+    else:
+        name = message.text.split(None, 1)[1].strip()
+        if not name:
+            await message.reply_text("**Usage**\n__/get [NOTE_NAME]__")
+            return
+        _note = await get_note(message.chat.id, name)
+        if not _note:
+            await message.reply_text(f"**No such note.**")
+        else:
+            if _note["type"] == "text":
+                await message.reply_text(_note["data"])
+            else:
+                await message.reply_sticker(_note["data"])
 
-    for notes_list in await notes_cursor.to_list(length=1):
-        note = notes_list['notes']
-    try:
-        if len(note) == 0:
-            await message.reply_text("__**No note with this name.**__")
-            return
-    except UnboundLocalError:
-            await message.reply_text("__**No note with this name.**__")
-            return
 
-    for note in notes:
-        if note['name'] == note_name:
-            if note['type'] == "sticker":
-                await message.reply_sticker(note['data'])
-                return
-            await message.reply_text(note['data'])
+@app.on_message(filters.command("delete") & ~filters.edited & ~filters.private)
+async def del_note(_, message):
+    if len(message.command) < 2:
+        await message.reply_text("**Usage**\n__/delete [NOTE_NAME]__")
+    
+    elif len(await member_permissions(message.chat.id, message.from_user.id)) < 1:
+        await message.reply_text("**You don't have enough permissions**")
+    
+    else:
+        name = message.text.split(None, 1)[1].strip()
+        if not name:
+            await message.reply_text("**Usage**\n__/delete [NOTE_NAME]__")
             return
-    await message.reply_text("**There are no notes in this chat matching your query.**")
+        chat_id = message.chat.id
+        deleted = await delete_note(chat_id, name)
+        if deleted:
+            await message.reply_text(f"**Deleted note {name} successfully.**")
+        else:
+            await message.reply_text(f"**No such note.**")
+
+# Functions
+
+
+async def _get_notes(chat_id: int) -> Dict[str, int]:
+    _notes = await notes.find_one({"chat_id": chat_id})
+    _notes = {} if not _notes else _notes["notes"]
+    return _notes
+
+
+async def save_note(chat_id: int, name: str, note: dict):
+    name = name.lower()
+    name = name.strip()
+    _notes = await _get_notes(chat_id)
+    _notes[name] = note
+
+    await notes.update_one(
+        {"chat_id": chat_id},
+        {
+            "$set": {
+                "notes": _notes
+            }
+        },
+        upsert=True
+    )
+
+
+async def get_note_names(chat_id: int) -> List[str]: return [note for note in await _get_notes(chat_id)]
+
+
+async def get_note(chat_id: int, name: str) -> Union[bool, dict]:
+    name = name.lower()
+    name = name.strip()
+    _notes = await _get_notes(chat_id)
+    return _notes[name] if name in _notes else False
+
+
+async def delete_note(chat_id: int, name:str) -> bool:
+    notesd = await _get_notes(chat_id)
+    name = name.lower()
+    name = name.strip()
+    if name in notesd:
+        del notesd[name]    
+        await notes.update_one(
+            {"chat_id": chat_id},
+            {
+                "$set": {
+                    "notes": notesd
+                }
+            },
+            upsert=True
+        )
+        return True
+    return False
 

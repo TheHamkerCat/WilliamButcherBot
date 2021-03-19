@@ -9,7 +9,6 @@ from random import randint
 from pyrogram import filters
 from wbb import app, SUDOERS, arq 
 from wbb.utils.fetch import fetch
-from wbb.utils.errors import capture_err
 
 
 __MODULE__ = "Music"
@@ -31,7 +30,6 @@ ydl_opts = {
 # Ytmusic
 
 @app.on_message(filters.command("ytmusic") & ~filters.edited & filters.user(SUDOERS))
-@capture_err
 async def music(_, message):
     if len(message.command) != 2:
         await message.reply_text("/ytmusic needs a link as argument")
@@ -86,7 +84,6 @@ async def download_song(url):
 
 
 @app.on_message(filters.command("saavn"))
-@capture_err
 async def jssong(_, message):
     if len(message.command) < 2:
         await message.reply_text("/saavn requires an argument.")
@@ -116,7 +113,6 @@ async def jssong(_, message):
 
 
 @app.on_message(filters.command("deezer"))
-@capture_err
 async def jssong(_, message):
     if len(message.command) < 2:
         await message.reply_text("/deezer requires an argument.")

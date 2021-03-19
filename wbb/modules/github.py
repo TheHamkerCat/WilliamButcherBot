@@ -1,7 +1,6 @@
 import aiohttp
 from pyrogram import filters
 from wbb import app
-from wbb.utils.errors import capture_err
 
 
 __MODULE__ = 'Github'
@@ -9,7 +8,6 @@ __HELP__ = "Get information about a GitHub user.\n /github [username]"
 
 
 @app.on_message(filters.command('github'))
-@capture_err
 async def github(_, message):
     if len(message.command) != 2:
         await message.reply_text("/git Username")

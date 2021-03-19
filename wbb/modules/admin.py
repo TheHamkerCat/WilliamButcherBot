@@ -2,7 +2,6 @@ from pyrogram import filters
 from pyrogram.types import ChatPermissions
 from wbb import OWNER_ID, SUDOERS, app
 from wbb.utils.botinfo import BOT_ID
-from wbb.utils.errors import capture_err
 
 __MODULE__ = "Admin"
 __HELP__ = '''/ban - Ban A User
@@ -17,7 +16,7 @@ __HELP__ = '''/ban - Ban A User
 /ban_ghosts - Ban Deleted Accounts'''
 
 
-async def list_admins(group_id):
+async def list_admins(group_id) -> list:
     list_of_admins = []
     async for member in app.iter_chat_members(
             group_id, filter="administrators"):
@@ -25,7 +24,7 @@ async def list_admins(group_id):
     return list_of_admins
 
 
-async def member_permissions(chat_id, user_id):
+async def member_permissions(chat_id, user_id) -> list:
     perms = []
     member = (await app.get_chat_member(chat_id, user_id))
     if member.can_post_messages:
@@ -61,7 +60,6 @@ async def list_members(group_id):
 
 
 @app.on_message(filters.command("purge") & ~filters.edited)
-@capture_err
 async def purge(client, message):
     message_ids = []
     chat_id = message.chat.id
@@ -103,7 +101,6 @@ async def purge(client, message):
 
 
 @app.on_message(filters.command("kick") & ~filters.edited)
-@capture_err
 async def kick(_, message):
     try:
         from_user_id = message.from_user.id
@@ -142,7 +139,6 @@ async def kick(_, message):
 
 
 @app.on_message(filters.command("ban") & ~filters.edited)
-@capture_err
 async def ban(_, message):
     try:
         from_user_id = message.from_user.id
@@ -180,7 +176,6 @@ async def ban(_, message):
 
 
 @app.on_message(filters.command("unban") & ~filters.edited)
-@capture_err
 async def unban(_, message):
     try:
         from_user_id = message.from_user.id
@@ -213,7 +208,6 @@ async def unban(_, message):
 
 
 @app.on_message(filters.command("del") & ~filters.edited)
-@capture_err
 async def delete(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply To A Message To Delete It")
@@ -235,7 +229,6 @@ async def delete(_, message):
 
 
 @app.on_message(filters.command("promote") & ~filters.edited)
-@capture_err
 async def promote(_, message):
     try:
         from_user_id = message.from_user.id
@@ -278,7 +271,6 @@ async def promote(_, message):
 
 
 @app.on_message(filters.command("pin") & ~filters.edited)
-@capture_err
 async def pin(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply To A Message To Pin.")
@@ -299,7 +291,6 @@ async def pin(_, message):
 
 
 @app.on_message(filters.command("mute") & ~filters.edited)
-@capture_err
 async def mute(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply To A User's Message!")
@@ -322,7 +313,6 @@ async def mute(_, message):
 
 
 @app.on_message(filters.command("unmute") & ~filters.edited)
-@capture_err
 async def unmute(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply To A User's Message!")

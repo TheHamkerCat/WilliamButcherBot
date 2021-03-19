@@ -13,13 +13,11 @@ import asyncio
 from datetime import datetime
 from pyrogram import filters
 from wbb import app, WELCOME_DELAY_KICK_SEC
-from wbb.utils.errors import capture_err
 from wbb.modules.admin import list_admins
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ChatPermissions, User
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 
 @app.on_message(filters.new_chat_members)
-@capture_err
 async def welcome(_, message: Message):
     """Mute new member and send message with button"""
     for member in message.new_chat_members:
@@ -89,7 +87,6 @@ async def kick_restricted_after_delay(delay, button_message: Message, user: User
 
 
 @app.on_message(filters.left_chat_member)
-@capture_err
 async def left_chat_member(_, message: Message):
     """When a restricted member left the chat, ban him for a while"""
     group_chat = message.chat

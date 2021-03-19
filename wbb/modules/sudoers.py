@@ -4,7 +4,6 @@ from pyrogram import filters, types
 import speedtest
 import psutil
 from wbb.utils import nekobin, formatter
-from wbb.utils.errors import capture_err
 from wbb import app, SUDOERS, bot_start_time
 
 __MODULE__ = "Sudoers"
@@ -18,7 +17,6 @@ __HELP__ = '''/log - To Get Logs From Last Run.
 
 
 @app.on_message(filters.user(SUDOERS) & filters.command("log"))
-@capture_err
 async def logs_chat(_, message):
     keyb = types.InlineKeyboardMarkup(
         [
@@ -74,7 +72,6 @@ def speed_convert(size):
 @app.on_message(
     filters.user(SUDOERS) & filters.command("speedtest")
 )
-@capture_err
 async def get_speedtest_result(_, message):
     m = await message.reply_text("`Performing A Speedtest!`")
     speed = speedtest.Speedtest()
@@ -93,7 +90,6 @@ Latency  - {round((i["latency"]))} ms
 @app.on_message(
     filters.user(SUDOERS) & filters.command("stats")
 )
-@capture_err
 async def get_stats(_, message):
     bot_uptime = int(time.time() - bot_start_time)
     cpu = psutil.cpu_percent(interval=0.5)

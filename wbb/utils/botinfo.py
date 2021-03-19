@@ -1,4 +1,3 @@
-from wbb import LOG_GROUP_ID
 BOT_ID = 0
 BOT_NAME = ""
 BOT_USERNAME = ""

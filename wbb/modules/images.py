@@ -4,8 +4,6 @@ import asyncio
 from random import randint
 from pyrogram import filters
 from wbb import app, arq
-from wbb.utils.errors import capture_err
-from wbb.utils.fetch import fetch
 
 
 __MODULE__ = "Images"
@@ -19,7 +17,6 @@ async def delete_message_with_delay(delay, message):
 
 
 @app.on_message(filters.command("cat") & ~filters.edited)
-@capture_err
 async def cat(_, message):
     with urllib.request.urlopen(
             "https://api.thecatapi.com/v1/images/search"
@@ -30,7 +27,6 @@ async def cat(_, message):
 
 
 @app.on_message(filters.command("wall") & ~filters.edited)
-@capture_err
 async def wall(_, message):
     if len(message.command) < 2:
         await message.reply_text("/wall needs an argument")
