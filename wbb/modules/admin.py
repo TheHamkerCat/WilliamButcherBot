@@ -1,7 +1,8 @@
 from pyrogram import filters
 from pyrogram.types import ChatPermissions
-from wbb import OWNER_ID, SUDOERS, app
+from wbb import OWNER_ID, SUDOERS, app, db
 from wbb.utils.botinfo import BOT_ID
+from wbb.utils.errors import capture_err
 
 __MODULE__ = "Admin"
 __HELP__ = '''/ban - Ban A User
@@ -15,8 +16,9 @@ __HELP__ = '''/ban - Ban A User
 /unmute - Unmute A User
 /ban_ghosts - Ban Deleted Accounts'''
 
+db = db.warns
 
-async def list_admins(group_id) -> list:
+async def list_admins(group_id):
     list_of_admins = []
     async for member in app.iter_chat_members(
             group_id, filter="administrators"):
@@ -24,7 +26,7 @@ async def list_admins(group_id) -> list:
     return list_of_admins
 
 
-async def member_permissions(chat_id, user_id) -> list:
+async def member_permissions(chat_id, user_id):
     perms = []
     member = (await app.get_chat_member(chat_id, user_id))
     if member.can_post_messages:
@@ -60,6 +62,7 @@ async def list_members(group_id):
 
 
 @app.on_message(filters.command("purge") & ~filters.edited)
+@capture_err
 async def purge(client, message):
     message_ids = []
     chat_id = message.chat.id
@@ -78,8 +81,8 @@ async def purge(client, message):
                 message_ids.append(a_s_message_id)
                 if len(message_ids) == 100:
                     await client.delete_messages(chat_id=chat_id,
-                        message_ids=message_ids,
-                        revoke=True)
+                                                 message_ids=message_ids,
+                                                 revoke=True)
 
                     message_ids = []
             if len(message_ids) > 0:
@@ -101,6 +104,7 @@ async def purge(client, message):
 
 
 @app.on_message(filters.command("kick") & ~filters.edited)
+@capture_err
 async def kick(_, message):
     try:
         from_user_id = message.from_user.id
@@ -139,6 +143,7 @@ async def kick(_, message):
 
 
 @app.on_message(filters.command("ban") & ~filters.edited)
+@capture_err
 async def ban(_, message):
     try:
         from_user_id = message.from_user.id
@@ -176,6 +181,7 @@ async def ban(_, message):
 
 
 @app.on_message(filters.command("unban") & ~filters.edited)
+@capture_err
 async def unban(_, message):
     try:
         from_user_id = message.from_user.id
@@ -208,6 +214,7 @@ async def unban(_, message):
 
 
 @app.on_message(filters.command("del") & ~filters.edited)
+@capture_err
 async def delete(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply To A Message To Delete It")
@@ -229,6 +236,7 @@ async def delete(_, message):
 
 
 @app.on_message(filters.command("promote") & ~filters.edited)
+@capture_err
 async def promote(_, message):
     try:
         from_user_id = message.from_user.id
@@ -255,8 +263,8 @@ async def promote(_, message):
                     can_change_info=True,
                     can_invite_users=True,
                     can_delete_messages=True,
-                    can_restrict_members=False, 
-                    can_pin_messages=True, 
+                    can_restrict_members=False,
+                    can_pin_messages=True,
                     can_promote_members=True)
                 await message.reply_text('Promoted!')
             else:
@@ -271,6 +279,7 @@ async def promote(_, message):
 
 
 @app.on_message(filters.command("pin") & ~filters.edited)
+@capture_err
 async def pin(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply To A Message To Pin.")
@@ -291,6 +300,7 @@ async def pin(_, message):
 
 
 @app.on_message(filters.command("mute") & ~filters.edited)
+@capture_err
 async def mute(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply To A User's Message!")
@@ -313,6 +323,7 @@ async def mute(_, message):
 
 
 @app.on_message(filters.command("unmute") & ~filters.edited)
+@capture_err
 async def unmute(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply To A User's Message!")
@@ -363,3 +374,29 @@ async def ban_deleted_accounts(_, message):
     except Exception as e:
         await message.reply_text(str(e))
         print(str(e))
+
+
+# Warn
+
+
+@app.on_message(filters.command("warn") & ~filters.edited)
+@capture_err
+async def warn(_, message):
+    try:
+        from_user_id = message.from_user.id
+        chat_id = message.chat.id
+        permissions = await member_permissions(chat_id, from_user_id)
+        if "can_restrict_members" in permissions or from_user_id in SUDOERS:
+            if message.reply_to_message:
+                user_id = message.reply_to_message.from_user.id
+                if user_id in SUDOERS:
+                    await message.reply_text("You Wanna Warn The Elevated One?")
+                else:
+                    if user_id in await list_members(chat_id):
+                        await message.reply_text("Banned!")
+                    else:
+                        await message.reply_text("This user isn't here.")
+            else:
+                await message.reply_text("Reply to someone's message to warn him.")
+    except Exception as e:
+        await message.reply_text(str(e))

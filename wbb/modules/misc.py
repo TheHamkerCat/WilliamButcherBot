@@ -9,7 +9,7 @@ from wbb.utils import random_line
 from wbb.utils.json_prettify import json_prettify
 from wbb.utils.fetch import fetch
 from wbb.utils.nekobin import neko
-
+from wbb.utils.errors import capture_err
 
 __MODULE__ = "Misc"
 __HELP__ = '''/commit - Generate Funny Commit Messages
@@ -45,6 +45,7 @@ async def runs(_, message):
 
 
 @app.on_message(filters.command("id") & ~filters.edited)
+@capture_err
 async def get_id(_, message):
     if len(message.command) != 1:
         username = message.text.split(None, 1)[1]
@@ -67,6 +68,7 @@ async def get_id(_, message):
 
 
 @app.on_message(filters.command('random') & ~filters.edited)
+@capture_err
 async def random(_, message):
     if len(message.command) != 2:
         await message.reply_text('"/random" Needs An Argurment.'
@@ -90,6 +92,7 @@ async def random(_, message):
 
 
 @app.on_message(filters.command('encrypt') & ~filters.edited)
+@capture_err
 async def encrypt(_, message):
     if not message.reply_to_message:
         await message.reply_text('Reply To A Message To Encrypt It.')
@@ -105,6 +108,7 @@ async def encrypt(_, message):
 
 
 @app.on_message(filters.command('decrypt') & ~filters.edited)
+@capture_err
 async def decrypt(_, message):
     if not message.reply_to_message:
         await message.reply_text('Reply To A Message To Decrypt It.')
@@ -128,6 +132,7 @@ async def fetch_text(url):
 
 
 @app.on_message(filters.command("cheat") & ~filters.edited)
+@capture_err
 async def cheat(_, message):
     if len(message.command) < 3:
         await message.reply_text("/cheat [language] [query]")
@@ -151,6 +156,7 @@ async def cheat(_, message):
 
 
 @app.on_message(filters.command("weather") & ~filters.edited)
+@capture_err
 async def weather(_, message):
     if len(message.command) != 2:
         await message.reply_text("/weather [city]")
@@ -164,6 +170,7 @@ async def weather(_, message):
 
 
 @app.on_message(filters.command("tr") & ~filters.edited)
+@capture_err
 async def tr(_, message):
     if len(message.command) != 2:
         await message.reply_text("/tr [LANGUAGE_CODE]")
@@ -196,6 +203,7 @@ fetch_limit = 0
 
 
 @app.on_message(filters.command("json") & ~filters.edited)
+@capture_err
 async def json_fetch(_, message):
     global fetch_limit
     if len(message.command) != 2:

@@ -1,6 +1,8 @@
 from search_engine_parser import GoogleSearch
 from pyrogram import filters
 from wbb import app, arq
+from wbb.utils.errors import capture_err
+
 
 __MODULE__ = "Search"
 __HELP__ = '''/ud - Search For Something In Urban Dictionary
@@ -13,6 +15,7 @@ __HELP__ = '''/ud - Search For Something In Urban Dictionary
 
 
 @app.on_message(filters.command("ud") & ~filters.edited)
+@capture_err
 async def urbandict(_, message):
     if len(message.command) < 2:
         await message.reply_text('"/ud" Needs An Argument.')
@@ -37,6 +40,7 @@ async def urbandict(_, message):
 
 
 @app.on_message(filters.command("google") & ~filters.edited)
+@capture_err
 async def google(_, message):
     try:
         if len(message.command) < 2:
@@ -63,6 +67,7 @@ async def google(_, message):
 
 
 @app.on_message(filters.command("so") & ~filters.edited)
+@capture_err
 async def stack(_, message):
     try:
         if len(message.command) < 2:
@@ -90,6 +95,7 @@ async def stack(_, message):
 
 
 @app.on_message(filters.command("gh") & ~filters.edited)
+@capture_err
 async def github(_, message):
     try:
         if len(message.command) < 2:
@@ -117,6 +123,7 @@ async def github(_, message):
 
 
 @app.on_message(filters.command("yt") & ~filters.edited)
+@capture_err
 async def ytsearch(_, message):
     try:
         if len(message.command) < 2:

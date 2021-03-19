@@ -16,17 +16,20 @@ from wbb import app, WELCOME_DELAY_KICK_SEC
 from wbb.modules.admin import list_admins
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ChatPermissions, User
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
+from wbb.utils.errors import capture_err
+
 
 @app.on_message(filters.new_chat_members)
+@capture_err
 async def welcome(_, message: Message):
     """Mute new member and send message with button"""
     for member in message.new_chat_members:
         if member.is_bot:
-            continue # ignore bots
-            
+            continue  # ignore bots
+
         text = (f"Welcome, {(member.mention())}\n**Are you human?**\n"
-            "You will be removed from this chat if you are not verified "
-            f"in {WELCOME_DELAY_KICK_SEC} seconds")
+                "You will be removed from this chat if you are not verified "
+                f"in {WELCOME_DELAY_KICK_SEC} seconds")
         await message.chat.restrict_member(member.id, ChatPermissions())
         user = await app.get_users(member.id)
         name_length = len(str(user.first_name) + str(user.last_name))
@@ -40,18 +43,21 @@ async def welcome(_, message: Message):
                     [
                         InlineKeyboardButton(
                             "Press Here to Verify",
-                            callback_data="pressed_button {}".format(member.id) # According to the docs, the user can send arbitrary data in this field, yet, I'm not able to do so, so until there's a db to pass data, imma use it like this so it will be very easy to change it to use a db in the future
+                            # According to the docs, the user can send arbitrary data in this field, yet, I'm not able to do so, so until there's a db to pass data, imma use it like this so it will be very easy to change it to use a db in the future
+                            callback_data="pressed_button {}".format(member.id)
                         )
                     ]
                 ]
             ),
             quote=True
         )
-        #await message.reply_animation("CgACAgQAAx0CWIlO9AABATjjYBrlKqQID0SQ7Ey7bkVRKM5gNn8AAl8CAAIm39VRHDx6EoKU6W0eBA") 
+        # await message.reply_animation("CgACAgQAAx0CWIlO9AABATjjYBrlKqQID0SQ7Ey7bkVRKM5gNn8AAl8CAAIm39VRHDx6EoKU6W0eBA")
         # wtf is this? "file_id is unique for each individual bot and can't be transferred from one bot to another." source: https://core.telegram.org/bots/api#sending-files
-        #and here is the error I just received -- pyrogram.errors.exceptions.bad_request_400.MediaEmpty: [400 MEDIA_EMPTY]: The media you tried to send is invalid (caused by "messages.SendMedia")
-        asyncio.create_task(kick_restricted_after_delay(WELCOME_DELAY_KICK_SEC, button_message, member))
+        # and here is the error I just received -- pyrogram.errors.exceptions.bad_request_400.MediaEmpty: [400 MEDIA_EMPTY]: The media you tried to send is invalid (caused by "messages.SendMedia")
+        asyncio.create_task(kick_restricted_after_delay(
+            WELCOME_DELAY_KICK_SEC, button_message, member))
         await asyncio.sleep(0.5)
+
 
 @app.on_callback_query(filters.regex("pressed_button"))
 async def callback_query_welcome_button(client, callback_query):
@@ -73,6 +79,8 @@ async def callback_query_welcome_button(client, callback_query):
 # If anyone is interested, we should use threads and kill them when the user has verified himself.
 # Also, once there's a db, we should save this data and re-create the threads in case the bot crashed, tho pyrogram doesn't support history messages (obviously)
 # so in such a case we may lose data anyway
+
+
 async def kick_restricted_after_delay(delay, button_message: Message, user: User):
     """If the new member is still restricted after the delay, delete
     button message and join message and then kick him
@@ -87,6 +95,7 @@ async def kick_restricted_after_delay(delay, button_message: Message, user: User
 
 
 @app.on_message(filters.left_chat_member)
+@capture_err
 async def left_chat_member(_, message: Message):
     """When a restricted member left the chat, ban him for a while"""
     group_chat = message.chat

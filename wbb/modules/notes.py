@@ -1,7 +1,14 @@
-from wbb import app, db
+from wbb import app
+from wbb.utils.dbfunctions import (
+        _get_notes, save_note,
+        get_note_names, get_note,
+        delete_note
+        )
+from wbb.utils.errors import capture_err
 from wbb.modules.admin import member_permissions
 from typing import Dict, List, Union
 from pyrogram import filters
+
 
 __MODULE__ = "Notes"
 __HELP__ = """/notes To Get All The Notes In The Chat.
@@ -10,10 +17,8 @@ __HELP__ = """/notes To Get All The Notes In The Chat.
 /delete [NOTE_NAME] To Delete A Note."""
 
 
-notes = db.notes # Notes collection
-
-
 @app.on_message(filters.command("save") & ~filters.edited & ~filters.private)
+@capture_err
 async def save_note(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
         await message.reply_text("Usage:\nReply to a text or sticker with /save [NOTE_NAME] to save it.")
@@ -38,6 +43,7 @@ async def save_note(_, message):
 
 
 @app.on_message(filters.command("notes") & ~filters.edited & ~filters.private)
+@capture_err
 async def get_notes(_, message):
     _notes = await get_note_names(message.chat.id)
 
@@ -51,6 +57,7 @@ async def get_notes(_, message):
 
 
 @app.on_message(filters.command("get") & ~filters.edited & ~filters.private)
+@capture_err
 async def get_note(_, message):
     if len(message.command) < 2:
         await message.reply_text("**Usage**\n__/get [NOTE_NAME]__")
@@ -70,6 +77,7 @@ async def get_note(_, message):
 
 
 @app.on_message(filters.command("delete") & ~filters.edited & ~filters.private)
+@capture_err
 async def del_note(_, message):
     if len(message.command) < 2:
         await message.reply_text("**Usage**\n__/delete [NOTE_NAME]__")
@@ -88,58 +96,3 @@ async def del_note(_, message):
             await message.reply_text(f"**Deleted note {name} successfully.**")
         else:
             await message.reply_text(f"**No such note.**")
-
-# Functions
-
-
-async def _get_notes(chat_id: int) -> Dict[str, int]:
-    _notes = await notes.find_one({"chat_id": chat_id})
-    _notes = {} if not _notes else _notes["notes"]
-    return _notes
-
-
-async def save_note(chat_id: int, name: str, note: dict):
-    name = name.lower()
-    name = name.strip()
-    _notes = await _get_notes(chat_id)
-    _notes[name] = note
-
-    await notes.update_one(
-        {"chat_id": chat_id},
-        {
-            "$set": {
-                "notes": _notes
-            }
-        },
-        upsert=True
-    )
-
-
-async def get_note_names(chat_id: int) -> List[str]: return [note for note in await _get_notes(chat_id)]
-
-
-async def get_note(chat_id: int, name: str) -> Union[bool, dict]:
-    name = name.lower()
-    name = name.strip()
-    _notes = await _get_notes(chat_id)
-    return _notes[name] if name in _notes else False
-
-
-async def delete_note(chat_id: int, name:str) -> bool:
-    notesd = await _get_notes(chat_id)
-    name = name.lower()
-    name = name.strip()
-    if name in notesd:
-        del notesd[name]    
-        await notes.update_one(
-            {"chat_id": chat_id},
-            {
-                "$set": {
-                    "notes": notesd
-                }
-            },
-            upsert=True
-        )
-        return True
-    return False
-
