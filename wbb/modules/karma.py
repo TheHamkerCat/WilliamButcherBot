@@ -81,7 +81,6 @@ async def karma(_, message):
     if not message.reply_to_message:
         karma = await get_karmas(chat_id)
         msg = f"**Karma list of {message.chat.title}:- **\n"
-#        output = await json_prettify(karma)
         limit = 0
         for i in karma:
             if limit > 9:
@@ -90,8 +89,8 @@ async def karma(_, message):
             user_id = await alpha_to_int(i)
             user_karma = karma[i]['karma']
             user_name = (await app.get_users(user_id)).username
-            ii += f"{user_name}  {user_karma}"
-            msg += f"`{ii}`\n"
+            ii += f"**{user_name}** - `{user_karma}`"
+            msg += f"{ii}\n"
             limit += 1
         await message.reply_text(msg)
     else:
