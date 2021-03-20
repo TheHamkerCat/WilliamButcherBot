@@ -414,6 +414,8 @@ async def warn_user(_, message):
                     await message.reply_text("This user isn't here.")
         else:
             await message.reply_text("Reply to someone's message to warn him.")
+    else:
+        await message.reply_text("You don't have enough permissions.")
 
 
 

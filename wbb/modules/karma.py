@@ -1,3 +1,4 @@
+import operator
 from wbb import app
 from wbb.utils.errors import capture_err
 from wbb.utils.json_prettify import json_prettify
@@ -82,15 +83,18 @@ async def karma(_, message):
         karma = await get_karmas(chat_id)
         msg = f"**Karma list of {message.chat.title}:- **\n"
         limit = 0
+        karma_dicc = {}
         for i in karma:
-            if limit > 9:
-                break
-            ii = ""
             user_id = await alpha_to_int(i)
             user_karma = karma[i]['karma']
             user_name = (await app.get_users(user_id)).username
-            ii += f"**{user_name}** - `{user_karma}`"
-            msg += f"{ii}\n"
+            karma_dicc[user_name] = user_karma
+            
+            karma_arranged = dict(sorted(karma_dicc.items(), key=operator.itemgetter(0)))
+        for username, karma_count in karma_arranged.items():
+            if limit > 9:
+                break
+            msg += f"{username} - `{karma_count}`\n"
             limit += 1
         await message.reply_text(msg)
     else:
@@ -102,4 +106,3 @@ async def karma(_, message):
         else:
             karma = 0
             await message.reply_text(f'**Total Points**: __{karma}__')
-
