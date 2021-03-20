@@ -3,7 +3,7 @@ from pyrogram.types import ChatPermissions
 from wbb import OWNER_ID, SUDOERS, app
 from wbb.utils.botinfo import BOT_ID
 from wbb.utils.errors import capture_err
-#from wbb.utils.dbfunctions import add_warn, get_warns, remove_warns
+from wbb.utils.dbfunctions import add_warn, get_warn, remove_warns, int_to_alpha
 
 __MODULE__ = "Admin"
 __HELP__ = '''/ban - Ban A User
@@ -378,9 +378,6 @@ async def ban_deleted_accounts(_, message):
         await message.reply_text(str(e))
         print(str(e))
 
-"""
-# Warn
-
 
 @app.on_message(filters.command("warn") & ~filters.edited)
 @capture_err
@@ -397,14 +394,22 @@ async def warn_user(_, message):
                 await message.reply_text("You Wanna Warn The Elevated One?")
             else:
                 if user_id in await list_members(chat_id):
-                    warns = await get_warns(chat_id, user_id)
+                    warns = await get_warn(chat_id, await int_to_alpha(user_id))
+                    if warns:
+                        warns = warns['warns']
+                    else:
+                        warn = {"warns": 1}
+                        await add_warn(chat_id, await int_to_alpha(user_id), warn)
+                        await message.reply_text(f"Warned {mention} !, 1/3 warnings now.")
+                        return
                     if warns >= 3:
                         await message.chat.kick_member(user_id)
                         await message.reply_text(f"Number of warns of {mention} exceeded, Banned!")
-                        await remove_warns(chat_id, user_id)
+                        await remove_warns(chat_id, await int_to_alpha(user_id))
                     else:
-                        await add_warn(chat_id, user_id)
-                        await message.reply_text(f"Warned {mention}!, {warns}/3 warnings now.")
+                        warn = {"warns": warns+1}
+                        await add_warn(chat_id, await int_to_alpha(user_id), warn)
+                        await message.reply_text(f"Warned {mention} !, {warns+1}/3 warnings now.")
                 else:
                     await message.reply_text("This user isn't here.")
         else:
@@ -426,11 +431,13 @@ async def remove_warnings(_, message):
         permissions = await member_permissions(chat_id, from_user_id)
         if "can_restrict_members" in permissions or from_user_id in SUDOERS:
             if message.reply_to_message:
-                warns = await get_warns(chat_id, user_id)
-                if warns == 0:
+                warns = await get_warn(chat_id, await int_to_alpha(user_id))
+                if warns:
+                    warns = warns['warns']
+                if warns == 0 or not warns:
                     await message.reply_text(f"{mention} have no warnings.")
                 else:
-                    await remove_warns(chat_id, user_id)
+                    await remove_warns(chat_id, await int_to_alpha(user_id))
                     await message.reply_text(f"Removed warnings of {mention}.")
             else:
                 await message.reply_text("Reply to someone's message to remove Warnings")
@@ -453,11 +460,20 @@ async def check_warns(_, message):
         mention_from_user = message.from_user.mention
         chat_id = message.chat.id
         if message.reply_to_message:
-            warns = await get_warns(chat_id, user_id)
+            warns = await get_warn(chat_id, await int_to_alpha(user_id))
+            if warns:
+                warns = warns['warns']
+            else:
+                await message.reply_text(f"{mention_user} have no warnings.")
+                return
             await message.reply_text(f"{mention_user} have {warns}/3 warnings.")
             return
-        warns = await get_warns(chat_id, from_user_id)
+        warns = await get_warn(chat_id, await int_to_alpha(user_id))
+        if warns:
+            warns = warns['warns']
+        else:
+            await message.reply_text(f"{mention_user} have no warnings.")
+            return
         await message.reply_text(f"{mention__from_user} have {warns}/3 warnings.")
     except Exception as e:
         await message.reply_text(str(e))
-"""
