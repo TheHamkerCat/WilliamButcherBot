@@ -90,11 +90,11 @@ async def karma(_, message):
             user_name = (await app.get_users(user_id)).username
             karma_dicc[user_name] = user_karma
             
-            karma_arranged = dict(sorted(karma_dicc.items(), key=operator.itemgetter(0)))
+            karma_arranged = dict(sorted(karma_dicc.items(), key=lambda item: item[1], reverse=True))
         for username, karma_count in karma_arranged.items():
             if limit > 9:
                 break
-            msg += f"{username} - `{karma_count}`\n"
+            msg += f"{username} : `{karma_count}`\n"
             limit += 1
         await message.reply_text(msg)
     else:

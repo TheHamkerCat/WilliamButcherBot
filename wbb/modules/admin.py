@@ -18,7 +18,8 @@ __HELP__ = '''/ban - Ban A User
 /pin - Pin A Message
 /mute - Mute A User
 /unmute - Unmute A User
-/ban_ghosts - Ban Deleted Accounts'''
+/ban_ghosts - Ban Deleted Accounts
+/report | @admins - Report A Message To Admins.'''
 
 
 async def list_admins(group_id):
@@ -479,3 +480,19 @@ async def check_warns(_, message):
         await message.reply_text(f"{mention__from_user} have {warns}/3 warnings.")
     except Exception as e:
         await message.reply_text(str(e))
+
+# Report
+
+
+@app.on_message(filters.command(["report", "admins"], prefixes=["@", "/"]) & ~filters.edited)
+@capture_err
+async def report_user(_, message):
+    if not message.reply_to_message:
+        await message.reply_text("Reply to a message to report user.")
+        return
+    list_of_admins = await list_admins(message.chat.id)
+    user_mention = message.reply_to_message.from_user.mention
+    text = f"Reported {user_mention} to admins."
+    for admin in list_of_admins:
+        text += f"[\u2063](tg://user?id={admin})"
+    await message.reply_text(text)
