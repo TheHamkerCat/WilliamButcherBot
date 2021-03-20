@@ -24,6 +24,7 @@ Just Another Telegram Bot Written In Python Using Pyrogram.
 
 * Group Management
 * Music Downloading 
+* AI Chatbot
 * Web Scraping 
 * Get Pictures/Wallpapers  
 * Dictionary
@@ -36,8 +37,3 @@ Just Another Telegram Bot Written In Python Using Pyrogram.
 ## Motive of This Bot
 
 We wanted to create a Telegram Bot which could do almost everything a bot can do...
-
-
-
-
-

@@ -70,7 +70,7 @@ async def del_filter(_, message):
         chat_id = message.chat.id
         deleted = await delete_filter(chat_id, name)
         if deleted:
-            await message.reply_text(f"**Deleted filter {name} successfully.**")
+            await message.reply_text(f"**Deleted filter {name}.**")
         else:
             await message.reply_text(f"**No such filter.**")
 
