@@ -5,6 +5,12 @@ from wbb.utils.dbfunctions import (update_karma, get_karma, get_karmas,
     int_to_alpha, alpha_to_int)
 from pyrogram import filters
 
+__MODULE__ = "Karma"
+__HELP__ = """[UPVOTE] - Use upvote keywords like "+", "+1", "thanks" etc to upvote a message.
+[DOWNVOTE] - Use downvote keywords like "-", "-1", etc to downvote a message.
+Reply to a message with /karma to check a user's karma
+Send /karma without replying to any message to chek karma list of top 10 users"""
+
 
 regex_upvote = r"^((?i)\+|\+\+|\+1|thx|tnx|ty|thank you|thanx|thanks|pro|cool|good|👍)$"
 regex_downvote = r"^(\-|\-\-|\-1|👎)$"
