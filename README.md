@@ -7,7 +7,7 @@ Just Another Telegram Bot Written In Python Using Pyrogram.
 
 ## Requirements
 
-- Python 3.6 or higher.
+- Python 3.7 or higher.
 - A [Telegram API key](//docs.pyrogram.org/intro/setup#api-keys).
 - A [Telegram bot token](//t.me/botfather).
 
