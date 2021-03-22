@@ -15,5 +15,3 @@ RUN pip install -r requirements.txt
 COPY . .
 # Starting Worker
 CMD ["python3", "-m", "wbb"]
-
-EXPOSE 8000
