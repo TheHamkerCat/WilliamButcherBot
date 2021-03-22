@@ -16,7 +16,7 @@ Just Another Telegram Bot Written In Python Using Pyrogram.
 1. `git clone https://github.com/thehamkercat/WilliamButcherBot`, to download the source code.
 2. `cd WilliamButcherBot`, to enter the directory.
 3. `pip3 install -r requirements.txt`, to install the requirements.
-4. `cp sample_config.ini config.ini`
+4. `cp sample_config.py config.py`
 5. Edit `config.ini` with your own values
 6. Run with `python3 -m wbb`
 
