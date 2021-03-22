@@ -79,18 +79,22 @@ async def del_filter(_, message):
                 ~filters.private & ~filters.via_bot &
                 ~filters.forwarded, group=1)
 async def filters_re(_, message):
-    if message.text[0] != "/":
-        text = message.text.lower().strip().split(" ")
-        if text:
-            chat_id = message.chat.id
-            list_of_filters = await get_filters_names(chat_id)
-            for word in text:
-                if word in list_of_filters:
-                    _filter = await get_filter(chat_id, word)
-                    data_type = _filter['type']
-                    data = _filter['data']
-                    if data_type == "text":
-                        await message.reply_text(data)
-                    else:
-                        await message.reply_sticker(data)
-                    return
+    try:
+        if message.text[0] != "/":
+            text = message.text.lower().strip().split(" ")
+            if text:
+                chat_id = message.chat.id
+                list_of_filters = await get_filters_names(chat_id)
+                for word in text:
+                    if word in list_of_filters:
+                        _filter = await get_filter(chat_id, word)
+                        data_type = _filter['type']
+                        data = _filter['data']
+                        if data_type == "text":
+                            await message.reply_text(data)
+                        else:
+                            await message.reply_sticker(data)
+                        return
+    except Exception as e:
+        print("Error in filters_re function in filters.py [IGNORE THIS]")
+        pass
