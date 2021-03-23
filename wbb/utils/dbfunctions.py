@@ -278,7 +278,7 @@ async def add_served_chat(chat_id: int):
     is_served = await is_served_chat(chat_id)
     if is_served: return
     chats = await get_served_chats()
-    chats[await int_to_alpha_chat(chat_id)] = {"chat_id": chat_id}
+    chats[await int_to_alpha_chat(chat_id)] = {"chats": "chats"}
     await chatsdb.update_one(
             {"chats": "chats"},
             {
