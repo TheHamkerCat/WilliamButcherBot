@@ -11,15 +11,18 @@ Just Another Telegram Bot Written In Python Using Pyrogram.
 - A [Telegram API key](https://docs.pyrogram.org/intro/setup#api-keys).
 - A [Telegram bot token](https://t.me/botfather).
 
-## Installation
+## Install Locally Or On A VPS
 
 ```sh
 $ git clone https://github.com/thehamkercat/WilliamButcherBot
+
 $ cd WilliamButcherBot
+
 $ pip3 install -U -r requirements.txt
+
 $ cp sample_config.py config.py
 ```
-Edit **config.ini** with your own values
+Edit **config.py** with your own values
 
 # Run
 ```sh
@@ -29,6 +32,16 @@ $ python3 -m wbb
 # Heroku
 
 ```sh 
+$ git clone https://github.com/thehamkercat/WilliamButcherBot
+
+$ cd WilliamButcherBot
+
+$ pip3 install -U -r requirements.txt
+
+$ cp sample_config.py config.py
+
+$ rm .gitignore
+
 $ heroku git:remote -a YOUR_HEROKU_APP_NAME
 
 $ heroku stack:set container
@@ -56,7 +69,3 @@ $ heroku ps:scale worker=1
 * Python Interpreter (Right In Your Telegram Chat!)
 * Nekobin (Paste Code/Text)
 * And Much More...
-
-## Motive of This Bot
-
-We wanted to create a Telegram Bot which could do almost everything a bot can do...
