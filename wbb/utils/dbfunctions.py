@@ -279,7 +279,7 @@ async def add_served_chat(chat_id: int):
     if is_served: return
     chats = await get_served_chats()
     chats[await int_to_alpha_chat(chat_id)] = {"chats": "chats"}
-    await chatsdb.update_one(
+    return await chatsdb.update_one(
             {"chats": "chats"},
             {
                 "$set": {
@@ -294,7 +294,7 @@ async def remove_served_chat(chat_id: int):
     if not is_served: return
     chats = await get_served_chats()
     del chats[await int_to_alpha_chat(chat_id)]
-    await chatsdb.update_one(
+    return await chatsdb.update_one(
             {"chats": "chats"},
             {
                 "$set": {
