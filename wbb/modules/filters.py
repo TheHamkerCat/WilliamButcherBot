@@ -7,7 +7,7 @@ from wbb.utils.dbfunctions import (
         )
 from pyrogram import filters
 from wbb.utils.errors import capture_err
-
+from wbb.utils.filter_groups import chat_filters_group
 
 __MODULE__ = "Filters"
 __HELP__ = """/filters To Get All The Filters In The Chat.
@@ -77,7 +77,7 @@ async def del_filter(_, message):
 
 @app.on_message(filters.text & ~filters.edited &
                 ~filters.private & ~filters.via_bot &
-                ~filters.forwarded, group=1)
+                ~filters.forwarded, group=chat_filters_group)
 async def filters_re(_, message):
     try:
         if message.text[0] != "/":

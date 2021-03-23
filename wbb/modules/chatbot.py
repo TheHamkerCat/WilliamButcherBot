@@ -2,6 +2,7 @@ from wbb import app, arq
 from wbb.utils.fetch import fetch
 from wbb.utils.errors import capture_err
 from wbb.utils.botinfo import BOT_ID
+from wbb.utils.filter_groups import chatbot_group
 from pyrogram import filters
 
 
@@ -48,7 +49,7 @@ async def chatbot_status(_, message):
 
 
 @app.on_message(filters.text & filters.reply & ~filters.bot &
-        ~filters.via_bot & ~filters.forwarded, group=2)
+        ~filters.via_bot & ~filters.forwarded, group=chatbot_group)
 @capture_err
 async def chatbot_talk(_, message):
     if message.chat.id not in active_chats:

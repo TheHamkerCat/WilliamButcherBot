@@ -6,6 +6,9 @@ notesdb = db.notes
 filtersdb = db.filters
 warnsdb = db.warns
 karmadb = db.karma
+usersdb = db.users
+chatsdb = db.chats
+
 
 """ Notes functions """
 
@@ -101,7 +104,6 @@ async def save_filter(chat_id: int, name: str, _filter: dict):
     name = name.lower().strip()
     _filters = await _get_filters(chat_id)
     _filters[name] = _filter
-
     await filtersdb.update_one(
         {"chat_id": chat_id},
         {
@@ -131,7 +133,9 @@ async def delete_filter(chat_id: int, name: str) -> bool:
     return False
 
 
-""" Warn function """
+""" Warn functions """
+
+
 async def int_to_alpha(user_id: int) -> str:
     alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
     text = ""
@@ -233,3 +237,49 @@ async def update_karma(chat_id: int, name: str, karma: dict):
         },
         upsert=True
     )
+
+
+""" Chats log functions """
+
+async def is_served_chat(chat_id: int) -> bool:
+    chats = await chatsdb.find_one({"chats": "chats"})
+    chats = chats['chats']
+    for chat in chats:
+        if chat == await int_to_alpha(chat_id): return True
+
+
+async def get_served_chats():
+    chats = await chatsdb.find_one({"chats": "chats"})
+    chats = chats['chats']
+    return chats
+
+
+async def add_served_chat(chat_id: int):
+    is_served = await is_served_chat(chat_id)
+    if is_served: return
+    chats = await get_served_chats()
+    chats[await int_to_alpha(chat_id)] = {"chat_id": chat_id}
+    await chatsdb.update_one(
+            {"chats": "chats"},
+            {
+                "$set": {
+                    "chats": chats
+                }
+            },
+            upsert=True
+            )
+
+async def remove_served_chat(chat_id: int):
+    is_served = await is_served_chat(chat_id)
+    if not is_served: return
+    chats = await get_served_chats()
+    del chats[await int_to_alpha(chat_id)]
+    await chatsdb.update_one(
+            {"chats": "chats"},
+            {
+                "$set": {
+                    "chats": chats
+                }
+            },
+            upsert=True
+            )

@@ -4,6 +4,7 @@ from wbb.utils.errors import capture_err
 from wbb.utils.json_prettify import json_prettify
 from wbb.utils.dbfunctions import (update_karma, get_karma, get_karmas,
     int_to_alpha, alpha_to_int)
+from wbb.utils.filter_groups import karma_positive_group, karma_negative_group
 from pyrogram import filters
 
 __MODULE__ = "Karma"
@@ -24,7 +25,8 @@ regex_downvote = r"^(\-|\-\-|\-1|👎)$"
                 & filters.regex(regex_upvote)
                 & ~filters.via_bot
                 & ~filters.bot
-                & ~filters.edited, group=3)
+                & ~filters.edited,
+                group=karma_positive_group)
 async def upvote(_, message):
     if message.reply_to_message.from_user.id == message.from_user.id:
         return
@@ -53,7 +55,8 @@ async def upvote(_, message):
                 & filters.regex(regex_downvote)
                 & ~filters.via_bot
                 & ~filters.bot
-                & ~filters.edited, group=4)
+                & ~filters.edited,
+                group=karma_negative_group)
 async def downvote(_, message):
     if message.reply_to_message.from_user.id == message.from_user.id:
         return
