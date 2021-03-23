@@ -1,9 +1,8 @@
 from config import (
-    bot_token, api_id, api_hash, OWNER_ID,
-    sudo_users_id as SUDO_USER_ID, log_group_id as LOG_GROUP_ID,
-    fernet_encryption_key as FERNET_ENCRYPTION_KEY, mongo_db_uri as mdb_uri,
-    captcha_delay_in_seconds as WELCOME_DELAY_KICK_SEC,
-    ARQ_API_BASE_URL as ARQ_API)
+    BOT_TOKEN, API_ID ,API_HASH, OWNER_ID, SUDO_USER_ID,
+    LOG_GROUP_ID, FERNET_ENCRYPTION_KEY, MONGO_DB_URI,
+    WELCOME_DELAY_KICK_SEC, ARQ_API_BASE_URL as ARQ_API
+    )
 from pyrogram import Client
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from Python_ARQ import ARQ
@@ -41,7 +40,7 @@ SUDOERS.append(OWNER_ID)
 MOD_LOAD = []
 MOD_NOLOAD = []
 bot_start_time = time.time()
-mongo_client = MongoClient(mdb_uri)
+mongo_client = MongoClient(MONGO_DB_URI)
 db = mongo_client.wbb
-app = Client("wbb", bot_token=bot_token, api_id=api_id, api_hash=api_hash)
+app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
 arq = ARQ(ARQ_API)

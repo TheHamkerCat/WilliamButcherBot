@@ -8,8 +8,8 @@ Just Another Telegram Bot Written In Python Using Pyrogram.
 ## Requirements
 
 - Python 3.7 or higher.
-- A [Telegram API key](//docs.pyrogram.org/intro/setup#api-keys).
-- A [Telegram bot token](//t.me/botfather).
+- A [Telegram API key](https://docs.pyrogram.org/intro/setup#api-keys).
+- A [Telegram bot token](https://t.me/botfather).
 
 ## Installation
 
@@ -28,7 +28,20 @@ $ python3 -m wbb
 
 # Heroku
 
-Soon af
+```sh 
+$ heroku git:remote -a YOUR_HEROKU_APP_NAME
+
+$ heroku stack:set container
+
+$ git add -f .
+
+$ git commit -m 'Hail WBB!'
+
+$ git push heroku HEAD:master --force
+
+$ heroku ps:scale worker=1
+```
+
 
 ## Features 
 

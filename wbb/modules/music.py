@@ -7,9 +7,12 @@ import aiofiles
 import os
 from random import randint
 from pyrogram import filters
-from wbb import app, SUDOERS, arq 
+from wbb import app, SUDOERS, arq
+from wbb.utils.functions import convert_seconds_to_minutes
 from wbb.utils.fetch import fetch
 from wbb.utils.errors import capture_err
+
+
 
 __MODULE__ = "Music"
 __HELP__ = """/ytmusic [link] To Download Music From Various Websites Including Youtube.
@@ -98,11 +101,13 @@ async def jssong(_, message):
         sname = songs[0].song
         slink = songs[0].media_url
         ssingers = songs[0].singers
+        duration = int(songs[0].duration)
+        duration = convert_seconds_to_minutes(duration)
         await m.edit("Downloading") 
         song = await download_song(slink)
         await m.edit("Uploading")
         await message.reply_audio(audio=song, title=sname,
-                                  performer=ssingers)
+                                  performer=ssingers, duration=duration)
         os.remove(song)
         await m.delete()
     except Exception as e:
@@ -128,11 +133,13 @@ async def deezsong(_, message):
         title = songs[0].title
         url = songs[0].url
         artist = songs[0].artist
+        duration = int(songs[0].duration)
+        duration = convert_seconds_to_minutes(duration)
         await m.edit("Downloading") 
         song = await download_song(url)
         await m.edit("Uploading") 
         await message.reply_audio(audio=song, title=title,
-                                  performer=artist)
+                                  performer=artist, duration=duration)
         os.remove(song)
         await m.delete()
     except Exception as e:
