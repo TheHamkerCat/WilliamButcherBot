@@ -144,6 +144,14 @@ async def int_to_alpha(user_id: int) -> str:
         text += alphabet[int(i)]
     return text
 
+async def int_to_alpha_chat(chat_id: int) -> str:
+    alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
+    text = ""
+    chat_id = str(chat_id)
+    chat_id = chat_id.replace("-", "")
+    for i in chat_id:
+        text += alphabet[int(i)]
+    return text
 
 async def alpha_to_int(user_id_alphabet: str) -> int:
     alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
@@ -153,6 +161,16 @@ async def alpha_to_int(user_id_alphabet: str) -> int:
         user_id += str(index)
     user_id = int(user_id)
     return user_id
+
+
+async def alpha_to_int_chat(chat_id_alphabet: str) -> int:
+    alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
+    chat_id = "-"
+    for i in chat_id_alphabet:
+        index = alphabet.index(i)
+        chat_id += str(index)
+    chat_id = int(chat_id)
+    return chat_id
 
 
 async def get_warns(chat_id: int) -> Dict[str, int]:
@@ -243,13 +261,15 @@ async def update_karma(chat_id: int, name: str, karma: dict):
 
 async def is_served_chat(chat_id: int) -> bool:
     chats = await chatsdb.find_one({"chats": "chats"})
+    if not chats: return False
     chats = chats['chats']
     for chat in chats:
-        if chat == await int_to_alpha(chat_id): return True
+        if chat == await int_to_alpha_chat(chat_id): return True
 
 
 async def get_served_chats():
     chats = await chatsdb.find_one({"chats": "chats"})
+    if not chats: return {}
     chats = chats['chats']
     return chats
 
@@ -258,7 +278,7 @@ async def add_served_chat(chat_id: int):
     is_served = await is_served_chat(chat_id)
     if is_served: return
     chats = await get_served_chats()
-    chats[await int_to_alpha(chat_id)] = {"chat_id": chat_id}
+    chats[await int_to_alpha_chat(chat_id)] = {"chat_id": chat_id}
     await chatsdb.update_one(
             {"chats": "chats"},
             {
@@ -273,7 +293,7 @@ async def remove_served_chat(chat_id: int):
     is_served = await is_served_chat(chat_id)
     if not is_served: return
     chats = await get_served_chats()
-    del chats[await int_to_alpha(chat_id)]
+    del chats[await int_to_alpha_chat(chat_id)]
     await chatsdb.update_one(
             {"chats": "chats"},
             {
