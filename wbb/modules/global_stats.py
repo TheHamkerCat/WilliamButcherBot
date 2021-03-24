@@ -2,6 +2,7 @@ from wbb import app
 from wbb.utils.filter_groups import global_stats_group
 from wbb.utils.errors import capture_err
 from wbb.utils.botinfo import BOT_ID, BOT_NAME
+from wbb.utils.fetch import fetch
 from wbb.utils.dbfunctions import (
         is_served_chat,
         get_served_chats,
@@ -46,36 +47,43 @@ async def global_stats(_, message):
         mc = (await app.get_chat(i)).members_count
         total_users += int(mc)
     
-    ## For notes count across chats
+    ## Notes count across chats
     _notes = await get_notes_count()
     notes_count = _notes["notes_count"]
     notes_chats_count = _notes["chats_count"]
 
-    # For filters count across chats
+    # Filters count across chats
     _filters = await get_filters_count()
     filters_count = _filters["filters_count"]
     filters_chats_count = _filters["chats_count"]
     
-    # For warns count across chats
+    # Warns count across chats
     _warns = await get_warns_count()
     warns_count = _warns["warns_count"]
     warns_chats_count = _warns["chats_count"]
 
-    # For karmas count across chats
+    # Karmas count across chats
     _karmas = await get_karmas_count()
     karmas_count = _karmas["karmas_count"]
     karmas_chats_count = _karmas["chats_count"]
 
+    # Contributors/Developers count and commits on github
+    url = "https://api.github.com/repos/thehamkercat/williambutcherbot/contributors"
+    rurl = "https://github.com/thehamkercat/williambutcherbot"
+    developers = await fetch(url)
+    developers = len(developers)
+    commits = 0
+    for i in a: commits += i['contributions']
+
     # NOTE need to fix these
     msg = f"""**Global Stats of {BOT_NAME}**:
-**0** Globally banned users.                           
-**0** Blacklist triggers, Across **0** chats.
+**0** Globally banned users.
+**{total_users}** Users, Across **{len(served_chats)}** chats.
 **{filters_count}** Filters, Across **{filters_chats_count}** chats.
 **{notes_count}** Notes, Across **{notes_chats_count}** chats.
-**0** welcome messages are set.
-**{total_users}** Users, Across **{len(served_chats)}** chats.
 **{warns_count}** Warns, Across **{warns_chats_count}** chats.
-**{karmas_count}** Karma, Across **{karmas_chats_count}** chats."""
-    
+**{karmas_count}** Karma, Across **{karmas_chats_count}** chats.
+**{developers}** Developers And **{commits}** On **[Github]({rurl})**."""
+
     await m.edit(msg)
 
