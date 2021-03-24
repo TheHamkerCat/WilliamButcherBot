@@ -15,6 +15,7 @@ from wbb.utils.dbfunctions import (
         get_gbans_count
         )
 from pyrogram import filters
+from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant, PeerIdInvalid
 
 @app.on_message(filters.text, group=global_stats_group)
 @capture_err
@@ -33,15 +34,14 @@ async def global_stats(_, message):
             )
     
     ## For bot served chat and users count
-
     served_chats = []
     total_users = 0
     chats = await get_served_chats()
     for chat in chats: served_chats.append(chat["chat_id"])
     for served_chat in served_chats:
-        try: await app.get_chat_member(served_chat, BOT_ID)
-        except Exception as e:
-            print(e)
+        try:
+            await app.get_chat_member(int(served_chat), BOT_ID)
+        except (UserNotParticipant, PeerIdInvalid) as e:
             await remove_served_chat(served_chat)
             served_chats.remove(served_chat)
             pass
