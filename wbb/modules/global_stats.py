@@ -11,7 +11,7 @@ from wbb.utils.dbfunctions import (
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from pyrogram import filters
 
-@app.on_message(filters.sticker, group=global_stats_group)
+@app.on_message(filters.text, group=global_stats_group)
 @capture_err
 async def chat_watcher(_, message):
     chat_id = message.chat.id
