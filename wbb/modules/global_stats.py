@@ -40,7 +40,8 @@ async def global_stats(_, message):
     for chat in chats: served_chats.append(chat["chat_id"])
     for served_chat in served_chats:
         try: await app.get_chat_member(served_chat, BOT_ID)
-        except Exception:
+        except Exception as e:
+            print(e)
             await remove_served_chat(served_chat)
             served_chats.remove(served_chat)
             pass
