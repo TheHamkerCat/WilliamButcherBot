@@ -101,20 +101,16 @@ async def get_speedtest_result(_, message):
 
 
 async def bot_sys_stats():
-#    bot_uptime = int(time.time() - bot_start_time)
-#    cpu = psutil.cpu_percent(interval=0.5)
-#    mem = psutil.virtual_memory().percent
-#    disk = psutil.disk_usage("/").percent
-#    stats = f'''
-#Uptime: {formatter.get_readable_time((bot_uptime))}
-#CPU: {cpu}%
-#RAM: {mem}%
-#Disk: {disk}%'''
-    neofetch = check_output(["neofetch", "--stdout"])
-    neofetch = neofetch.decode("UTF-8")
-    stats = f"\nNEOFETCH\n{neofetch}"
+    bot_uptime = int(time.time() - bot_start_time)
+    cpu = psutil.cpu_percent(interval=0.5)
+    mem = psutil.virtual_memory().percent
+    disk = psutil.disk_usage("/").percent
+    stats = f'''
+Uptime: {formatter.get_readable_time((bot_uptime))}
+CPU: {cpu}%
+RAM: {mem}%
+Disk: {disk}%'''
     return stats
-
 
 
 @app.on_message(

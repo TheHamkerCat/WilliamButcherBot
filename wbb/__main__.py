@@ -89,7 +89,12 @@ async def help_command(_, message):
                 [
                     InlineKeyboardButton(
                         text="System Stats",
-                        callback_data="stats_callback")
+                        callback_data="stats_callback"
+                    ),
+                    InlineKeyboardButton(
+                        text="Support",
+                        url="t.me/PatheticProgrammers"
+                    )
                 ]
             ]
         )
