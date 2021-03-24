@@ -8,7 +8,8 @@ from wbb.utils.dbfunctions import (
         add_served_chat,
         remove_served_chat,
         get_notes_count,
-        get_filters_count
+        get_filters_count,
+        get_warns_count
         )
 from pyrogram import filters
 
@@ -33,11 +34,9 @@ async def global_stats(_, message):
     served_chats = []
     total_users = 0
     chats = await get_served_chats()
-    for chat in chats:
-        served_chats.append(chat["chat_id"])
+    for chat in chats: served_chats.append(chat["chat_id"])
     for served_chat in served_chats:
-        try:
-            await app.get_chat_member(served_chat, BOT_ID)
+        try: await app.get_chat_member(served_chat, BOT_ID)
         except Exception:
             await remove_served_chat(served_chat)
             served_chats.remove(served_chat)
@@ -55,7 +54,11 @@ async def global_stats(_, message):
     _filters = await get_filters_count()
     filters_count = _filters["filters_count"]
     filters_chats_count = _filters["chats_count"]
-
+    
+    # For warns count across chats
+    _warns = await get_warns_count()
+    warns_count = _warns["warns_count"]
+    warns_chats_count = _warns["chats_count"]
     # NOTE need to fix these
     msg = f"""**Global Stats of {BOT_NAME}**:
 0 gbanned users.                           
@@ -64,7 +67,7 @@ async def global_stats(_, message):
 {notes_count} notes, across {notes_chats_count} chats.
 0 welcome messages are set.
 {total_users} users, across {len(served_chats)} chats.
-0 warns, across 0 chats."""
+{warns_count} warns, across {warns_chats_count} chats."""
     
     await m.edit(msg)
 

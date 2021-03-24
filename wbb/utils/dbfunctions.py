@@ -186,6 +186,20 @@ async def alpha_to_int(user_id_alphabet: str) -> int:
     return user_id
 
 
+async def get_warns_count() -> dict:
+    chats = warnsdb.find({"chat_id": {"$lt": 0}})
+    if not chats: return
+    chats_count = 0
+    warns_count = 0
+    for chat in await chats.to_list(length=100000000):
+        for user in chat['warns']:
+            warns_count += chat['warns'][user]['warns']
+        chats_count += 1
+    return {
+            "chats_count": chats_count,
+            "warns_count": warns_count
+            }
+
 async def get_warns(chat_id: int) -> Dict[str, int]:
     warns = await warnsdb.find_one({"chat_id": chat_id})
     if warns:
