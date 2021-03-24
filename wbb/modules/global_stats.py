@@ -25,12 +25,12 @@ async def chat_watcher(_, message):
     await add_served_chat(chat_id)
 
 
-@app.on_message(filters.command("global_stats") & ~filters.edited)
-@capture_err
 async def global_stats(_, message):
     m = await app.send_message(
             message.chat.id,
-            text="__**Analysing Stats, Might Take 10-30 Seconds.**__")
+            text="__**Analysing Stats, Might Take 10-30 Seconds.**__",
+            disable_web_page_preview=True
+            )
     
     ## For bot served chat and users count
 
@@ -89,5 +89,5 @@ async def global_stats(_, message):
 **{karmas_count}** Karma, Across **{karmas_chats_count}** chats.
 **{developers}** Developers And **{commits}** On **[Github]({rurl})**."""
 
-    await m.edit(msg)
+    await m.edit(msg, disable_web_page_preview=True)
 
