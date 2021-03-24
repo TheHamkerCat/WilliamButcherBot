@@ -10,7 +10,6 @@ from wbb.utils.dbfunctions import (
         get_notes_count,
         get_filters_count
         )
-from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from pyrogram import filters
 
 @app.on_message(filters.text, group=global_stats_group)
@@ -39,7 +38,7 @@ async def global_stats(_, message):
     for served_chat in served_chats:
         try:
             await app.get_chat_member(served_chat, BOT_ID)
-        except UserNotParticipant:
+        except Exception:
             await remove_served_chat(served_chat)
             served_chats.remove(served_chat)
             pass
