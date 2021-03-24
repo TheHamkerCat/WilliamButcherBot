@@ -145,7 +145,7 @@ async def ban_globally(_, message):
     elif user_id in SUDOERS:
         await message.reply_text("You want to ban a sudo user? GET REKT!!")
     else:
-        is_gbanned = is_gbanned_user(user_id)
+        is_gbanned = await is_gbanned_user(user_id)
         if is_gbanned:
             await message.reply_text("He's already gbanned, why bully him?")
         else:
@@ -178,7 +178,7 @@ async def unban_globally(_, message):
     elif user_id in SUDOERS:
         await message.reply_text("Sudo users can't be gbanned/ungbanned.")
     else:
-        is_gbanned = is_gbanned_user(user_id)
+        is_gbanned = await is_gbanned_user(user_id)
         if not is_gbanned:
             await message.reply_text("He's already free, why bully him?")
         else:
