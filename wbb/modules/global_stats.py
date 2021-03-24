@@ -81,6 +81,7 @@ async def global_stats(_, message):
 
     # NOTE need to fix these
     msg = f"""**Global Stats of {BOT_NAME}**:
+
 **{gbans}** Globally banned users.
 **{total_users}** Users, Across **{len(served_chats)}** chats.
 **{filters_count}** Filters, Across **{filters_chats_count}** chats.
