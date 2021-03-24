@@ -7,6 +7,8 @@ from wbb.utils.dbfunctions import (
         get_served_chats,
         add_served_chat,
         remove_served_chat,
+        get_notes_count,
+        get_filters_count
         )
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from pyrogram import filters
@@ -23,7 +25,12 @@ async def chat_watcher(_, message):
 @app.on_message(filters.command("global_stats") & ~filters.edited)
 @capture_err
 async def global_stats(_, message):
-    m = await app.send_message(message.chat.id, text="__**Analysing Stats, Might Take 10-30 Seconds.**__")
+    m = await app.send_message(
+            message.chat.id,
+            text="__**Analysing Stats, Might Take 10-30 Seconds.**__")
+    
+    ## For bot served chat and users count
+
     served_chats = []
     total_users = 0
     chats = await get_served_chats()
@@ -37,15 +44,28 @@ async def global_stats(_, message):
             served_chats.remove(served_chat)
             pass
     for i in served_chats:
-        total_users += int((await app.get_chat(i)).members_count)
+        mc = (await app.get_chat(i)).members_count
+        total_users += int(mc)
+    
+    ## For notes count across chats
+    _notes = await get_notes_count()
+    notes_count = _notes["notes_count"]
+    notes_chats_count = _notes["chats_count"]
+
+    # For filters count across chats
+    _filters = await get_filters_count()
+    filters_count = _filters["filters_count"]
+    filters_chats_count = _filters["chats_count"]
+
     # NOTE need to fix these
     msg = f"""**Global Stats of {BOT_NAME}**:
 0 gbanned users.                           
 0 blacklist triggers, across 0 chats.
-0 filters, across 0 chats.
-0 notes, across 0 chats.
+{filters_count} filters, across {filters_chats_count} chats.
+{notes_count} notes, across {notes_chats_count} chats.
 0 welcome messages are set.
 {total_users} users, across {len(served_chats)} chats.
 0 warns, across 0 chats."""
+    
     await m.edit(msg)
 

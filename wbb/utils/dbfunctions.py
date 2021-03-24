@@ -12,6 +12,21 @@ chatsdb = db.chats
 
 """ Notes functions """
 
+async def get_notes_count() -> dict:
+    chats = notesdb.find({"chat_id": {"$lt": 0}})
+    if not chats: return {}
+    chats_count = 0
+    notes_count = 0
+    for chat in await chats.to_list(length=1000000000):
+        notes_name = await get_note_names(chat['chat_id'])
+        notes_count += len(notes_name)
+        chats_count += 1
+    return {
+            "chats_count": chats_count,
+            "notes_count": notes_count
+            }
+
+
 
 async def _get_notes(chat_id: int) -> Dict[str, int]:
     _notes = await notesdb.find_one({"chat_id": chat_id})
@@ -73,6 +88,22 @@ async def delete_note(chat_id: int, name: str) -> bool:
 
 
 """ Filters funcions """
+
+
+async def get_filters_count() -> dict:
+    chats = filtersdb.find({"chat_id": {"$lt": 0}})
+    if not chats: return {}
+    chats_count = 0
+    filters_count = 0
+    for chat in await chats.to_list(length=1000000000):
+        filters_name = await get_filters_names(chat['chat_id'])
+        filters_count += len(filters_name)
+        chats_count += 1
+    return {
+            "chats_count": chats_count,
+            "filters_count": filters_count
+            }
+
 
 
 async def _get_filters(chat_id: int) -> Dict[str, int]:
