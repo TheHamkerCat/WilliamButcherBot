@@ -251,7 +251,7 @@ async def remove_warns(chat_id: int, name: str) -> bool:
 
 """ Karma functions """
 
-async def get_karmas_count(chat_id: int) -> dict:
+async def get_karmas_count() -> dict:
     chats = karmadb.find({"chat_id": {"$lt": 0}})
     if not chats: return {}
     chats_count = 0
