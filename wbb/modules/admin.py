@@ -383,38 +383,44 @@ async def ban_deleted_accounts(_, message):
 @app.on_message(filters.command("warn") & ~filters.edited)
 @capture_err
 async def warn_user(_, message):
+    if not message.reply_to_message:
+        await message.reply_text("Reply to a message to warn a user.")
+        return
     try:
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
         if "can_restrict_members" in permissions or from_user_id in SUDOERS:
-            if message.reply_to_message:
-                user_id = message.reply_to_message.from_user.id
-                mention = message.reply_to_message.from_user.mention
-                if user_id in SUDOERS:
-                    await message.reply_text("You Wanna Warn The Elevated One?")
-                else:
-                    if user_id in await list_members(chat_id):
-                        warns = await get_warn(chat_id, await int_to_alpha(user_id))
-                        if warns:
-                            warns = warns['warns']
-                        else:
-                            warn = {"warns": 1}
-                            await add_warn(chat_id, await int_to_alpha(user_id), warn)
-                            await message.reply_text(f"Warned {mention} !, 1/3 warnings now.")
-                            return
-                        if warns >= 3:
-                            await message.chat.kick_member(user_id)
-                            await message.reply_text(f"Number of warns of {mention} exceeded, Banned!")
-                            await remove_warns(chat_id, await int_to_alpha(user_id))
-                        else:
-                            warn = {"warns": warns+1}
-                            await add_warn(chat_id, await int_to_alpha(user_id), warn)
-                            await message.reply_text(f"Warned {mention} !, {warns+1}/3 warnings now.")
-                    else:
-                        await message.reply_text("This user isn't here.")
+            user_id = message.reply_to_message.from_user.id
+            mention = message.reply_to_message.from_user.mention
+            if user_id in SUDOERS:
+                await message.reply_text("You Wanna Warn The Elevated One?")
+            elif user_id == BOT_ID:
+                await message.reply_text("Huh, Can't warn myself.")
+            elif user_id in await list_admins(message.chat.id):
+                await message.reply_text("Can't warn an admin.")
+            elif user_id == from_user_id:
+                await message.reply_text("I wouldn't do that if i were you.")
             else:
-                await message.reply_text("Reply to someone's message to warn him.")
+                if user_id in await list_members(chat_id):
+                    warns = await get_warn(chat_id, await int_to_alpha(user_id))
+                    if warns:
+                        warns = warns['warns']
+                    else:
+                        warn = {"warns": 1}
+                        await add_warn(chat_id, await int_to_alpha(user_id), warn)
+                        await message.reply_text(f"Warned {mention} !, 1/3 warnings now.")
+                        return
+                    if warns >= 3:
+                        await message.chat.kick_member(user_id)
+                        await message.reply_text(f"Number of warns of {mention} exceeded, Banned!")
+                        await remove_warns(chat_id, await int_to_alpha(user_id))
+                    else:
+                        warn = {"warns": warns+1}
+                        await add_warn(chat_id, await int_to_alpha(user_id), warn)
+                        await message.reply_text(f"Warned {mention} !, {warns+1}/3 warnings now.")
+                else:
+                    await message.reply_text("This user isn't here.")
         else:
             await message.reply_text("You don't have enough permissions.")
     except Exception as e:
@@ -429,6 +435,9 @@ async def warn_user(_, message):
 @app.on_message(filters.command("rmwarns") & ~filters.edited)
 @capture_err
 async def remove_warnings(_, message):
+    if not message.reply_to_message:
+        await message.reply_text("Reply to a message to remove a user's warnings.")
+        return
     try:
         from_user_id = message.from_user.id
         user_id = message.reply_to_message.from_user.id
@@ -436,17 +445,14 @@ async def remove_warnings(_, message):
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
         if "can_restrict_members" in permissions or from_user_id in SUDOERS:
-            if message.reply_to_message:
-                warns = await get_warn(chat_id, await int_to_alpha(user_id))
-                if warns:
-                    warns = warns['warns']
-                if warns == 0 or not warns:
-                    await message.reply_text(f"{mention} have no warnings.")
-                else:
-                    await remove_warns(chat_id, await int_to_alpha(user_id))
-                    await message.reply_text(f"Removed warnings of {mention}.")
+            warns = await get_warn(chat_id, await int_to_alpha(user_id))
+            if warns:
+                warns = warns['warns']
+            if warns == 0 or not warns:
+                await message.reply_text(f"{mention} have no warnings.")
             else:
-                await message.reply_text("Reply to someone's message to remove Warnings")
+                await remove_warns(chat_id, await int_to_alpha(user_id))
+                await message.reply_text(f"Removed warnings of {mention}.")
         else:
             await message.reply_text("You don't have enough permissions")
     except Exception as e:
@@ -459,6 +465,9 @@ async def remove_warnings(_, message):
 @app.on_message(filters.command("warns") & ~filters.edited)
 @capture_err
 async def check_warns(_, message):
+    if not message.reply_to_message:
+        await message.reply_text("Reply to a message to check a user's warnings.")
+        return
     try:
         from_user_id = message.from_user.id
         user_id = message.reply_to_message.from_user.id
