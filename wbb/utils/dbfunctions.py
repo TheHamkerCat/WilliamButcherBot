@@ -6,11 +6,25 @@ notesdb = db.notes
 filtersdb = db.filters
 warnsdb = db.warns
 karmadb = db.karma
-usersdb = db.users
 chatsdb = db.chats
-
+gbansdb = db.gban
 
 """ Notes functions """
+
+async def get_notes_count() -> dict:
+    chats = notesdb.find({"chat_id": {"$lt": 0}})
+    if not chats: return {}
+    chats_count = 0
+    notes_count = 0
+    for chat in await chats.to_list(length=1000000000):
+        notes_name = await get_note_names(chat['chat_id'])
+        notes_count += len(notes_name)
+        chats_count += 1
+    return {
+            "chats_count": chats_count,
+            "notes_count": notes_count
+            }
+
 
 
 async def _get_notes(chat_id: int) -> Dict[str, int]:
@@ -73,6 +87,22 @@ async def delete_note(chat_id: int, name: str) -> bool:
 
 
 """ Filters funcions """
+
+
+async def get_filters_count() -> dict:
+    chats = filtersdb.find({"chat_id": {"$lt": 0}})
+    if not chats: return {}
+    chats_count = 0
+    filters_count = 0
+    for chat in await chats.to_list(length=1000000000):
+        filters_name = await get_filters_names(chat['chat_id'])
+        filters_count += len(filters_name)
+        chats_count += 1
+    return {
+            "chats_count": chats_count,
+            "filters_count": filters_count
+            }
+
 
 
 async def _get_filters(chat_id: int) -> Dict[str, int]:
@@ -144,14 +174,6 @@ async def int_to_alpha(user_id: int) -> str:
         text += alphabet[int(i)]
     return text
 
-async def int_to_alpha_chat(chat_id: int) -> str:
-    alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
-    text = ""
-    chat_id = str(chat_id)
-    chat_id = chat_id.replace("-", "")
-    for i in chat_id:
-        text += alphabet[int(i)]
-    return text
 
 async def alpha_to_int(user_id_alphabet: str) -> int:
     alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
@@ -163,15 +185,19 @@ async def alpha_to_int(user_id_alphabet: str) -> int:
     return user_id
 
 
-async def alpha_to_int_chat(chat_id_alphabet: str) -> int:
-    alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
-    chat_id = "-"
-    for i in chat_id_alphabet:
-        index = alphabet.index(i)
-        chat_id += str(index)
-    chat_id = int(chat_id)
-    return chat_id
-
+async def get_warns_count() -> dict:
+    chats = warnsdb.find({"chat_id": {"$lt": 0}})
+    if not chats: return {}
+    chats_count = 0
+    warns_count = 0
+    for chat in await chats.to_list(length=100000000):
+        for user in chat['warns']:
+            warns_count += chat['warns'][user]['warns']
+        chats_count += 1
+    return {
+            "chats_count": chats_count,
+            "warns_count": warns_count
+            }
 
 async def get_warns(chat_id: int) -> Dict[str, int]:
     warns = await warnsdb.find_one({"chat_id": chat_id})
@@ -225,6 +251,19 @@ async def remove_warns(chat_id: int, name: str) -> bool:
 
 """ Karma functions """
 
+async def get_karmas_count() -> dict:
+    chats = karmadb.find({"chat_id": {"$lt": 0}})
+    if not chats: return {}
+    chats_count = 0
+    karmas_count = 0
+    for chat in await chats.to_list(length=1000000):
+        for i in chat['karma']:
+            karmas_count += chat['karma'][i]['karma']
+        chats_count += 1
+    return {
+            "chats_count": chats_count,
+            "karmas_count": karmas_count
+            }
 
 async def get_karmas(chat_id: int) -> Dict[str, int]:
     karma = await karmadb.find_one({"chat_id": chat_id})
@@ -260,46 +299,54 @@ async def update_karma(chat_id: int, name: str, karma: dict):
 """ Chats log functions """
 
 async def is_served_chat(chat_id: int) -> bool:
-    chats = await chatsdb.find_one({"chats": "chats"})
-    if not chats: return False
-    chats = chats['chats']
-    for chat in chats:
-        if chat == await int_to_alpha_chat(chat_id): return True
+    chat = await chatsdb.find_one({"chat_id": chat_id})
+    if not chat: return False
+    return True
 
 
-async def get_served_chats():
-    chats = await chatsdb.find_one({"chats": "chats"})
-    if not chats: return {}
-    chats = chats['chats']
-    return chats
+async def get_served_chats() -> list:
+    chats = chatsdb.find({"chat_id": {'$lt': 0}})
+    if not chats: return []
+    chats_list = []
+    for chat in await chats.to_list(length=1000000000):
+        chats_list.append(chat)
+    return chats_list
 
 
 async def add_served_chat(chat_id: int):
     is_served = await is_served_chat(chat_id)
     if is_served: return
-    chats = await get_served_chats()
-    chats[await int_to_alpha_chat(chat_id)] = {"chat_id": chat_id}
-    await chatsdb.update_one(
-            {"chats": "chats"},
-            {
-                "$set": {
-                    "chats": chats
-                }
-            },
-            upsert=True
-            )
+    return await chatsdb.insert_one({"chat_id": chat_id})
+
 
 async def remove_served_chat(chat_id: int):
     is_served = await is_served_chat(chat_id)
     if not is_served: return
-    chats = await get_served_chats()
-    del chats[await int_to_alpha_chat(chat_id)]
-    await chatsdb.update_one(
-            {"chats": "chats"},
-            {
-                "$set": {
-                    "chats": chats
-                }
-            },
-            upsert=True
-            )
+    return await chatsdb.delete_one({"chat_id": chat_id})
+
+
+""" Gban functions """
+
+
+async def get_gbans_count() -> int:
+    users = gbansdb.find({"user_id": {"$gt": 0}})
+    users = await users.to_list(length=100000)
+    return len(users)
+
+
+async def is_gbanned_user(user_id: int) -> bool:
+    user = await gbansdb.find_one({"user_id": user_id})
+    if not user: return False
+    return True
+
+
+async def add_gban_user(user_id: int):
+    is_gbanned = await is_gbanned_user(user_id)
+    if is_gbanned: return
+    return await gbansdb.insert_one({"user_id": user_id})
+
+
+async def remove_gban_user(user_id: int):
+    is_gbanned = await is_gbanned_user(chat_id)
+    if not is_gbanned: return
+    return await gbansdb.delete_one({"user_id": user_id})

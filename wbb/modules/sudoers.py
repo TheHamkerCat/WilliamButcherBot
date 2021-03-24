@@ -3,16 +3,24 @@ import time
 from pyrogram import filters, types
 import speedtest
 import psutil
-from wbb.utils import nekobin, formatter
 from wbb import app, SUDOERS, bot_start_time
+from wbb.utils import nekobin, formatter
 from wbb.utils.errors import capture_err
+from wbb.utils.botinfo import BOT_ID
+from wbb.modules.global_stats import global_stats
+from wbb.utils.dbfunctions import (
+        is_gbanned_user,
+        add_gban_user,
+        remove_gban_user,
+        get_served_chats)
 
 
 __MODULE__ = "Sudoers"
 __HELP__ = '''/log - To Get Logs From Last Run.
 /speedtest - To Perform A Speedtest.
 /stats - To Check System Status.
-/song - To Download Songs From JioSaavn'''
+/global_stats - To Check Bot's Global Stats.
+/gban - To Ban A User Globally.'''
 
 
 # Logs Module
@@ -105,3 +113,74 @@ CPU: {cpu}%
 RAM: {mem}%
 Disk: {disk}%```''')
     await message.reply_text(stats)
+
+# Global Stats
+
+
+@app.on_message(
+        filters.command("global_stats") & filters.user(SUDOERS)
+        & ~filters.edited
+        )
+@capture_err
+async def g_stats(_, message):
+    await global_stats(_, message)
+
+# Gban
+
+
+@app.on_message(filters.command("gban") & filters.user(SUDOERS))
+@capture_err
+async def ban_globally(_, message):
+    if not message.reply_to_message:
+        await message.reply_to_message("Reply to a user's message to Gban.")
+        return
+    from_user_id = message.from_user.id
+    user_id = message.reply_to_message.from_user.id
+    mention = message.reply_to_message.from_user.mention
+    from_user_mention = message.from_user.mention
+    if user_id == from_user_id:
+        await message.reply_text("You want to gban yourself? FOOL!")
+    elif user_id == BOT_ID:
+        await message.reply_text("Should i gban myself? I'm not fool like you, HUMAN!")
+    elif user_id in SUDOERS:
+        await message.reply_text("You want to ban a sudo user? GET REKT!!")
+    else:
+        is_gbanned = is_gbanned_user(user_id)
+        if is_gbanned:
+            await message.reply_text("He's already gbanned, why bully him?")
+        else:
+            served_chats = await get_served_chats()
+            for served_chat in served_chats:
+                try: await app.kick_chat_member(served_chat, user_id)
+                except Exception: pass
+            await add_gban_user(user_id)
+            try: await app.send_message(
+            user_id, """Hello, You have been globally banned by {from_user_mention},
+You can appeal for this ban by talking to {from_user_mention} about this.""")
+            except Exception: pass
+            await message.reply_text(f"Banned {mention} Globally!")
+
+# Ungban
+
+@app.on_message(filters.command("ungban") & filters.user(SUDOERS))
+@capture_err
+async def unban_globally(_, message):
+    if not message.reply_to_message:
+        await message.reply_to_message("Reply to a user's message to ungban.")
+        return
+    from_user_id = message.from_user.id
+    user_id = message.reply_to_message.from_user.id
+    mention = message.reply_to_message.from_user.mention
+    if user_id == from_user_id:
+        await message.reply_text("You want to ungban yourself? FOOL!")
+    elif user_id == BOT_ID:
+        await message.reply_text("Should i ungban myself? But i'm not gbanned.")
+    elif user_id in SUDOERS:
+        await message.reply_text("Sudo users can't be gbanned/ungbanned.")
+    else:
+        is_gbanned = is_gbanned_user(user_id)
+        if not is_gbanned:
+            await message.reply_text("He's already free, why bully him?")
+        else:
+            await remove_gban_user(user_id)
+            await message.reply_text(f"Unbanned {mention} Globally!")

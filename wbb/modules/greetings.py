@@ -17,6 +17,7 @@ from wbb.modules.admin import list_admins
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ChatPermissions, User
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from wbb.utils.errors import capture_err
+from wbb.utils.dbfunctions import is_gbanned_user
 
 
 @app.on_message(filters.new_chat_members)
@@ -24,9 +25,10 @@ from wbb.utils.errors import capture_err
 async def welcome(_, message: Message):
     """Mute new member and send message with button"""
     for member in message.new_chat_members:
-        if member.is_bot:
-            continue  # ignore bots
-
+        if member.is_bot: continue  # ignore bots
+        if await is_gbanned_user(member.id):
+            await message.chat.kick_member(member.id)
+            continue
         text = (f"Welcome, {(member.mention())}\n**Are you human?**\n"
                 "You will be removed from this chat if you are not verified "
                 f"in {WELCOME_DELAY_KICK_SEC} seconds")
