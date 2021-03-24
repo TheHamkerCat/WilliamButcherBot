@@ -330,7 +330,7 @@ async def remove_served_chat(chat_id: int):
 
 async def get_gbans_count() -> int:
     users = gbansdb.find({"user_id": {"$gt": 0}})
-    users = users.to_list(length=100000)
+    users = await users.to_list(length=100000)
     return len(users)
 
 
