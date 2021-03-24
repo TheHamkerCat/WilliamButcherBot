@@ -8,6 +8,7 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from wbb import app, MOD_NOLOAD
 from wbb.utils import get_info, paginate_modules
 from wbb.utils import botinfo, formatter
+from wbb.modules.sudoers import bot_sys_stats
 from wbb.modules import ALL_MODULES
 from wbb import bot_start_time
 
@@ -78,12 +79,21 @@ async def help_command(_, message):
                 [
                     InlineKeyboardButton(
                         text="Help",
-                        url="t.me/" + botinfo.BOT_USERNAME + "?start=help",
+                        url=f"t.me/{botinfo.BOT_USERNAME}?start=help",
+                    ),
+                    InlineKeyboardButton(
+                        text="Repo",
+                        url="https://github.com/thehamkercat/WilliamButcherBot",
                     )
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="System Stats",
+                        callback_data="stats_callback")
                 ]
             ]
         )
-        await message.reply("Contact me in PM.", reply_markup=keyboard)
+        await message.reply("Pm Me For More Details.", reply_markup=keyboard)
         return
     text, keyboard = await help_parser(message)
     await message.reply_photo(
@@ -103,6 +113,10 @@ async def help_parser(message, keyboard=None):
         keyboard,
     )
 
+@app.on_callback_query(filters.regex("stats_callback"))
+async def end_callbacc(_, CallbackQuery):
+    text = await bot_sys_stats()
+    await app.answer_callback_query(CallbackQuery.id, text, show_alert=True)
 
 @app.on_callback_query(filters.regex(r"help_(.*?)"))
 async def help_button(client, query):

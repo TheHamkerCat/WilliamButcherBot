@@ -99,19 +99,25 @@ Latency  - {round((i["latency"]))} ms
 # Stats Module
 
 
+async def bot_sys_stats():
+    bot_uptime = int(time.time() - bot_start_time)
+    cpu = psutil.cpu_percent(interval=0.5)
+    mem = psutil.virtual_memory().percent
+    disk = psutil.disk_usage("/").percent
+    stats = (f'''**Uptime:** {formatter.get_readable_time((bot_uptime))}
+**CPU:** {cpu}%
+**RAM:** {mem}%
+**Disk:** {disk}%''')
+    return stats
+
+
+
 @app.on_message(
     filters.user(SUDOERS) & filters.command("stats")
 )
 @capture_err
 async def get_stats(_, message):
-    bot_uptime = int(time.time() - bot_start_time)
-    cpu = psutil.cpu_percent(interval=0.5)
-    mem = psutil.virtual_memory().percent
-    disk = psutil.disk_usage("/").percent
-    stats = (f'''```Uptime: {formatter.get_readable_time((bot_uptime))}
-CPU: {cpu}%
-RAM: {mem}%
-Disk: {disk}%```''')
+    stats = await bot_sys_stats()
     await message.reply_text(stats)
 
 # Global Stats
