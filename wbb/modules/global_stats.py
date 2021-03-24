@@ -7,7 +7,6 @@ from wbb.utils.dbfunctions import (
         get_served_chats,
         add_served_chat,
         remove_served_chat,
-        alpha_to_int_chat
         )
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from pyrogram import filters
