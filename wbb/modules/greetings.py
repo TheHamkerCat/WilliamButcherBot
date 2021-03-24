@@ -26,7 +26,7 @@ async def welcome(_, message: Message):
     """Mute new member and send message with button"""
     for member in message.new_chat_members:
         if member.is_bot: continue  # ignore bots
-        if is_gbanned_user(member.id):
+        if await is_gbanned_user(member.id):
             await message.chat.kick_member(member.id)
             continue
         text = (f"Welcome, {(member.mention())}\n**Are you human?**\n"
