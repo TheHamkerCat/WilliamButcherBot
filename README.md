@@ -3,7 +3,7 @@ Just Another Telegram Bot Written In Python Using Pyrogram.
 
 [![Python](http://forthebadge.com/images/badges/made-with-python.svg)](https://python.org)
 
-<img src="https://static2.aniimg.com/upload/20170515/414/c/d/7/cd7EEF.jpg" width="160" align="right">
+<img src="https://static2.aniimg.com/upload/20170515/414/c/d/7/cd7EEF.jpg" width="300" align="right">
 
 ## Requirements
 
