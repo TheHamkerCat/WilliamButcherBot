@@ -103,8 +103,9 @@ async def help_command(_, message):
     text, keyboard = await help_parser(message)
     await message.reply_photo(
         caption=text,
-        photo="https://hamker.me/z/b8vzvds.png",
-        reply_markup=keyboard)
+        photo="https://static2.aniimg.com/upload/20170515/414/c/d/7/cd7EEF.jpg",
+        reply_markup=keyboard
+    )
 
 
 async def help_parser(message, keyboard=None):
