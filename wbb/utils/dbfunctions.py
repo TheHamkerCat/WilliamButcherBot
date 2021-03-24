@@ -6,7 +6,6 @@ notesdb = db.notes
 filtersdb = db.filters
 warnsdb = db.warns
 karmadb = db.karma
-usersdb = db.users
 chatsdb = db.chats
 
 
@@ -188,7 +187,7 @@ async def alpha_to_int(user_id_alphabet: str) -> int:
 
 async def get_warns_count() -> dict:
     chats = warnsdb.find({"chat_id": {"$lt": 0}})
-    if not chats: return
+    if not chats: return {}
     chats_count = 0
     warns_count = 0
     for chat in await chats.to_list(length=100000000):
@@ -252,6 +251,19 @@ async def remove_warns(chat_id: int, name: str) -> bool:
 
 """ Karma functions """
 
+async def get_karmas_count(chat_id: int) -> dict:
+    chats = karmadb.find({"chat_id": {"$lt": 0}})
+    if not chats: return {}
+    chats_count = 0
+    karmas_count = 0
+    for chat in await chats.to_list(length=1000000):
+        for i in chat['karma']:
+            karmas_count += chat['karma'][i]['karma']
+            chats_count += 1
+    return {
+            "chats_count": chats_count,
+            "karmas_count": karmas_count
+            }
 
 async def get_karmas(chat_id: int) -> Dict[str, int]:
     karma = await karmadb.find_one({"chat_id": chat_id})

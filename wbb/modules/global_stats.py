@@ -9,7 +9,8 @@ from wbb.utils.dbfunctions import (
         remove_served_chat,
         get_notes_count,
         get_filters_count,
-        get_warns_count
+        get_warns_count,
+        get_karmas_count
         )
 from pyrogram import filters
 
@@ -59,15 +60,22 @@ async def global_stats(_, message):
     _warns = await get_warns_count()
     warns_count = _warns["warns_count"]
     warns_chats_count = _warns["chats_count"]
+
+    # For karmas count across chats
+    _karmas = await get_karmas_count()
+    karmas_count = _karmas["karmas_count"]
+    karmas_chats_count = _karmas["chats_count"]
+
     # NOTE need to fix these
     msg = f"""**Global Stats of {BOT_NAME}**:
-0 gbanned users.                           
-0 blacklist triggers, across 0 chats.
-{filters_count} filters, across {filters_chats_count} chats.
-{notes_count} notes, across {notes_chats_count} chats.
-0 welcome messages are set.
-{total_users} users, across {len(served_chats)} chats.
-{warns_count} warns, across {warns_chats_count} chats."""
+**0** Globally banned users.                           
+**0** Blacklist triggers, Across **0** chats.
+**{filters_count}** Filters, Across **{filters_chats_count}** chats.
+**{notes_count}** Notes, Across **{notes_chats_count}** chats.
+**0** welcome messages are set.
+**{total_users}** Users, Across **{len(served_chats)}** chats.
+**{warns_count}** Warns, Across **{warns_chats_count}** chats.
+**{karmas_count}** Karma, Across **{karmas_chats_count}** chats."""
     
     await m.edit(msg)
 
