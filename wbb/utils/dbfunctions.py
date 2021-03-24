@@ -347,6 +347,6 @@ async def add_gban_user(user_id: int):
 
 
 async def remove_gban_user(user_id: int):
-    is_gbanned = await is_gbanned_user(chat_id)
+    is_gbanned = await is_gbanned_user(user_id)
     if not is_gbanned: return
     return await gbansdb.delete_one({"user_id": user_id})
