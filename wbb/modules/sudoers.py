@@ -122,7 +122,7 @@ Disk: {disk}%```''')
         )
 @capture_err
 async def g_stats(_, message):
-    await global_stats()
+    await global_stats(_, message)
 
 # Gban
 
