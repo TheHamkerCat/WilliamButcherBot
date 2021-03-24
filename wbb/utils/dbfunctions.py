@@ -7,7 +7,7 @@ filtersdb = db.filters
 warnsdb = db.warns
 karmadb = db.karma
 chatsdb = db.chats
-
+gbansdb = db.gban
 
 """ Notes functions """
 
@@ -318,7 +318,35 @@ async def add_served_chat(chat_id: int):
     if is_served: return
     return await chatsdb.insert_one({"chat_id": chat_id})
 
+
 async def remove_served_chat(chat_id: int):
     is_served = await is_served_chat(chat_id)
     if not is_served: return
-    await chatsdb.delete_one({"chat_id": chat_id})
+    return await chatsdb.delete_one({"chat_id": chat_id})
+
+
+""" Gban functions """
+
+
+async def get_gbans_count() -> int:
+    users = gbansdb.find({"user_id": {"$gt": 0}})
+    users = users.to_list(length=100000)
+    return len(users)
+
+
+async def is_gbanned_user(user_id: int) -> bool:
+    user = await gbansdb.find_one({"user_id": user_id})
+    if not user: return False
+    return True
+
+
+async def add_gban_user(user_id: int):
+    is_gbanned = await is_gbanned_user(user_id)
+    if is_gbanned: return
+    return await gbansdb.insert_one({"user_id": user_id})
+
+
+async def remove_gban_user(user_id: int):
+    is_gbanned = await is_gbanned_user(chat_id)
+    if not is_gbanned: return
+    return await gbansdb.delete_one({"user_id": user_id})

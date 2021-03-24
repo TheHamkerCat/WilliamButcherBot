@@ -11,7 +11,8 @@ from wbb.utils.dbfunctions import (
         get_notes_count,
         get_filters_count,
         get_warns_count,
-        get_karmas_count
+        get_karmas_count,
+        get_gbans_count
         )
 from pyrogram import filters
 
@@ -47,6 +48,8 @@ async def global_stats(_, message):
         mc = (await app.get_chat(i)).members_count
         total_users += int(mc)
     
+    # Gbans count
+    gbans = await get_gbans_count()
     ## Notes count across chats
     _notes = await get_notes_count()
     notes_count = _notes["notes_count"]
@@ -71,13 +74,14 @@ async def global_stats(_, message):
     url = "https://api.github.com/repos/thehamkercat/williambutcherbot/contributors"
     rurl = "https://github.com/thehamkercat/williambutcherbot"
     developers = await fetch(url)
-    developers = len(developers)
     commits = 0
-    for i in a: commits += i['contributions']
+    for developer in developers:
+        commits += developer['contributions']
+    developers = len(developers)
 
     # NOTE need to fix these
     msg = f"""**Global Stats of {BOT_NAME}**:
-**0** Globally banned users.
+**{gbans}** Globally banned users.
 **{total_users}** Users, Across **{len(served_chats)}** chats.
 **{filters_count}** Filters, Across **{filters_chats_count}** chats.
 **{notes_count}** Notes, Across **{notes_chats_count}** chats.
