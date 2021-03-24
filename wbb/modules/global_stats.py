@@ -28,7 +28,7 @@ async def global_stats(_, message):
     total_users = 0
     chats = await get_served_chats()
     for chat in chats:
-        served_chats.append(await alpha_to_int_chat(chat))
+        served_chats.append(chat["chat_id"])
     for served_chat in served_chats:
         try:
             await app.get_chat_member(served_chat, BOT_ID)
