@@ -132,7 +132,7 @@ async def g_stats(_, message):
 @capture_err
 async def ban_globally(_, message):
     if not message.reply_to_message:
-        await message.reply_to_message("Reply to a user's message to Gban.")
+        await message.reply_text("Reply to a user's message to Gban.")
         return
     from_user_id = message.from_user.id
     user_id = message.reply_to_message.from_user.id
