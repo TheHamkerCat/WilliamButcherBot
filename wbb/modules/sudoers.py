@@ -121,17 +121,6 @@ async def get_stats(_, message):
     stats = await bot_sys_stats()
     await message.reply_text(stats)
 
-# Global Stats
-
-
-@app.on_message(
-        filters.command("global_stats") & filters.user(SUDOERS)
-        & ~filters.edited
-        )
-@capture_err
-async def g_stats(_, message):
-    await global_stats(_, message)
-
 # Gban
 
 

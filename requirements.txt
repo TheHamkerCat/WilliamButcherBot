@@ -4,7 +4,6 @@ aiohttp
 aiofiles
 future
 psutil
-pillow
 pyrogram
 speedtest-cli
 uvloop

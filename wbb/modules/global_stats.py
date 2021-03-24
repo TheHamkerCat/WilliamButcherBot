@@ -25,7 +25,11 @@ async def chat_watcher(_, message):
     if served_chat: return
     await add_served_chat(chat_id)
 
-
+@app.on_message(
+        filters.command("global_stats") & filters.user(SUDOERS)
+        & ~filters.edited
+        )
+@capture_err
 async def global_stats(_, message):
     m = await app.send_message(
             message.chat.id,
@@ -37,11 +41,13 @@ async def global_stats(_, message):
     served_chats = []
     total_users = 0
     chats = await get_served_chats()
-    for chat in chats: served_chats.append(chat["chat_id"])
+    for chat in chats:
+        served_chats.append(int(chat["chat_id"]))
     for served_chat in served_chats:
         try:
-            await app.get_chat_member(int(served_chat), BOT_ID)
-        except (UserNotParticipant, PeerIdInvalid) as e:
+            await app.get_chat_member(served_chat, BOT_ID)
+        except Exception as e:
+            print(e)
             await remove_served_chat(served_chat)
             served_chats.remove(served_chat)
             pass
