@@ -87,7 +87,7 @@ async def global_stats(_, message):
 **{notes_count}** Notes, Across **{notes_chats_count}** chats.
 **{warns_count}** Warns, Across **{warns_chats_count}** chats.
 **{karmas_count}** Karma, Across **{karmas_chats_count}** chats.
-**{developers}** Developers And **{commits}** On **[Github]({rurl})**."""
+**{developers}** Developers And **{commits}** Commits On **[Github]({rurl})**."""
 
     await m.edit(msg, disable_web_page_preview=True)
 

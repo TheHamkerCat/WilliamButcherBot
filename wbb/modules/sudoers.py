@@ -11,7 +11,8 @@ from wbb.modules.global_stats import global_stats
 from wbb.utils.dbfunctions import (
         is_gbanned_user,
         add_gban_user,
-        remove_gban_user)
+        remove_gban_user,
+        get_served_chats)
 
 
 __MODULE__ = "Sudoers"
@@ -136,6 +137,7 @@ async def ban_globally(_, message):
     from_user_id = message.from_user.id
     user_id = message.reply_to_message.from_user.id
     mention = message.reply_to_message.from_user.mention
+    from_user_mention = message.from_user.mention
     if user_id == from_user_id:
         await message.reply_text("You want to gban yourself? FOOL!")
     elif user_id == BOT_ID:
@@ -147,7 +149,15 @@ async def ban_globally(_, message):
         if is_gbanned:
             await message.reply_text("He's already gbanned, why bully him?")
         else:
+            served_chats = await get_served_chats()
+            for served_chat in served_chats:
+                try: await app.kick_chat_member(served_chat, user_id)
+                except Exception: pass
             await add_gban_user(user_id)
+            try: await app.send_message(
+            user_id, """Hello, You have been globally banned by {from_user_mention},
+You can appeal for this ban by talking to {from_user_mention} about this.""")
+            except Exception: pass
             await message.reply_text(f"Banned {mention} Globally!")
 
 # Ungban
