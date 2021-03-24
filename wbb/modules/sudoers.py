@@ -151,7 +151,7 @@ async def ban_globally(_, message):
         else:
             served_chats = await get_served_chats()
             for served_chat in served_chats:
-                try: await app.kick_chat_member(served_chat, user_id)
+                try: await app.kick_chat_member(served_chat['chat_id'], user_id)
                 except Exception: pass
             await add_gban_user(user_id)
             try: await app.send_message(
