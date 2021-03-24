@@ -92,11 +92,11 @@ async def global_stats(_, message):
 
 **Global Stats of {BOT_NAME}**:
 **{gbans}** Globally banned users.
-**{total_users}** Users, Across **{len(served_chats)}** chats.
 **{filters_count}** Filters, Across **{filters_chats_count}** chats.
 **{notes_count}** Notes, Across **{notes_chats_count}** chats.
 **{warns_count}** Warns, Across **{warns_chats_count}** chats.
 **{karmas_count}** Karma, Across **{karmas_chats_count}** chats.
+**{total_users}** Users, Across **{len(served_chats)}** chats.
 **{developers}** Developers And **{commits}** Commits On **[Github]({rurl})**."""
 
     await m.edit(msg, disable_web_page_preview=True)

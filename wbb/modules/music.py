@@ -81,16 +81,21 @@ async def download_song(url):
                 await f.close()
     return song_name
 
-
+is_downloading = False
 # Jiosaavn Music
 
 
 @app.on_message(filters.command("saavn") & ~filters.edited)
 @capture_err
 async def jssong(_, message):
+    global is_downloading
     if len(message.command) < 2:
         await message.reply_text("/saavn requires an argument.")
         return
+    if is_downloading:
+        await message.reply_text("Another download is in progress, try again after sometime.")
+        return
+    is_downloading = True
     text = message.text.split(None, 1)[1]
     query = text.replace(" ", "%20")
     m = await message.reply_text("Searching...")
@@ -109,9 +114,10 @@ async def jssong(_, message):
         os.remove(song)
         await m.delete()
     except Exception as e:
+        is_downloading = False
         await m.edit(str(e))
         return
-
+    is_downloading = False
 
 # Deezer Music
 
@@ -119,9 +125,14 @@ async def jssong(_, message):
 @app.on_message(filters.command("deezer") & ~filters.edited)
 @capture_err
 async def deezsong(_, message):
+    global is_downloading
     if len(message.command) < 2:
         await message.reply_text("/deezer requires an argument.")
         return
+    if is_downloading:
+        await message.reply_text("Another download is in progress, try again after sometime.")
+        return
+    is_downloading = True
     text = message.text.split(None, 1)[1]
     query = text.replace(" ", "%20")
     m = await message.reply_text("Searching...")
@@ -140,5 +151,7 @@ async def deezsong(_, message):
         os.remove(song)
         await m.delete()
     except Exception as e:
+        is_downloading = False
         await m.edit(str(e))
         return
+    is_downloading = False
