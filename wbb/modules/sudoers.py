@@ -13,7 +13,8 @@ from wbb.utils.dbfunctions import (
         is_gbanned_user,
         add_gban_user,
         remove_gban_user,
-        get_served_chats)
+        get_served_chats
+        )
 
 
 __MODULE__ = "Sudoers"
@@ -21,7 +22,8 @@ __HELP__ = '''/log - To Get Logs From Last Run.
 /speedtest - To Perform A Speedtest.
 /stats - To Check System Status.
 /global_stats - To Check Bot's Global Stats.
-/gban - To Ban A User Globally.'''
+/gban - To Ban A User Globally.
+/broadcast - To Broadcast A Message In All Groups.'''
 
 
 # Logs Module
@@ -180,3 +182,27 @@ async def unban_globally(_, message):
         else:
             await remove_gban_user(user_id)
             await message.reply_text(f"Unbanned {mention} Globally!")
+
+# Broadcast
+
+@app.on_message(
+        filters.command("/broadcast")
+        & filters.user(SUDOERS)
+        & ~filters.edited
+        )
+@capture_err
+async def broadcast_message(_, message):
+    if len(message.command) < 2:
+        await message.reply_text("**Usage**:\n/broadcast [MESSAGE]")
+        return
+    text = message.text.split(None, 1)[1]
+    sent = 0
+    chats = []
+    schats = await get_served_chats()
+    for chat in schats: chats.append(int(chat["chat_id"]))
+    for i in chats:
+        try:
+            await app.send_message(i, text=text)
+            sent += 1
+        except Exception: pass
+    await message.reply_text(f"**Broadcasted Message In {sent} Chats.**")

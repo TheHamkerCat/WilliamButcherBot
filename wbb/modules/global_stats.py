@@ -46,7 +46,7 @@ async def global_stats(_, message):
         try:
             await app.get_chat_members(served_chat, BOT_ID)
         except Exception as e:
-            print(f"{e} - {served_chat}")
+            print(f"{e} - {served_chat} in global_stats.py")
             await remove_served_chat(served_chat)
             served_chats.remove(served_chat)
             pass
