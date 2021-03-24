@@ -1,4 +1,4 @@
-from wbb import app
+from wbb import app, SUDOERS
 from wbb.utils.filter_groups import global_stats_group
 from wbb.utils.errors import capture_err
 from wbb.utils.botinfo import BOT_ID, BOT_NAME
