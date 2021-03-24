@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 from urllib.parse import urlparse
-import os
 import youtube_dl
 import aiohttp
 import aiofiles
@@ -9,9 +8,7 @@ from random import randint
 from pyrogram import filters
 from wbb import app, SUDOERS, arq
 from wbb.utils.functions import convert_seconds_to_minutes
-from wbb.utils.fetch import fetch
 from wbb.utils.errors import capture_err
-
 
 
 __MODULE__ = "Music"
@@ -49,7 +46,8 @@ async def music(_, message):
             # .webm -> .weba
             basename = audio_file.rsplit(".", 1)[-2]
             thumbnail_url = info_dict['thumbnail']
-            thumbnail_file = basename + "." + get_file_extension_from_url(thumbnail_url)
+            thumbnail_file = basename + "." + \
+                get_file_extension_from_url(thumbnail_url)
             audio_file = basename + ".mp3"
     except Exception as e:
         await m.edit(str(e))
@@ -103,7 +101,7 @@ async def jssong(_, message):
         ssingers = songs[0].singers
         duration = int(songs[0].duration)
         duration = convert_seconds_to_minutes(duration)
-        await m.edit("Downloading") 
+        await m.edit("Downloading")
         song = await download_song(slink)
         await m.edit("Uploading")
         await message.reply_audio(audio=song, title=sname,
@@ -113,7 +111,6 @@ async def jssong(_, message):
     except Exception as e:
         await m.edit(str(e))
         return
-
 
 
 # Deezer Music
@@ -135,9 +132,9 @@ async def deezsong(_, message):
         artist = songs[0].artist
         duration = int(songs[0].duration)
         duration = convert_seconds_to_minutes(duration)
-        await m.edit("Downloading") 
+        await m.edit("Downloading")
         song = await download_song(url)
-        await m.edit("Uploading") 
+        await m.edit("Uploading")
         await message.reply_audio(audio=song, title=title,
                                   performer=artist, duration=duration)
         os.remove(song)
@@ -145,4 +142,3 @@ async def deezsong(_, message):
     except Exception as e:
         await m.edit(str(e))
         return
-

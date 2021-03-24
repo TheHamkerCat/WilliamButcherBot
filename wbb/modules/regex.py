@@ -32,7 +32,7 @@ async def sed(_, message):
 
         try:
 
-            if infinite_checker(repl) == True:
+            if infinite_checker(repl):
                 await message.reply_text("Nice try -_-")
                 return
 

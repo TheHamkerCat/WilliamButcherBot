@@ -118,10 +118,12 @@ async def help_parser(message, keyboard=None):
         keyboard,
     )
 
+
 @app.on_callback_query(filters.regex("stats_callback"))
 async def end_callbacc(_, CallbackQuery):
     text = await bot_sys_stats()
     await app.answer_callback_query(CallbackQuery.id, text, show_alert=True)
+
 
 @app.on_callback_query(filters.regex(r"help_(.*?)"))
 async def help_button(client, query):

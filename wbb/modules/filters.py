@@ -1,10 +1,8 @@
-from wbb import app, db
+from wbb import app
 from wbb.modules.admin import member_permissions
 from wbb.utils.dbfunctions import (
-        _get_filters, save_filter,
-        get_filters_names, get_filter,
-        delete_filter
-        )
+    save_filter, get_filters_names, get_filter, delete_filter
+)
 from pyrogram import filters
 from wbb.utils.errors import capture_err
 from wbb.utils.filter_groups import chat_filters_group
@@ -72,7 +70,7 @@ async def del_filter(_, message):
         if deleted:
             await message.reply_text(f"**Deleted filter {name}.**")
         else:
-            await message.reply_text(f"**No such filter.**")
+            await message.reply_text("**No such filter.**")
 
 
 @app.on_message(filters.text & ~filters.edited &
@@ -95,6 +93,6 @@ async def filters_re(_, message):
                         else:
                             await message.reply_sticker(data)
                         return
-    except Exception as e:
+    except Exception:
         print("Error in filters_re function in filters.py [IGNORE THIS]")
         pass

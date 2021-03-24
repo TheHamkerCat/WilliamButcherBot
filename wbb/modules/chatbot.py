@@ -1,5 +1,4 @@
-from wbb import app, arq 
-from wbb.utils.fetch import fetch
+from wbb import app, arq
 from wbb.utils.errors import capture_err
 from wbb.utils.botinfo import BOT_ID
 from wbb.utils.filter_groups import chatbot_group
@@ -23,7 +22,7 @@ async def chatbot_status(_, message):
         return
     status = message.text.split(None, 1)[1]
     chat_id = message.chat.id
-    
+
     if status == "ON" or status == "on" or status == "On":
         if chat_id not in active_chats:
             active_chats.append(chat_id)
@@ -41,15 +40,13 @@ async def chatbot_status(_, message):
             return
         await message.reply_text("ChatBot Is Already Disabled.")
         return
-    
+
     else:
         await message.reply_text("/chatbot [ON|OFF]")
 
 
-
-
 @app.on_message(filters.text & filters.reply & ~filters.bot &
-        ~filters.via_bot & ~filters.forwarded, group=chatbot_group)
+                ~filters.via_bot & ~filters.forwarded, group=chatbot_group)
 @capture_err
 async def chatbot_talk(_, message):
     if message.chat.id not in active_chats:
@@ -61,4 +58,3 @@ async def chatbot_talk(_, message):
     response = luna.response
     await app.send_chat_action(message.chat.id, "typing")
     await message.reply_text(response)
-

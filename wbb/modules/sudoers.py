@@ -3,18 +3,16 @@ import time
 from pyrogram import filters, types
 import speedtest
 import psutil
-from subprocess import check_output
 from wbb import app, SUDOERS, bot_start_time
 from wbb.utils import nekobin, formatter
 from wbb.utils.errors import capture_err
 from wbb.utils.botinfo import BOT_ID
-from wbb.modules.global_stats import global_stats
 from wbb.utils.dbfunctions import (
-        is_gbanned_user,
-        add_gban_user,
-        remove_gban_user,
-        get_served_chats
-        )
+    is_gbanned_user,
+    add_gban_user,
+    remove_gban_user,
+    get_served_chats
+)
 
 
 __MODULE__ = "Sudoers"
@@ -149,16 +147,22 @@ async def ban_globally(_, message):
         else:
             served_chats = await get_served_chats()
             for served_chat in served_chats:
-                try: await app.kick_chat_member(served_chat['chat_id'], user_id)
-                except Exception: pass
+                try:
+                    await app.kick_chat_member(served_chat['chat_id'], user_id)
+                except Exception:
+                    pass
             await add_gban_user(user_id)
-            try: await app.send_message(
-            user_id, """Hello, You have been globally banned by {from_user_mention},
+            try:
+                await app.send_message(
+                    user_id, f"""
+Hello, You have been globally banned by {from_user_mention},
 You can appeal for this ban by talking to {from_user_mention} about this.""")
-            except Exception: pass
+            except Exception:
+                pass
             await message.reply_text(f"Banned {mention} Globally!")
 
 # Ungban
+
 
 @app.on_message(filters.command("ungban") & filters.user(SUDOERS))
 @capture_err
@@ -185,11 +189,12 @@ async def unban_globally(_, message):
 
 # Broadcast
 
+
 @app.on_message(
-        filters.command("/broadcast")
-        & filters.user(SUDOERS)
-        & ~filters.edited
-        )
+    filters.command("/broadcast")
+    & filters.user(SUDOERS)
+    & ~filters.edited
+)
 @capture_err
 async def broadcast_message(_, message):
     if len(message.command) < 2:
@@ -199,10 +204,12 @@ async def broadcast_message(_, message):
     sent = 0
     chats = []
     schats = await get_served_chats()
-    for chat in schats: chats.append(int(chat["chat_id"]))
+    for chat in schats:
+        chats.append(int(chat["chat_id"]))
     for i in chats:
         try:
             await app.send_message(i, text=text)
             sent += 1
-        except Exception: pass
+        except Exception:
+            pass
     await message.reply_text(f"**Broadcasted Message In {sent} Chats.**")

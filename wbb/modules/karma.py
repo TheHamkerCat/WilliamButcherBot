@@ -1,9 +1,7 @@
-import operator
 from wbb import app
 from wbb.utils.errors import capture_err
-from wbb.utils.json_prettify import json_prettify
 from wbb.utils.dbfunctions import (update_karma, get_karma, get_karmas,
-    int_to_alpha, alpha_to_int)
+                                   int_to_alpha, alpha_to_int)
 from wbb.utils.filter_groups import karma_positive_group, karma_negative_group
 from pyrogram import filters
 
@@ -27,6 +25,7 @@ regex_downvote = r"^(\-|\-\-|\-1|👎)$"
                 & ~filters.bot
                 & ~filters.edited,
                 group=karma_positive_group)
+@capture_err
 async def upvote(_, message):
     if message.reply_to_message.from_user.id == message.from_user.id:
         return
@@ -57,6 +56,7 @@ async def upvote(_, message):
                 & ~filters.bot
                 & ~filters.edited,
                 group=karma_negative_group)
+@capture_err
 async def downvote(_, message):
     if message.reply_to_message.from_user.id == message.from_user.id:
         return
@@ -74,11 +74,12 @@ async def downvote(_, message):
         new_karma = {"karma": karma}
         await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
     await message.reply_text(
-    f'Decremented Karma Of {user_mention} By 1 \nTotal Points: {karma}'
-)
+        f'Decremented Karma Of {user_mention} By 1 \nTotal Points: {karma}'
+    )
 
 
 @app.on_message(filters.command("karma") & filters.group)
+@capture_err
 async def karma(_, message):
     chat_id = message.chat.id
 
@@ -92,8 +93,9 @@ async def karma(_, message):
             user_karma = karma[i]['karma']
             user_name = (await app.get_users(user_id)).username
             karma_dicc[user_name] = user_karma
-            
-            karma_arranged = dict(sorted(karma_dicc.items(), key=lambda item: item[1], reverse=True))
+
+            karma_arranged = dict(
+                sorted(karma_dicc.items(), key=lambda item: item[1], reverse=True))
         for username, karma_count in karma_arranged.items():
             if limit > 9:
                 break

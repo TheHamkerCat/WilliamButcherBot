@@ -11,9 +11,11 @@ gbansdb = db.gban
 
 """ Notes functions """
 
+
 async def get_notes_count() -> dict:
     chats = notesdb.find({"chat_id": {"$lt": 0}})
-    if not chats: return {}
+    if not chats:
+        return {}
     chats_count = 0
     notes_count = 0
     for chat in await chats.to_list(length=1000000000):
@@ -21,10 +23,9 @@ async def get_notes_count() -> dict:
         notes_count += len(notes_name)
         chats_count += 1
     return {
-            "chats_count": chats_count,
-            "notes_count": notes_count
-            }
-
+        "chats_count": chats_count,
+        "notes_count": notes_count
+    }
 
 
 async def _get_notes(chat_id: int) -> Dict[str, int]:
@@ -91,7 +92,8 @@ async def delete_note(chat_id: int, name: str) -> bool:
 
 async def get_filters_count() -> dict:
     chats = filtersdb.find({"chat_id": {"$lt": 0}})
-    if not chats: return {}
+    if not chats:
+        return {}
     chats_count = 0
     filters_count = 0
     for chat in await chats.to_list(length=1000000000):
@@ -99,10 +101,9 @@ async def get_filters_count() -> dict:
         filters_count += len(filters_name)
         chats_count += 1
     return {
-            "chats_count": chats_count,
-            "filters_count": filters_count
-            }
-
+        "chats_count": chats_count,
+        "filters_count": filters_count
+    }
 
 
 async def _get_filters(chat_id: int) -> Dict[str, int]:
@@ -187,7 +188,8 @@ async def alpha_to_int(user_id_alphabet: str) -> int:
 
 async def get_warns_count() -> dict:
     chats = warnsdb.find({"chat_id": {"$lt": 0}})
-    if not chats: return {}
+    if not chats:
+        return {}
     chats_count = 0
     warns_count = 0
     for chat in await chats.to_list(length=100000000):
@@ -195,9 +197,10 @@ async def get_warns_count() -> dict:
             warns_count += chat['warns'][user]['warns']
         chats_count += 1
     return {
-            "chats_count": chats_count,
-            "warns_count": warns_count
-            }
+        "chats_count": chats_count,
+        "warns_count": warns_count
+    }
+
 
 async def get_warns(chat_id: int) -> Dict[str, int]:
     warns = await warnsdb.find_one({"chat_id": chat_id})
@@ -251,9 +254,11 @@ async def remove_warns(chat_id: int, name: str) -> bool:
 
 """ Karma functions """
 
+
 async def get_karmas_count() -> dict:
     chats = karmadb.find({"chat_id": {"$lt": 0}})
-    if not chats: return {}
+    if not chats:
+        return {}
     chats_count = 0
     karmas_count = 0
     for chat in await chats.to_list(length=1000000):
@@ -261,9 +266,10 @@ async def get_karmas_count() -> dict:
             karmas_count += chat['karma'][i]['karma']
         chats_count += 1
     return {
-            "chats_count": chats_count,
-            "karmas_count": karmas_count
-            }
+        "chats_count": chats_count,
+        "karmas_count": karmas_count
+    }
+
 
 async def get_karmas(chat_id: int) -> Dict[str, int]:
     karma = await karmadb.find_one({"chat_id": chat_id})
@@ -298,15 +304,18 @@ async def update_karma(chat_id: int, name: str, karma: dict):
 
 """ Chats log functions """
 
+
 async def is_served_chat(chat_id: int) -> bool:
     chat = await chatsdb.find_one({"chat_id": chat_id})
-    if not chat: return False
+    if not chat:
+        return False
     return True
 
 
 async def get_served_chats() -> list:
     chats = chatsdb.find({"chat_id": {'$lt': 0}})
-    if not chats: return []
+    if not chats:
+        return []
     chats_list = []
     for chat in await chats.to_list(length=1000000000):
         chats_list.append(chat)
@@ -315,13 +324,15 @@ async def get_served_chats() -> list:
 
 async def add_served_chat(chat_id: int):
     is_served = await is_served_chat(chat_id)
-    if is_served: return
+    if is_served:
+        return
     return await chatsdb.insert_one({"chat_id": chat_id})
 
 
 async def remove_served_chat(chat_id: int):
     is_served = await is_served_chat(chat_id)
-    if not is_served: return
+    if not is_served:
+        return
     return await chatsdb.delete_one({"chat_id": chat_id})
 
 
@@ -336,17 +347,20 @@ async def get_gbans_count() -> int:
 
 async def is_gbanned_user(user_id: int) -> bool:
     user = await gbansdb.find_one({"user_id": user_id})
-    if not user: return False
+    if not user:
+        return False
     return True
 
 
 async def add_gban_user(user_id: int):
     is_gbanned = await is_gbanned_user(user_id)
-    if is_gbanned: return
+    if is_gbanned:
+        return
     return await gbansdb.insert_one({"user_id": user_id})
 
 
 async def remove_gban_user(user_id: int):
     is_gbanned = await is_gbanned_user(user_id)
-    if not is_gbanned: return
+    if not is_gbanned:
+        return
     return await gbansdb.delete_one({"user_id": user_id})

@@ -1,6 +1,6 @@
 from pyrogram import filters
 from pyrogram.types import ChatPermissions
-from wbb import OWNER_ID, SUDOERS, app
+from wbb import SUDOERS, app
 from wbb.utils.botinfo import BOT_ID
 from wbb.utils.errors import capture_err
 from wbb.utils.dbfunctions import add_warn, get_warn, remove_warns, int_to_alpha
@@ -427,8 +427,6 @@ async def warn_user(_, message):
         await message.reply_text(str(e))
 
 
-
-
 # Rmwarns
 
 
@@ -469,7 +467,6 @@ async def check_warns(_, message):
         await message.reply_text("Reply to a message to check a user's warnings.")
         return
     try:
-        from_user_id = message.from_user.id
         user_id = message.reply_to_message.from_user.id
         mention_user = message.reply_to_message.from_user.mention
         mention_from_user = message.from_user.mention
@@ -489,7 +486,7 @@ async def check_warns(_, message):
         else:
             await message.reply_text(f"{mention_user} have no warnings.")
             return
-        await message.reply_text(f"{mention__from_user} have {warns}/3 warnings.")
+        await message.reply_text(f"{mention_from_user} have {warns}/3 warnings.")
     except Exception as e:
         await message.reply_text(str(e))
 

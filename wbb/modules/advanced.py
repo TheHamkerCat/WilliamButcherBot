@@ -74,4 +74,3 @@ async def send_message(_, message):
     except Exception as e:
         await message.reply_text(str(e))
         print(str(e))
-

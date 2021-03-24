@@ -13,7 +13,7 @@ __HELP__ = "/repo - To Get My Github Repository Link " \
 async def repo(_, message):
     users = await fetch("https://api.github.com/repos/thehamkercat/williambutcherbot/contributors")
     list_of_users = ""
-    count = 1    
+    count = 1
     for user in users:
         list_of_users += f"**{count}.** [{user['login']}]({user['html_url']})\n"
         count += 1

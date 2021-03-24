@@ -13,7 +13,6 @@ import asyncio
 from datetime import datetime
 from pyrogram import filters
 from wbb import app, WELCOME_DELAY_KICK_SEC
-from wbb.modules.admin import list_admins
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ChatPermissions, User
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from wbb.utils.errors import capture_err
@@ -25,7 +24,8 @@ from wbb.utils.dbfunctions import is_gbanned_user
 async def welcome(_, message: Message):
     """Mute new member and send message with button"""
     for member in message.new_chat_members:
-        if member.is_bot: continue  # ignore bots
+        if member.is_bot:
+            continue  # ignore bots
         if await is_gbanned_user(member.id):
             await message.chat.kick_member(member.id)
             continue

@@ -21,7 +21,7 @@ __HELP__ = '''/commit - Generate Funny Commit Messages
 /cheat [Language] [Query] - Get Programming Related Help
 /weather [City] - To Get Weather Info
 /tr [en] - Translate A Message
-/json [URL] - Get Response From An API or Something. 
+/json [URL] - Get Response From An API or Something.
 #RTFM - Check it lol'''
 
 
@@ -122,7 +122,7 @@ async def decrypt(_, message):
 
 
 async def fetch_text(url):
-    async with aiohttp.ClientSession(headers={"user-agent":"curl"}) as session:
+    async with aiohttp.ClientSession(headers={"user-agent": "curl"}) as session:
         async with session.get(url) as resp:
             data = await resp.text()
     return data
@@ -198,7 +198,6 @@ async def tr(_, message):
         await message.reply_text(i.text)
 
 
-
 fetch_limit = 0
 
 
@@ -225,7 +224,7 @@ async def json_fetch(_, message):
     except Exception as e:
         await message.reply_text(str(e))
         print(str(e))
-    
+
 
 @app.on_message(filters.command('bun'))
 async def bunn(_, message):
