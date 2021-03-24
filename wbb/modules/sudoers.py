@@ -3,6 +3,7 @@ import time
 from pyrogram import filters, types
 import speedtest
 import psutil
+from subprocess import check_output
 from wbb import app, SUDOERS, bot_start_time
 from wbb.utils import nekobin, formatter
 from wbb.utils.errors import capture_err
@@ -91,9 +92,9 @@ async def get_speedtest_result(_, message):
     j = speed.download()
     k = speed.upload()
     await m.edit(f'''
-```Download - {speed_convert(j)}
-Upload   - {speed_convert(k)}
-Latency  - {round((i["latency"]))} ms
+**Download:** {speed_convert(j)}
+**Upload:** {speed_convert(k)}
+**Latency:** {round((i["latency"]))} ms
 ```''')
 
 # Stats Module
@@ -104,10 +105,14 @@ async def bot_sys_stats():
     cpu = psutil.cpu_percent(interval=0.5)
     mem = psutil.virtual_memory().percent
     disk = psutil.disk_usage("/").percent
-    stats = (f'''**Uptime:** {formatter.get_readable_time((bot_uptime))}
-**CPU:** {cpu}%
-**RAM:** {mem}%
-**Disk:** {disk}%''')
+    stats = f'''
+Uptime: {formatter.get_readable_time((bot_uptime))}
+CPU: {cpu}%
+RAM: {mem}%
+Disk: {disk}%'''
+    neofetch = check_output(["neofetch", "--stdout"])
+    neofetch = neofetch.decode("UTF-8")
+    stats += f"\nNEOFETCH\n{neofetch}"
     return stats
 
 
