@@ -8,7 +8,7 @@ from datetime import datetime
 from pyrogram import filters
 from wbb import app, WELCOME_DELAY_KICK_SEC
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ChatPermissions, User
-from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
+from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant, ChatAdminRequired
 from wbb.utils.errors import capture_err
 from wbb.utils.dbfunctions import is_gbanned_user
 
@@ -18,15 +18,18 @@ from wbb.utils.dbfunctions import is_gbanned_user
 async def welcome(_, message: Message):
     """Mute new member and send message with button"""
     for member in message.new_chat_members:
-        if member.is_bot:
-            continue  # ignore bots
-        if await is_gbanned_user(member.id):
-            await message.chat.kick_member(member.id)
+        try:
+            if member.is_bot:
+                continue  # ignore bots
+            if await is_gbanned_user(member.id):
+                await message.chat.kick_member(member.id)
+                continue
+            text = (f"Welcome, {(member.mention())}\n**Are you human?**\n"
+                    "You will be removed from this chat if you are not verified "
+                    f"in {WELCOME_DELAY_KICK_SEC} seconds")
+            await message.chat.restrict_member(member.id, ChatPermissions())
+        except ChatAdminRequired:
             continue
-        text = (f"Welcome, {(member.mention())}\n**Are you human?**\n"
-                "You will be removed from this chat if you are not verified "
-                f"in {WELCOME_DELAY_KICK_SEC} seconds")
-        await message.chat.restrict_member(member.id, ChatPermissions())
         button_message = await message.reply(
             text,
             reply_markup=InlineKeyboardMarkup(
