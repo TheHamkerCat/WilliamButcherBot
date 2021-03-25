@@ -130,12 +130,12 @@ async def help_command(_, message):
 
 
 
-async def help_parser(message, keyboard=None):
+async def help_parser(name, keyboard=None):
     if not keyboard:
         keyboard = InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help"))
     return (
         "Hi {first_name}, I am {bot_name}, Here is the list of all possible commands:".format(
-            first_name=message.from_user.first_name,
+            first_name=name,
             bot_name=botinfo.BOT_NAME,
         ),
         keyboard,
@@ -144,13 +144,14 @@ async def help_parser(message, keyboard=None):
 
 @app.on_callback_query(filters.regex("bot_commands"))
 async def end_callbacc(_, CallbackQuery):
-    text, keyboard = await help_parser(message)
+    text, keyboard = await help_parser(CallbackQuery.from_user.mention)
     await app.send_message(
             CallbackQuery.message.chat.id,
             text=text,
             reply_markup=keyboard
             )
 
+    await CallbackQuery.message.delete()
 
 @app.on_callback_query(filters.regex("stats_callback"))
 async def end_callbacc(_, CallbackQuery):
