@@ -32,7 +32,8 @@ async def welcome(_, message: Message):
         text = (f"Welcome, {(member.mention())}\n**Are you human?**\n"
                 "You will be removed from this chat if you are not verified "
                 f"in {WELCOME_DELAY_KICK_SEC} seconds")
-        await message.chat.restrict_member(member.id, ChatPermissions())
+        await message.chat.promote_member(user_id=member.id, can_post_messages=False)
+        #await message.chat.restrict_member(member.id, ChatPermissions())
         user = await app.get_users(member.id)
         name_length = len(str(user.first_name) + str(user.last_name))
         if name_length > 50:

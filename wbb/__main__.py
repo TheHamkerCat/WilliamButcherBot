@@ -112,7 +112,7 @@ async def help_parser(message, keyboard=None):
     if not keyboard:
         keyboard = InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help"))
     return (
-        "Hi {first_name}, I am {bot_name}".format(
+        "Hi {first_name}, I am {bot_name}, A well written telegram group manager bot, Invite me to your chat.".format(
             first_name=message.from_user.first_name,
             bot_name=botinfo.BOT_NAME,
         ),
