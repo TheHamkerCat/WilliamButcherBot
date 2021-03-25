@@ -191,7 +191,7 @@ async def unban_globally(_, message):
 
 
 @app.on_message(
-    filters.command("/broadcast")
+    filters.command("broadcast")
     & filters.user(SUDOERS)
     & ~filters.edited
 )
