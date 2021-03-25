@@ -2,6 +2,8 @@ import sys
 import traceback
 from io import StringIO
 import os
+import re
+import subprocess
 from inspect import getfullargspec
 from wbb import app, OWNER_ID
 from pyrogram import filters
@@ -84,7 +86,7 @@ async def executor(client, message):
 )
 async def shellrunner(client, message):
     if len(message.command) < 2:
-        await message.reply_text(message, text='**Usage:**\n/sh git pull')
+        await edit_or_reply(message, text='**Usage:**\n/sh git pull')
         return
     text = message.text.split(None, 1)[1]
     if '\n' in text:
@@ -98,7 +100,7 @@ async def shellrunner(client, message):
                 )
             except Exception as err:
                 print(err)
-                await message.reply_text(
+                await edit_or_reply(
                     message,
                     text=f"**Error:**\n```{err}```")
             output += f'**{code}**\n'
@@ -118,7 +120,7 @@ async def shellrunner(client, message):
             errors = traceback.format_exception(
                 etype=exc_type, value=exc_obj, tb=exc_tb,
             )
-            await message.reply_text(
+            await edit_or_reply(
                 message,
                 text="**Error:**\n```{''.join(errors)}```")
             return
@@ -137,11 +139,11 @@ async def shellrunner(client, message):
             )
             os.remove('output.txt')
             return
-        await message.reply_text(
+        await edit_or_reply(
             message,
             text="**Output:**\n```{output}```"
         )
     else:
-        await message.reply_text(
+        await edit_or_reply(
             message,
             text='**Output: **\n`No output`')
