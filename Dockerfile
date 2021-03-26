@@ -1,23 +1,17 @@
-FROM python:3.9.2-slim-buster
+FROM ubuntu:latest
 
-WORKDIR /app
+WORKDIR /usr/src/app
+RUN chmod 777 /usr/src/app
+RUN apt-get -qq update
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -qq install python3 python3-pip software-properties-common
 
-ENV PIP_NO_CACHE_DIR 1
-
-# Pypi package Repo upgrade
-RUN pip3 install --upgrade pip setuptools
-
-# copy the dependencies file to the working directory
+#Updating Libraries
+RUN pip3 install -U pip
 COPY requirements.txt .
+RUN pip3 install --no-cache-dir -U -r requirements.txt
 
-# install dependencies
-RUN pip install -r requirements.txt
-
-# copy the content of the local src directory to the working directory
+#Copying All Source
 COPY . .
 
-
-RUN cp sample_config.py config.py
-
-# Starting Worker
-CMD ["python3", "-m", "wbb"]
+#Starting Bot
+CMD ["python3", "-m", "wbb"]]
