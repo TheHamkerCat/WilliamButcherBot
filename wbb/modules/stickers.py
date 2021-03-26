@@ -57,7 +57,7 @@ async def kang(client, message):
             await msg.edit("Format not supported! ({})".format(image_type))
             return
         try:
-            await resize_file_to_sticker_size(temp_file_path)
+            temp_file_path = await resize_file_to_sticker_size(temp_file_path)
         except OSError as e:
             await msg.edit_text("Something wrong happened.")
             raise Exception(f"Something went wrong while resizing the sticker (at {temp_file_path}); {e}")

@@ -8,7 +8,7 @@ from pyrogram.file_id import FileId
 STICKER_DIMENSIONS = (512, 512)
 
 
-async def resize_file_to_sticker_size(file_path: str):
+async def resize_file_to_sticker_size(file_path: str) -> str:
     im = Image.open(file_path)
     if (im.width, im.height) < STICKER_DIMENSIONS:
         size1 = im.width
@@ -27,7 +27,12 @@ async def resize_file_to_sticker_size(file_path: str):
         im = im.resize(sizenew)
     else:
         im.thumbnail(STICKER_DIMENSIONS)
-    im.save(file_path, "PNG")
+    try:
+        os.remove(file_path)
+        file_path = f"{file_path}.png"
+        return file_path
+    finally:
+        im.save(file_path)
 
 async def upload_document(client: Client, file_path: str, chat_id: int) -> raw.base.InputDocument:
     media = await client.send(
