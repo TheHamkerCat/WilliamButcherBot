@@ -54,15 +54,7 @@ async def start_bot():
     await idle()
 
 
-@app.on_message(filters.command("start"))
-async def start(_, message):
-    bot_uptime = int(time.time() - bot_start_time)
-    await message.reply_text(
-        f"Already Online Since {formatter.get_readable_time((bot_uptime))},"
-        " Maybe Try /help")
-
-
-@app.on_message(filters.command("help"))
+@app.on_message(filters.command(["help", "start"]))
 async def help_command(_, message):
     if message.chat.type != "private":
         if len(message.command) >= 2 and message.command[1] == "help":
@@ -75,21 +67,21 @@ async def help_command(_, message):
             [
                 [
                     InlineKeyboardButton(
-                        text="Help",
+                        text="Help ❓",
                         url=f"t.me/{botinfo.BOT_USERNAME}?start=help",
                     ),
                     InlineKeyboardButton(
-                        text="Repo",
+                        text="Repo 🛠",
                         url="https://github.com/thehamkercat/WilliamButcherBot",
                     )
                 ],
                 [
                     InlineKeyboardButton(
-                        text="System Stats",
+                        text="System Stats 💻",
                         callback_data="stats_callback"
                     ),
                     InlineKeyboardButton(
-                        text="Support",
+                        text="Support 👨",
                         url="t.me/PatheticProgrammers"
                     )
                 ]
@@ -101,27 +93,33 @@ async def help_command(_, message):
         [    
             [
                 InlineKeyboardButton(
-                    text="Commands",
+                    text="Commands ❓",
                     callback_data="bot_commands"
                 ),
                 InlineKeyboardButton(
-                    text="Repo",
+                    text="Repo 🛠",
                     url="https://github.com/thehamkercat/WilliamButcherBot"
                 )
             ],
             [
                 InlineKeyboardButton(   
-                    text="System Stats",
+                    text="System Stats 🖥",
                     callback_data="stats_callback"
                 ),
                 InlineKeyboardButton(
-                    text="Support",
+                    text="Support 👨",
                     url="t.me/PatheticProgrammers"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="Add Me To Your Group 🎉",
+                    url=f"http://t.me/{botinfo.BOT_USERNAME}?startgroup=new"
                 )
             ]
         ]
     )
-    await message.reply("Hello, Choose An Option From Below.", reply_markup=keyboard)
+    await message.reply("fHey there! My name is {botinfo.BOT_NAME}. I can manage your group with lots of useful features, feel free to add me to your group.", reply_markup=keyboard)
 
 
 
@@ -131,7 +129,14 @@ async def help_parser(name, keyboard=None):
     if not keyboard:
         keyboard = InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help"))
     return (
-        "Hi {first_name}, I am {bot_name}, Here is the list of all possible commands:".format(
+        """Hello {first_name}! My name is {bot_name}!
+I'm a group management bot with some usefule features.
+You can choose an option below, by clicking a button.
+Also you can ask anything in Support Group.
+
+General command are:
+ - /start: Start the bot
+ - /help: Give this message""".format(
             first_name=name,
             bot_name=botinfo.BOT_NAME,
         ),
