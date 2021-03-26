@@ -1,4 +1,3 @@
-"""
 import os
 import math
 import imghdr
@@ -10,11 +9,13 @@ from wbb import BOT_TOKEN
 from wbb import app
 from pyrogram import filters
 from wbb.utils.errors import capture_err
+from random import randint
 
 __MODULE__ = "Stickers"
-__HELP__ = "/sticker_id - To Get File ID of A Sticker.
-/kang - To Kang A Sticker or Image."
+__HELP__ = """/sticker_id - To Get File ID of A Sticker.
+/kang - To Kang A Sticker or Image."""
 
+## Another marie based kang module
 
 
 @app.on_message(filters.command("sticker_id") & ~filters.edited)
@@ -36,6 +37,10 @@ updater = tg(BOT_TOKEN)
 @app.on_message(filters.command("kang") & ~filters.edited)
 @capture_err
 async def kang(client, message):
+    if not message.reply_to_message:
+        await message.reply_text("Reply to a sticker/image to kang it.")
+        return
+    kangsticker = f"{randint(10000, 99999)}.png"
     args = message.text.split()
     msg = await message.reply_text("Kanging Sticker..")
     user = message.from_user
@@ -55,7 +60,6 @@ async def kang(client, message):
         except TelegramError as e:
             if e.message == "Stickerset_invalid":
                 packname_found = 1
-    kangsticker = "images/kangsticker.png"
     if message.reply_to_message:
         if message.reply_to_message.sticker:
             file_id = message.reply_to_message.sticker.file_id
@@ -64,10 +68,9 @@ async def kang(client, message):
         elif message.reply_to_message.document:
             file_id = message.reply_to_message.document.file_id
         else:
-            await msg.edit("Nope.")
+            await msg.edit("Nope, can't kang that.")
             return
-        await msg.edit("Kanging.....")
-        await app.download_media(file_id, file_name='images/kangsticker.png')
+        await app.download_media(file_id, file_name=kangsticker)
         image_type = imghdr.what(kangsticker)
         if image_type != 'jpeg' and image_type != 'png' and image_type != 'webp':
             await msg.edit("Format not supported! ({})".format(image_type))
@@ -101,7 +104,7 @@ async def kang(client, message):
             if not message.reply_to_message.sticker:
                 im.save(kangsticker, "PNG")
             updater.add_sticker_to_set(user_id=user.id, name=packname,
-                                       png_sticker=open('images/kangsticker.png', 'rb'), emojis=sticker_emoji)
+                                       png_sticker=open(kangsticker, 'rb'), emojis=sticker_emoji)
             await msg.edit("Sticker Kanged [pack](t.me/addstickers/{})\nEmoji: ```{}```".format(packname, sticker_emoji))
         except OSError as e:
             await message.reply_text("Something wrong happened.")
@@ -109,34 +112,20 @@ async def kang(client, message):
             return
         except TelegramError as e:
             if e.message == "Stickerset_invalid":
-                await msg.edit("Kanging")
-                await makepack_internal(msg, user, open('images/kangsticker.png', 'rb'), sticker_emoji, updater, packname, packnum)
+                await makepack_internal(msg, user, open(kangsticker, 'rb'), sticker_emoji, updater, packname, packnum)
             elif e.message == "Sticker_png_dimensions":
                 im.save(kangsticker, "PNG")
                 updater.add_sticker_to_set(user_id=user.id, name=packname,
-                                           png_sticker=open('images/kangsticker.png', 'rb'), emojis=sticker_emoji)
+                                           png_sticker=open(kangsticker, 'rb'), emojis=sticker_emoji)
                 await msg.edit("Sticker Kanged [pack](t.me/addstickers/{})\nEmoji: ```{}```".format(packname, sticker_emoji))
             elif e.message == "Invalid sticker emojis":
                 await msg.edit("Invalid emoji")
             elif e.message == "Stickers_too_much":
-                await msg.edit("Too much stickers")
+                await msg.edit("Too many stickers")
             elif e.message == "Internal Server Error: sticker set not found (500)":
                 await msg.edit("Sticker Kanged [pack](t.me/addstickers/{})\nEmoji: ```{}```".format(packname, sticker_emoji))
-            print(e)
-    else:
-        packs = "Please reply to a sticker\nhere is your pack:\n"
-        if packnum > 0:
-            firstpackname = "c" + str(user.id) + "_by_"+ BOT_USERNAME
-            for i in range(0, packnum + 1):
-                if i == 0:
-                    packs += f"[pack](t.me/addstickers/{firstpackname})\n"
-                else:
-                    packs += f"[pack{i}](t.me/addstickers/{packname})\n"
-        else:
-            packs += f"[pack](t.me/addstickers/{packname})"
-            await msg.edit(packs)
-    if os.path.isfile("images/kangsticker.png"):
-        os.remove("images/kangsticker.png")
+    if os.path.isfile(kangsticker):
+        os.remove(kangsticker)
 
 
 async def makepack_internal(msg, user, png_sticker, emoji, updater, packname, packnum):
@@ -155,12 +144,11 @@ async def makepack_internal(msg, user, png_sticker, emoji, updater, packname, pa
             await msg.edit("Your pack can be found [here](t.me/addstickers/%s)" % packname)
         elif e.message == "Peer_id_invalid":
             await msg.edit("Contact me in PM first.", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(
-                text="Start", url=f"t.me/{bot_username}")]]))
+                text="Start", url=f"t.me/{BOT_USERNAME}")]]))
         elif e.message == "Internal Server Error: created sticker set not found (500)":
             await msg.edit("Sticker pack successfully created. Get it [here](t.me/addstickers/%s)" % packname)
         return
-
     if success:
         await msg.edit("Sticker pack successfully created. Get it [here](t.me/addstickers/%s)" % packname)
     else:
-        await msg.edit("Failed to create sticker pack.")"""
+        await msg.edit("Failed to create sticker pack.")

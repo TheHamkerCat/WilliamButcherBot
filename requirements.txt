@@ -5,6 +5,7 @@ aiofiles
 future
 psutil
 pyrogram
+python-telegram-bot
 speedtest-cli
 uvloop
 youtube_dl
