@@ -146,7 +146,7 @@ async def help_parser(message, keyboard=None):
 async def end_callbacc(_, CallbackQuery):
     text, keyboard = await help_parser(message)
     await app.send_message(
-            CallbackQuery.message.chat.id
+            CallbackQuery.message.chat.id,
             text=text,
             reply_markup=keyboard
             )
