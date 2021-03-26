@@ -7,7 +7,7 @@ from wbb.utils.errors import capture_err
 from wbb.utils.files import resize_file_to_sticker_size, upload_document, get_document_from_file_id
 from wbb.utils.stickerset import get_sticker_set_by_name, create_sticker, add_sticker_to_set, create_sticker_set
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
+from errors.exceptions.bad_request_400 import PeerIdInvalid
 
 __MODULE__ = "Stickers"
 __HELP__ = """/sticker_id - To Get File ID of A Sticker.
@@ -75,17 +75,22 @@ async def kang(client, message):
     # Would be a good idea to cache the number instead of searching it every single time...
     packnum = 0
     packname = "f" + str(message.from_user.id) + "_by_" + BOT_USERNAME
-    while True:
-        stickerset = await get_sticker_set_by_name(client, packname)
-        if not stickerset:
-            stickerset = await create_sticker_set(client, message.from_user.id, f"{message.from_user.first_name[:32]}'s kang pack", packname, [sticker])
-        elif stickerset.set.count >= MAX_STICKERS:
-            packnum += 1
-            packname = "f" + str(packnum) + "_" + \
-                str(message.from_user.id) + "_by_"+BOT_USERNAME
-            continue
-        else:
-            await add_sticker_to_set(client, stickerset, sticker)
-        break
+    try:
+        while True:
+            stickerset = await get_sticker_set_by_name(client, packname)
+            if not stickerset:
+                stickerset = await create_sticker_set(client, message.from_user.id, f"{message.from_user.first_name[:32]}'s kang pack", packname, [sticker])
+            elif stickerset.set.count >= MAX_STICKERS:
+                packnum += 1
+                packname = "f" + str(packnum) + "_" + \
+                    str(message.from_user.id) + "_by_"+BOT_USERNAME
+                continue
+            else:
+                await add_sticker_to_set(client, stickerset, sticker)
+            break
 
-    await msg.edit("Sticker Kanged To [Pack](t.me/addstickers/{})\nEmoji: {}".format(packname, sticker_emoji))
+        await msg.edit("Sticker Kanged To [Pack](t.me/addstickers/{})\nEmoji: {}".format(packname, sticker_emoji))
+    except PeerIdInvalid:
+        keyboard = InlineKeyboardMarkup(
+            [[InlineKeyboardButton(text="Start", url=f"t.me/{BOT_USERNAME}")]])
+        await msg.edit("Contact Me In Pm First", reply_markup=keyboard)
