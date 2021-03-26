@@ -1,5 +1,6 @@
 python-arq
 TgCrypto
+pillow
 aiohttp
 aiofiles
 future

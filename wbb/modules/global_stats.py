@@ -91,10 +91,11 @@ async def global_stats(_, message):
     
     # Modules info
     modules_count = len(ALL_MODULES)
+
     msg = f"""
 
 **Global Stats of {BOT_NAME}**:
-0 Commands, Across {modules_count} Modules.
+**{modules_count}** Modules Loaded
 **{gbans}** Globally banned users.
 **{filters_count}** Filters, Across **{filters_chats_count}** chats.
 **{notes_count}** Notes, Across **{notes_chats_count}** chats.

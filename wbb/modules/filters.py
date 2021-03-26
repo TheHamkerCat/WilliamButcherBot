@@ -6,6 +6,8 @@ from wbb.utils.dbfunctions import (
 from pyrogram import filters
 from wbb.utils.errors import capture_err
 from wbb.utils.filter_groups import chat_filters_group
+import re
+
 
 __MODULE__ = "Filters"
 __HELP__ = """/filters To Get All The Filters In The Chat.
@@ -84,7 +86,8 @@ async def filters_re(_, message):
                 chat_id = message.chat.id
                 list_of_filters = await get_filters_names(chat_id)
                 for word in list_of_filters:
-                    if word in text:
+                    pattern = r"( |^|[^\w])" + re.escape(word) + r"( |$|[^\w])"
+                    if re.search(pattern, text, flags=re.IGNORECASE):
                         _filter = await get_filter(chat_id, word)
                         data_type = _filter['type']
                         data = _filter['data']
