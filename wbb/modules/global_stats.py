@@ -3,6 +3,7 @@ from wbb.utils.filter_groups import global_stats_group
 from wbb.utils.errors import capture_err
 from wbb.utils.botinfo import BOT_ID, BOT_NAME
 from wbb.utils.fetch import fetch
+from wbb.modules import ALL_MODULES
 from wbb.utils.dbfunctions import (
     is_served_chat,
     get_served_chats,
@@ -87,10 +88,13 @@ async def global_stats(_, message):
     for developer in developers:
         commits += developer['contributions']
     developers = len(developers)
-
+    
+    # Modules info
+    modules_count = len(ALL_MODULES)
     msg = f"""
 
 **Global Stats of {BOT_NAME}**:
+0 Commands, Across {modules_count} Modules.
 **{gbans}** Globally banned users.
 **{filters_count}** Filters, Across **{filters_chats_count}** chats.
 **{notes_count}** Notes, Across **{notes_chats_count}** chats.

@@ -16,9 +16,10 @@ loop = asyncio.get_event_loop()
 
 
 HELPABLE = {}
-
+COMMANDS_COUNT = None
 
 async def start_bot():
+    global COMMANDS_COUNT
     await app.start()
     await get_info(app)
 
@@ -28,8 +29,6 @@ async def start_bot():
             hasattr(imported_module, "__MODULE__")
             and imported_module.__MODULE__
         ):
-            if imported_module.__MODULE__.lower() in MOD_NOLOAD:
-                continue
             imported_module.__MODULE__ = imported_module.__MODULE__
             if (
                 hasattr(imported_module, "__HELP__")
@@ -38,7 +37,7 @@ async def start_bot():
                 HELPABLE[
                     imported_module.__MODULE__.lower()
                 ] = imported_module
-
+    COMMANDS_COUNT = HELPABLE
     bot_modules = ""
     j = 1
     for i in ALL_MODULES:

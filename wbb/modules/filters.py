@@ -79,12 +79,12 @@ async def del_filter(_, message):
 async def filters_re(_, message):
     try:
         if message.text[0] != "/":
-            text = message.text.lower().strip().split(" ")
+            text = message.text.lower().strip()
             if text:
                 chat_id = message.chat.id
                 list_of_filters = await get_filters_names(chat_id)
-                for word in text:
-                    if word in list_of_filters:
+                for word in list_of_filters:
+                    if word in text:
                         _filter = await get_filter(chat_id, word)
                         data_type = _filter['type']
                         data = _filter['data']
