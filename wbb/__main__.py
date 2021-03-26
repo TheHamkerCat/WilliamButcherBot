@@ -100,24 +100,56 @@ async def help_command(_, message):
         )
         await message.reply("Pm Me For More Details.", reply_markup=keyboard)
         return
-    text, keyboard = await help_parser(message)
-    await message.reply_photo(
-        caption=text,
-        photo="https://static2.aniimg.com/upload/20170515/414/c/d/7/cd7EEF.jpg",
-        reply_markup=keyboard
+    keyboard = InlineKeyboardMarkup(
+        [    
+            [
+                InlineKeyboardButton(
+                    text="Commands",
+                    callback_data="bot_commands"
+                ),
+                InlineKeyboardButton(
+                    text="Repo",
+                    url="https://github.com/thehamkercat/WilliamButcherBot"
+                )
+            ],
+            [
+                InlineKeyboardButton(   
+                    text="System Stats",
+                    callback_data="stats_callback"
+                ),
+                InlineKeyboardButton(
+                    text="Support",
+                    url="t.me/PatheticProgrammers"
+                )
+            ]
+        ]
     )
+    await message.reply("Hello, Choose An Option From Below.", reply_markup=keyboard)
+
+
+
 
 
 async def help_parser(message, keyboard=None):
     if not keyboard:
         keyboard = InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help"))
     return (
-        "Hi {first_name}, I am {bot_name}, A well written telegram group manager bot, Invite me to your chat.".format(
+        "Hi {first_name}, I am {bot_name}, Here is the list of all possible commands:".format(
             first_name=message.from_user.first_name,
             bot_name=botinfo.BOT_NAME,
         ),
         keyboard,
     )
+
+
+@app.on_callback_query(filters.regex("bot_commands"))
+async def end_callbacc(_, CallbackQuery):
+    text, keyboard = await help_parser(message)
+    await app.send_message(
+            CallbackQuery.message.chat.id
+            text=text,
+            reply_markup=keyboard
+            )
 
 
 @app.on_callback_query(filters.regex("stats_callback"))

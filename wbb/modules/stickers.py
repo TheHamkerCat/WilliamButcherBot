@@ -1,3 +1,4 @@
+"""
 import os
 import math
 import imghdr
@@ -11,8 +12,8 @@ from pyrogram import filters
 from wbb.utils.errors import capture_err
 
 __MODULE__ = "Stickers"
-__HELP__ = """/sticker_id - To Get File ID of A Sticker.
-/kang - To Kang A Sticker or Image."""
+__HELP__ = "/sticker_id - To Get File ID of A Sticker.
+/kang - To Kang A Sticker or Image."
 
 
 
@@ -162,4 +163,4 @@ async def makepack_internal(msg, user, png_sticker, emoji, updater, packname, pa
     if success:
         await msg.edit("Sticker pack successfully created. Get it [here](t.me/addstickers/%s)" % packname)
     else:
-        await msg.edit("Failed to create sticker pack.")
+        await msg.edit("Failed to create sticker pack.")"""
