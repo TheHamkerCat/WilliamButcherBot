@@ -1,4 +1,5 @@
 from PIL import Image
+import math
 
 from pyrogram import Client, raw
 from pyrogram.file_id import FileId

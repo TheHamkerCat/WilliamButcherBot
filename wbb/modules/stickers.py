@@ -1,5 +1,4 @@
 import os
-import math
 import uuid
 import imghdr
 from wbb.utils.botinfo import BOT_USERNAME
@@ -9,7 +8,6 @@ from pyrogram import filters
 from wbb.utils.errors import capture_err
 from wbb.utils.files import resize_file_to_sticker_size, upload_document, get_document_from_file_id
 from wbb.utils.stickerset import get_sticker_set_by_name, create_sticker, add_sticker_to_set, create_sticker_set
-from random import randint
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
@@ -85,7 +83,7 @@ async def kang(client, message):
                 str(message.from_user.id) + "_by_"+BOT_USERNAME
             continue
         else:
-            add_sticker_to_set(client, stickerset, sticker)
+            await add_sticker_to_set(client, stickerset, sticker)
         break
 
     await msg.edit("Sticker Kanged To [Pack](t.me/addstickers/{})\nEmoji: {}".format(packname, sticker_emoji))

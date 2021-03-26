@@ -29,7 +29,7 @@ async def create_sticker_set(client: Client, owner: int, title: str, short_name:
 async def add_sticker_to_set(client: Client, stickerset: raw.base.messages.StickerSet, sticker: raw.base.InputStickerSetItem) -> raw.base.messages.StickerSet:
     return await client.send(
         raw.functions.stickers.AddStickerToSet(
-            stickerset=stickerset,
+            stickerset=raw.types.InputStickerSetShortName(short_name=stickerset.set.short_name),
             sticker=sticker
         )
     )
