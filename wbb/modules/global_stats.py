@@ -91,16 +91,21 @@ async def global_stats(_, message):
     
     # Modules info
     modules_count = len(ALL_MODULES)
+    all_mods_help = ""
+    for module in ALL_MODULES:
+        a = __import__(module)
+        all_mods_help += f"{a.__HELP__}\n"
+    commands_count = len(all_mods_help.splitlines())
     msg = f"""
 
 **Global Stats of {BOT_NAME}**:
-0 Commands, Across {modules_count} Modules.
 **{gbans}** Globally banned users.
 **{filters_count}** Filters, Across **{filters_chats_count}** chats.
 **{notes_count}** Notes, Across **{notes_chats_count}** chats.
 **{warns_count}** Warns, Across **{warns_chats_count}** chats.
 **{karmas_count}** Karma, Across **{karmas_chats_count}** chats.
 **{total_users}** Users, Across **{len(served_chats)}** chats.
+**{commands_count}** Commands, Across **{modules_count}** Modules.
 **{developers}** Developers And **{commits}** Commits On **[Github]({rurl})**."""
 
     await m.edit(msg, disable_web_page_preview=True)
