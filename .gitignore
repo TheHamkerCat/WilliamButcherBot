@@ -1,6 +1,9 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*.png
+*.mp4
+*.webm
 *$py.class
 *.mp3
 .

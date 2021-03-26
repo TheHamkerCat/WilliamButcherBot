@@ -10,6 +10,8 @@ from wbb import app
 from pyrogram import filters
 from wbb.utils.errors import capture_err
 from random import randint
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
 
 __MODULE__ = "Stickers"
 __HELP__ = """/sticker_id - To Get File ID of A Sticker.
@@ -40,7 +42,7 @@ async def kang(client, message):
     if not message.reply_to_message:
         await message.reply_text("Reply to a sticker/image to kang it.")
         return
-    kangsticker = f"{randint(10000, 99999)}.png"
+    kangsticker = f"./{randint(10000, 99999)}.png"
     args = message.text.split()
     msg = await message.reply_text("Kanging Sticker..")
     user = message.from_user
@@ -105,7 +107,7 @@ async def kang(client, message):
                 im.save(kangsticker, "PNG")
             updater.add_sticker_to_set(user_id=user.id, name=packname,
                                        png_sticker=open(kangsticker, 'rb'), emojis=sticker_emoji)
-            await msg.edit("Sticker Kanged [pack](t.me/addstickers/{})\nEmoji: ```{}```".format(packname, sticker_emoji))
+            await msg.edit("Sticker Kanged To [Pack](t.me/addstickers/{})\nEmoji: {}".format(packname, sticker_emoji))
         except OSError as e:
             await message.reply_text("Something wrong happened.")
             print(e)
@@ -139,7 +141,6 @@ async def makepack_internal(msg, user, png_sticker, emoji, updater, packname, pa
                                                  png_sticker=png_sticker,
                                                  emojis=emoji)
     except TelegramError as e:
-        print(e)
         if e.message == "Sticker set name is already occupied":
             await msg.edit("Your pack can be found [here](t.me/addstickers/%s)" % packname)
         elif e.message == "Peer_id_invalid":
