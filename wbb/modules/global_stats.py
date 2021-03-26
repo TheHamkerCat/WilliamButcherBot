@@ -88,7 +88,7 @@ async def global_stats(_, message):
     for developer in developers:
         commits += developer['contributions']
     developers = len(developers)
-    
+
     # Modules info
     modules_count = len(ALL_MODULES)
 

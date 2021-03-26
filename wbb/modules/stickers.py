@@ -1,7 +1,6 @@
 import os
 import imghdr
 from wbb.utils.botinfo import BOT_USERNAME
-from wbb import BOT_TOKEN
 from wbb import app
 from pyrogram import filters
 from wbb.utils.errors import capture_err
@@ -14,8 +13,9 @@ __MODULE__ = "Stickers"
 __HELP__ = """/sticker_id - To Get File ID of A Sticker.
 /kang - To Kang A Sticker or Image."""
 
-MAX_STICKERS = 120 # would be better if we could fetch this limit directly from telegram
+MAX_STICKERS = 120  # would be better if we could fetch this limit directly from telegram
 SUPPORTED_TYPES = ['jpeg', 'png', 'webp']
+
 
 @app.on_message(filters.command("sticker_id") & ~filters.edited)
 @capture_err
@@ -53,16 +53,18 @@ async def kang(client, message):
         sticker = await create_sticker(await get_document_from_file_id(message.reply_to_message.sticker.file_id), sticker_emoji)
     elif doc:
         temp_file_path = await app.download_media(doc)
-        if imghdr.what(temp_file_path) not in SUPPORTED_TYPES:
+        image_type = imghdr.what(temp_file_path)
+        if image_type not in SUPPORTED_TYPES:
             await msg.edit("Format not supported! ({})".format(image_type))
             return
         try:
             temp_file_path = await resize_file_to_sticker_size(temp_file_path)
         except OSError as e:
             await msg.edit_text("Something wrong happened.")
-            raise Exception(f"Something went wrong while resizing the sticker (at {temp_file_path}); {e}")
+            raise Exception(
+                f"Something went wrong while resizing the sticker (at {temp_file_path}); {e}")
             return False
-        sticker =  await create_sticker(await upload_document(client, temp_file_path, message.chat.id), sticker_emoji)
+        sticker = await create_sticker(await upload_document(client, temp_file_path, message.chat.id), sticker_emoji)
         if os.path.isfile(temp_file_path):
             os.remove(temp_file_path)
     else:
@@ -70,8 +72,9 @@ async def kang(client, message):
         return
 
     # Find an available pack & add the sticker to the pack; create a new pack if needed
-    packnum = 0 # Would be a good idea to cache the number instead of searching it every single time...
-    packname = "f" + str(message.from_user.id) + "_by_"+ BOT_USERNAME
+    # Would be a good idea to cache the number instead of searching it every single time...
+    packnum = 0
+    packname = "f" + str(message.from_user.id) + "_by_" + BOT_USERNAME
     while True:
         stickerset = await get_sticker_set_by_name(client, packname)
         if not stickerset:

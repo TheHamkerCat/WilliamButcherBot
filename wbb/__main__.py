@@ -1,21 +1,20 @@
 import asyncio
 import re
 import importlib
-import time
 import uvloop
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from wbb import app, MOD_NOLOAD
+from wbb import app
 from wbb.utils import get_info, paginate_modules
-from wbb.utils import botinfo, formatter
+from wbb.utils import botinfo
 from wbb.modules.sudoers import bot_sys_stats
 from wbb.modules import ALL_MODULES
-from wbb import bot_start_time
 
 loop = asyncio.get_event_loop()
 
 
 HELPABLE = {}
+
 
 async def start_bot():
     global COMMANDS_COUNT
@@ -90,7 +89,7 @@ async def help_command(_, message):
         await message.reply("Pm Me For More Details.", reply_markup=keyboard)
         return
     keyboard = InlineKeyboardMarkup(
-        [    
+        [
             [
                 InlineKeyboardButton(
                     text="Commands ❓",
@@ -102,7 +101,7 @@ async def help_command(_, message):
                 )
             ],
             [
-                InlineKeyboardButton(   
+                InlineKeyboardButton(
                     text="System Stats 🖥",
                     callback_data="stats_callback"
                 ),
@@ -119,10 +118,7 @@ async def help_command(_, message):
             ]
         ]
     )
-    await message.reply("fHey there! My name is {botinfo.BOT_NAME}. I can manage your group with lots of useful features, feel free to add me to your group.", reply_markup=keyboard)
-
-
-
+    await message.reply(f"Hey there! My name is {botinfo.BOT_NAME}. I can manage your group with lots of useful features, feel free to add me to your group.", reply_markup=keyboard)
 
 
 async def help_parser(name, keyboard=None):
@@ -145,18 +141,19 @@ General command are:
 
 
 @app.on_callback_query(filters.regex("bot_commands"))
-async def end_callbacc(_, CallbackQuery):
+async def commands_callbacc(_, CallbackQuery):
     text, keyboard = await help_parser(CallbackQuery.from_user.mention)
     await app.send_message(
-            CallbackQuery.message.chat.id,
-            text=text,
-            reply_markup=keyboard
-            )
+        CallbackQuery.message.chat.id,
+        text=text,
+        reply_markup=keyboard
+    )
 
     await CallbackQuery.message.delete()
 
+
 @app.on_callback_query(filters.regex("stats_callback"))
-async def end_callbacc(_, CallbackQuery):
+async def stats_callbacc(_, CallbackQuery):
     text = await bot_sys_stats()
     await app.answer_callback_query(CallbackQuery.id, text, show_alert=True)
 
