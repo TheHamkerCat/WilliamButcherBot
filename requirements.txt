@@ -1,3 +1,5 @@
+wget
+requests
 python-arq
 TgCrypto
 pillow
