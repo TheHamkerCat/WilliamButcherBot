@@ -22,7 +22,10 @@ async def sed(_, message):
             to_fix = message.reply_to_message.caption
         else:
             return
-        repl, repl_with, flags = sed_result
+        try:
+            repl, repl_with, flags = sed_result
+        except Exception:
+            return
 
         if not repl:
             await message.reply_text(

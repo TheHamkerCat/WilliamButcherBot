@@ -7,7 +7,7 @@ from wbb.utils.errors import capture_err
 from wbb.utils.files import resize_file_to_sticker_size, upload_document, get_document_from_file_id
 from wbb.utils.stickerset import get_sticker_set_by_name, create_sticker, add_sticker_to_set, create_sticker_set
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram.errors.exceptions.bad_request_400 import PeerIdInvalid
+from pyrogram.errors.exceptions.bad_request_400 import PeerIdInvalid, StickerPngNopng
 
 __MODULE__ = "Stickers"
 __HELP__ = """/sticker_id - To Get File ID of A Sticker.
@@ -50,7 +50,12 @@ async def kang(client, message):
     # Get the corresponding fileid, resize the file if necessary
     doc = (message.reply_to_message.photo or message.reply_to_message.document)
     if message.reply_to_message.sticker:
-        sticker = await create_sticker(await get_document_from_file_id(message.reply_to_message.sticker.file_id), sticker_emoji)
+        sticker = await create_sticker(
+                await get_document_from_file_id(
+                    message.reply_to_message.sticker.file_id
+                    ),
+                sticker_emoji
+                )
     elif doc:
         temp_file_path = await app.download_media(doc)
         image_type = imghdr.what(temp_file_path)
@@ -64,7 +69,14 @@ async def kang(client, message):
             raise Exception(
                 f"Something went wrong while resizing the sticker (at {temp_file_path}); {e}")
             return False
-        sticker = await create_sticker(await upload_document(client, temp_file_path, message.chat.id), sticker_emoji)
+        sticker = await create_sticker(
+                await upload_document(
+                    client,
+                    temp_file_path,
+                    message.chat.id
+                    ),
+                sticker_emoji
+                )
         if os.path.isfile(temp_file_path):
             os.remove(temp_file_path)
     else:
@@ -79,7 +91,13 @@ async def kang(client, message):
         while True:
             stickerset = await get_sticker_set_by_name(client, packname)
             if not stickerset:
-                stickerset = await create_sticker_set(client, message.from_user.id, f"{message.from_user.first_name[:32]}'s kang pack", packname, [sticker])
+                stickerset = await create_sticker_set(
+                        client,
+                        message.from_user.id,
+                        f"{message.from_user.first_name[:32]}'s kang pack",
+                        packname,
+                        [sticker]
+                        )
             elif stickerset.set.count >= MAX_STICKERS:
                 packnum += 1
                 packname = "f" + str(packnum) + "_" + \
@@ -89,8 +107,15 @@ async def kang(client, message):
                 await add_sticker_to_set(client, stickerset, sticker)
             break
 
-        await msg.edit("Sticker Kanged To [Pack](t.me/addstickers/{})\nEmoji: {}".format(packname, sticker_emoji))
+        await msg.edit(
+                "Sticker Kanged To [Pack](t.me/addstickers/{})\nEmoji: {}".format(
+                    packname,
+                    sticker_emoji
+                    )
+                )
     except PeerIdInvalid:
         keyboard = InlineKeyboardMarkup(
             [[InlineKeyboardButton(text="Start", url=f"t.me/{BOT_USERNAME}")]])
         await msg.edit("Contact Me In Pm First", reply_markup=keyboard)
+    except StickerPngNopng:
+        await message.reply_text("Stickers must be png files but the provided image was not a png")
