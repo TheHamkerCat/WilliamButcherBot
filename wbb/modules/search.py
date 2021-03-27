@@ -5,30 +5,11 @@ from wbb.utils.errors import capture_err
 from wikipedia import summary
 
 __MODULE__ = "Search"
-__HELP__ = '''/wiki - Query Wikipedia
-/ud - Query Urban Dictionary
+__HELP__ = '''/ud - Query Urban Dictionary
 /google - Query Google
 /so - Query Stack OverFlow
 /gh - Query GitHub
 /yt - Query YouTube'''
-
-
-# wikipedia
-
-@app.on_message(filters.command("wiki") & ~filters.edited)
-async def wiki(_, message):
-    if len(message.command) != 2:
-        await message.reply_text("'**/wiki** Needs An Argument")
-        return
-    m = await message.reply_text("Searching")
-    await m.edit(
-            summary
-            (
-                message.text.split(None ,1)[1],
-                sentences = 3
-                )
-            )
-
 
 # ud -  urbandictionary
 
