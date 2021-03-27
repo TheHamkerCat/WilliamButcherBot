@@ -96,6 +96,6 @@ async def filters_re(_, message):
                         else:
                             await message.reply_sticker(data)
                         return
+    # NOTE When the first letter of the message is an emoji it throws an error, that's why using this
     except Exception:
-        print("Error in filters_re function in filters.py [IGNORE THIS]")
         pass
