@@ -29,7 +29,7 @@ async def chat_watcher(_, message):
 
 
 @app.on_message(
-    filters.command("global_stats") & filters.user(SUDOERS)
+    filters.command("gstats") & filters.user(SUDOERS)
     & ~filters.edited
 )
 @capture_err

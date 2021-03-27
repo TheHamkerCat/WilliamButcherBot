@@ -19,9 +19,9 @@ __MODULE__ = "Sudoers"
 __HELP__ = '''/log - To Get Logs From Last Run.
 /speedtest - To Perform A Speedtest.
 /stats - To Check System Status.
-/global_stats - To Check Bot's Global Stats.
+/gstats - To Check Bot's Global Stats.
 /gban - To Ban A User Globally.
-/broadcast - To Broadcast A Message In All Groups.'''
+/broadcast - To Broadcast A Message To All Groups.'''
 
 
 # Logs Module
@@ -128,8 +128,37 @@ async def get_stats(_, message):
 @capture_err
 async def ban_globally(_, message):
     if not message.reply_to_message:
-        await message.reply_text("Reply to a user's message to Gban.")
+        if len(message.command) != 2:
+            await message.reply_text("Reply to a user's message or give username/user_id.")
+            return
+        user = message.text.split(None, 1)[1]
+        if "@" in user:
+            user = user.replace("@", "")
+        user = (await app.get_users(user))
+        from_user = message.from_user
+        if user.id == from_user_id:
+            await message.reply_text("You want to gban yourself? FOOL!")
+        elif user.id == BOT_ID:
+            await message.reply_text("Should i gban myself? I'm not fool like you, HUMAN!")
+        elif user.id in SUDOERS:
+            await message.reply_text("You want to ban a sudo user? GET REKT!!")
+        else:
+            served_chats = await get_served_chats()
+            for served_chat in served_chats:
+                try:
+                    await app.kick_chat_member(served_chat['chat_id'], user.id)
+                except Exception:
+                    pass
+            await add_gban_user(user.id)
+            try:
+                await app.send_message(
+                    user.id, f"Hello, You have been globally banned by {from_user.mention},"
+                    + " You can appeal for this ban by talking to {from_user.mention}.")
+            except Exception:
+                pass
+            await message.reply_text(f"Banned {user.mention} Globally!")
         return
+
     from_user_id = message.from_user.id
     user_id = message.reply_to_message.from_user.id
     mention = message.reply_to_message.from_user.mention
@@ -156,7 +185,7 @@ async def ban_globally(_, message):
                 await app.send_message(
                     user_id, f"""
 Hello, You have been globally banned by {from_user_mention},
-You can appeal for this ban by talking to {from_user_mention} about this.""")
+You can appeal for this ban by talking to {from_user_mention}.""")
             except Exception:
                 pass
             await message.reply_text(f"Banned {mention} Globally!")
@@ -168,8 +197,29 @@ You can appeal for this ban by talking to {from_user_mention} about this.""")
 @capture_err
 async def unban_globally(_, message):
     if not message.reply_to_message:
-        await message.reply_to_message("Reply to a user's message to ungban.")
+        if len(message.command) != 2:
+            await message.reply_text("Reply to a user's message or give username/user_id.")
+            return
+        user = message.text.split(None, 1)[1]
+        if "@" in user:
+            user = user.replace("@", "")
+        user = (await app.get_users(user))
+        from_user = message.from_user
+        if user.id == from_user.id:
+            await message.reply_text("You want to ungban yourself? FOOL!")
+        elif user.id == BOT_ID:
+            await message.reply_text("Should i ungban myself? But i'm not gbanned.")
+        elif user.id in SUDOERS:
+            await message.reply_text("Sudo users can't be gbanned/ungbanned.")
+        else:
+            is_gbanned = await is_gbanned_user(user.id)
+            if not is_gbanned:
+                await message.reply_text("He's already free, why bully him?")
+            else:
+                await remove_gban_user(user.id)
+                await message.reply_text(f"Unbanned {user.mention} Globally!")
         return
+
     from_user_id = message.from_user.id
     user_id = message.reply_to_message.from_user.id
     mention = message.reply_to_message.from_user.mention
