@@ -1,6 +1,7 @@
 import os
 import requests
-import wget
+import aiohttp
+import aiofiles
 from wbb import app, OWNER_ID
 from pyrogram import Client, filters
 
@@ -15,13 +16,10 @@ async def url(_, message):
     if len(message.command) != 2:
         await message.reply_text("/url [url]")
         return
-    if message.entities[1]['type'] != "url":
-        await message.reply_text("/url [url]")
-        return
-    m = await message.reply_text("downloading....bot will be unresponsive until download finishes.")
+    m = await message.reply_text("Downloading")
     lenk = message.text.split(None, 1)[1]
     try:
-        filename = wget.download(lenk)
+        filename = await download(lenk)
         files = { 'file': open(filename, 'rb')}
         await m.edit("Uploading....")
         r = requests.post("https://api.bayfiles.com/upload", files=files)
@@ -32,7 +30,7 @@ async def url(_, message):
 **id:** `{text['data']['file']['metadata']['id']}`
 **name:** `{text['data']['file']['metadata']['name']}`
 **size:** `{text['data']['file']['metadata']['size']['readable']}`"""
-        await message.reply_text(output)
+        await m.edit(output)
         os.remove(filename)
     except Exception as e:
         print(str(e))
@@ -56,14 +54,24 @@ async def tg(_, message):
         r = requests.post("https://api.bayfiles.com/upload", files=files)
         text = r.json()
         output = f"""
-**status:** `{text['status']}`
-**link:** {text['data']['file']['url']['full']}
-**id:** `{text['data']['file']['metadata']['id']}`
-**name:** `{text['data']['file']['metadata']['name']}`
-**size:** `{text['data']['file']['metadata']['size']['readable']}`"""
-        await message.reply_text(output)
+**Status:** `{text['status']}`
+**Link:** {text['data']['file']['url']['full']}
+**ID:** `{text['data']['file']['metadata']['id']}`
+**Name:** `{text['data']['file']['metadata']['name']}`
+**Size:** `{text['data']['file']['metadata']['size']['readable']}`"""
+        await m.edit(output)
         os.remove(fn)
     except Exception as e:
         print(str(e))
         await m.edit(str(e))
         return
+
+
+async def download(filename, url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            if resp.status == 200:
+                f = await aiofiles.open(filename, mode='wb')
+                await f.write(await resp.read())
+                await f.close()
+    return filename
