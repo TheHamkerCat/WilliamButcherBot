@@ -17,3 +17,4 @@ cryptography
 googletrans==4.0.0-rc1
 motor
 dnspython
+Wikipedia
