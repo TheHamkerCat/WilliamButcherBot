@@ -136,7 +136,7 @@ async def ban_globally(_, message):
             user = user.replace("@", "")
         user = (await app.get_users(user))
         from_user = message.from_user
-        if user.id == from_user_id:
+        if user.id == from_user.id:
             await message.reply_text("You want to gban yourself? FOOL!")
         elif user.id == BOT_ID:
             await message.reply_text("Should i gban myself? I'm not fool like you, HUMAN!")
