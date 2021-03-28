@@ -12,4 +12,4 @@ MONGO_DB_URI = "mongodb+srv://username:password@cluster0.ksiis.mongodb.net/YourD
 
 
 # NOTE Don't make changes below this line
-ARQ_API_BASE_URL = "https://thearq.tech"
+ARQ_API_BASE_URL = "http://35.240.133.234:8000"
