@@ -44,5 +44,11 @@ MOD_NOLOAD = []
 bot_start_time = time.time()
 mongo_client = MongoClient(MONGO_DB_URI)
 db = mongo_client.wbb
+
+print("\nStarting Helper Userbot")
+app2 = Client("userbot", api_id=API_ID, api_hash=API_HASH)
+
+print("\nStarting Main Bot\n")
 app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
+
 arq = ARQ(ARQ_API)

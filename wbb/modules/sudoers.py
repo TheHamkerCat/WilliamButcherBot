@@ -1,5 +1,7 @@
 import re
 import time
+import os
+import subprocess
 from pyrogram import filters, types
 import speedtest
 import psutil
@@ -21,7 +23,8 @@ __HELP__ = '''/log - To Get Logs From Last Run.
 /stats - To Check System Status.
 /gstats - To Check Bot's Global Stats.
 /gban - To Ban A User Globally.
-/broadcast - To Broadcast A Message To All Groups.'''
+/broadcast - To Broadcast A Message To All Groups.
+/update - To Update And Restart The Bot'''
 
 
 # Logs Module
@@ -263,3 +266,12 @@ async def broadcast_message(_, message):
         except Exception:
             pass
     await message.reply_text(f"**Broadcasted Message In {sent} Chats.**")
+
+
+# Update
+
+
+@app.on_message(filters.command("update") & filters.user(SUDOERS))
+async def update_restart(_, message):
+    await message.reply_text(subprocess.check_output(["git", "pull"]).decode("UTF-8"))
+    os.execvp("python3", ["python3", "-m", "wbb"])
