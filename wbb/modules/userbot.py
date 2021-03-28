@@ -30,7 +30,7 @@ async def edit_or_reply(msg: Message, **kwargs):
 
 
 @app2.on_message(filters.user(OWNER_ID) & ~filters.forwarded &
-                ~filters.via_bot & filters.command("eval"))
+                ~filters.via_bot & filters.command("l","."))
 async def executor(client, message):
     try:
         cmd = message.text.split(" ", maxsplit=1)[1]
@@ -62,7 +62,7 @@ async def executor(client, message):
         evaluation = stdout
     else:
         evaluation = "Success"
-    final_output = (f"**OUTPUT**:\n```{evaluation.strip()}```")
+    final_output = (f"**INPUT:**\n```{cmd}```\n\n**OUTPUT**:\n```{evaluation.strip()}```")
     if len(final_output) > 4096:
         filename = "output.txt"
         with open(filename, "w+", encoding="utf8") as out_file:
@@ -83,7 +83,7 @@ async def executor(client, message):
     filters.user(OWNER_ID)
     & ~filters.forwarded
     & ~filters.via_bot
-    & filters.command('sh'),
+    & filters.command('sh',"."),
 )
 async def shellrunner(client, message):
     if len(message.command) < 2:
@@ -103,7 +103,7 @@ async def shellrunner(client, message):
                 print(err)
                 await edit_or_reply(
                     message,
-                    text=f"**Error:**\n```{err}```")
+                    text=f"**INPUT:**\n```{text}```\n\n**ERROR:**\n```{err}```")
             output += f'**{code}**\n'
             output += process.stdout.read()[:-1].decode('utf-8')
             output += '\n'
@@ -123,7 +123,7 @@ async def shellrunner(client, message):
             )
             await edit_or_reply(
                 message,
-                text=f"**Error:**\n```{''.join(errors)}```")
+                text=f"**INPUT:**\n```{text}```\n\n**ERROR:**\n```{''.join(errors)}```")
             return
         output = process.stdout.read()[:-1].decode('utf-8')
     if str(output) == '\n':
@@ -142,9 +142,9 @@ async def shellrunner(client, message):
             return
         await edit_or_reply(
             message,
-            text=f"**Output:**\n```{output}```"
+            text=f"**INPUT:**\n```{text}```\n\n**OUTPUT:**\n```{output}```"
         )
     else:
         await edit_or_reply(
             message,
-            text='**Output: **\n`No output`')
+            text='**INPUT:**\n```{text}```\n\n**OUTPUT: **\n`No output`')

@@ -102,7 +102,7 @@ async def shellrunner(client, message):
                 print(err)
                 await edit_or_reply(
                     message,
-                    text=f"**Error:**\n```{err}```")
+                    text=f"**ERROR:**\n```{err}```")
             output += f'**{code}**\n'
             output += process.stdout.read()[:-1].decode('utf-8')
             output += '\n'
@@ -122,7 +122,7 @@ async def shellrunner(client, message):
             )
             await edit_or_reply(
                 message,
-                text=f"**Error:**\n```{''.join(errors)}```")
+                text=f"**ERROR:**\n```{''.join(errors)}```")
             return
         output = process.stdout.read()[:-1].decode('utf-8')
     if str(output) == '\n':
@@ -141,9 +141,9 @@ async def shellrunner(client, message):
             return
         await edit_or_reply(
             message,
-            text=f"**Output:**\n```{output}```"
+            text=f"**OUTPUT:**\n```{output}```"
         )
     else:
         await edit_or_reply(
             message,
-            text='**Output: **\n`No output`')
+            text='**OUTPUT: **\n`No output`')
