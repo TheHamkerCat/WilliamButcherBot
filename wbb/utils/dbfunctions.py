@@ -8,6 +8,7 @@ warnsdb = db.warns
 karmadb = db.karma
 chatsdb = db.chats
 gbansdb = db.gban
+coupledb = db.couple
 
 """ Notes functions """
 

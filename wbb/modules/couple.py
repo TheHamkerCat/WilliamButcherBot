@@ -3,7 +3,7 @@ from wbb.utils.errors import capture_err
 from wbb.utils.dbfunctions import _get_lovers, get_couple, save_couple
 from pyrogram import filters
 import random
-import datetime
+from datetime import datetime
 
 __MODULE__ = "Shippering"
 __HELP__ = "/detect_gay - To Choose Couple Of The Day"
@@ -26,7 +26,8 @@ today = str(dt()[0])
 tomorrow = str(dt_tom())
 
 
-@app.on_message(filters.command("detect_gay"))
+@app.on_message(filters.command("detect_gay") & ~filters.edited)
+@capture_err
 async def couple(_, message):
     if message.chat.type == "private":
         await message.reply_text("This command only works in groups.")
@@ -39,6 +40,9 @@ async def couple(_, message):
             async for i in app.iter_chat_members(message.chat.id):
                 if not i.user.is_bot:
                     list_of_users.append(i.user.id)
+            if len(list_of_users) < 2:
+                await message.reply_text("Not enough users")
+                return
             c1_id = random.choice(list_of_users)
             c2_id = random.choice(list_of_users)
             while c1_id == c2_id:
