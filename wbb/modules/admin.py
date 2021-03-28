@@ -59,7 +59,6 @@ async def list_members(group_id):
     list_of_members = []
     async for member in app.iter_chat_members(group_id):
         list_of_members.append(member.user.id)
-
     return list_of_members
 
 # Purge Messages
@@ -68,41 +67,41 @@ async def list_members(group_id):
 @app.on_message(filters.command("purge") & ~filters.edited)
 @capture_err
 async def purge(client, message):
-    message_ids = []
-    chat_id = message.chat.id
-    user_id = message.from_user.id
-    if message.chat.type not in ("supergroup", "channel"):
-        return
-
-    permissions = await member_permissions(chat_id, user_id)
-
-    if "can_delete_messages" in permissions or user_id in SUDOERS:
-        if message.reply_to_message:
-            for a_s_message_id in range(
-                message.reply_to_message.message_id,
-                message.message_id
-            ):
-                message_ids.append(a_s_message_id)
-                if len(message_ids) == 100:
-                    await client.delete_messages(chat_id=chat_id,
-                                                 message_ids=message_ids,
-                                                 revoke=True)
-
-                    message_ids = []
-            if len(message_ids) > 0:
-                await client.delete_messages(
-                    chat_id=chat_id,
-                    message_ids=message_ids,
-                    revoke=True
-                )
+    try:
+        message_ids = []
+        chat_id = message.chat.id
+        user_id = message.from_user.id
+        if message.chat.type not in ("supergroup", "channel"):
+            return
+        permissions = await member_permissions(chat_id, user_id)
+        if "can_delete_messages" in permissions or user_id in SUDOERS:
+            if message.reply_to_message:
+                for a_s_message_id in range(
+                    message.reply_to_message.message_id,
+                    message.message_id
+                ):
+                    message_ids.append(a_s_message_id)
+                    if len(message_ids) == 100:
+                        await client.delete_messages(chat_id=chat_id,
+                                                     message_ids=message_ids,
+                                                     revoke=True)
+                        message_ids = []
+                if len(message_ids) > 0:
+                    await client.delete_messages(
+                        chat_id=chat_id,
+                        message_ids=message_ids,
+                        revoke=True
+                    )
+            else:
+                await message.reply_text(
+                    "Reply To A Message To Delete It,"
+                    " Don't Make Fun Of Yourself!")
         else:
-            await message.reply_text(
-                "Reply To A Message To Delete It,"
-                " Don't Make Fun Of Yourself!")
-    else:
-        await message.reply_text("Your Don't Have Enough Permissions!")
-    await message.delete()
-
+            await message.reply_text("Your Don't Have Enough Permissions!")
+        await message.delete()
+    except Exception as e:
+        print(e)
+        await message.reply_text(e)
 
 # Kick members
 
@@ -141,7 +140,8 @@ async def kick(_, message):
                     else:
                         await message.reply_text("This user isn't here.")
     except Exception as e:
-        await message.reply_text(str(e))
+        print(e)
+        await message.reply_text(e)
 
 # Ban members
 

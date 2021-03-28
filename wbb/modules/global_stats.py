@@ -16,7 +16,7 @@ from wbb.utils.dbfunctions import (
     get_gbans_count
 )
 from pyrogram import filters
-
+import asyncio
 
 @app.on_message(filters.text, group=global_stats_group)
 @capture_err
@@ -36,7 +36,7 @@ async def chat_watcher(_, message):
 async def global_stats(_, message):
     m = await app.send_message(
         message.chat.id,
-        text="__**Analysing Stats, Might Take 10-30 Seconds.**__",
+        text="__**Analysing Stats, Might Take 5-10 Minutes.**__",
         disable_web_page_preview=True
     )
 
@@ -49,6 +49,7 @@ async def global_stats(_, message):
     for served_chat in served_chats:
         try:
             await app.get_chat_members(served_chat, BOT_ID)
+            await asyncio.sleep(2)
         except Exception as e:
             print(f"{e} - {served_chat} in global_stats.py")
             await remove_served_chat(served_chat)
