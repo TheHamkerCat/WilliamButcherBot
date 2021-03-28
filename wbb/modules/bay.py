@@ -4,7 +4,7 @@ import aiohttp
 import aiofiles
 from wbb import app, OWNER_ID
 from pyrogram import Client, filters
-
+from random import randint
 
 __MODULE__ = "BAYFILES"
 __HELP__ = """/url [URL] To upload a url to bayfiles. [SUDO ONLY]
@@ -67,7 +67,9 @@ async def tg(_, message):
         return
 
 
-async def download(filename, url):
+async def download(url):
+    ext = url.split(".")[-1]
+    filename = randint(1000, 9999) + "." + ext
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
             if resp.status == 200:
