@@ -21,7 +21,7 @@ async def get_info(app, app2):
         BOT_NAME = getme.first_name
     BOT_USERNAME = getme.username
     BOT_DC_ID = getme.dc_id
-    
+
     if getme2.last_name:
         USERBOT_NAME = getme2.first_name + " " + getme2.last_name
     else:

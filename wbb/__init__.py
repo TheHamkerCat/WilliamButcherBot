@@ -1,7 +1,8 @@
 from config import (
     BOT_TOKEN, API_ID, API_HASH, OWNER_ID, SUDO_USER_ID,
     LOG_GROUP_ID, FERNET_ENCRYPTION_KEY, MONGO_DB_URI,
-    WELCOME_DELAY_KICK_SEC, ARQ_API_BASE_URL as ARQ_API
+    WELCOME_DELAY_KICK_SEC, ARQ_API_BASE_URL as ARQ_API,
+    PHONE_NUMBER
 )
 from pyrogram import Client
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
@@ -46,9 +47,19 @@ mongo_client = MongoClient(MONGO_DB_URI)
 db = mongo_client.wbb
 
 print("\nStarting Helper Userbot")
-app2 = Client("userbot", api_id=API_ID, api_hash=API_HASH)
+app2 = Client(
+    "userbot",
+    phone_number=PHONE_NUMBER,
+    api_id=API_ID,
+    api_hash=API_HASH
+)
 
 print("\nStarting Main Bot\n")
-app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
+app = Client(
+    "wbb",
+    bot_token=BOT_TOKEN,
+    api_id=API_ID,
+    api_hash=API_HASH
+)
 
 arq = ARQ(ARQ_API)

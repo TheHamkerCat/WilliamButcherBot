@@ -35,6 +35,7 @@ initial_keyboard = InlineKeyboardMarkup(
 
 
 @app.on_message(filters.command("anime") & ~filters.edited)
+@capture_err
 async def anime_search(_, message):
     if len(message.command) < 2:
         await message.reply_text("**Usage:**\n/anime [Query]")
@@ -119,4 +120,3 @@ async def delete_callbacc(_, CallbackQuery):
     data = None
     DATA_LEN = 0
     await m.delete()
-

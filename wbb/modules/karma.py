@@ -16,15 +16,17 @@ regex_upvote = r"^((?i)\+|\+\+|\+1|thx|tnx|ty|thank you|thanx|thanks|pro|cool|go
 regex_downvote = r"^(\-|\-\-|\-1|👎)$"
 
 
-@app.on_message(filters.text
-                & filters.group
-                & filters.incoming
-                & filters.reply
-                & filters.regex(regex_upvote)
-                & ~filters.via_bot
-                & ~filters.bot
-                & ~filters.edited,
-                group=karma_positive_group)
+@app.on_message(
+    filters.text
+    & filters.group
+    & filters.incoming
+    & filters.reply
+    & filters.regex(regex_upvote)
+    & ~filters.via_bot
+    & ~filters.bot
+    & ~filters.edited,
+    group=karma_positive_group
+)
 @capture_err
 async def upvote(_, message):
     if message.reply_to_message.from_user.id == message.from_user.id:
@@ -47,15 +49,17 @@ async def upvote(_, message):
     )
 
 
-@app.on_message(filters.text
-                & filters.group
-                & filters.incoming
-                & filters.reply
-                & filters.regex(regex_downvote)
-                & ~filters.via_bot
-                & ~filters.bot
-                & ~filters.edited,
-                group=karma_negative_group)
+@app.on_message(
+    filters.text
+    & filters.group
+    & filters.incoming
+    & filters.reply
+    & filters.regex(regex_downvote)
+    & ~filters.via_bot
+    & ~filters.bot
+    & ~filters.edited,
+    group=karma_negative_group
+)
 @capture_err
 async def downvote(_, message):
     if message.reply_to_message.from_user.id == message.from_user.id:

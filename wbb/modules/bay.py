@@ -3,7 +3,7 @@ import requests
 import aiohttp
 import aiofiles
 from wbb import app, OWNER_ID
-from pyrogram import Client, filters
+from pyrogram import filters
 from random import randint
 
 __MODULE__ = "BAYFILES"
@@ -20,7 +20,7 @@ async def url(_, message):
     lenk = message.text.split(None, 1)[1]
     try:
         filename = await download(lenk)
-        files = { 'file': open(filename, 'rb')}
+        files = {'file': open(filename, 'rb')}
         await m.edit("Uploading....")
         r = requests.post("https://api.bayfiles.com/upload", files=files)
         text = r.json()
@@ -49,7 +49,7 @@ async def tg(_, message):
     m = await message.reply_text("Downloading Document.")
     fn = await message.reply_to_message.download()
     try:
-        files = { 'file': open(fn, 'rb')}
+        files = {'file': open(fn, 'rb')}
         await m.edit("Uploading....")
         r = requests.post("https://api.bayfiles.com/upload", files=files)
         text = r.json()

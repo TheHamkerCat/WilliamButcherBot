@@ -377,6 +377,7 @@ async def _get_lovers(chat_id: int):
         lovers = {}
     return lovers
 
+
 async def get_couple(chat_id: int, date: str):
     lovers = await _get_lovers(chat_id)
     if date in lovers:

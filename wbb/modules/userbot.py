@@ -30,7 +30,7 @@ async def edit_or_reply(msg: Message, **kwargs):
 
 
 @app2.on_message(filters.user(OWNER_ID) & ~filters.forwarded &
-                ~filters.via_bot & filters.command("l","."))
+                 ~filters.via_bot & filters.command("l", "."))
 async def executor(client, message):
     try:
         cmd = message.text.split(" ", maxsplit=1)[1]
@@ -62,7 +62,8 @@ async def executor(client, message):
         evaluation = stdout
     else:
         evaluation = "Success"
-    final_output = (f"**INPUT:**\n```{cmd}```\n\n**OUTPUT**:\n```{evaluation.strip()}```")
+    final_output = (
+        f"**INPUT:**\n```{cmd}```\n\n**OUTPUT**:\n```{evaluation.strip()}```")
     if len(final_output) > 4096:
         filename = "output.txt"
         with open(filename, "w+", encoding="utf8") as out_file:
@@ -83,7 +84,7 @@ async def executor(client, message):
     filters.user(OWNER_ID)
     & ~filters.forwarded
     & ~filters.via_bot
-    & filters.command('sh',"."),
+    & filters.command('sh', "."),
 )
 async def shellrunner(client, message):
     if len(message.command) < 2:
