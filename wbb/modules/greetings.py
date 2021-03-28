@@ -19,11 +19,11 @@ async def welcome(_, message: Message):
     """Mute new member and send message with button"""
     for member in message.new_chat_members:
         try:
-            if member.is_bot:
-                continue  # ignore bots
             if await is_gbanned_user(member.id):
                 await message.chat.kick_member(member.id)
                 continue
+            if member.is_bot:
+                continue  # ignore bots
             text = (f"Welcome, {(member.mention())}\n**Are you human?**\n"
                     "You will be removed from this chat if you are not verified "
                     f"in {WELCOME_DELAY_KICK_SEC} seconds")
