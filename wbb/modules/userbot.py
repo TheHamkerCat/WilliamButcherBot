@@ -5,7 +5,7 @@ import os
 import re
 import subprocess
 from inspect import getfullargspec
-from wbb import app, OWNER_ID
+from wbb import app, app2, OWNER_ID
 from pyrogram import filters
 from pyrogram.types import Message
 
