@@ -3,7 +3,7 @@ from wbb.utils.errors import capture_err
 from wbb.utils.dbfunctions import _get_lovers, get_couple, save_couple
 from pyrogram import filters
 import random
-import datetime
+from datetime import datetime
 
 __MODULE__ = "Shippering"
 __HELP__ = "/detect_gay - To Choose Couple Of The Day"
@@ -26,8 +26,10 @@ today = str(dt()[0])
 tomorrow = str(dt_tom())
 
 
-@app.on_message(filters.command("detect_gay"))
+@app.on_message(filters.command("detect_gay") & ~filters.edited)
+@capture_err
 async def couple(_, message):
+    print(1)
     if message.chat.type == "private":
         await message.reply_text("This command only works in groups.")
         return
