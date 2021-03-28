@@ -36,7 +36,7 @@ async def chat_watcher(_, message):
 async def global_stats(_, message):
     m = await app.send_message(
         message.chat.id,
-        text="__**Analysing Stats, Might Take 5-10 Minutes.**__",
+        text="__**Analysing Stats**__",
         disable_web_page_preview=True
     )
 
@@ -46,17 +46,21 @@ async def global_stats(_, message):
     chats = await get_served_chats()
     for chat in chats:
         served_chats.append(int(chat["chat_id"]))
+    await m.edit(
+            f"__**Analysing Stats Might Take {len(served_chats)*6}+ Seconds.**__",
+            disable_web_page_preview=True
+            )
     for served_chat in served_chats:
         try:
             await app.get_chat_members(served_chat, BOT_ID)
-            await asyncio.sleep(2)
+            await asyncio.sleep(3)
         except Exception as e:
-            print(f"{e} - {served_chat} in global_stats.py")
             await remove_served_chat(served_chat)
             served_chats.remove(served_chat)
             pass
     for i in served_chats:
         mc = (await app.get_chat(i)).members_count
+        await asyncio.sleep(3)
         total_users += int(mc)
 
     # Gbans count
@@ -94,7 +98,6 @@ async def global_stats(_, message):
     modules_count = len(ALL_MODULES)
 
     msg = f"""
-
 **Global Stats of {BOT_NAME}**:
 **{modules_count}** Modules Loaded
 **{gbans}** Globally banned users.

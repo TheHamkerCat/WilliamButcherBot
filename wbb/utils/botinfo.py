@@ -10,6 +10,7 @@ USERBOT_DC_ID = 0
 
 async def get_info(app):
     global BOT_ID, BOT_NAME, BOT_USERNAME, BOT_DC_ID
+    global USERBOT_ID, USERBOT_NAME, USERBOT_USERNAME, USERBOT_DC_ID
     getme = await app.get_me()
     getme2 = await app2.get_me()
     BOT_ID = getme.id
