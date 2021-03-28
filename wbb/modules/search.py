@@ -2,7 +2,6 @@ from search_engine_parser import GoogleSearch
 from pyrogram import filters
 from wbb import app, arq
 from wbb.utils.errors import capture_err
-from wikipedia import summary
 
 __MODULE__ = "Search"
 __HELP__ = '''/ud - Query Urban Dictionary
