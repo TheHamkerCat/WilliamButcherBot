@@ -48,7 +48,7 @@ db = mongo_client.wbb
 
 
 # Userbot client
-print("\nStarting Helper Userbot")
+print("\nStarting Helper Userbot\n")
 app2 = Client(
     "userbot",
     phone_number=PHONE_NUMBER,
