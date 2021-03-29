@@ -340,16 +340,16 @@ async def unmute(_, message):
         if "can_restrict_members" not in permissions or from_user_id not in SUDOERS:
             await message.reply_text("You don't have enough permissions.")
             return
-            if len(message.command) == 2:
-                username = message.text.split(None, 1)[1]
-                await message.chat.unban_member(username)
-                await message.reply_text(f"Unmuted!")
-            elif len(message.command) == 1 and message.reply_to_message:
-                user_id = message.reply_to_message.from_user.id
-                await message.chat.unban_member(user_id)
-                await message.reply_text("Unmuted!")
-            else:
-                await message.reply_text("Provide a username or reply to a user's message to Unmute")
+        if len(message.command) == 2:
+            username = message.text.split(None, 1)[1]
+            await message.chat.unban_member(username)
+            await message.reply_text(f"Unmuted!")
+        elif len(message.command) == 1 and message.reply_to_message:
+            user_id = message.reply_to_message.from_user.id
+            await message.chat.unban_member(user_id)
+            await message.reply_text("Unmuted!")
+        else:
+            await message.reply_text("Provide a username or reply to a user's message to Unmute")
     except Exception as e:
         await message.reply_text(str(e))
 
