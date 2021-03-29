@@ -20,8 +20,7 @@ async def start_bot():
     global COMMANDS_COUNT
     await app2.start()
     await app.start()
-    await get_info(app, app2)
-    init_sudo()
+    await get_info(app, app2) 
 
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)

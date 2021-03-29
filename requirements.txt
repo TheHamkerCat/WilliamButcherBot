@@ -1,3 +1,4 @@
+pykeyboard
 requests
 python-arq
 TgCrypto
