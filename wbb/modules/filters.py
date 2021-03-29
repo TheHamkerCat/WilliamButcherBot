@@ -80,22 +80,22 @@ async def del_filter(_, message):
                 ~filters.forwarded, group=chat_filters_group)
 async def filters_re(_, message):
     try:
-        if message.text[0] != "/":
-            text = message.text.lower().strip()
-            if text:
-                chat_id = message.chat.id
-                list_of_filters = await get_filters_names(chat_id)
-                for word in list_of_filters:
-                    pattern = r"( |^|[^\w])" + re.escape(word) + r"( |$|[^\w])"
-                    if re.search(pattern, text, flags=re.IGNORECASE):
-                        _filter = await get_filter(chat_id, word)
-                        data_type = _filter['type']
-                        data = _filter['data']
-                        if data_type == "text":
-                            await message.reply_text(data)
-                        else:
-                            await message.reply_sticker(data)
-                        return
+        text = message.text.lower().strip()
+        if not text:
+            return
+        chat_id = message.chat.id
+        list_of_filters = await get_filters_names(chat_id)
+        for word in list_of_filters:
+            pattern = r"( |^|[^\w])" + re.escape(word) + r"( |$|[^\w])"
+            if re.search(pattern, text, flags=re.IGNORECASE):
+                _filter = await get_filter(chat_id, word)
+                data_type = _filter['type']
+                data = _filter['data']
+                if data_type == "text":
+                    await message.reply_text(data)
+                else:
+                    await message.reply_sticker(data)
+                return
     # NOTE When the first letter of the message is an emoji it throws an error, that's why using this
     except Exception:
         pass

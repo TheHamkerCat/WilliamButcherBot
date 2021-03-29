@@ -1,5 +1,3 @@
-ffmpeg-python
-pytgcalls
 requests
 python-arq
 TgCrypto

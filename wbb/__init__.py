@@ -5,7 +5,6 @@ from config import (
     MAIN_CHATS
 )
 from pyrogram import Client
-from pytgcalls import GroupCall
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from Python_ARQ import ARQ
 import time
@@ -70,14 +69,6 @@ app = Client(
     api_id=API_ID,
     api_hash=API_HASH
 )
-
-# Pytgcalls client
-vc = GroupCall(
-        app2,
-        input_filename="input.raw",
-        play_on_repeat=False,
-        enable_logs_to_console=False
-        )
 
 # ARQ client
 arq = ARQ(ARQ_API)
