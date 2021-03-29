@@ -1,4 +1,4 @@
-python-ffmpeg
+ffmpeg-python
 pytgcalls
 requests
 python-arq
