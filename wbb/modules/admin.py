@@ -187,16 +187,16 @@ async def unban(_, message):
         if "can_restrict_members" not in permissions and from_user_id not in SUDOERS:
             await message.reply_text("You don't have enough permissions.")
             return
-            if len(message.command) == 2:
-                username = message.text.split(None, 1)[1]
-                await message.chat.unban_member(username)
-                await message.reply_text(f"Unbanned!")
-            elif len(message.command) == 1 and message.reply_to_message:
-                user_id = message.reply_to_message.from_user.id
-                await message.chat.unban_member(user_id)
-                await message.reply_text("Unbanned!")
-            else:
-                await message.reply_text("Provide a username or reply to a user's message to unban.")
+        if len(message.command) == 2:
+            username = message.text.split(None, 1)[1]
+            await message.chat.unban_member(username)
+            await message.reply_text(f"Unbanned!")
+        elif len(message.command) == 1 and message.reply_to_message:
+            user_id = message.reply_to_message.from_user.id
+            await message.chat.unban_member(user_id)
+            await message.reply_text("Unbanned!")
+        else:
+            await message.reply_text("Provide a username or reply to a user's message to unban.")
     except Exception as e:
         await message.reply_text(str(e))
 
@@ -236,38 +236,38 @@ async def promote(_, message):
         if "can_promote_members" not in permissions and from_user_id not in SUDOERS:
             await message.reply_text("You don't have enough permissions")
             return
-            if len(message.command) == 2:
-                username = message.text.split(None, 1)[1]
-                user_id = (await app.get_users(username)).id
-                await message.chat.promote_member(
-                    user_id=user_id,
-                    can_change_info=True,
-                    can_invite_users=True,
-                    can_delete_messages=True,
-                    can_restrict_members=False,
-                    can_pin_messages=True,
-                    can_promote_members=True,
-                    can_manage_chat=True,
-                    can_manage_voice_chats=True
-                )
-                await message.reply_text('Promoted!')
+        if len(message.command) == 2:
+            username = message.text.split(None, 1)[1]
+            user_id = (await app.get_users(username)).id
+            await message.chat.promote_member(
+                user_id=user_id,
+                can_change_info=True,
+                can_invite_users=True,
+                can_delete_messages=True,
+                can_restrict_members=False,
+                can_pin_messages=True,
+                can_promote_members=True,
+                can_manage_chat=True,
+                can_manage_voice_chats=True
+            )
+            await message.reply_text('Promoted!')
 
-            elif len(message.command) == 1 and message.reply_to_message:
-                user_id = message.reply_to_message.from_user.id
-                await message.chat.promote_member(
-                    user_id=user_id,
-                    can_change_info=True,
-                    can_invite_users=True,
-                    can_delete_messages=True,
-                    can_restrict_members=False,
-                    can_pin_messages=True,
-                    can_promote_members=True,
-                    can_manage_chat=True,
-                    can_manage_voice_chats=True
-                )
-                await message.reply_text('Promoted!')
-            else:
-                await message.reply_text("Reply To A User's Message Or Give A Username To Promote.")
+        elif len(message.command) == 1 and message.reply_to_message:
+            user_id = message.reply_to_message.from_user.id
+            await message.chat.promote_member(
+                user_id=user_id,
+                can_change_info=True,
+                can_invite_users=True,
+                can_delete_messages=True,
+                can_restrict_members=False,
+                can_pin_messages=True,
+                can_promote_members=True,
+                can_manage_chat=True,
+                can_manage_voice_chats=True
+            )
+            await message.reply_text('Promoted!')
+        else:
+            await message.reply_text("Reply To A User's Message Or Give A Username To Promote.")
     except Exception as e:
         await message.reply_text(str(e))
 
