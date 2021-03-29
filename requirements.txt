@@ -1,3 +1,4 @@
+pytgcalls
 requests
 python-arq
 TgCrypto

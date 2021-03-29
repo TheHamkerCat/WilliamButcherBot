@@ -5,6 +5,7 @@ from config import (
     PHONE_NUMBER
 )
 from pyrogram import Client
+from pytgcalls import GroupCall
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from Python_ARQ import ARQ
 import time
@@ -46,6 +47,8 @@ bot_start_time = time.time()
 mongo_client = MongoClient(MONGO_DB_URI)
 db = mongo_client.wbb
 
+
+# Userbot client
 print("\nStarting Helper Userbot")
 app2 = Client(
     "userbot",
@@ -54,6 +57,8 @@ app2 = Client(
     api_hash=API_HASH
 )
 
+
+# Mainbot client
 print("\nStarting Main Bot\n")
 app = Client(
     "wbb",
@@ -62,4 +67,13 @@ app = Client(
     api_hash=API_HASH
 )
 
+# Pytgcalls client
+vc = GroupCall(
+        app2,
+        input_filename="input.raw",
+        play_on_repeat=False,
+        enable_logs_to_console=False
+        )
+
+# ARQ client
 arq = ARQ(ARQ_API)
