@@ -1,5 +1,5 @@
 # WilliamButcherBot
-Just Another Telegram Bot Written In Python Using Pyrogram.
+Telegram Group Manager Bot + Userbot Written In Python Using Pyrogram.
 
 [![Python](http://forthebadge.com/images/badges/made-with-python.svg)](https://python.org)
 
@@ -31,36 +31,10 @@ Edit **config.py** with your own values
 $ python3 -m wbb
 ```
 
-# Heroku
-
-```sh 
-$ git clone https://github.com/thehamkercat/WilliamButcherBot
-
-$ cd WilliamButcherBot
-
-$ pip3 install -U -r requirements.txt
-
-$ cp sample_config.py config.py
-
-$ rm .gitignore
-
-$ heroku git:remote -a YOUR_HEROKU_APP_NAME
-
-$ heroku stack:set container
-
-$ git add -f .
-
-$ git commit -m 'Hail WBB!'
-
-$ git push heroku HEAD:master --force
-
-$ heroku ps:scale worker=1
-```
-
-
 ## Features 
 
 * Group Management
+* Userbot
 * Music Downloading 
 * AI Chatbot
 * Web Scraping 
