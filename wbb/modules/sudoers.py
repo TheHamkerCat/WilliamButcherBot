@@ -105,11 +105,14 @@ async def get_speedtest_result(_, message):
 
 
 async def bot_sys_stats():
+    from wbb.utils.botinfo import USERBOT_USERNAME
     bot_uptime = int(time.time() - bot_start_time)
     cpu = psutil.cpu_percent(interval=0.5)
     mem = psutil.virtual_memory().percent
     disk = psutil.disk_usage("/").percent
     stats = f'''
+{USERBOT_USERNAME}@William
+------------------
 Uptime: {formatter.get_readable_time((bot_uptime))}
 CPU: {cpu}%
 RAM: {mem}%
