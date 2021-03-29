@@ -15,7 +15,7 @@ async def nudenet_detector(_, message):
                 message.document.mime_type != "image/jpeg":
                     return
     mention = message.from_user.mention
-    file = await message.reply_to_message.download()
+    file = await message.download()
     image = detector.detect(file, mode='fast')
     if image:
         try:
