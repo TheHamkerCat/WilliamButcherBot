@@ -1,4 +1,3 @@
-nudenet
 requests
 python-arq
 TgCrypto
