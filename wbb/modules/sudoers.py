@@ -5,6 +5,7 @@ import subprocess
 from pyrogram import filters, types
 import speedtest
 import psutil
+import asyncio
 from wbb import app, SUDOERS, bot_start_time
 from wbb.utils import nekobin, formatter
 from wbb.utils.errors import capture_err

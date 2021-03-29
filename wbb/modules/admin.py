@@ -115,7 +115,7 @@ async def kick(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" not in permissions or from_user_id not in SUDOERS:
+        if "can_restrict_members" not in permissions and from_user_id not in SUDOERS:
             await message.reply_text("You don't have enough permissions.")
             return
         if len(message.command) == 2:
@@ -150,7 +150,7 @@ async def ban(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" not in permissions or from_user_id not in SUDOERS:
+        if "can_restrict_members" not in permissions and from_user_id not in SUDOERS:
             await message.reply_text("You don't have enough permissions.")
             return
         if len(message.command) == 2:
@@ -184,7 +184,7 @@ async def unban(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" not in permissions or from_user_id not in SUDOERS:
+        if "can_restrict_members" not in permissions and from_user_id not in SUDOERS:
             await message.reply_text("You don't have enough permissions.")
             return
             if len(message.command) == 2:
@@ -233,7 +233,9 @@ async def promote(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_promote_members" in permissions or from_user_id in SUDOERS:
+        if "can_promote_members" not in permissions and from_user_id not in SUDOERS:
+            await message.reply_text("You don't have enough permissions")
+            return
             if len(message.command) == 2:
                 username = message.text.split(None, 1)[1]
                 user_id = (await app.get_users(username)).id
@@ -266,9 +268,6 @@ async def promote(_, message):
                 await message.reply_text('Promoted!')
             else:
                 await message.reply_text("Reply To A User's Message Or Give A Username To Promote.")
-
-        else:
-            await message.reply_text("You're Not An Admin, Want A Good Ban?")
     except Exception as e:
         await message.reply_text(str(e))
 
@@ -303,7 +302,7 @@ async def mute(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" not in permissions or from_user_id not in SUDOERS:
+        if "can_restrict_members" not in permissions and from_user_id not in SUDOERS:
             await message.reply_text("You don't have enough permissions.")
             return
         if len(message.command) == 2:
@@ -343,7 +342,7 @@ async def unmute(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" not in permissions or from_user_id not in SUDOERS:
+        if "can_restrict_members" not in permissions and from_user_id not in SUDOERS:
             await message.reply_text("You don't have enough permissions.")
             return
         if len(message.command) == 2:
