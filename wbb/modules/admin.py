@@ -244,7 +244,10 @@ async def promote(_, message):
                     can_delete_messages=True,
                     can_restrict_members=False,
                     can_pin_messages=True,
-                    can_promote_members=True)
+                    can_promote_members=True,
+                    can_manage_chat=True,
+                    can_manage_voice_chats=True
+                )
                 await message.reply_text('Promoted!')
 
             elif len(message.command) == 1 and message.reply_to_message:
@@ -256,7 +259,10 @@ async def promote(_, message):
                     can_delete_messages=True,
                     can_restrict_members=False,
                     can_pin_messages=True,
-                    can_promote_members=True)
+                    can_promote_members=True,
+                    can_manage_chat=True,
+                    can_manage_voice_chats=True
+                )
                 await message.reply_text('Promoted!')
             else:
                 await message.reply_text("Reply To A User's Message Or Give A Username To Promote.")
