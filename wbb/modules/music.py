@@ -6,7 +6,7 @@ import aiofiles
 import os
 from random import randint
 from pyrogram import filters
-from wbb import app, SUDOERS, arq
+from wbb import app, SUDOERS, arq, MAIN_CHATS
 from wbb.utils.errors import capture_err
 
 
@@ -84,7 +84,7 @@ is_downloading = False
 # Jiosaavn Music
 
 
-@app.on_message(filters.command("saavn") & ~filters.edited)
+@app.on_message(filters.command("saavn") & ~filters.edited & filters.chat(MAIN_CHATS))
 @capture_err
 async def jssong(_, message):
     global is_downloading
@@ -119,7 +119,7 @@ async def jssong(_, message):
 # Deezer Music
 
 
-@app.on_message(filters.command("deezer") & ~filters.edited)
+@app.on_message(filters.command("deezer") & ~filters.edited & filters.chat(MAIN_CHATS))
 @capture_err
 async def deezsong(_, message):
     global is_downloading

@@ -5,7 +5,7 @@ import os
 import re
 import subprocess
 from inspect import getfullargspec
-from wbb import app, OWNER_ID
+from wbb import app, SUDOERS
 from pyrogram import filters
 from pyrogram.types import Message
 
@@ -29,7 +29,7 @@ async def edit_or_reply(msg: Message, **kwargs):
     await func(**{k: v for k, v in kwargs.items() if k in spec})
 
 
-@app.on_message(filters.user(OWNER_ID) & ~filters.forwarded & ~filters.via_bot & filters.command("eval"))
+@app.on_message(filters.user(SUDOERS) & ~filters.forwarded & ~filters.via_bot & filters.command("eval"))
 async def executor(client, message):
     try:
         cmd = message.text.split(" ", maxsplit=1)[1]
@@ -79,7 +79,7 @@ async def executor(client, message):
 
 
 @app.on_message(
-    filters.user(OWNER_ID)
+    filters.user(SUDOERS)
     & ~filters.forwarded
     & ~filters.via_bot
     & filters.command('sh'),

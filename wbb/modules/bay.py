@@ -2,7 +2,7 @@ import os
 import requests
 import aiohttp
 import aiofiles
-from wbb import app, OWNER_ID
+from wbb import app, SUDOERS
 from pyrogram import filters
 from random import randint
 
@@ -11,7 +11,7 @@ __HELP__ = """/url [URL] To upload a url to bayfiles. [SUDO ONLY]
 /tg To Upload a telegram file to bayfiles. [SUDO ONLY]"""
 
 
-@app.on_message(filters.command("url") & filters.user(OWNER_ID))
+@app.on_message(filters.command("url") & filters.user(SUDOERS))
 async def url(_, message):
     if len(message.command) != 2:
         await message.reply_text("/url [url]")
@@ -38,7 +38,7 @@ async def url(_, message):
         return
 
 
-@app.on_message(filters.command("tg") & filters.user(OWNER_ID))
+@app.on_message(filters.command("tg") & filters.user(SUDOERS))
 async def tg(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply To A File With /tg To Upload")

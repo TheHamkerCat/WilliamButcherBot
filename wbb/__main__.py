@@ -4,7 +4,7 @@ import importlib
 import uvloop
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from wbb import app, app2
+from wbb import app, app2, init_sudo
 from wbb.utils import get_info, paginate_modules
 from wbb.utils import botinfo
 from wbb.modules.sudoers import bot_sys_stats
@@ -21,6 +21,7 @@ async def start_bot():
     await app2.start()
     await app.start()
     await get_info(app, app2)
+    init_sudo()
 
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)

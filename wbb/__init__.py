@@ -1,8 +1,8 @@
 from config import (
-    BOT_TOKEN, API_ID, API_HASH, OWNER_ID, SUDO_USER_ID,
+    BOT_TOKEN, API_ID, API_HASH, SUDO_USERS_ID, PHONE_NUMBER,
     LOG_GROUP_ID, FERNET_ENCRYPTION_KEY, MONGO_DB_URI,
     WELCOME_DELAY_KICK_SEC, ARQ_API_BASE_URL as ARQ_API,
-    PHONE_NUMBER
+    MAIN_CHATS
 )
 from pyrogram import Client
 from pytgcalls import GroupCall
@@ -10,7 +10,6 @@ from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from Python_ARQ import ARQ
 import time
 import logging
-
 
 f = open("error.log", "w")
 f.write("PEAK OF LOG FILE")
@@ -36,11 +35,16 @@ logging.getLogger("").addHandler(console)
 
 log = logging.getLogger()
 
+SUDOERS = SUDO_USERS_ID
+
+def init_sudo():
+    global SUDOERS
+    from wbb.utils.botinfo import USERBOT_ID
+    SUDOERS.append(USERBOT_ID)
+
 FERNET_ENCRYPTION_KEY = FERNET_ENCRYPTION_KEY
 WELCOME_DELAY_KICK_SEC = WELCOME_DELAY_KICK_SEC
 LOG_GROUP_ID = LOG_GROUP_ID
-SUDOERS = SUDO_USER_ID
-SUDOERS.append(OWNER_ID)
 MOD_LOAD = []
 MOD_NOLOAD = []
 bot_start_time = time.time()
