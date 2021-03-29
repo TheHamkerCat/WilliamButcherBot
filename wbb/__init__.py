@@ -36,10 +36,6 @@ log = logging.getLogger()
 
 SUDOERS = SUDO_USERS_ID
 
-def init_sudo():
-    global SUDOERS
-    from wbb.utils.botinfo import USERBOT_ID
-    SUDOERS.append(USERBOT_ID)
 
 FERNET_ENCRYPTION_KEY = FERNET_ENCRYPTION_KEY
 WELCOME_DELAY_KICK_SEC = WELCOME_DELAY_KICK_SEC
@@ -60,6 +56,8 @@ app2 = Client(
     api_hash=API_HASH
 )
 
+with app2:
+    SUDOERS.append((app2.get_me()).id)
 
 # Mainbot client
 print("\nStarting Main Bot\n")
