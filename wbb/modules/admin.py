@@ -302,7 +302,8 @@ async def mute(_, message):
             return
         if len(message.command) == 2:
             username = message.text.split(None, 1)[1]
-            if (await app.get_users(username)).id in SUDOERS:
+            user_id = (await app.get_users(username)).id
+            if user_id in SUDOERS:
                 await message.reply_text("You Wanna Mute The Elevated One?")
             else:
                 await message.chat.restrict_member(

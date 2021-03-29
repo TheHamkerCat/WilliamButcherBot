@@ -147,19 +147,21 @@ async def ban_globally(_, message):
             await message.reply_text("You want to ban a sudo user? GET REKT!!")
         else:
             served_chats = await get_served_chats()
+            m = await message.reply_text(f"**{user.mention} Will Be Banned  Globally In {len(served_chats)} Seconds.**")
+            await add_gban_user(user.id)
             for served_chat in served_chats:
                 try:
                     await app.kick_chat_member(served_chat['chat_id'], user.id)
+                    await asyncio.sleep(1)
                 except Exception:
                     pass
-            await add_gban_user(user.id)
             try:
                 await app.send_message(
                     user.id, f"Hello, You have been globally banned by {from_user.mention},"
                     + " You can appeal for this ban by talking to {from_user.mention}.")
             except Exception:
                 pass
-            await message.reply_text(f"Banned {user.mention} Globally!")
+            await m.edit(f"Banned {user.mention} Globally!")
         return
 
     from_user_id = message.from_user.id
@@ -178,9 +180,11 @@ async def ban_globally(_, message):
             await message.reply_text("He's already gbanned, why bully him?")
         else:
             served_chats = await get_served_chats()
+            m = await message.reply_text(f"**{mention} Will Be Banned  Globally In {len(served_chats)} Seconds.**")
             for served_chat in served_chats:
                 try:
                     await app.kick_chat_member(served_chat['chat_id'], user_id)
+                    await asyncio.sleep(1)
                 except Exception:
                     pass
             await add_gban_user(user_id)
@@ -191,7 +195,7 @@ Hello, You have been globally banned by {from_user_mention},
 You can appeal for this ban by talking to {from_user_mention}.""")
             except Exception:
                 pass
-            await message.reply_text(f"Banned {mention} Globally!")
+            await m.edit(f"Banned {mention} Globally!")
 
 # Ungban
 
