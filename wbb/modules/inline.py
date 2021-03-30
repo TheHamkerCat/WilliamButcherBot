@@ -13,6 +13,12 @@ from pyrogram.types import (
 )
 from googletrans import Translator
 
+__MODULE__ = "Inline"
+__HELP__ = """
+tr [LANGUAGE] [QUERY] Translate Text.
+alive - Check Bot's Stats."""
+
+
 """ Inspiration From https://github.com/pokurt/Nana-Remix/blob/master/nana/plugins/assistant/inline_mod/alive.py """
 
 
