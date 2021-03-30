@@ -95,18 +95,17 @@ async def karma(_, message):
         for i in karma:
             user_id = await alpha_to_int(i)
             user_karma = karma[i]['karma']
-            try:
-                user_name = (await app.get_users(user_id)).username
-            except Exception:
-                continue
-            karma_dicc[user_name] = user_karma
-
+            karma_dicc[str(user_id)] = user_karma
             karma_arranged = dict(
                 sorted(karma_dicc.items(), key=lambda item: item[1], reverse=True))
-        for username, karma_count in karma_arranged.items():
+        for user_idd, karma_count in karma_arranged.items():
             if limit > 9:
                 break
-            msg += f"{username} : `{karma_count}`\n"
+            try:
+                user_name = (await app.get_users(int(user_idd))).username
+            except Exception:
+                continue
+            msg += f"{user_name} : `{karma_count}`\n"
             limit += 1
         await message.reply_text(msg)
     else:
