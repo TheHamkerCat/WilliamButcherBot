@@ -11,6 +11,8 @@ from pyrogram.types import (
     InputTextMessageContent,
     InlineKeyboardButton
 )
+from googletrans import Translator
+
 """ Inspiration From https://github.com/pokurt/Nana-Remix/blob/master/nana/plugins/assistant/inline_mod/alive.py """
 
 
@@ -36,31 +38,63 @@ async def alive_function(answers):
             input_message_content=InputTextMessageContent(
                 msg,
                 disable_web_page_preview=True
-                ),
+            ),
             reply_markup=buttons,
+        )
+    )
+    return answers
+
+
+async def translate_func(answers, lang, tex):
+    i = Translator().translate(tex, dest=lang)
+    msg = f"""
+__**Translated to {lang}**__
+
+**INPUT:**
+{tex}
+
+**OUTPUT:**
+{i.text}"""
+    answers.append(
+        InlineQueryResultArticle(
+            title=f'Translated to {lang}',
+            description=i.text,
+            input_message_content=InputTextMessageContent(
+                msg
             )
         )
+    )
     return answers
 
 
 @app.on_inline_query()
 async def inline_query_handler(client, query):
-    text = query.query.lower()
-    answers = []
-    if text == '':
-        await client.answer_inline_query(
-            query.id,
-            results=answers,
-            switch_pm_text='Commands',
-            switch_pm_parameter='help',
-        )
+    try:
+        text = query.query.lower()
+        answers = []
+        if text == '':
+            await client.answer_inline_query(
+                query.id,
+                results=answers,
+                switch_pm_text='Commands',
+                switch_pm_parameter='help',
+            )
+            return
+        elif text == "alive":
+            answerss = await alive_function(answers)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=10
+            )
+        elif text.split()[0] == "tr":
+            lang = text.split()[1]
+            tex = text.split(None, 2)[2]
+            answerss = await translate_func(answers, lang, tex)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=10
+            )
+    except IndexError:
         return
-    elif text == "alive":
-        answerss = await alive_function(answers)
-        await client.answer_inline_query(
-            query.id,
-            results=answerss,
-            cache_time=60,
-            switch_pm_text=f'Hello',
-            switch_pm_parameter='start',
-        )
