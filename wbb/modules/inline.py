@@ -1,5 +1,5 @@
 import sys
-from wbb import app, app2, SUDOERS, USERBOT_USERNAME, BOT_USERNAME
+from wbb import arq, app, app2, SUDOERS, USERBOT_USERNAME, BOT_USERNAME
 from wbb.utils.errors import capture_err
 from pykeyboard import InlineKeyboard
 from sys import version as pyver
@@ -15,7 +15,8 @@ from googletrans import Translator
 
 __MODULE__ = "Inline"
 __HELP__ = """
-tr [LANGUAGE] [QUERY] Translate Text.
+tr [LANGUAGE_CODE] [QUERY] - Translate Text.
+ud [QUERY] - Urban Dictionary Query.
 alive - Check Bot's Stats."""
 
 
@@ -65,12 +66,27 @@ __**Translated to {lang}**__
         InlineQueryResultArticle(
             title=f'Translated to {lang}',
             description=i.text,
-            input_message_content=InputTextMessageContent(
-                msg
-            )
+            input_message_content=InputTextMessageContent(msg)
         )
     )
     return answers
+
+async def urban_func(answers, text):
+    results = await arq.urbandict(text)
+    for i in results:
+        msg = f"""
+    **Definition:** __{results[i].definition}__
+
+    **Example:** __{results[i].example}__"""
+        
+        answers.append(
+            InlineQueryResultArticle(
+                title=results[i].word,
+                description=results[i].definition,
+                input_message_content=InputTextMessageContent(msg)
+            ))
+    return answers
+
 
 
 @app.on_inline_query()
@@ -86,7 +102,7 @@ async def inline_query_handler(client, query):
                 switch_pm_parameter='help',
             )
             return
-        elif text == "alive":
+        elif text.split()[0] == "alive":
             answerss = await alive_function(answers)
             await client.answer_inline_query(
                 query.id,
@@ -102,5 +118,14 @@ async def inline_query_handler(client, query):
                 results=answerss,
                 cache_time=10
             )
+        elif text.split()[0] == "ud":
+            tex = text.split(None, 1)[1]
+            answerss = await urban_func(answers, tex)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=10
+            )
+
     except IndexError:
         return

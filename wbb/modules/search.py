@@ -21,7 +21,7 @@ async def urbandict(_, message):
         return
     text = message.text.split(None, 1)[1]
     try:
-        results = await arq.urbandict(text, 1)
+        results = await arq.urbandict(text)
         reply_text = f"""**Definition:** __{results[0].definition}__
 
 **Example:** __{results[0].example}__"""
