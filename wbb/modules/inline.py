@@ -1,5 +1,5 @@
 import sys
-from wbb import app, app2, SUDOERS
+from wbb import app, app2, SUDOERS, USERBOT_USERNAME, BOT_USERNAME
 from wbb.utils.errors import capture_err
 from pykeyboard import InlineKeyboard
 from sys import version as pyver
@@ -27,6 +27,7 @@ async def alive_function(answers):
 **Pyrogram:** `{pyrover}`
 **MongoDB:** `{mongover}`
 **Platform:** `{sys.platform}`
+**Profiles:** [BOT](t.me/{BOT_USERNAME}) | [UBOT](t.me/{USERBOT_USERNAME})
 """
     answers.append(
         InlineQueryResultArticle(
@@ -44,11 +45,22 @@ async def alive_function(answers):
 
 @app.on_inline_query()
 async def inline_query_handler(client, query):
+    text = query.query.lower()
     answers = []
-    answerss = await alive_function(answers)
-    await client.answer_inline_query(
-        query.id,
-        results=answerss,
-        switch_pm_text=f'Hello',
-        switch_pm_parameter='start',
-    )
+    if text == '':
+        await client.answer_inline_query(
+            query.id,
+            results=answers,
+            switch_pm_text='Commands',
+            switch_pm_parameter='help',
+        )
+        return
+    elif text == "alive":
+        answerss = await alive_function(answers)
+        await client.answer_inline_query(
+            query.id,
+            results=answerss,
+            cache_time=60,
+            switch_pm_text=f'Hello',
+            switch_pm_parameter='start',
+        )

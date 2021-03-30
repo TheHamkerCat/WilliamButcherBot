@@ -4,9 +4,8 @@ import importlib
 import uvloop
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from wbb import app, app2
-from wbb.utils import get_info, paginate_modules
-from wbb.utils import botinfo
+from wbb import app, app2, BOT_NAME, BOT_USERNAME
+from wbb.utils import paginate_modules
 from wbb.modules.sudoers import bot_sys_stats
 from wbb.modules import ALL_MODULES
 
@@ -18,9 +17,6 @@ HELPABLE = {}
 
 async def start_bot():
     global COMMANDS_COUNT
-    await app2.start()
-    await app.start()
-    await get_info(app, app2) 
 
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
@@ -50,9 +46,8 @@ async def start_bot():
     print("+===============+===============+===============+===============+")
     print(bot_modules)
     print("+===============+===============+===============+===============+")
-    print("Bot Started Successfully as {}!".format(botinfo.BOT_NAME))
+    print("Bot Started Successfully as {}!".format(BOT_NAME))
     await idle()
-
 
 @app.on_message(filters.command(["help", "start"]))
 async def help_command(_, message):
@@ -68,7 +63,7 @@ async def help_command(_, message):
                 [
                     InlineKeyboardButton(
                         text="Help ❓",
-                        url=f"t.me/{botinfo.BOT_USERNAME}?start=help",
+                        url=f"t.me/{BOT_USERNAME}?start=help",
                     ),
                     InlineKeyboardButton(
                         text="Repo 🛠",
@@ -114,12 +109,12 @@ async def help_command(_, message):
             [
                 InlineKeyboardButton(
                     text="Add Me To Your Group 🎉",
-                    url=f"http://t.me/{botinfo.BOT_USERNAME}?startgroup=new"
+                    url=f"http://t.me/{BOT_USERNAME}?startgroup=new"
                 )
             ]
         ]
     )
-    await message.reply(f"Hey there! My name is {botinfo.BOT_NAME}. I can manage your group with lots of useful features, feel free to add me to your group.", reply_markup=keyboard)
+    await message.reply(f"Hey there! My name is {BOT_NAME}. I can manage your group with lots of useful features, feel free to add me to your group.", reply_markup=keyboard)
 
 
 async def help_parser(name, keyboard=None):
@@ -135,7 +130,7 @@ General command are:
  - /start: Start the bot
  - /help: Give this message""".format(
             first_name=name,
-            bot_name=botinfo.BOT_NAME,
+            bot_name=BOT_NAME,
         ),
         keyboard,
     )
@@ -189,7 +184,7 @@ async def help_button(client, query):
         await query.message.edit(
             text="Hi {first_name}. I am {bot_name}".format(
                 first_name=query.from_user.first_name,
-                bot_name=botinfo.BOT_NAME,
+                bot_name=BOT_NAME,
             ),
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(curr_page - 1, HELPABLE, "help")
@@ -202,7 +197,7 @@ async def help_button(client, query):
         await query.message.edit(
             text="Hi {first_name}. I am {bot_name}".format(
                 first_name=query.from_user.first_name,
-                bot_name=botinfo.BOT_NAME,
+                bot_name=BOT_NAME,
             ),
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(next_page + 1, HELPABLE, "help")
@@ -214,7 +209,7 @@ async def help_button(client, query):
         await query.message.edit(
             text="Hi {first_name}. I am {bot_name}".format(
                 first_name=query.from_user.first_name,
-                bot_name=botinfo.BOT_NAME,
+                bot_name=BOT_NAME,
             ),
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(0, HELPABLE, "help")

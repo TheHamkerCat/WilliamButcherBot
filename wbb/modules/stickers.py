@@ -1,7 +1,6 @@
 import os
 import imghdr
-from wbb.utils.botinfo import BOT_USERNAME
-from wbb import app
+from wbb import app, BOT_USERNAME
 from pyrogram import filters
 from wbb.utils.errors import capture_err
 from wbb.utils.files import resize_file_to_sticker_size, upload_document, get_document_from_file_id

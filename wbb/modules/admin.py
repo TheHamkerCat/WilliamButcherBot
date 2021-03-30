@@ -1,7 +1,6 @@
 from pyrogram import filters
 from pyrogram.types import ChatPermissions
-from wbb import SUDOERS, app
-from wbb.utils.botinfo import BOT_ID
+from wbb import SUDOERS, app, BOT_ID
 from wbb.utils.errors import capture_err
 from wbb.utils.dbfunctions import add_warn, get_warn, remove_warns, int_to_alpha
 

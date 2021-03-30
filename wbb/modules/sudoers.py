@@ -6,10 +6,9 @@ from pyrogram import filters, types
 import speedtest
 import psutil
 import asyncio
-from wbb import app, SUDOERS, bot_start_time
+from wbb import app, SUDOERS, bot_start_time, BOT_ID, USERBOT_USERNAME
 from wbb.utils import nekobin, formatter
 from wbb.utils.errors import capture_err
-from wbb.utils.botinfo import BOT_ID
 from wbb.utils.dbfunctions import (
     is_gbanned_user,
     add_gban_user,
@@ -105,7 +104,6 @@ async def get_speedtest_result(_, message):
 
 
 async def bot_sys_stats():
-    from wbb.utils.botinfo import USERBOT_USERNAME
     bot_uptime = int(time.time() - bot_start_time)
     cpu = psutil.cpu_percent(interval=0.5)
     mem = psutil.virtual_memory().percent
