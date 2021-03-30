@@ -7,7 +7,7 @@ Telegram Group Manager Bot + Userbot Written In Python Using Pyrogram.
 
 ## Requirements
 
-- Python==3.9.
+- Python >= 3.7
 - Neofetch is needed for some modules.
 - A [Telegram API key](https://docs.pyrogram.org/intro/setup#api-keys).
 - A [Telegram bot token](https://t.me/botfather).
