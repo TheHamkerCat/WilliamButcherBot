@@ -15,6 +15,7 @@ from wbb.utils.dbfunctions import (
     get_gbans_count
 )
 from pyrogram import filters
+
 import asyncio
 
 @app.on_message(filters.text, group=global_stats_group)
@@ -58,9 +59,14 @@ async def global_stats(_, message):
             served_chats.remove(served_chat)
             pass
     for i in served_chats:
-        mc = (await app.get_chat(i)).members_count
+        try:
+            mc = (await app.get_chat(i)).members_count
+            total_users += int(mc)
+        except Exception:
+            await remove_served_chat(served_chat)
+            pass
         await asyncio.sleep(3)
-        total_users += int(mc)
+        
 
     # Gbans count
     gbans = await get_gbans_count()

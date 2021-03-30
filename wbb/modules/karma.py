@@ -95,7 +95,10 @@ async def karma(_, message):
         for i in karma:
             user_id = await alpha_to_int(i)
             user_karma = karma[i]['karma']
-            user_name = (await app.get_users(user_id)).username
+            try:
+                user_name = (await app.get_users(user_id)).username
+            except Exception:
+                continue
             karma_dicc[user_name] = user_karma
 
             karma_arranged = dict(
