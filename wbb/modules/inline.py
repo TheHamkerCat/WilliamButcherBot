@@ -12,11 +12,14 @@ from pyrogram.types import (
     InlineKeyboardButton
 )
 from googletrans import Translator
+from search_engine_parser import GoogleSearch
+
 
 __MODULE__ = "Inline"
 __HELP__ = """
 tr [LANGUAGE_CODE] [QUERY] - Translate Text.
 ud [QUERY] - Urban Dictionary Query.
+google [Query] - Google Search.
 alive - Check Bot's Stats."""
 
 
@@ -75,9 +78,11 @@ async def urban_func(answers, text):
     results = await arq.urbandict(text)
     for i in results:
         msg = f"""
-    **Definition:** __{results[i].definition}__
+**Query:** {text}
 
-    **Example:** __{results[i].example}__"""
+**Definition:** __{results[i].definition}__
+
+**Example:** __{results[i].example}__"""
         
         answers.append(
             InlineQueryResultArticle(
@@ -85,6 +90,28 @@ async def urban_func(answers, text):
                 description=results[i].definition,
                 input_message_content=InputTextMessageContent(msg)
             ))
+    return answers
+
+
+async def google_search_func(answers, text):
+    gresults = await GoogleSearch().async_search(text)
+    for i in gresults:
+        try:
+            msg = f"""
+[{i['titles']}]({i['links']})
+```{i['descriptions']}```"""
+            
+            answers.append(
+                InlineQueryResultArticle(
+                    title=i['titles'],
+                    description=i['descriptions'],
+                    input_message_content=InputTextMessageContent(
+                        msg,
+                        disable_web_page_preview=True
+                        )
+                ))
+        except KeyError:
+            pass
     return answers
 
 
@@ -98,7 +125,7 @@ async def inline_query_handler(client, query):
             await client.answer_inline_query(
                 query.id,
                 results=answers,
-                switch_pm_text='Commands',
+                switch_pm_text='Click here for help',
                 switch_pm_parameter='help',
             )
             return
@@ -121,6 +148,14 @@ async def inline_query_handler(client, query):
         elif text.split()[0] == "ud":
             tex = text.split(None, 1)[1]
             answerss = await urban_func(answers, tex)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=10
+            )
+        elif text.split()[0] == "google":
+            tex = text.split(None, 1)[1]
+            answerss = await google_search_func(answers, tex)
             await client.answer_inline_query(
                 query.id,
                 results=answerss,
