@@ -1,5 +1,4 @@
 pykeyboard
-pyppeteer
 requests
 python-arq
 TgCrypto
