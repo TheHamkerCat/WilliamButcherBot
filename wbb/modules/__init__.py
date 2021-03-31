@@ -3,7 +3,7 @@ import importlib
 import sys
 
 from os.path import dirname, basename, isfile
-from wbb import MOD_LOAD, MOD_NOLOAD, log
+from wbb import MOD_LOAD, MOD_NOLOAD
 
 
 def __list_all_modules():
@@ -26,14 +26,12 @@ def __list_all_modules():
                 any(mod == module_name for module_name in all_modules)
                 for mod in to_load
             ):
-                log.error("Invalid Module name!")
                 sys.exit()
 
         else:
             to_load = all_modules
 
         if MOD_NOLOAD:
-            log.info("No load: %s", MOD_NOLOAD)
             return [item for item in to_load if item not in MOD_NOLOAD]
 
         return to_load
@@ -43,5 +41,4 @@ def __list_all_modules():
 
 importlib.import_module("wbb.modules.__main__")
 ALL_MODULES = sorted(__list_all_modules())
-log.info("Modules loaded: %s", str(ALL_MODULES))
 __all__ = ALL_MODULES + ["ALL_MODULES"]

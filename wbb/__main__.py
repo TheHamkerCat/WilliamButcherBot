@@ -1,4 +1,5 @@
 import asyncio
+from pyppeteer import launch
 import re
 import importlib
 import uvloop
@@ -11,13 +12,11 @@ from wbb.modules import ALL_MODULES
 
 loop = asyncio.get_event_loop()
 
-
 HELPABLE = {}
 
 
 async def start_bot():
     global COMMANDS_COUNT
-
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
         if (

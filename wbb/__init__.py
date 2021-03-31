@@ -8,31 +8,6 @@ from pyrogram import Client
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from Python_ARQ import ARQ
 import time
-import logging
-
-f = open("error.log", "w")
-f.write("PEAK OF LOG FILE")
-
-LOG_FORMAT = (
-    '''
-    [%(asctime)s.%(msecs)03d] %(filename)s:%(lineno)s
-    %(levelname)s: %(message)s''')
-
-logging.basicConfig(
-    level=logging.INFO,
-    format=LOG_FORMAT,
-    datefmt="%m-%d %H:%M",
-    filename="error.log",
-    filemode="w",
-)
-
-console = logging.StreamHandler()
-console.setLevel(logging.ERROR)
-formatter = logging.Formatter(LOG_FORMAT)
-console.setFormatter(formatter)
-logging.getLogger("").addHandler(console)
-
-log = logging.getLogger()
 
 SUDOERS = SUDO_USERS_ID
 

@@ -19,57 +19,12 @@ from wbb.utils.dbfunctions import (
 
 
 __MODULE__ = "Sudoers"
-__HELP__ = '''/log - To Get Logs From Last Run.
-/speedtest - To Perform A Speedtest.
+__HELP__ = '''/speedtest - To Perform A Speedtest.
 /stats - To Check System Status.
 /gstats - To Check Bot's Global Stats.
 /gban - To Ban A User Globally.
 /broadcast - To Broadcast A Message To All Groups.
 /update - To Update And Restart The Bot'''
-
-
-# Logs Module
-
-
-@app.on_message(filters.user(SUDOERS) & filters.command("log"))
-@capture_err
-async def logs_chat(_, message):
-    keyb = types.InlineKeyboardMarkup(
-        [
-            [
-                types.InlineKeyboardButton(
-                    "Paste on Nekobin", callback_data="paste_log_nekobin"
-                )
-            ]
-        ]
-    )
-    await message.reply_document(
-        "error.log", reply_markup=keyb
-    )
-
-
-def logs_callback(_, __, query):
-    if re.match("paste_log_nekobin", query.data):
-        return True
-
-
-logs_create = filters.create(logs_callback)
-
-
-@app.on_callback_query(logs_create)
-async def paste_log_neko(client, query):
-    if query.from_user.id in SUDOERS:
-        j = open("error.log", "r")
-        data = await nekobin.neko(j.read())
-        keyb = types.InlineKeyboardMarkup(
-            [[types.InlineKeyboardButton("Pasted!", url=f"{data}")]]
-        )
-        await query.message.edit_caption("Successfully Nekofied",
-                                         reply_markup=keyb)
-    else:
-        await client.answer_callback_query(
-            query.id, "'Blue Button Must Press', huh?", show_alert=True
-        )
 
 
 # SpeedTest Module
