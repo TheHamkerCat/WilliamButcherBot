@@ -1,5 +1,4 @@
 import asyncio
-from pyppeteer import launch
 import re
 import importlib
 import uvloop
