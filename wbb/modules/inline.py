@@ -1,6 +1,10 @@
 import sys
-from wbb import arq, app, app2, SUDOERS, USERBOT_USERNAME, BOT_USERNAME
+from wbb import (
+        arq, app, app2, SUDOERS,
+        USERBOT_USERNAME, BOT_USERNAME,
+        LOG_GROUP_ID)
 from wbb.utils.errors import capture_err
+from wbb.utils.fetch import fetch
 from pykeyboard import InlineKeyboard
 from sys import version as pyver
 from motor import version as mongover
@@ -9,11 +13,12 @@ from pyrogram import filters
 from pyrogram.types import (
     InlineQueryResultArticle,
     InputTextMessageContent,
-    InlineKeyboardButton
+    InlineKeyboardButton,
+    InlineQueryResultPhoto
 )
 from googletrans import Translator
 from search_engine_parser import GoogleSearch
-
+from time import time
 
 __MODULE__ = "Inline"
 __HELP__ = """
@@ -114,7 +119,21 @@ async def google_search_func(answers, text):
             pass
     return answers
 
-
+async def webss(url):
+    start_time = time()
+    if "." not in url:
+        return
+    screenshot = await fetch(f"https://patheticprogrammers.cf/ss?site={url}")
+    end_time = time()
+    m = await app.send_photo(LOG_GROUP_ID, photo=screenshot['url'])
+    await m.delete()
+    a = []
+    pic = InlineQueryResultPhoto(
+            photo_url=screenshot['url'],
+            caption=(f"`{url}`\n__Took {round(end_time - start_time)} Seconds.__")
+            )
+    a.append(pic)
+    return a
 
 @app.on_inline_query()
 async def inline_query_handler(client, query):
@@ -160,6 +179,14 @@ async def inline_query_handler(client, query):
                 query.id,
                 results=answerss,
                 cache_time=10
+            )
+        elif text.split()[0] == "webss":
+            tex = text.split(None, 1)[1]
+            answerss = await webss(tex)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=2
             )
 
     except IndexError:
