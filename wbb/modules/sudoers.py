@@ -51,10 +51,10 @@ async def get_speedtest_result(_, message):
     j = speed.download()
     k = speed.upload()
     await m.edit(f'''
-**Download:** {speed_convert(j)}
-**Upload:** {speed_convert(k)}
-**Latency:** {round((i["latency"]))} ms
-```''')
+**Download:** `{speed_convert(j)}`
+**Upload:** `{speed_convert(k)}`
+**Latency:** `{round((i["latency"]))} ms`
+''')
 
 # Stats Module
 
