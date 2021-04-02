@@ -4,3 +4,4 @@ karma_positive_group = 3
 karma_negative_group = 4
 regex_group = 5
 global_stats_group = 6
+welcome_captcha_group = 7
