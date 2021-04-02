@@ -12,10 +12,15 @@ tr [LANGUAGE_CODE] [QUERY] - Translate Text.
 ud [QUERY] - Urban Dictionary Query.
 google [Query] - Google Search.
 alive - Check Bot's Stats.
-webss [URL] - Take A Screenshot Of A Website."""
+webss [URL] - Take A Screenshot Of A Website.
+bitly [URL] - Shorten A Link"""
 
 
 """ Inspiration From https://github.com/pokurt/Nana-Remix/blob/master/nana/plugins/assistant/inline_mod/alive.py """
+
+@app.on_message(filters.command("inline"))
+async def inline_help(_, message):
+    await app.send_message(message.chat.id, text=__HELP__)
 
 
 @app.on_inline_query()
@@ -28,7 +33,7 @@ async def inline_query_handler(client, query):
                 query.id,
                 results=answers,
                 switch_pm_text='Click here for help',
-                switch_pm_parameter='help',
+                switch_pm_parameter='inline',
             )
             return
         elif text.split()[0] == "alive":
