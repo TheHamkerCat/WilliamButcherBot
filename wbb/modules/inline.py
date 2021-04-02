@@ -4,7 +4,7 @@ from wbb.utils.inlinefuncs import (
         google_search_func, urban_func, translate_func,
         alive_function, webss, shortify
         )
-from wbb import filters
+from pyrogram import filters
 
 __MODULE__ = "Inline"
 __HELP__ = """
