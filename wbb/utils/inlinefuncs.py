@@ -92,7 +92,7 @@ async def google_search_func(answers, text):
         try:
             msg = f"""
 [{i['titles']}]({i['links']})
-```{i['descriptions']}```"""
+{i['descriptions']}"""
             
             answers.append(
                 InlineQueryResultArticle(
