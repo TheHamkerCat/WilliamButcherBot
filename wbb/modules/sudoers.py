@@ -8,7 +8,7 @@ import psutil
 import asyncio
 from sys import version as pyver
 from wbb import app, SUDOERS, bot_start_time, BOT_ID, USERBOT_USERNAME
-from wbb.utils import nekobin, formatter
+from wbb.utils import formatter
 from wbb.utils.errors import capture_err
 from wbb.utils.dbfunctions import (
     is_gbanned_user,

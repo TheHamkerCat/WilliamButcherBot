@@ -8,7 +8,7 @@ from wbb import app, FERNET_ENCRYPTION_KEY
 from wbb.utils import random_line
 from wbb.utils.json_prettify import json_prettify
 from wbb.utils.fetch import fetch
-from wbb.utils.nekobin import neko
+from wbb.utils.pastebin import paste
 from wbb.utils.errors import capture_err
 
 __MODULE__ = "Misc"
@@ -219,8 +219,8 @@ async def json_fetch(_, message):
         if len(data) < 4090:
             await message.reply_text(data)
         else:
-            neko_link = await neko(data)
-            await message.reply_text(f"[OUTPUT_TOO_LONG]({neko_link})", disable_web_page_preview=True)
+            link = await paste(data)
+            await message.reply_text(f"[OUTPUT_TOO_LONG]({link})", disable_web_page_preview=True)
     except Exception as e:
         await message.reply_text(str(e))
         print(str(e))
