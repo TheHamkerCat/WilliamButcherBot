@@ -1,29 +1,38 @@
 """
- Thanks to @dashezup for this module
+ Thanks to @dashezup for this idea
  Repo - https://github.com/dashezup/tgbot
 """
 
 import asyncio
-from datetime import datetime
-from pyrogram import filters
 from wbb import app, WELCOME_DELAY_KICK_SEC
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ChatPermissions, User
-from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant, ChatAdminRequired
+from wbb.modules.admin import member_permissions
 from wbb.utils.errors import capture_err
 from wbb.utils.filter_groups import welcome_captcha_group
-#from wbb.utils.dbfunctions import is_gbanned_user
-from random import randint, shuffle
+from wbb.utils.dbfunctions import (
+        is_gbanned_user, is_captcha_on, captcha_on, captcha_off
+        )
+from pyrogram.types import (
+        Message, InlineKeyboardMarkup,
+        InlineKeyboardButton, ChatPermissions, User
+         )
+from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant, ChatAdminRequired
 from pyrogram import emoji
+from pyrogram import filters
+from random import randint, shuffle
+from datetime import datetime
+
 
 @app.on_message(filters.new_chat_members, group=welcome_captcha_group)
 @capture_err
 async def welcome(_, message: Message):
     """Mute new member and send message with button"""
+    if not await is_captcha_on(message.chat.id):
+        return
     for member in message.new_chat_members:
         try:
-            #if await is_gbanned_user(member.id):
-            #    await message.chat.kick_member(member.id)
-            #    continue
+            if await is_gbanned_user(member.id):
+                await message.chat.kick_member(member.id)
+                continue
             if member.is_bot:
                 continue  # ignore bots
             text = (f"Welcome, {(member.mention())}\nAre you human?\n"
@@ -33,28 +42,28 @@ async def welcome(_, message: Message):
             continue
 
         keyboard = [
-                InlineKeyboardButton(
-                    f"{emoji.BRAIN}",
-                    callback_data=f"pressed_button {emoji.BRAIN} {member.id}"
-                ),
-                InlineKeyboardButton(
-                    f"{emoji.CHECK_MARK_BUTTON}",
-                    callback_data=f"pressed_button {emoji.CHECK_MARK_BUTTON} {member.id}"
-                ),
-                InlineKeyboardButton(
-                    f"{emoji.CROSS_MARK}",
-                    callback_data=f"pressed_button {emoji.CROSS_MARK} {member.id}"
-                ),
-                InlineKeyboardButton(
-                    f"{emoji.ROBOT}",
-                    callback_data=f"pressed_button {emoji.ROBOT} {member.id}"
-                )
-            ]
+            InlineKeyboardButton(
+                f"{emoji.BRAIN}",
+                callback_data=f"pressed_button {emoji.BRAIN} {member.id}"
+            ),
+            InlineKeyboardButton(
+                f"{emoji.CHECK_MARK_BUTTON}",
+                callback_data=f"pressed_button {emoji.CHECK_MARK_BUTTON} {member.id}"
+            ),
+            InlineKeyboardButton(
+                f"{emoji.CROSS_MARK}",
+                callback_data=f"pressed_button {emoji.CROSS_MARK} {member.id}"
+            ),
+            InlineKeyboardButton(
+                f"{emoji.ROBOT}",
+                callback_data=f"pressed_button {emoji.ROBOT} {member.id}"
+            )
+        ]
         shuffle(keyboard)
-        keyb = InlineKeyboardMarkup([keyboard])
+        keyboard = InlineKeyboardMarkup([keyboard])
         button_message = await message.reply(
             text,
-            reply_markup=keyb,
+            reply_markup=keyboard,
             quote=True
         )
         asyncio.create_task(kick_restricted_after_delay(
@@ -75,6 +84,30 @@ async def callback_query_welcome_button(client, callback_query):
     pending_user_id = pending_user.id
     if answer != emoji.CHECK_MARK_BUTTON:
         await callback_query.answer("Yeah, It's Wrong.")
+        keyboard = [
+            InlineKeyboardButton(
+                f"{emoji.BRAIN}",
+                callback_data=f"pressed_button {emoji.BRAIN} {pending_user_id}"
+            ),
+            InlineKeyboardButton(
+                f"{emoji.CHECK_MARK_BUTTON}",
+                callback_data=f"pressed_button {emoji.CHECK_MARK_BUTTON} {pending_user_id}"
+            ),
+            InlineKeyboardButton(
+                f"{emoji.CROSS_MARK}",
+                callback_data=f"pressed_button {emoji.CROSS_MARK} {pending_user_id}"
+            ),
+            InlineKeyboardButton(
+                f"{emoji.ROBOT}",
+                callback_data=f"pressed_button {emoji.ROBOT} {pending_user_id}"
+            )
+        ]
+        shuffle(keyboard)
+        keyboard = InlineKeyboardMarkup([keyboard])
+        await button_message.edit(
+            text=button_message.text,
+            reply_markup=keyboard
+        )
         return
     if pending_user_id == pressed_user_id:
         await callback_query.answer("Captcha passed successfully!")
@@ -117,3 +150,28 @@ async def _ban_restricted_user_until_date(group_chat,
             await group_chat.kick_member(user_id, until_date=until_date)
     except UserNotParticipant:
         pass
+
+
+@app.on_message(filters.command("captcha"))
+async def captcha_state(_, message):
+    usage = "**Usage:**\n/captcha [ON|OFF]"
+    if len(message.command) != 2:
+        await message.reply_text(usage)
+        return
+    user_id = message.from_user.id
+    chat_id = message.chat.id
+    permissions = await member_permissions(chat_id, user_id)
+    if "can_restrict_members" not in permissions:
+        await message.reply_text("You don't have enough permissions.")
+        return
+    state = message.text.split(None, 1).strip()
+    state = state.lower()
+    if state == "on":
+        await captcha_on(chat_id)
+        await message.reply_text("Enabled Captcha For New Users.")
+    elif state == "off":
+        await captcha_off(chat_id)
+        await message.reply_text("Disabled Captcha For New Users.")
+    else:
+        await message.reply_text(usage)
+
