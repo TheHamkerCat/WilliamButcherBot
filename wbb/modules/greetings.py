@@ -168,7 +168,7 @@ async def captcha_state(_, message):
     if "can_restrict_members" not in permissions:
         await message.reply_text("You don't have enough permissions.")
         return
-    state = message.text.split(None, 1).strip()
+    state = message.text.split(None, 1)[1].strip()
     state = state.lower()
     if state == "on":
         await captcha_on(chat_id)
