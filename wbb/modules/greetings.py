@@ -21,6 +21,9 @@ from pyrogram import filters
 from random import randint, shuffle
 from datetime import datetime
 
+__MODULE__ = "Captcha"
+__HELP__ = "/captcha [ON|OFF] - Enable/Disable Captcha."
+
 
 @app.on_message(filters.new_chat_members, group=welcome_captcha_group)
 @capture_err
@@ -153,6 +156,7 @@ async def _ban_restricted_user_until_date(group_chat,
 
 
 @app.on_message(filters.command("captcha"))
+@capture_err
 async def captcha_state(_, message):
     usage = "**Usage:**\n/captcha [ON|OFF]"
     if len(message.command) != 2:
