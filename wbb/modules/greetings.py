@@ -155,7 +155,7 @@ async def _ban_restricted_user_until_date(group_chat,
         pass
 
 
-@app.on_message(filters.command("captcha"))
+@app.on_message(filters.command("captcha") & ~filters.private)
 @capture_err
 async def captcha_state(_, message):
     usage = "**Usage:**\n/captcha [ON|OFF]"
