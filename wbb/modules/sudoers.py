@@ -1,8 +1,7 @@
-import re
 import time
 import os
 import subprocess
-from pyrogram import filters, types
+from pyrogram import filters
 import speedtest
 import psutil
 import asyncio

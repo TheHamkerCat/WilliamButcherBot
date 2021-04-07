@@ -13,6 +13,7 @@ from time import time
 from wbb.utils.fetch import fetch
 from pykeyboard import InlineKeyboard
 from sys import version as pyver
+import sys
 from motor import version as mongover
 from pyrogram import __version__ as pyrover
 import aiohttp
