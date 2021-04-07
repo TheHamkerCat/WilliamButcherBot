@@ -3,6 +3,7 @@ from pyrogram.types import ChatPermissions
 from wbb import SUDOERS, app, BOT_ID
 from wbb.utils.errors import capture_err
 from wbb.utils.dbfunctions import add_warn, get_warn, remove_warns, int_to_alpha
+import asyncio
 
 __MODULE__ = "Admin"
 __HELP__ = '''/ban - Ban A User
@@ -123,6 +124,7 @@ async def kick(_, message):
                 await message.reply_text("You Wanna Kick The Elevated One?")
             else:
                 await message.chat.kick_member(username)
+                await asyncio.sleep(2)
                 await message.chat.unban_member(username)
                 await message.reply_text(f"Kicked")
         elif len(message.command) == 1 and message.reply_to_message:
@@ -131,6 +133,7 @@ async def kick(_, message):
                 await message.reply_text("You Wanna Kick The Elevated One?")
             else:
                 await message.reply_to_message.chat.kick_member(user_id)
+                await asyncio.sleep(2)
                 await message.reply_to_message.chat.unban_member(user_id)
                 await message.reply_text("Kicked!")
         else:
