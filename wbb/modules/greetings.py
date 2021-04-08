@@ -79,45 +79,47 @@ async def callback_query_welcome_button(client, callback_query):
     """After the new member presses the button, set his permissions to
     chat permissions, delete button message and join message
     """
-    button_message = callback_query.message
     data = callback_query.data
-    answer = data.split(None, 2)[1]
     pending_user = await app.get_users(int(data.split(None, 2)[2]))
     pressed_user_id = callback_query.from_user.id
     pending_user_id = pending_user.id
-    if answer != emoji.CHECK_MARK_BUTTON:
-        await callback_query.answer("Yeah, It's Wrong.")
-        keyboard = [
-            InlineKeyboardButton(
-                f"{emoji.BRAIN}",
-                callback_data=f"pressed_button {emoji.BRAIN} {pending_user_id}"
-            ),
-            InlineKeyboardButton(
-                f"{emoji.CHECK_MARK_BUTTON}",
-                callback_data=f"pressed_button {emoji.CHECK_MARK_BUTTON} {pending_user_id}"
-            ),
-            InlineKeyboardButton(
-                f"{emoji.CROSS_MARK}",
-                callback_data=f"pressed_button {emoji.CROSS_MARK} {pending_user_id}"
-            ),
-            InlineKeyboardButton(
-                f"{emoji.ROBOT}",
-                callback_data=f"pressed_button {emoji.ROBOT} {pending_user_id}"
-            )
-        ]
-        shuffle(keyboard)
-        keyboard = InlineKeyboardMarkup([keyboard])
-        await button_message.edit(
-            text=button_message.text,
-            reply_markup=keyboard
-        )
-        return
+    button_message = callback_query.message 
+    answer = data.split(None, 2)[1]
     if pending_user_id == pressed_user_id:
+        if answer != emoji.CHECK_MARK_BUTTON:
+            await callback_query.answer("Yeah, It's Wrong.")
+            keyboard = [
+                InlineKeyboardButton(
+                    f"{emoji.BRAIN}",
+                    callback_data=f"pressed_button {emoji.BRAIN} {pending_user_id}"
+                ),
+                InlineKeyboardButton(
+                    f"{emoji.CHECK_MARK_BUTTON}",
+                    callback_data=f"pressed_button {emoji.CHECK_MARK_BUTTON} {pending_user_id}"
+                ),
+                InlineKeyboardButton(
+                    f"{emoji.CROSS_MARK}",
+                    callback_data=f"pressed_button {emoji.CROSS_MARK} {pending_user_id}"
+                ),
+                InlineKeyboardButton(
+                    f"{emoji.ROBOT}",
+                    callback_data=f"pressed_button {emoji.ROBOT} {pending_user_id}"
+                )
+            ]
+            shuffle(keyboard)
+            keyboard = InlineKeyboardMarkup([keyboard])
+            await button_message.edit(
+                text=button_message.text,
+                reply_markup=keyboard
+            )
+            return
         await callback_query.answer("Captcha passed successfully!")
         await button_message.chat.unban_member(pending_user_id)
         await button_message.delete()
+        return
     else:
         await callback_query.answer("This is not for you")
+        return
 
 
 async def kick_restricted_after_delay(delay, button_message: Message, user: User):
