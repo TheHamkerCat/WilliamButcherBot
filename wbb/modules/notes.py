@@ -50,6 +50,7 @@ async def get_notes(_, message):
         msg = f"List of notes in {message.chat.title}\n"
         for note in _notes:
             msg += f"**-** `{note}`\n"
+        msg += "Use **/get note_name** to get a note."
         await message.reply_text(msg)
 
 
