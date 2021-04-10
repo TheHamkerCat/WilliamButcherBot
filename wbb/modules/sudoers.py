@@ -91,7 +91,7 @@ async def get_stats(_, message):
 @capture_err
 async def ban_globally(_, message):
     if not message.reply_to_message:
-        if len(message.command) != 3:
+        if len(message.command) < 3:
             await message.reply_text("**Usage**\n/gban [USERNAME | USER_ID] [REASON]")
             return
         user = message.text.split(None, 2)[1]
@@ -139,7 +139,7 @@ __**New Global Ban**__
                 await message.reply_text("User Gbanned, But This Gban Wasn't Logged, Add Bot In GBAN_LOG_GROUP")
                 return
         return
-    if len(message.command) != 2:
+    if len(message.command) < 2:
         await message.reply_text("**Usage**\n/gban [REASON]")
         return
     from_user_id = message.from_user.id
