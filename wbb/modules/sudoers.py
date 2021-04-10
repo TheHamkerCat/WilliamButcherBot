@@ -6,7 +6,10 @@ import speedtest
 import psutil
 import asyncio
 from sys import version as pyver
-from wbb import app, SUDOERS, bot_start_time, BOT_ID, USERBOT_USERNAME
+from wbb import (
+        app, SUDOERS, bot_start_time, BOT_ID,
+        USERBOT_USERNAME, GBAN_LOG_GROUP_ID
+        )
 from wbb.utils import formatter
 from wbb.utils.errors import capture_err
 from wbb.utils.dbfunctions import (
@@ -88,10 +91,11 @@ async def get_stats(_, message):
 @capture_err
 async def ban_globally(_, message):
     if not message.reply_to_message:
-        if len(message.command) != 2:
-            await message.reply_text("Reply to a user's message or give username/user_id.")
+        if len(message.command) != 3:
+            await message.reply_text("**Usage**\n/gban [USERNAME | USER_ID] [REASON]")
             return
-        user = message.text.split(None, 1)[1]
+        user = message.text.split(None, 2)[1]
+        reason = message.text.split(None, 2)[2]
         if "@" in user:
             user = user.replace("@", "")
         user = (await app.get_users(user))
@@ -106,9 +110,11 @@ async def ban_globally(_, message):
             served_chats = await get_served_chats()
             m = await message.reply_text(f"**{user.mention} Will Be Banned  Globally In {len(served_chats)} Seconds.**")
             await add_gban_user(user.id)
+            number_of_chats = 0
             for served_chat in served_chats:
                 try:
                     await app.kick_chat_member(served_chat['chat_id'], user.id)
+                    number_of_chats += 1
                     await asyncio.sleep(1)
                 except Exception:
                     pass
@@ -119,12 +125,27 @@ async def ban_globally(_, message):
             except Exception:
                 pass
             await m.edit(f"Banned {user.mention} Globally!")
+            ban_text = f"""
+__**New Global Ban**__
+**Origin:** {message.chat.title} [`{message.chat.id}`]
+**Admin:** {from_user.mention}
+**Banned User:** {user.mention}
+**Banned User ID:** `{user.id}`
+**Reason:** __{reason}__
+**Chats: `{number_of_chats}`"""
+            try:
+                await app.send_message(GBAN_LOG_GROUP_ID, text=ban_text)
+            except Exception:
+                await message.reply_text("User Gbanned, But This Gban Wasn't Logged, Add Bot In GBAN_LOG_GROUP")
+                return
         return
-
+    if len(message.command) != 2:
+        await message.reply_text("**Usage**\n/gban [REASON]")
+        return
     from_user_id = message.from_user.id
+    from_user_mention = message.from_user.mention
     user_id = message.reply_to_message.from_user.id
     mention = message.reply_to_message.from_user.mention
-    from_user_mention = message.from_user.mention
     if user_id == from_user_id:
         await message.reply_text("You want to gban yourself? FOOL!")
     elif user_id == BOT_ID:
@@ -138,9 +159,11 @@ async def ban_globally(_, message):
         else:
             served_chats = await get_served_chats()
             m = await message.reply_text(f"**{mention} Will Be Banned  Globally In {len(served_chats)} Seconds.**")
+            number_of_chats = 0
             for served_chat in served_chats:
                 try:
                     await app.kick_chat_member(served_chat['chat_id'], user_id)
+                    number_of_chats += 1
                     await asyncio.sleep(1)
                 except Exception:
                     pass
@@ -153,6 +176,19 @@ You can appeal for this ban by talking to {from_user_mention}.""")
             except Exception:
                 pass
             await m.edit(f"Banned {mention} Globally!")
+            ban_text = f"""
+__**New Global Ban**__
+**Origin:** {message.chat.title} [`{message.chat.id}`]
+**Admin:** {from_user.mention}
+**Banned User:** {user.mention}
+**Banned User ID:** `{user.id}`
+**Reason:** __{reason}__
+**Chats: `{number_of_chats}`"""
+            try:
+                await app.send_message(GBAN_LOG_GROUP_ID, text=ban_text)
+            except Exception:
+                await message.reply_text("User Gbanned, But This Gban Wasn't Logged, Add Bot In GBAN_LOG_GROUP")
+                return
 
 # Ungban
 
