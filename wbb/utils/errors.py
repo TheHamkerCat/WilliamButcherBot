@@ -4,6 +4,7 @@ from functools import wraps
 from wbb import app, LOG_GROUP_ID
 from pyrogram.errors.exceptions.forbidden_403 import ChatWriteForbidden
 
+
 def split_limits(text):
     if len(text) < 2048:
         return [text]

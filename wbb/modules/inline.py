@@ -1,4 +1,3 @@
-import sys
 from wbb import app
 from wbb.utils.inlinefuncs import (
         google_search_func, urban_func, translate_func,
@@ -17,6 +16,7 @@ bitly [URL] - Shorten A Link"""
 
 
 """ Inspiration From https://github.com/pokurt/Nana-Remix/blob/master/nana/plugins/assistant/inline_mod/alive.py """
+
 
 @app.on_message(filters.command("inline"))
 async def inline_help(_, message):
@@ -85,5 +85,5 @@ async def inline_query_handler(client, query):
                 cache_time=2
             )
 
-    except (IndexError, TypeError) as e:
+    except (IndexError, TypeError):
         return

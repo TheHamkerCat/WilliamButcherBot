@@ -10,7 +10,7 @@ from Python_ARQ import ARQ
 import time
 
 SUDOERS = SUDO_USERS_ID
-
+MAIN_CHATS = MAIN_CHATS
 GBAN_LOG_GROUP_ID = GBAN_LOG_GROUP_ID
 FERNET_ENCRYPTION_KEY = FERNET_ENCRYPTION_KEY
 WELCOME_DELAY_KICK_SEC = WELCOME_DELAY_KICK_SEC
@@ -20,7 +20,6 @@ MOD_NOLOAD = []
 bot_start_time = time.time()
 mongo_client = MongoClient(MONGO_DB_URI)
 db = mongo_client.wbb
-
 
 
 app2 = Client(

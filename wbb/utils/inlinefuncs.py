@@ -1,6 +1,6 @@
 from wbb import (
         arq, app, app2, USERBOT_USERNAME,
-        BOT_USERNAME, LOG_GROUP_ID )
+        BOT_USERNAME, LOG_GROUP_ID)
 from pyrogram.types import (
     InlineQueryResultArticle,
     InputTextMessageContent,
@@ -18,6 +18,7 @@ from motor import version as mongover
 from pyrogram import __version__ as pyrover
 import aiohttp
 import json
+
 
 async def alive_function(answers):
     buttons = InlineKeyboard(row_width=1)
@@ -77,7 +78,7 @@ async def urban_func(answers, text):
 **Definition:** __{results[i].definition}__
 
 **Example:** __{results[i].example}__"""
-        
+
         answers.append(
             InlineQueryResultArticle(
                 title=results[i].word,
@@ -94,7 +95,7 @@ async def google_search_func(answers, text):
             msg = f"""
 [{i['titles']}]({i['links']})
 {i['descriptions']}"""
-            
+
             answers.append(
                 InlineQueryResultArticle(
                     title=i['titles'],

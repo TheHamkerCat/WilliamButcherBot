@@ -7,9 +7,9 @@ import psutil
 import asyncio
 from sys import version as pyver
 from wbb import (
-        app, SUDOERS, bot_start_time, BOT_ID,
-        USERBOT_USERNAME, GBAN_LOG_GROUP_ID
-        )
+    app, SUDOERS, bot_start_time, BOT_ID,
+    USERBOT_USERNAME, GBAN_LOG_GROUP_ID
+)
 from wbb.utils import formatter
 from wbb.utils.errors import capture_err
 from wbb.utils.dbfunctions import (
@@ -132,7 +132,7 @@ __**New Global Ban**__
 **Banned User:** {user.mention}
 **Banned User ID:** `{user.id}`
 **Reason:** __{reason}__
-**Chats: `{number_of_chats}`"""
+**Chats:** `{number_of_chats}`"""
             try:
                 await app.send_message(GBAN_LOG_GROUP_ID, text=ban_text)
             except Exception:
@@ -183,7 +183,7 @@ __**New Global Ban**__
 **Banned User:** {user.mention}
 **Banned User ID:** `{user.id}`
 **Reason:** __{reason}__
-**Chats: `{number_of_chats}`"""
+**Chats:** `{number_of_chats}`"""
             try:
                 await app.send_message(GBAN_LOG_GROUP_ID, text=ban_text)
             except Exception:
@@ -271,4 +271,5 @@ async def broadcast_message(_, message):
 @app.on_message(filters.command("update") & filters.user(SUDOERS))
 async def update_restart(_, message):
     await message.reply_text(f'```{subprocess.check_output(["git", "pull"]).decode("UTF-8")}```')
-    os.execvp(f"python{str(pyver.split(' ')[0])[:3]}", [f"python{str(pyver.split(' ')[0])[:3]}", "-m", "wbb"])
+    os.execvp(f"python{str(pyver.split(' ')[0])[:3]}", [
+              f"python{str(pyver.split(' ')[0])[:3]}", "-m", "wbb"])

@@ -18,6 +18,7 @@ from pyrogram import filters
 
 import asyncio
 
+
 @app.on_message(filters.text, group=global_stats_group)
 @capture_err
 async def chat_watcher(_, message):
@@ -54,7 +55,7 @@ async def global_stats(_, message):
         try:
             await app.get_chat_members(served_chat, BOT_ID)
             await asyncio.sleep(3)
-        except Exception as e:
+        except Exception:
             await remove_served_chat(served_chat)
             served_chats.remove(served_chat)
             pass
@@ -66,7 +67,6 @@ async def global_stats(_, message):
             await remove_served_chat(served_chat)
             pass
         await asyncio.sleep(3)
-        
 
     # Gbans count
     gbans = await get_gbans_count()

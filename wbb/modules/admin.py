@@ -126,7 +126,7 @@ async def kick(_, message):
                 await message.chat.kick_member(username)
                 await asyncio.sleep(2)
                 await message.chat.unban_member(username)
-                await message.reply_text(f"Kicked")
+                await message.reply_text("Kicked")
         elif len(message.command) == 1 and message.reply_to_message:
             user_id = message.reply_to_message.from_user.id
             if user_id in SUDOERS:
@@ -161,7 +161,7 @@ async def ban(_, message):
                 await message.reply_text("You Wanna Ban The Elevated One?")
             else:
                 await message.chat.kick_member(username)
-                await message.reply_text(f"Banned!")
+                await message.reply_text("Banned!")
 
         elif len(message.command) == 1 and message.reply_to_message:
             user_id = message.reply_to_message.from_user.id
@@ -192,7 +192,7 @@ async def unban(_, message):
         if len(message.command) == 2:
             username = message.text.split(None, 1)[1]
             await message.chat.unban_member(username)
-            await message.reply_text(f"Unbanned!")
+            await message.reply_text("Unbanned!")
         elif len(message.command) == 1 and message.reply_to_message:
             user_id = message.reply_to_message.from_user.id
             await message.chat.unban_member(user_id)
@@ -317,7 +317,7 @@ async def mute(_, message):
                     user_id,
                     permissions=ChatPermissions()
                 )
-                await message.reply_text(f"Muted!")
+                await message.reply_text("Muted!")
 
         elif len(message.command) == 1 and message.reply_to_message:
             user_id = message.reply_to_message.from_user.id
@@ -350,7 +350,7 @@ async def unmute(_, message):
         if len(message.command) == 2:
             username = message.text.split(None, 1)[1]
             await message.chat.unban_member(username)
-            await message.reply_text(f"Unmuted!")
+            await message.reply_text("Unmuted!")
         elif len(message.command) == 1 and message.reply_to_message:
             user_id = message.reply_to_message.from_user.id
             await message.chat.unban_member(user_id)

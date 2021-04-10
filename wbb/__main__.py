@@ -4,7 +4,7 @@ import importlib
 import uvloop
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from wbb import app, app2, BOT_NAME, BOT_USERNAME
+from wbb import app, BOT_NAME, BOT_USERNAME
 from wbb.utils import paginate_modules
 from wbb.modules.sudoers import bot_sys_stats
 from wbb.modules import ALL_MODULES
@@ -46,6 +46,7 @@ async def start_bot():
     print("+===============+===============+===============+===============+")
     print("Bot Started Successfully as {}!".format(BOT_NAME))
     await idle()
+
 
 @app.on_message(filters.command(["help", "start"]))
 async def help_command(_, message):

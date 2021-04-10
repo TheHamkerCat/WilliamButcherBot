@@ -1,11 +1,8 @@
 import os
-import aiofiles
 from pyrogram import filters
 from wbb.utils.pastebin import paste
 from wbb import app
 from wbb.utils.errors import capture_err
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputMediaPhoto
-from random import randint
 
 __MODULE__ = "Paste"
 __HELP__ = "/paste - To Paste Replied Text Or Document To Nekobin"

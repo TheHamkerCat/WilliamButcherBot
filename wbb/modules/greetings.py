@@ -18,7 +18,7 @@ from pyrogram.types import (
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant, ChatAdminRequired
 from pyrogram import emoji
 from pyrogram import filters
-from random import randint, shuffle
+from random import shuffle
 from datetime import datetime
 
 __MODULE__ = "Captcha"
@@ -83,7 +83,7 @@ async def callback_query_welcome_button(client, callback_query):
     pending_user = await app.get_users(int(data.split(None, 2)[2]))
     pressed_user_id = callback_query.from_user.id
     pending_user_id = pending_user.id
-    button_message = callback_query.message 
+    button_message = callback_query.message
     answer = data.split(None, 2)[1]
     if pending_user_id == pressed_user_id:
         if answer != emoji.CHECK_MARK_BUTTON:
@@ -180,4 +180,3 @@ async def captcha_state(_, message):
         await message.reply_text("Disabled Captcha For New Users.")
     else:
         await message.reply_text(usage)
-
