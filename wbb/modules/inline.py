@@ -1,21 +1,22 @@
 from wbb import app
 from wbb.utils.inlinefuncs import (
         google_search_func, urban_func, translate_func,
-        alive_function, webss, shortify
+        alive_function, webss, shortify, wall_func,
+        saavn_func, deezer_func
         )
 from pyrogram import filters
 
 __MODULE__ = "Inline"
 __HELP__ = """
+alive - Check Bot's Stats.
 tr [LANGUAGE_CODE] [QUERY] - Translate Text.
 ud [QUERY] - Urban Dictionary Query.
 google [Query] - Google Search.
-alive - Check Bot's Stats.
-webss [URL] - Take A Screenshot Of A Website.
-bitly [URL] - Shorten A Link"""
-
-
-""" Inspiration From https://github.com/pokurt/Nana-Remix/blob/master/nana/plugins/assistant/inline_mod/alive.py """
+webss [URL] - Take Screenshot Of A Website.
+bitly [URL] - Shorten A Link.
+wall [Query] - Find Wallpapers.
+saavn [SONG_NAME] - Get Songs From Saavn.
+deezer [SONG_NAME]- Get Songs From Deezer."""
 
 
 @app.on_message(filters.command("inline"))
@@ -85,5 +86,29 @@ async def inline_query_handler(client, query):
                 cache_time=2
             )
 
-    except (IndexError, TypeError):
+        elif text.split()[0] == "wall":
+            tex = text.split(None, 1)[1]
+            answerss = await wall_func(answers, tex)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss
+            )
+
+        elif text.split()[0] == "saavn":
+            tex = text.split(None, 1)[1]
+            answerss = await saavn_func(answers, tex)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss
+            )
+
+        elif text.split()[0] == "deezer":
+            tex = text.split(None, 1)[1]
+            answerss = await deezer_func(answers, tex)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss
+            )
+
+    except (IndexError, TypeError, KeyError):
         return

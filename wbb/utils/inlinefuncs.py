@@ -110,6 +110,61 @@ async def google_search_func(answers, text):
     return answers
 
 
+async def wall_func(answers, text):
+    results = await arq.wall(text)
+    for i in results:
+        try:
+            answers.append(
+                InlineQueryResultPhoto(
+                    photo_url=results[i].url_image,
+                    thumb_url=results[i].url_thumb,
+                    caption=f"[Source]({results[i].url_image})"
+                ))
+        except KeyError:
+            pass
+    return answers
+
+
+async def saavn_func(answers, text):
+    results = await arq.saavn(text)
+    for i in results:
+        caption = f"""
+**Title:** {results[i].song}
+**Album:** {results[i].album}
+**Duration:** {results[i].duration} Seconds
+**Release:** {results[i].year}
+**Singers:** {results[i].singers}
+**Link:** [Here]({results[i].media_url})"""
+        try:
+            answers.append(
+                InlineQueryResultPhoto(
+                    photo_url=results[i].image,
+                    caption=caption,
+                ))
+        except KeyError:
+            pass
+    return answers
+
+
+async def deezer_func(answers, text):
+    results = await arq.deezer(text, 5)
+    for i in results:
+        caption = f"""
+**Title:** {results[i].title}
+**Duration:** {results[i].duration} Seconds
+**Artist:** {results[i].artist}
+**Link:** [Here]({results[i].url})"""
+        try:
+            answers.append(
+                InlineQueryResultPhoto(
+                    photo_url=results[i].thumbnail,
+                    caption=caption,
+                ))
+        except KeyError:
+            pass
+    return answers
+
+
 async def webss(url):
     start_time = time()
     if "." not in url:
