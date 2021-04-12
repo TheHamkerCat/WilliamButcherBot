@@ -179,9 +179,9 @@ You can appeal for this ban by talking to {from_user_mention}.""")
             ban_text = f"""
 __**New Global Ban**__
 **Origin:** {message.chat.title} [`{message.chat.id}`]
-**Admin:** {from_user.mention}
-**Banned User:** {user.mention}
-**Banned User ID:** `{user.id}`
+**Admin:** {from_user_mention}
+**Banned User:** {mention}
+**Banned User ID:** `{user_id}`
 **Reason:** __{reason}__
 **Chats:** `{number_of_chats}`"""
             try:
