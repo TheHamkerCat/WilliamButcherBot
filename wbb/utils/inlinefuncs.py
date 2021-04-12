@@ -1,7 +1,7 @@
 from wbb import (
-        arq, app, app2, USERBOT_USERNAME,
-        BOT_USERNAME, LOG_GROUP_ID
-        )
+    arq, app, app2, USERBOT_USERNAME,
+    BOT_USERNAME, LOG_GROUP_ID
+)
 from pyrogram.types import (
     InlineQueryResultArticle,
     InputTextMessageContent,
@@ -25,26 +25,26 @@ import json
 async def inline_help_func(__HELP__):
     buttons = InlineKeyboard(row_width=2)
     buttons.add(
-            InlineKeyboardButton(
-                'Get More Help.',
-                url=f"t.me/{BOT_USERNAME}?start=start"
-            ),
-            InlineKeyboardButton(
-                "Go Inline!",
-                switch_inline_query_current_chat=""
-            )
-            )
+        InlineKeyboardButton(
+            'Get More Help.',
+            url=f"t.me/{BOT_USERNAME}?start=start"
+        ),
+        InlineKeyboardButton(
+            "Go Inline!",
+            switch_inline_query_current_chat=""
+        )
+    )
     answerss = [
-                InlineQueryResultArticle(
-                    title="Inline Commands",
-                    description="Help Related To Inline Usage.",
-                    input_message_content=InputTextMessageContent(__HELP__),
-                    reply_markup=buttons
-                    )
-                ]
+        InlineQueryResultArticle(
+            title="Inline Commands",
+            description="Help Related To Inline Usage.",
+            input_message_content=InputTextMessageContent(__HELP__),
+            thumb_url="https://hamker.me/cy00x5x.png",
+            reply_markup=buttons
+        )
+    ]
     answerss = await alive_function(answerss)
     return answerss
-
 
 
 async def alive_function(answers):
@@ -52,16 +52,16 @@ async def alive_function(answers):
     bot_state = 'Dead' if not await app.get_me() else 'Alive'
     ubot_state = 'Dead' if not await app2.get_me() else 'Alive'
     buttons.add(
-            InlineKeyboardButton(
-                'Stats',
-                callback_data='stats_callback'
-            ),
-            InlineKeyboardButton(
-                "Go Inline!",
-                switch_inline_query_current_chat=""
-            )
-            )
-            
+        InlineKeyboardButton(
+            'Stats',
+            callback_data='stats_callback'
+        ),
+        InlineKeyboardButton(
+            "Go Inline!",
+            switch_inline_query_current_chat=""
+        )
+    )
+
     msg = f"""
 **[William✨](https://github.com/thehamkercat/WilliamButcherBot):**
 **MainBot:** `{bot_state}`
@@ -76,6 +76,7 @@ async def alive_function(answers):
         InlineQueryResultArticle(
             title='Alive',
             description="Check Bot's Stats",
+            thumb_url="https://static2.aniimg.com/upload/20170515/414/c/d/7/cd7EEF.jpg",
             input_message_content=InputTextMessageContent(
                 msg,
                 disable_web_page_preview=True
@@ -140,7 +141,7 @@ async def google_search_func(answers, text):
                     input_message_content=InputTextMessageContent(
                         msg,
                         disable_web_page_preview=True
-                        )
+                    )
                 ))
         except KeyError:
             pass
@@ -168,11 +169,11 @@ async def saavn_func(answers, text):
     for i in results:
         buttons = InlineKeyboard(row_width=1)
         buttons.add(
-                InlineKeyboardButton(
-                    'Download | Play',
-                    url=results[i].media_url
-                    )
-                )
+            InlineKeyboardButton(
+                'Download | Play',
+                url=results[i].media_url
+            )
+        )
         buttons_list.append(buttons)
         duration = await time_convert(results[i].duration)
         caption = f"""
@@ -182,7 +183,7 @@ async def saavn_func(answers, text):
 **Release:** {results[i].year}
 **Singers:** {results[i].singers}"""
         description = f"{results[i].album} | {duration} " \
-                       + f"| {results[i].singers} ({results[i].year})"
+            + f"| {results[i].singers} ({results[i].year})"
         try:
             answers.append(
                 InlineQueryResultArticle(
@@ -190,12 +191,12 @@ async def saavn_func(answers, text):
                     input_message_content=InputTextMessageContent(
                         caption,
                         disable_web_page_preview=True
-                        ),
+                    ),
                     description=description,
                     thumb_url=results[i].image,
                     reply_markup=buttons_list[i]
                 ))
-        except KeyError:
+        except (KeyError, ValueError):
             pass
     return answers
 
@@ -206,11 +207,11 @@ async def deezer_func(answers, text):
     for i in results:
         buttons = InlineKeyboard(row_width=1)
         buttons.add(
-                InlineKeyboardButton(
-                    'Download | Play',
-                    url=results[i].url
-                    )
-                )
+            InlineKeyboardButton(
+                'Download | Play',
+                url=results[i].url
+            )
+        )
         buttons_list.append(buttons)
         duration = await time_convert(results[i].duration)
         caption = f"""
@@ -228,10 +229,10 @@ async def deezer_func(answers, text):
                     input_message_content=InputTextMessageContent(
                         caption,
                         disable_web_page_preview=True
-                        ),
+                    ),
                     reply_markup=buttons_list[i]
                 ))
-        except KeyError:
+        except (KeyError, ValueError):
             pass
     return answers
 
@@ -246,9 +247,9 @@ async def webss(url):
     await m.delete()
     a = []
     pic = InlineQueryResultPhoto(
-            photo_url=screenshot['url'],
-            caption=(f"`{url}`\n__Took {round(end_time - start_time)} Seconds.__")
-            )
+        photo_url=screenshot['url'],
+        caption=(f"`{url}`\n__Took {round(end_time - start_time)} Seconds.__")
+    )
     a.append(pic)
     return a
 
@@ -258,12 +259,12 @@ async def shortify(url):
     if "." not in url:
         return
     header = {
-            "Authorization": "Bearer ad39983fa42d0b19e4534f33671629a4940298dc",
-            'Content-Type': 'application/json'
-            }
+        "Authorization": "Bearer ad39983fa42d0b19e4534f33671629a4940298dc",
+        'Content-Type': 'application/json'
+    }
     payload = {
-            "long_url": f"{url}"
-            }
+        "long_url": f"{url}"
+    }
     payload = json.dumps(payload)
     async with aiohttp.ClientSession() as session:
         async with session.post("https://api-ssl.bitly.com/v4/shorten", headers=header, data=payload) as resp:
@@ -273,7 +274,46 @@ async def shortify(url):
     b = InlineQueryResultArticle(
         title="Link Shortened!",
         description=data['link'],
-        input_message_content=InputTextMessageContent(msg, disable_web_page_preview=True)
+        input_message_content=InputTextMessageContent(
+            msg, disable_web_page_preview=True)
     )
     a.append(b)
     return a
+
+
+async def torrent_func(answers, text):
+    results = await arq.torrent(text)
+    limit = 0
+    for i in results:
+        if limit > 48:
+            break
+        title = results[i].name
+        size = results[i].size
+        seeds = results[i].seeds
+        leechs = results[i].leechs
+        upload_date = results[i].uploaded + " Ago"
+        magnet = results[i].magnet
+        caption = f"""
+**Title:** __{title}__
+**Size:** __{size}__
+**Seeds:** __{seeds}__
+**Leechs:** __{leechs}__
+**Uploaded:** __{upload_date}__
+**Magnet:** __{magnet}__"""
+
+        description = f"{size} | {upload_date} | Seeds: {seeds}"
+        try:
+            answers.append(
+                InlineQueryResultArticle(
+                    title=title,
+                    description=description,
+                    input_message_content=InputTextMessageContent(
+                        caption,
+                        disable_web_page_preview=True
+                    )
+                )
+            )
+            limit += 1
+        except (KeyError, ValueError):
+            pass
+    return answers

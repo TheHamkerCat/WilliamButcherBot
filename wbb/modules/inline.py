@@ -2,7 +2,8 @@ from wbb import app
 from wbb.utils.inlinefuncs import (
         google_search_func, urban_func, translate_func,
         alive_function, webss, shortify, wall_func,
-        saavn_func, deezer_func, inline_help_func
+        saavn_func, deezer_func, inline_help_func,
+        torrent_func
         )
 from pyrogram import filters
 
@@ -11,12 +12,13 @@ __HELP__ = """
 **alive** - __Check Bot's Stats.__
 **tr [LANGUAGE_CODE] [QUERY]** - __Translate Text.__
 **ud [QUERY]** - __Urban Dictionary Query.__
-**google [Query]** - __Google Search.__
+**google [QUERY]** - __Google Search.__
 **webss [URL]** - __Take Screenshot Of A Website.__
 **bitly [URL]** - __Shorten A Link.__
 **wall [Query]** - __Find Wallpapers.__
 **saavn [SONG_NAME]** - __Get Songs From Saavn.__
-**deezer [SONG_NAME]** - __Get Songs From Deezer.__"""
+**deezer [SONG_NAME]** - __Get Songs From Deezer.__
+**torrent [QUERY] - __Torrent Search.__"""
 
 
 @app.on_message(filters.command("inline"))
@@ -109,6 +111,15 @@ async def inline_query_handler(client, query):
                 query.id,
                 results=answerss
             )
+        
+        elif text.split()[0] == "torrent":
+            tex = text.split(None, 1)[1]
+            answerss = await torrent_func(answers, tex)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=10
+            )
 
-    except (IndexError, TypeError, KeyError):
+    except (IndexError, TypeError, KeyError, ValueError):
         return
