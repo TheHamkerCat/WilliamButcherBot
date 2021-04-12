@@ -1,6 +1,7 @@
 from wbb import (
         arq, app, app2, USERBOT_USERNAME,
-        BOT_USERNAME, LOG_GROUP_ID)
+        BOT_USERNAME, LOG_GROUP_ID
+        )
 from pyrogram.types import (
     InlineQueryResultArticle,
     InputTextMessageContent,
@@ -11,6 +12,7 @@ from googletrans import Translator
 from search_engine_parser import GoogleSearch
 from time import time
 from wbb.utils.fetch import fetch
+from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
 from pykeyboard import InlineKeyboard
 from sys import version as pyver
 import sys
@@ -20,11 +22,46 @@ import aiohttp
 import json
 
 
+async def inline_help_func(__HELP__):
+    buttons = InlineKeyboard(row_width=2)
+    buttons.add(
+            InlineKeyboardButton(
+                'Get More Help.',
+                url=f"t.me/{BOT_USERNAME}?start=start"
+            ),
+            InlineKeyboardButton(
+                "Go Inline!",
+                switch_inline_query_current_chat=""
+            )
+            )
+    answerss = [
+                InlineQueryResultArticle(
+                    title="Inline Commands",
+                    description="Help Related To Inline Usage.",
+                    input_message_content=InputTextMessageContent(__HELP__),
+                    reply_markup=buttons
+                    )
+                ]
+    answerss = await alive_function(answerss)
+    return answerss
+
+
+
 async def alive_function(answers):
-    buttons = InlineKeyboard(row_width=1)
+    buttons = InlineKeyboard(row_width=2)
     bot_state = 'Dead' if not await app.get_me() else 'Alive'
     ubot_state = 'Dead' if not await app2.get_me() else 'Alive'
-    buttons.add(InlineKeyboardButton('Stats', callback_data='stats_callback'))
+    buttons.add(
+            InlineKeyboardButton(
+                'Stats',
+                callback_data='stats_callback'
+            ),
+            InlineKeyboardButton(
+                "Go Inline!",
+                switch_inline_query_current_chat=""
+            )
+            )
+            
     msg = f"""
 **[William✨](https://github.com/thehamkercat/WilliamButcherBot):**
 **MainBot:** `{bot_state}`
@@ -126,20 +163,37 @@ async def wall_func(answers, text):
 
 
 async def saavn_func(answers, text):
+    buttons_list = []
     results = await arq.saavn(text)
     for i in results:
+        buttons = InlineKeyboard(row_width=1)
+        buttons.add(
+                InlineKeyboardButton(
+                    'Download | Play',
+                    url=results[i].media_url
+                    )
+                )
+        buttons_list.append(buttons)
+        duration = await time_convert(results[i].duration)
         caption = f"""
 **Title:** {results[i].song}
 **Album:** {results[i].album}
-**Duration:** {results[i].duration} Seconds
+**Duration:** {duration}
 **Release:** {results[i].year}
-**Singers:** {results[i].singers}
-**Link:** [Here]({results[i].media_url})"""
+**Singers:** {results[i].singers}"""
+        description = f"{results[i].album} | {duration} " \
+                       + f"| {results[i].singers} ({results[i].year})"
         try:
             answers.append(
-                InlineQueryResultPhoto(
-                    photo_url=results[i].image,
-                    caption=caption,
+                InlineQueryResultArticle(
+                    title=results[i].song,
+                    input_message_content=InputTextMessageContent(
+                        caption,
+                        disable_web_page_preview=True
+                        ),
+                    description=description,
+                    thumb_url=results[i].image,
+                    reply_markup=buttons_list[i]
                 ))
         except KeyError:
             pass
@@ -147,18 +201,35 @@ async def saavn_func(answers, text):
 
 
 async def deezer_func(answers, text):
+    buttons_list = []
     results = await arq.deezer(text, 5)
     for i in results:
+        buttons = InlineKeyboard(row_width=1)
+        buttons.add(
+                InlineKeyboardButton(
+                    'Download | Play',
+                    url=results[i].url
+                    )
+                )
+        buttons_list.append(buttons)
+        duration = await time_convert(results[i].duration)
         caption = f"""
 **Title:** {results[i].title}
-**Duration:** {results[i].duration} Seconds
 **Artist:** {results[i].artist}
-**Link:** [Here]({results[i].url})"""
+**Duration:** {duration}
+**Source:** [Deezer]({results[i].source})"""
+        description = f"{results[i].artist} | {duration}"
         try:
             answers.append(
-                InlineQueryResultPhoto(
-                    photo_url=results[i].thumbnail,
-                    caption=caption,
+                InlineQueryResultArticle(
+                    title=results[i].title,
+                    thumb_url=results[i].thumbnail,
+                    description=description,
+                    input_message_content=InputTextMessageContent(
+                        caption,
+                        disable_web_page_preview=True
+                        ),
+                    reply_markup=buttons_list[i]
                 ))
         except KeyError:
             pass

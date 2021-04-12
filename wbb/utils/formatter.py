@@ -20,3 +20,13 @@ def get_readable_time(seconds: int) -> str:
     time_list.reverse()
     ping_time += ":".join(time_list)
     return ping_time
+
+
+# Convert seconds to mm:ss
+async def convert_seconds_to_minutes(seconds: int):
+    seconds = int(seconds)
+    seconds = seconds % (24 * 3600)
+    seconds %= 3600
+    minutes = seconds // 60
+    seconds %= 60
+    return "%02d:%02d" % (minutes, seconds)
