@@ -1,10 +1,10 @@
 from wbb import app
 from wbb.utils.inlinefuncs import (
-        google_search_func, urban_func, translate_func,
-        alive_function, webss, shortify, wall_func,
-        saavn_func, deezer_func, inline_help_func,
-        torrent_func
-        )
+    google_search_func, urban_func, translate_func,
+    alive_function, webss, shortify, wall_func,
+    saavn_func, deezer_func, inline_help_func,
+    torrent_func
+)
 from pyrogram import filters
 
 __MODULE__ = "Inline"
@@ -34,10 +34,10 @@ async def inline_query_handler(client, query):
         if text.strip() == '':
             answerss = await inline_help_func(__HELP__)
             await client.answer_inline_query(
-                    query.id,
-                    results=answerss,
-                    cache_time=10
-                    )
+                query.id,
+                results=answerss,
+                cache_time=10
+            )
             return
         elif text.split()[0] == "alive":
             answerss = await alive_function(answers)
@@ -111,7 +111,7 @@ async def inline_query_handler(client, query):
                 query.id,
                 results=answerss
             )
-        
+
         elif text.split()[0] == "torrent":
             tex = text.split(None, 1)[1]
             answerss = await torrent_func(answers, tex)

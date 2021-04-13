@@ -7,11 +7,12 @@ from wbb.modules.admin import member_permissions
 from wbb.utils.dbfunctions import is_antiservice_on, antiservice_on, antiservice_off
 
 __MODULE__ = "AntiService"
-__HELP__ = f"""
-Plugin to delete antiservice messages in a chat!
+__HELP__ = """
+Plugin to delete service messages in a chat!
 
 /antiservice [enable|disable]
 """
+
 
 @app.on_message(filters.command("antiservice") & ~filters.private)
 async def anti_service(_, message):
@@ -36,7 +37,6 @@ async def anti_service(_, message):
         await message.reply_text("Unknown Suffix, Use /antiservice [enable|disable]")
 
 
-
 @app.on_message(filters.service, group=11)
 async def delete_service(_, message):
     chat_id = message.chat.id
@@ -44,5 +44,6 @@ async def delete_service(_, message):
         if await is_antiservice_on(chat_id):
             await message.delete()
             return
-    except:
+    except Exception as e:
+        print(e)
         pass

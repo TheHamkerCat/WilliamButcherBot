@@ -426,6 +426,7 @@ async def captcha_off(chat_id: int):
 
 """Anti Service System"""
 
+
 async def is_antiservice_on(chat_id: int) -> bool:
     chat = await antiservicedb.find_one({"chat_id": chat_id})
     if not chat:
