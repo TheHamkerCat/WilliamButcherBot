@@ -10,6 +10,7 @@ chatsdb = db.chats
 gbansdb = db.gban
 coupledb = db.couple
 captchadb = db.captcha
+antiservicedb = db.antiservice
 
 """ Notes functions """
 
@@ -422,3 +423,25 @@ async def captcha_off(chat_id: int):
     if not is_captcha:
         return
     return await captchadb.insert_one({"chat_id": chat_id})
+
+"""Anti Service System"""
+
+async def is_antiservice_on(chat_id: int) -> bool:
+    chat = await antiservicedb.find_one({"chat_id": chat_id})
+    if not chat:
+        return True
+    return False
+
+
+async def antiservice_on(chat_id: int):
+    is_antiservice = await is_antiservice_on(chat_id)
+    if is_antiservice:
+        return
+    return await antiservicedb.delete_one({"chat_id": chat_id})
+
+
+async def antiservice_off(chat_id: int):
+    is_antiservice = await is_antiservice_on(chat_id)
+    if not is_antiservice:
+        return
+    return await antiservicedb.insert_one({"chat_id": chat_id})
