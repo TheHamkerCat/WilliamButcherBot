@@ -142,6 +142,7 @@ __**New Global Ban**__
     if len(message.command) < 2:
         await message.reply_text("**Usage**\n/gban [REASON]")
         return
+    reason = message.text.strip.split(None, 1)[1]
     from_user_id = message.from_user.id
     from_user_mention = message.from_user.mention
     user_id = message.reply_to_message.from_user.id

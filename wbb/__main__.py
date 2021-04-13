@@ -102,7 +102,7 @@ async def help_command(_, message):
                 ),
                 InlineKeyboardButton(
                     text="Support 👨",
-                    url="t.me/PatheticProgrammers"
+                    url="t.me/WBBSupport"
                 )
             ],
             [

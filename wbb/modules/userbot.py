@@ -148,4 +148,4 @@ async def shellrunner(client, message):
     else:
         await edit_or_reply(
             message,
-            text='**INPUT:**\n```{text}```\n\n**OUTPUT: **\n`No output`')
+            text=f'**INPUT:**\n```{text}```\n\n**OUTPUT: **\n`No output`')
