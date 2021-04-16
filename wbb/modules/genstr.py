@@ -14,11 +14,11 @@ Credits:
 
 __MODULE__ = "GenStr"
 __HELP__ = """
-This Module Can Be Used To Generate Session String Of A Bot/Userbot.
+This Module Can Be Used To Generate Session String For A Userbot.
 Send **/genstr** Command To The Bot In Private And Follow Instructions."""
 
 
-@app.on_message(filters.command("genstr") & filters.private, group=69)
+@app.on_message(filters.command("genstr") & filters.private)
 async def genstr(_, message):
     chat = message.chat
     while True:
