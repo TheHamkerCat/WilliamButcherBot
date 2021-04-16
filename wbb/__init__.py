@@ -5,6 +5,7 @@ from config import (
     MAIN_CHATS, GBAN_LOG_GROUP_ID
 )
 from pyrogram import Client
+from pyromod import listen
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from Python_ARQ import ARQ
 import time
