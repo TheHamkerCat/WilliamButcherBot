@@ -1,3 +1,4 @@
+*.jpg
 token.py
 *.raw
 images/
