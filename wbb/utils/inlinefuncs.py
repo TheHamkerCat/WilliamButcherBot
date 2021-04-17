@@ -320,3 +320,42 @@ async def torrent_func(answers, text):
         except (KeyError, ValueError):
             pass
     return answers
+
+
+async def youtube_func(answers, text):
+    buttons_list = []
+    results = await arq.youtube(text)
+    for i in results:
+        buttons = InlineKeyboard(row_width=1)
+        video_url = f"https://youtube.com{results[i].url_suffix}"
+        buttons.add(
+            InlineKeyboardButton(
+                'Watch',
+                url=video_url
+            )
+        )
+        buttons_list.append(buttons)
+        caption = f"""
+**Title:** {results[i].title}
+**Views:** {results[i].views}
+**Channel:** {results[i].channel}
+**Duration:** {results[i].duration}
+**Uploaded:** {results[i].publish_time}
+**Description:** {results[i].long_desc}"""
+        description = f"{results[i].views} | {results[i].channel} | " \
+                       + f"{results[i].duration} | {results[i].publish_time}"
+        try:
+            answers.append(
+                InlineQueryResultArticle(
+                    title=results[i].title,
+                    thumb_url=results[i].thumbnails[0],
+                    description=description,
+                    input_message_content=InputTextMessageContent(
+                        caption,
+                        disable_web_page_preview=True
+                    ),
+                    reply_markup=buttons_list[i]
+                ))
+        except (KeyError, ValueError):
+            pass
+    return answers
