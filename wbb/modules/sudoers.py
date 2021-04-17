@@ -26,7 +26,8 @@ __HELP__ = '''/speedtest - To Perform A Speedtest.
 /gstats - To Check Bot's Global Stats.
 /gban - To Ban A User Globally.
 /broadcast - To Broadcast A Message To All Groups.
-/update - To Update And Restart The Bot'''
+/update - To Update And Restart The Bot
+/install - To Install A Module'''
 
 
 # SpeedTest Module
@@ -272,5 +273,26 @@ async def broadcast_message(_, message):
 @app.on_message(filters.command("update") & filters.user(SUDOERS))
 async def update_restart(_, message):
     await message.reply_text(f'```{subprocess.check_output(["git", "pull"]).decode("UTF-8")}```')
+    os.execvp(f"python{str(pyver.split(' ')[0])[:3]}", [
+              f"python{str(pyver.split(' ')[0])[:3]}", "-m", "wbb"])
+
+# Install
+
+
+@app.on_message(filters.command("install") & filters.user(SUDOERS))
+async def install_module(_, message):
+    if not message.reply_to_message:
+        await message.reply_text("Reply To A .py File To Install It.")
+        return
+    if not message.reply_to_message.document:
+        await message.reply_text("Reply To A .py File To Install It.")
+        return
+    document = message.reply_to_message.document
+    if document.mime_type != "text/x-python":
+        await message.reply_text("INVALID_MIME_TYPE, Reply To A Correct .py File.")
+        return
+    m = await message.reply_text("**Installing Module**")
+    await message.reply_to_message.download(f"./wbb/modules/{document.file_name}")
+    await m.edit("**Restarting**")
     os.execvp(f"python{str(pyver.split(' ')[0])[:3]}", [
               f"python{str(pyver.split(' ')[0])[:3]}", "-m", "wbb"])
