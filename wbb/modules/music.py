@@ -8,12 +8,13 @@ from random import randint
 from pyrogram import filters
 from wbb import app, SUDOERS, arq, MAIN_CHATS
 from wbb.utils.errors import capture_err
-
+from wbb.utils.pastebin import paste
 
 __MODULE__ = "Music"
 __HELP__ = """/ytmusic [link] To Download Music From Various Websites Including Youtube.
 /saavn [query] To Download Music From Saavn.
-/deezer [query] To Download Music From Deezer."""
+/deezer [query] To Download Music From Deezer.
+/lyrics [query] To Get Lyrics Of A Song."""
 
 ydl_opts = {
     'format': 'bestaudio/best',
@@ -150,3 +151,20 @@ async def deezsong(_, message):
         await m.edit(str(e))
         return
     is_downloading = False
+
+# Lyrics
+
+
+@app.on_message(filters.command("lyrics"))
+async def lyrics_func(_, message):
+    if len(message.command) < 2:
+        await message.reply_text("**Usage:**\n/lyrics [QUERY]")
+        return
+    query = message.text.strip().split(None ,1)[1]
+    song = await arq.lyrics(query)
+    lyrics = song.lyrics
+    if len(lyrics) < 4095:
+        await message.reply_text(f"__{lyrics}__")
+        return
+    lyrics = await paste(lyrics)
+    await message.reply_text(f"**LYRICS_TOO_LONG:** [URL]({lyrics})")

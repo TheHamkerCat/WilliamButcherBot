@@ -3,7 +3,7 @@ from wbb.utils.inlinefuncs import (
     google_search_func, urban_func, translate_func,
     alive_function, webss, shortify, wall_func,
     saavn_func, deezer_func, inline_help_func,
-    torrent_func, youtube_func
+    torrent_func, youtube_func, lyrics_func
 )
 from pyrogram import filters
 
@@ -19,7 +19,8 @@ __HELP__ = """
 **saavn [SONG_NAME]** - __Get Songs From Saavn.__
 **deezer [SONG_NAME]** - __Get Songs From Deezer.__
 **yt [Query]** - __Youtube Search.__
-**torrent [QUERY]** - __Torrent Search.__"""
+**torrent [QUERY]** - __Torrent Search.__
+**lyrics [Query]** - __Lyrics Search.__"""
 
 
 @app.on_message(filters.command("inline"))
@@ -54,7 +55,6 @@ async def inline_query_handler(client, query):
             await client.answer_inline_query(
                 query.id,
                 results=answerss,
-                cache_time=10
             )
         elif text.split()[0] == "ud":
             tex = text.split(None, 1)[1]
@@ -62,7 +62,6 @@ async def inline_query_handler(client, query):
             await client.answer_inline_query(
                 query.id,
                 results=answerss,
-                cache_time=10
             )
         elif text.split()[0] == "google":
             tex = text.split(None, 1)[1]
@@ -70,7 +69,6 @@ async def inline_query_handler(client, query):
             await client.answer_inline_query(
                 query.id,
                 results=answerss,
-                cache_time=10
             )
         elif text.split()[0] == "webss":
             tex = text.split(None, 1)[1]
@@ -119,12 +117,19 @@ async def inline_query_handler(client, query):
             await client.answer_inline_query(
                 query.id,
                 results=answerss,
-                cache_time=10
             )
 
         elif text.split()[0] == "yt":
             tex = text.split(None, 1)[1]
             answerss = await youtube_func(answers, tex)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss
+            )
+
+        elif text.split()[0] == "lyrics":
+            tex = text.split(None, 1)[1]
+            answerss = await lyrics_func(answers, tex)
             await client.answer_inline_query(
                 query.id,
                 results=answerss
