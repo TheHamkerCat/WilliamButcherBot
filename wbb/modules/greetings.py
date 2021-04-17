@@ -1,7 +1,7 @@
 """ Kang with proper credits or /gbun """
 
 import asyncio
-from wbb import app, WELCOME_DELAY_KICK_SEC
+from wbb import app, WELCOME_DELAY_KICK_SEC, SUDOERS
 from wbb.modules.admin import member_permissions
 from wbb.utils.errors import capture_err
 from wbb.utils.filter_groups import welcome_captcha_group
@@ -34,26 +34,28 @@ async def welcome(_, message: Message):
         return
     for member in message.new_chat_members:
         try:
-            # if await is_gbanned_user(member.id):
-            #    await message.chat.kick_member(member.id)
-            #    continue
+            if await is_gbanned_user(member.id):
+                await message.chat.kick_member(member.id)
+                continue
             if member.is_bot:
                 continue  # ignore bots
+            if member.id in SUDOERS:
+                continue  # ignore sudos
             await message.chat.restrict_member(member.id, ChatPermissions())
             text = (f"Welcome, {(member.mention())} Are you human?\n"
                     f"Solve this captcha in {WELCOME_DELAY_KICK_SEC} seconds or you'll be kicked.")
         except ChatAdminRequired:
             break
-        captcha = generate_captcha()
+        captcha = generate_captcha() # Generate a captcha image, answers and some wrong answers
         captcha_image = captcha[0]
         captcha_answer = captcha[1]
-        wrong_answers = captcha[2]
+        wrong_answers = captcha[2]  # This consists of 7 wrong answers
         correct_button = InlineKeyboardButton(
             f"{captcha_answer}",
             callback_data=f"pressed_button {captcha_answer} {member.id}"
         )
-        temp_keyboard_1 = [correct_button]
-        temp_keyboard_2 = []
+        temp_keyboard_1 = [correct_button]  # Button row 1
+        temp_keyboard_2 = []  # Botton row 2
         for i in range(3):
             temp_keyboard_1.append(
                 InlineKeyboardButton(
@@ -77,7 +79,8 @@ async def welcome(_, message: Message):
             "keyboard": keyboard
         }
         keyboard = InlineKeyboardMarkup(keyboard)
-        answers_dicc.append(verification_data)
+        answers_dicc.append(verification_data)  # Append user info, correct answer and 
+                                                # keyboard for later use with callback query
         button_message = await message.reply_photo(
             photo=captcha_image,
             caption=text,
