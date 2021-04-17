@@ -21,9 +21,13 @@ async def take_ss(_, message):
     screenshot = await fetch(f"https://patheticprogrammers.cf/ss?site={url}")
     await m.edit("**Uploading**")
     end_time = time.time()
-    await app.send_photo(
+    try:
+        await app.send_photo(
             message.chat.id,
             photo=screenshot['url'],
             caption=(f"{url}\n__Took {round(end_time - start_time)} Seconds.__")
             )
+    except TypeError:
+        await m.edit("No Such Website.")
+        return
     await m.delete()
