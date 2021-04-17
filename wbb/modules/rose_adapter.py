@@ -38,10 +38,16 @@ async def fbanstat(_, message):
             await m.edit(limit_text)
             processing = False
             return
+        loop_limit = 0
         while True:
             msgg = await app2.get_messages(miss_rose, rose_reply_message_id)
             if msgg.text == rose_reply_text:
                 await asyncio.sleep(2)
+                if loop_limit > 4:
+                    await m.edit(rose_reply_text)
+                    processing = False
+                    return
+                loop_limit += 1
                 continue
             rose_reply = msgg.text.markdown
             if "Looks" in rose_reply:
