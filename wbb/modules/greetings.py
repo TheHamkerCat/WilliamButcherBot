@@ -1,6 +1,6 @@
 """ Kang with proper credits or /gbun """
 
-import asyncio
+import asyncio, os
 from wbb import app, WELCOME_DELAY_KICK_SEC, SUDOERS
 from wbb.modules.admin import member_permissions
 from wbb.utils.errors import capture_err
@@ -34,13 +34,13 @@ async def welcome(_, message: Message):
         return
     for member in message.new_chat_members:
         try:
+            if member.id in SUDOERS:
+                continue  # ignore sudos
             if await is_gbanned_user(member.id):
                 await message.chat.kick_member(member.id)
                 continue
             if member.is_bot:
                 continue  # ignore bots
-            if member.id in SUDOERS:
-                continue  # ignore sudos
             await message.chat.restrict_member(member.id, ChatPermissions())
             text = (f"Welcome, {(member.mention())} Are you human?\n"
                     f"Solve this captcha in {WELCOME_DELAY_KICK_SEC} seconds or you'll be kicked.")
@@ -87,6 +87,7 @@ async def welcome(_, message: Message):
             reply_markup=keyboard,
             quote=True
         )
+        os.remove(captcha_image)
         asyncio.create_task(kick_restricted_after_delay(
             WELCOME_DELAY_KICK_SEC, button_message, member))
         await asyncio.sleep(0.5)

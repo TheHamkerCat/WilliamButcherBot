@@ -28,7 +28,7 @@ def generate_captcha():
     height = 120
     correct_answer = ""
     font = ImageFont.truetype("assets/arial.ttf", 90)
-    file = "assets/captcha.jpg"
+    file = f"assets/{randint(1000, 9999)}.jpg"
     image = Image.new('RGB', (width, height), (255, 255, 255))
     draw = ImageDraw.Draw(image)
     
