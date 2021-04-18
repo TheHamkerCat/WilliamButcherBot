@@ -10,18 +10,20 @@ from pyrogram.types import (
 )
 from googletrans import Translator
 from search_engine_parser import GoogleSearch
-from time import time
 from wbb.modules.userbot import eval_executor_func
 from wbb.utils.fetch import fetch
 from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
 from wbb.utils.pastebin import paste
 from pykeyboard import InlineKeyboard
 from sys import version as pyver
-import sys
 from motor import version as mongover
 from pyrogram import __version__ as pyrover
+from time import time
+from datetime import datetime
+import calendar
 import aiohttp
 import json
+import sys
 import asyncio
 
 
@@ -506,3 +508,14 @@ async def github_repo_func(answers, text):
         ))
     return answers
 
+
+async def calendar_func(answers):
+    year, month = str(datetime.now())[0:7].split("-")
+    calendarr = calendar.month(int(year), int(month))
+    msg = f"`{calendarr}`"
+    answers.append(
+        InlineQueryResultArticle(
+            title=f"Calendar For {month}/{year}",
+            input_message_content=InputTextMessageContent(msg)
+        ))
+    return answers

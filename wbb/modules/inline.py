@@ -5,13 +5,13 @@ from wbb.utils.inlinefuncs import (
     saavn_func, deezer_func, inline_help_func,
     torrent_func, youtube_func, lyrics_func,
     paste_func, eval_func, github_user_func,
-    github_repo_func
+    github_repo_func, calendar_func
 )
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import QueryIdInvalid
 
 __MODULE__ = "Inline"
-__HELP__ = '''
+__HELP__ = '''```
 - alive - Check Bot's Stats.
 - tr [LANG] [QUERY] - Translate Text.
 - ud [QUERY] - Urban Dictionary Query.
@@ -24,11 +24,12 @@ __HELP__ = '''
 - yt [Query] - Youtube Search.
 - torrent [QUERY] - Torrent Search.
 - lyrics [QUERY] - Lyrics Search.
+- calendar - Get Current Month Calendar.
 - eval [CODE] - Execute Python Code.
 - paste [TEXT] - Paste Text On Pastebin. <=500
 - gh_user [USERNAME] - Search A Github User.
 - gh_repo [USERNAME/REPO] - Search A Github Repo. 
-'''
+```'''
 
 
 @app.on_message(filters.command("inline"))
@@ -174,6 +175,14 @@ async def inline_query_handler(client, query):
         elif text.split()[0] == "gh_repo":
             tex = text.split(None, 1)[1].strip()
             answerss = await github_repo_func(answers, tex)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=2
+            )
+
+        elif text.split()[0] == "calendar":
+            answerss = await calendar_func(answers)
             await client.answer_inline_query(
                 query.id,
                 results=answerss,
