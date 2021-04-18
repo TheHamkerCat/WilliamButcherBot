@@ -69,7 +69,7 @@ async def get_one_note(_, message):
             await message.reply_text("**No such note.**")
         else:
             if _note["type"] == "text":
-                await message.reply_text(_note["data"])
+                await message.reply_text(_note["data"], disable_web_page_preview=True)
             else:
                 await message.reply_sticker(_note["data"])
 

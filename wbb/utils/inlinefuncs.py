@@ -18,7 +18,7 @@ from pykeyboard import InlineKeyboard
 from sys import version as pyver
 from motor import version as mongover
 from pyrogram import __version__ as pyrover
-from time import time
+from time import time, ctime
 from datetime import datetime
 import calendar
 import aiohttp
@@ -444,7 +444,7 @@ async def github_user_func(answers, text):
     buttons.add(InlineKeyboardButton(
         text="Open On Github",
         url=f"https://github.com/{text}"
-        ))
+    ))
     caption = f"""
 **Info Of {result['name']}**
 **Username:** `{text}`
@@ -477,11 +477,11 @@ async def github_repo_func(answers, text):
         commits += developer['contributions']
     buttons = InlineKeyboard(row_width=1)
     buttons.add(
-            InlineKeyboardButton(
-                'Open On Github',
-                url=f"https://github.com/{text}"
-            )
+        InlineKeyboardButton(
+            'Open On Github',
+            url=f"https://github.com/{text}"
         )
+    )
     caption = f"""
 **Info Of {r['full_name']}**
 **Stars:** `{r['stargazers_count']}`
@@ -504,7 +504,7 @@ async def github_repo_func(answers, text):
             input_message_content=InputTextMessageContent(
                 caption,
                 disable_web_page_preview=True
-                )
+            )
         ))
     return answers
 
@@ -518,4 +518,58 @@ async def calendar_func(answers):
             title=f"Calendar For {month}/{year}",
             input_message_content=InputTextMessageContent(msg)
         ))
+    return answers
+
+
+async def tg_search_func(answers, text, user_id):
+    if user_id != USERBOT_ID:
+        msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
+        answers.append(
+            InlineQueryResultArticle(
+                title="ERROR",
+                description="THIS FEATURE IS ONLY FOR SUDO USERS",
+                input_message_content=InputTextMessageContent(msg)
+            ))
+        return answers
+    if str(text)[-1] != ":":
+        msg = "**ERROR**\n__Put A ':' After The Text To Search__"
+        answers.append(
+            InlineQueryResultArticle(
+                title="ERROR",
+                description="Put A ':' After The Text To Search",
+                input_message_content=InputTextMessageContent(msg)
+            ))
+
+        return answers
+    text = text[0:-1]
+    async for message in app2.search_global(text, limit=49):
+        buttons = InlineKeyboard(row_width=2)
+        buttons.add(
+            InlineKeyboardButton(
+                text="Origin",
+                url=message.link if message.link else "https://t.me/telegram"
+            ),
+            InlineKeyboardButton(
+                text="Search again",
+                switch_inline_query_current_chat="search"
+            )
+        )
+        caption = f"""
+**Name:** {message.from_user.mention} [`{message.from_user.id}`]
+**Chat:** {message.chat.title} [`{message.chat.id}`]
+**Date:** {ctime(message.date)}
+**Text:** >>
+
+{message.text.markdown if message.text else message.caption if message.caption else "[NO_TEXT]"}
+"""
+        result = InlineQueryResultArticle(
+            title=message.from_user.first_name,
+            description=message.text if message.text else "[NO_TEXT]",
+            reply_markup=buttons,
+            input_message_content=InputTextMessageContent(
+                caption,
+                disable_web_page_preview=True
+                )
+        )
+        answers.append(result)
     return answers
