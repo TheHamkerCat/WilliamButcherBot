@@ -19,8 +19,6 @@ from sys import version as pyver
 from motor import version as mongover
 from pyrogram import __version__ as pyrover
 from time import time, ctime
-from datetime import datetime
-import calendar
 import aiohttp
 import json
 import sys
@@ -387,20 +385,6 @@ async def lyrics_func(answers, text):
     return answers
 
 
-async def paste_func(answers, text):
-    start_time = time()
-    url = await paste(text)
-    msg = f"__**{url}**__"
-    end_time = time()
-    answers.append(
-        InlineQueryResultArticle(
-            title=f"Pasted In {round(end_time - start_time)} Seconds.",
-            description=url,
-            input_message_content=InputTextMessageContent(msg)
-        ))
-    return answers
-
-
 async def eval_func(answers, text, user_id):
     if user_id != USERBOT_ID:
         msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
@@ -509,18 +493,6 @@ async def github_repo_func(answers, text):
     return answers
 
 
-async def calendar_func(answers):
-    year, month = str(datetime.now())[0:7].split("-")
-    calendarr = calendar.month(int(year), int(month))
-    msg = f"`{calendarr}`"
-    answers.append(
-        InlineQueryResultArticle(
-            title=f"Calendar For {month}/{year}",
-            input_message_content=InputTextMessageContent(msg)
-        ))
-    return answers
-
-
 async def tg_search_func(answers, text, user_id):
     if user_id != USERBOT_ID:
         msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
@@ -555,6 +527,7 @@ async def tg_search_func(answers, text, user_id):
             )
         )
         caption = f"""
+**Query:** {text}
 **Name:** {message.from_user.mention} [`{message.from_user.id}`]
 **Chat:** {message.chat.title} [`{message.chat.id}`]
 **Date:** {ctime(message.date)}

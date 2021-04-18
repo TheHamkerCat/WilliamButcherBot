@@ -144,15 +144,6 @@ async def inline_query_handler(client, query):
                 results=answerss
             )
 
-        elif text.split()[0] == "paste":
-            tex = text.split(None, 1)[1].strip()
-            answerss = await paste_func(answers, tex)
-            await client.answer_inline_query(
-                query.id,
-                results=answerss,
-                cache_time=2
-            )
-
         elif text.split()[0] == "eval":
             user_id = query.from_user.id
             tex = text.split(None, 1)[1].strip()
@@ -175,14 +166,6 @@ async def inline_query_handler(client, query):
         elif text.split()[0] == "gh_repo":
             tex = text.split(None, 1)[1].strip()
             answerss = await github_repo_func(answers, tex)
-            await client.answer_inline_query(
-                query.id,
-                results=answerss,
-                cache_time=2
-            )
-
-        elif text.split()[0] == "calendar":
-            answerss = await calendar_func(answers)
             await client.answer_inline_query(
                 query.id,
                 results=answerss,
