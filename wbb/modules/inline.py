@@ -4,8 +4,8 @@ from wbb.utils.inlinefuncs import (
     alive_function, webss, shortify, wall_func,
     saavn_func, deezer_func, inline_help_func,
     torrent_func, youtube_func, lyrics_func,
-    paste_func, eval_func, github_user_func,
-    github_repo_func, calendar_func, tg_search_func
+    eval_func, github_user_func, github_repo_func,
+    tg_search_func
 )
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import QueryIdInvalid
