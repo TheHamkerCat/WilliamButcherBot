@@ -381,3 +381,17 @@ async def lyrics_func(answers, text):
             input_message_content=InputTextMessageContent(msg)
         ))
     return answers
+
+
+async def paste_func(answers, text):
+    start_time = time()
+    url = await paste(text)
+    msg = f"__**{url}**__"
+    end_time = time()
+    answers.append(
+        InlineQueryResultArticle(
+            title=f"Pasted In {round(end_time - start_time)} Seconds.",
+            description=url,
+            input_message_content=InputTextMessageContent(msg)
+        ))
+    return answers

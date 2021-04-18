@@ -3,24 +3,30 @@ from wbb.utils.inlinefuncs import (
     google_search_func, urban_func, translate_func,
     alive_function, webss, shortify, wall_func,
     saavn_func, deezer_func, inline_help_func,
-    torrent_func, youtube_func, lyrics_func
+    torrent_func, youtube_func, lyrics_func,
+    paste_func
 )
 from pyrogram import filters
 
 __MODULE__ = "Inline"
-__HELP__ = """
-**alive** - __Check Bot's Stats.__
-**tr [LANGUAGE_CODE] [QUERY]** - __Translate Text.__
-**ud [QUERY]** - __Urban Dictionary Query.__
-**google [QUERY]** - __Google Search.__
-**webss [URL]** - __Take Screenshot Of A Website.__
-**bitly [URL]** - __Shorten A Link.__
-**wall [Query]** - __Find Wallpapers.__
-**saavn [SONG_NAME]** - __Get Songs From Saavn.__
-**deezer [SONG_NAME]** - __Get Songs From Deezer.__
-**yt [Query]** - __Youtube Search.__
-**torrent [QUERY]** - __Torrent Search.__
-**lyrics [Query]** - __Lyrics Search.__"""
+__HELP__ = '''```+===============================================================+
+|            Query            |           Function              |
++===============================================================+
+|  alive                      |  Check Bot's Stats.             |
+|  tr [LANGUAGE_CODE] [QUERY] |  Translate Text.                |
+|  ud      [QUERY]            |  Urban Dictionary Query.        |
+|  google  [QUERY]            |  Google Search.                 |
+|  webss   [URL]              |  Take Screenshot Of A Website.  |
+|  bitly   [URL]              |  Shorten A Link.                |
+|  wall    [QUERY]            |  Find Wallpapers.               |
+|  saavn   [SONG_NAME]        |  Get Songs From Saavn.          |
+|  deezer  [SONG_NAME]        |  Get Songs From Deezer.         |
+|  yt      [Query]            |  Youtube Search.                |
+|  torrent [QUERY]            |  Torrent Search.                |
+|  lyrics  [QUERY]            |  Lyrics Search.                 |
+|  paste   [TEXT]             |  Pase Text On Pastebin. <=500   |
++===============================================================+
+```'''
 
 
 @app.on_message(filters.command("inline"))
@@ -133,6 +139,15 @@ async def inline_query_handler(client, query):
             await client.answer_inline_query(
                 query.id,
                 results=answerss
+            )
+
+        elif text.split()[0] == "paste":
+            tex = text.split(None, 1)[1]
+            answerss = await paste_func(answers, tex)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=2
             )
 
     except (IndexError, TypeError, KeyError, ValueError):
