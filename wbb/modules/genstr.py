@@ -30,9 +30,10 @@ async def genstr(_, message):
         if "y" in confirm.text.lower():
             break
     try:
-        temp_client = Client(":memory:", api_id=6, api_hash="eb06d4abfb49dc3eeb1aeb98ae0f581e")
+        temp_client = Client(":memory:", api_id=6,
+                             api_hash="eb06d4abfb49dc3eeb1aeb98ae0f581e")
     except Exception as e:
-        await app.send_message(chat.id ,f"**ERROR:** `{str(e)}`")
+        await app.send_message(chat.id, f"**ERROR:** `{str(e)}`")
         return
     try:
         await temp_client.connect()
@@ -66,7 +67,7 @@ async def genstr(_, message):
     except SessionPasswordNeeded:
         try:
             two_step_code = await app.ask(
-                chat.id, 
+                chat.id,
                 "Your account have Two-Step Verification.\nPlease enter your Password.",
                 timeout=300
             )
@@ -80,12 +81,12 @@ async def genstr(_, message):
             await message.reply_text(f"**ERROR:** `{str(e)}`")
             return
     except Exception as e:
-        await app.send_message(chat.id ,f"**ERROR:** `{str(e)}`")
+        await app.send_message(chat.id, f"**ERROR:** `{str(e)}`")
         return
     try:
         session_string = await temp_client.export_session_string()
         await temp_client.disconnect()
         await app.send_message(chat.id, text=f"**HERE IS YOUR STRING SESSION:**\n```{session_string}```")
     except Exception as e:
-        await app.send_message(chat.id ,f"**ERROR:** `{str(e)}`")
+        await app.send_message(chat.id, f"**ERROR:** `{str(e)}`")
         return

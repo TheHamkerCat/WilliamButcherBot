@@ -1,9 +1,8 @@
 import urllib.request
 import json
 import asyncio
-from random import randint
 from pyrogram import filters
-from wbb import app, arq
+from wbb import app
 from wbb.utils.errors import capture_err
 
 __MODULE__ = "Images"

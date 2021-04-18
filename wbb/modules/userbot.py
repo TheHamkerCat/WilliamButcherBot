@@ -149,3 +149,41 @@ async def shellrunner(client, message):
         await edit_or_reply(
             message,
             text=f'**INPUT:**\n```{text}```\n\n**OUTPUT: **\n`No output`')
+
+""" The code below is for inline eval"""
+
+
+async def aexec2(code, client):
+    exec(
+        "async def __aexecc(client): "
+        + "".join(f"\n {a}" for a in code.split("\n"))
+    )
+    return await locals()["__aexecc"](client)
+
+
+async def eval_executor_func(code):
+    old_stderr = sys.stderr
+    old_stdout = sys.stdout
+    redirected_output = sys.stdout = StringIO()
+    redirected_error = sys.stderr = StringIO()
+    stdout, stderr, exc = None, None, None
+    try:
+        await aexec2(code, app)
+    except Exception:
+        exc = traceback.format_exc()
+    stdout = redirected_output.getvalue()
+    stderr = redirected_error.getvalue()
+    sys.stdout = old_stdout
+    sys.stderr = old_stderr
+    evaluation = ""
+    if exc:
+        evaluation = exc
+    elif stderr:
+        evaluation = stderr
+    elif stdout:
+        evaluation = stdout
+    else:
+        evaluation = "Success"
+    final_output = (
+        f"**INPUT:**\n```{code}```\n\n**OUTPUT**:\n```{evaluation.strip()}```")
+    return final_output

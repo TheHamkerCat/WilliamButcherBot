@@ -160,7 +160,7 @@ async def lyrics_func(_, message):
     if len(message.command) < 2:
         await message.reply_text("**Usage:**\n/lyrics [QUERY]")
         return
-    await message.reply_text("**Searching**")
+    m = await message.reply_text("**Searching**")
     query = message.text.strip().split(None, 1)[1]
     song = await arq.lyrics(query)
     lyrics = song.lyrics

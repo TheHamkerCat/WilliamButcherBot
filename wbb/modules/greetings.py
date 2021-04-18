@@ -1,6 +1,7 @@
 """ Kang with proper credits or /gbun """
 
-import asyncio, os
+import asyncio
+import os
 from wbb import app, WELCOME_DELAY_KICK_SEC, SUDOERS
 from wbb.modules.admin import member_permissions
 from wbb.utils.errors import capture_err
@@ -46,7 +47,8 @@ async def welcome(_, message: Message):
                     f"Solve this captcha in {WELCOME_DELAY_KICK_SEC} seconds or you'll be kicked.")
         except ChatAdminRequired:
             break
-        captcha = generate_captcha() # Generate a captcha image, answers and some wrong answers
+        # Generate a captcha image, answers and some wrong answers
+        captcha = generate_captcha()
         captcha_image = captcha[0]
         captcha_answer = captcha[1]
         wrong_answers = captcha[2]  # This consists of 7 wrong answers
@@ -79,8 +81,9 @@ async def welcome(_, message: Message):
             "keyboard": keyboard
         }
         keyboard = InlineKeyboardMarkup(keyboard)
-        answers_dicc.append(verification_data)  # Append user info, correct answer and 
-                                                # keyboard for later use with callback query
+        # Append user info, correct answer and
+        answers_dicc.append(verification_data)
+        # keyboard for later use with callback query
         button_message = await message.reply_photo(
             photo=captcha_image,
             caption=text,

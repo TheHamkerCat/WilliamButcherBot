@@ -1,6 +1,6 @@
 from wbb import (
     arq, app, app2, USERBOT_USERNAME,
-    BOT_USERNAME, LOG_GROUP_ID
+    BOT_USERNAME, LOG_GROUP_ID, USERBOT_ID
 )
 from pyrogram.types import (
     InlineQueryResultArticle,
@@ -11,6 +11,7 @@ from pyrogram.types import (
 from googletrans import Translator
 from search_engine_parser import GoogleSearch
 from time import time
+from wbb.modules.userbot import eval_executor_func
 from wbb.utils.fetch import fetch
 from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
 from wbb.utils.pastebin import paste
@@ -344,7 +345,7 @@ async def youtube_func(answers, text):
 **Uploaded:** {results[i].publish_time}
 **Description:** {results[i].long_desc}"""
         description = f"{results[i].views} | {results[i].channel} | " \
-                       + f"{results[i].duration} | {results[i].publish_time}"
+            + f"{results[i].duration} | {results[i].publish_time}"
         try:
             answers.append(
                 InlineQueryResultArticle(
@@ -392,6 +393,40 @@ async def paste_func(answers, text):
         InlineQueryResultArticle(
             title=f"Pasted In {round(end_time - start_time)} Seconds.",
             description=url,
+            input_message_content=InputTextMessageContent(msg)
+        ))
+    return answers
+
+
+async def eval_func(answers, text, user_id):
+    if user_id != USERBOT_ID:
+        msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
+        answers.append(
+            InlineQueryResultArticle(
+                title="ERROR",
+                description="THIS FEATURE IS ONLY FOR SUDO USERS",
+                input_message_content=InputTextMessageContent(msg)
+            ))
+        return answers
+    if str(text)[-1] != ":":
+        msg = "**ERROR**\n__Put A ':' After The Code To Execute It__"
+        answers.append(
+            InlineQueryResultArticle(
+                title="ERROR",
+                description="Put A ':' After The Code To Execute It",
+                input_message_content=InputTextMessageContent(msg)
+            ))
+
+        return answers
+    text = text[0:-1]
+    start_time = time()
+    result = await eval_executor_func(text)
+    msg = f"{result}"
+    end_time = time()
+    answers.append(
+        InlineQueryResultArticle(
+            title="Success",
+            description=f"Executed In {round(end_time - start_time)} Seconds.",
             input_message_content=InputTextMessageContent(msg)
         ))
     return answers

@@ -1,4 +1,4 @@
-from wbb import app, app2, SUDOERS
+from wbb import app
 from wbb.utils.errors import capture_err
 from wbb.utils.fetch import fetch
 from pyrogram import filters

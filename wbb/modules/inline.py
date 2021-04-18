@@ -4,29 +4,27 @@ from wbb.utils.inlinefuncs import (
     alive_function, webss, shortify, wall_func,
     saavn_func, deezer_func, inline_help_func,
     torrent_func, youtube_func, lyrics_func,
-    paste_func
+    paste_func, eval_func
 )
 from pyrogram import filters
 
 __MODULE__ = "Inline"
-__HELP__ = '''```+===============================================================+
-|            Query            |           Function              |
-+===============================================================+
-|  alive                      |  Check Bot's Stats.             |
-|  tr [LANGUAGE_CODE] [QUERY] |  Translate Text.                |
-|  ud      [QUERY]            |  Urban Dictionary Query.        |
-|  google  [QUERY]            |  Google Search.                 |
-|  webss   [URL]              |  Take Screenshot Of A Website.  |
-|  bitly   [URL]              |  Shorten A Link.                |
-|  wall    [QUERY]            |  Find Wallpapers.               |
-|  saavn   [SONG_NAME]        |  Get Songs From Saavn.          |
-|  deezer  [SONG_NAME]        |  Get Songs From Deezer.         |
-|  yt      [Query]            |  Youtube Search.                |
-|  torrent [QUERY]            |  Torrent Search.                |
-|  lyrics  [QUERY]            |  Lyrics Search.                 |
-|  paste   [TEXT]             |  Pase Text On Pastebin. <=500   |
-+===============================================================+
-```'''
+__HELP__ = '''
+- alive - Check Bot's Stats.
+- tr [LANG] [QUERY] - Translate Text.
+- ud [QUERY] - Urban Dictionary Query.
+- google [QUERY] - Google Search.
+- webss [URL] - Take Screenshot Of A Website.
+- bitly [URL] - Shorten A Link.
+- wall [QUERY] - Find Wallpapers.
+- saavn [SONG_NAME] - Get Songs From Saavn.
+- deezer [SONG_NAME] - Get Songs From Deezer.
+- yt [Query] - Youtube Search.
+- torrent [QUERY] - Torrent Search.
+- lyrics [QUERY] - Lyrics Search.
+- eval [CODE] - Execute Python Code.
+- paste [TEXT] - Paste Text On Pastebin. <=500
+'''
 
 
 @app.on_message(filters.command("inline"))
@@ -144,6 +142,16 @@ async def inline_query_handler(client, query):
         elif text.split()[0] == "paste":
             tex = text.split(None, 1)[1]
             answerss = await paste_func(answers, tex)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=2
+            )
+
+        elif text.split()[0] == "eval":
+            user_id = query.from_user.id
+            tex = text.split(None, 1)[1]
+            answerss = await eval_func(answers, tex, user_id)
             await client.answer_inline_query(
                 query.id,
                 results=answerss,
