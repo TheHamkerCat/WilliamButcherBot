@@ -526,17 +526,18 @@ async def tg_search_func(answers, text, user_id):
                 switch_inline_query_current_chat="search"
             )
         )
+        name = message.from_user.first_name if message.from_user.first_name else "NO NAME"
         caption = f"""
 **Query:** {text}
-**Name:** {message.from_user.mention} [`{message.from_user.id}`]
-**Chat:** {message.chat.title} [`{message.chat.id}`]
+**Name:** {str(name)} [`{message.from_user.id}`]
+**Chat:** {str(message.chat.title)} [`{message.chat.id}`]
 **Date:** {ctime(message.date)}
 **Text:** >>
 
 {message.text.markdown if message.text else message.caption if message.caption else "[NO_TEXT]"}
 """
         result = InlineQueryResultArticle(
-            title=message.from_user.first_name,
+            title=name,
             description=message.text if message.text else "[NO_TEXT]",
             reply_markup=buttons,
             input_message_content=InputTextMessageContent(
