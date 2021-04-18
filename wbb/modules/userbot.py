@@ -184,6 +184,7 @@ async def eval_executor_func(code):
         evaluation = stdout
     else:
         evaluation = "Success"
+    output = evaluation.strip()
     final_output = (
-        f"**INPUT:**\n```{code}```\n\n**OUTPUT**:\n```{evaluation.strip()}```")
-    return final_output
+        f"**INPUT:**\n```{code}```\n\n**OUTPUT**:\n```{output}```")
+    return [final_output, output]

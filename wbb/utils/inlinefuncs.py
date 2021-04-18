@@ -22,6 +22,7 @@ from motor import version as mongover
 from pyrogram import __version__ as pyrover
 import aiohttp
 import json
+import asyncio
 
 
 async def inline_help_func(__HELP__):
@@ -421,12 +422,87 @@ async def eval_func(answers, text, user_id):
     text = text[0:-1]
     start_time = time()
     result = await eval_executor_func(text)
+    output = result[1]
+    result = result[0]
     msg = f"{result}"
     end_time = time()
     answers.append(
         InlineQueryResultArticle(
-            title="Success",
-            description=f"Executed In {round(end_time - start_time)} Seconds.",
+            title=f"Took {round(end_time - start_time)} Seconds.",
+            description=output,
             input_message_content=InputTextMessageContent(msg)
         ))
     return answers
+
+
+async def github_user_func(answers, text):
+    URL = f"https://api.github.com/users/{text}"
+    result = await fetch(URL)
+    buttons = InlineKeyboard(row_width=1)
+    buttons.add(InlineKeyboardButton(
+        text="Open On Github",
+        url=f"https://github.com/{text}"
+        ))
+    caption = f"""
+**Info Of {result['name']}**
+**Username:** `{text}`
+**Bio:** `{result['bio']}`
+**Profile Link:** [Here]({result['html_url']})
+**Company:** `{result['company']}`
+**Created On:** `{result['created_at']}`
+**Repositories:** `{result['public_repos']}`
+**Blog:** `{result['blog']}`
+**Location:** `{result['location']}`
+**Followers:** `{result['followers']}`
+**Following:** `{result['following']}`"""
+    answers.append(
+        InlineQueryResultPhoto(
+            photo_url=result['avatar_url'],
+            caption=caption,
+            reply_markup=buttons
+        ))
+    return answers
+
+
+async def github_repo_func(answers, text):
+    URL = f"https://api.github.com/repos/{text}"
+    URL2 = f"https://api.github.com/repos/{text}/contributors"
+    results = await asyncio.gather(fetch(URL), fetch(URL2))
+    r = results[0]
+    r1 = results[1]
+    commits = 0
+    for developer in r1:
+        commits += developer['contributions']
+    buttons = InlineKeyboard(row_width=1)
+    buttons.add(
+            InlineKeyboardButton(
+                'Open On Github',
+                url=f"https://github.com/{text}"
+            )
+        )
+    caption = f"""
+**Info Of {r['full_name']}**
+**Stars:** `{r['stargazers_count']}`
+**Watchers:** `{r['watchers_count']}`
+**Forks:** `{r['forks_count']}`
+**Commits:** `{commits}`
+**Is Fork:** `{r['fork']}`
+**Language:** `{r['language']}`
+**Contributors:** `{len(r1)}`
+**License:** `{r['license']['name']}`
+**Repo Owner:** [{r['owner']['login']}]({r['owner']['html_url']})
+**Created On:** `{r['created_at']}`
+**Homepage:** {r['homepage']}
+**Description:** __{r['description']}__"""
+    answers.append(
+        InlineQueryResultArticle(
+            title="Found Repo",
+            description=text,
+            reply_markup=buttons,
+            input_message_content=InputTextMessageContent(
+                caption,
+                disable_web_page_preview=True
+                )
+        ))
+    return answers
+

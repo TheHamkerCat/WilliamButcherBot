@@ -187,7 +187,11 @@ __**New Global Ban**__
 **Reason:** __{reason}__
 **Chats:** `{number_of_chats}`"""
             try:
-                await app.send_message(GBAN_LOG_GROUP_ID, text=ban_text)
+                await app.send_message(
+                        GBAN_LOG_GROUP_ID,
+                        text=ban_text,
+                        disable_web_page_preview=True
+                        )
             except Exception:
                 await message.reply_text("User Gbanned, But This Gban Wasn't Logged, Add Bot In GBAN_LOG_GROUP")
                 return
