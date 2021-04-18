@@ -112,7 +112,11 @@ __**Translated to {lang}**__
 
 async def urban_func(answers, text):
     results = await arq.urbandict(text)
+    limit = 0
     for i in results:
+        if limit > 48:
+            break
+        limit += 1
         msg = f"""
 **Query:** {text}
 
@@ -131,7 +135,12 @@ async def urban_func(answers, text):
 
 async def google_search_func(answers, text):
     gresults = await GoogleSearch().async_search(text)
+    limit = 0
     for i in gresults:
+        if limit > 48:
+            break
+        limit += 1
+
         try:
             msg = f"""
 [{i['titles']}]({i['links']})
@@ -153,7 +162,11 @@ async def google_search_func(answers, text):
 
 async def wall_func(answers, text):
     results = await arq.wall(text)
+    limit = 0
     for i in results:
+        if limit > 48:
+            break
+        limit += 1
         try:
             answers.append(
                 InlineQueryResultPhoto(
@@ -326,9 +339,12 @@ async def torrent_func(answers, text):
 
 
 async def youtube_func(answers, text):
-    buttons_list = []
     results = await arq.youtube(text)
+    limit = 0
     for i in results:
+        if limit > 48:
+            break
+        limit += 1
         buttons = InlineKeyboard(row_width=1)
         video_url = f"https://youtube.com{results[i].url_suffix}"
         buttons.add(
@@ -337,7 +353,6 @@ async def youtube_func(answers, text):
                 url=video_url
             )
         )
-        buttons_list.append(buttons)
         caption = f"""
 **Title:** {results[i].title}
 **Views:** {results[i].views}
@@ -357,7 +372,7 @@ async def youtube_func(answers, text):
                         caption,
                         disable_web_page_preview=True
                     ),
-                    reply_markup=buttons_list[i]
+                    reply_markup=buttons
                 ))
         except (KeyError, ValueError):
             pass

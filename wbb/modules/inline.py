@@ -24,11 +24,10 @@ __HELP__ = '''```
 - yt [Query] - Youtube Search.
 - torrent [QUERY] - Torrent Search.
 - lyrics [QUERY] - Lyrics Search.
-- calendar - Get Current Month Calendar.
 - eval [CODE] - Execute Python Code.
-- paste [TEXT] - Paste Text On Pastebin. <=500
 - gh_user [USERNAME] - Search A Github User.
-- gh_repo [USERNAME/REPO] - Search A Github Repo. 
+- gh_repo [USERNAME/REPO] - Search A Github Repo.
+- search [QUERY] - Search For A Message Globally.
 ```'''
 
 
@@ -58,6 +57,14 @@ async def inline_query_handler(client, query):
                 cache_time=10
             )
         elif text.split()[0] == "tr":
+            if len(text.split()) < 3:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Translate Text.',
+                    switch_pm_parameter='inline',
+                )
+                return
             lang = text.split()[1]
             tex = text.split(None, 2)[2].strip()
             answerss = await translate_func(answers, lang, tex)
@@ -66,6 +73,14 @@ async def inline_query_handler(client, query):
                 results=answerss,
             )
         elif text.split()[0] == "ud":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Search Urban Dictionary.',
+                    switch_pm_parameter='inline',
+                )
+                return
             tex = text.split(None, 1)[1].strip()
             answerss = await urban_func(answers, tex)
             await client.answer_inline_query(
@@ -73,6 +88,14 @@ async def inline_query_handler(client, query):
                 results=answerss,
             )
         elif text.split()[0] == "google":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Search Google.',
+                    switch_pm_parameter='inline',
+                )
+                return
             tex = text.split(None, 1)[1].strip()
             answerss = await google_search_func(answers, tex)
             await client.answer_inline_query(
@@ -80,6 +103,14 @@ async def inline_query_handler(client, query):
                 results=answerss,
             )
         elif text.split()[0] == "webss":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Take Screenshot Of A Website.',
+                    switch_pm_parameter='inline',
+                )
+                return
             tex = text.split(None, 1)[1].strip()
             answerss = await webss(tex)
             await client.answer_inline_query(
@@ -88,6 +119,14 @@ async def inline_query_handler(client, query):
                 cache_time=2
             )
         elif text.split()[0] == "bitly":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Shorten A Link.',
+                    switch_pm_parameter='inline',
+                )
+                return
             tex = text.split(None, 1)[1].strip()
             answerss = await shortify(tex)
             await client.answer_inline_query(
@@ -97,6 +136,14 @@ async def inline_query_handler(client, query):
             )
 
         elif text.split()[0] == "wall":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Search Wallpapers.',
+                    switch_pm_parameter='inline',
+                )
+                return
             tex = text.split(None, 1)[1].strip()
             answerss = await wall_func(answers, tex)
             await client.answer_inline_query(
@@ -105,6 +152,14 @@ async def inline_query_handler(client, query):
             )
 
         elif text.split()[0] == "saavn":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Search Songs On JioSaavn.',
+                    switch_pm_parameter='inline',
+                )
+                return
             tex = text.split(None, 1)[1].strip()
             answerss = await saavn_func(answers, tex)
             await client.answer_inline_query(
@@ -113,6 +168,14 @@ async def inline_query_handler(client, query):
             )
 
         elif text.split()[0] == "deezer":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Search Songs On Deezer.',
+                    switch_pm_parameter='inline',
+                )
+                return
             tex = text.split(None, 1)[1].strip()
             answerss = await deezer_func(answers, tex)
             await client.answer_inline_query(
@@ -121,6 +184,14 @@ async def inline_query_handler(client, query):
             )
 
         elif text.split()[0] == "torrent":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Search For Torrent.',
+                    switch_pm_parameter='inline',
+                )
+                return
             tex = text.split(None, 1)[1].strip()
             answerss = await torrent_func(answers, tex)
             await client.answer_inline_query(
@@ -129,6 +200,14 @@ async def inline_query_handler(client, query):
             )
 
         elif text.split()[0] == "yt":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Search YouTube.',
+                    switch_pm_parameter='inline',
+                )
+                return
             tex = text.split(None, 1)[1].strip()
             answerss = await youtube_func(answers, tex)
             await client.answer_inline_query(
@@ -137,6 +216,14 @@ async def inline_query_handler(client, query):
             )
 
         elif text.split()[0] == "lyrics":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Search Lyrics.',
+                    switch_pm_parameter='inline',
+                )
+                return
             tex = text.split(None, 1)[1].strip()
             answerss = await lyrics_func(answers, tex)
             await client.answer_inline_query(
@@ -145,6 +232,14 @@ async def inline_query_handler(client, query):
             )
 
         elif text.split()[0] == "eval":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Excute Python Code.',
+                    switch_pm_parameter='inline',
+                )
+                return
             user_id = query.from_user.id
             tex = text.split(None, 1)[1].strip()
             answerss = await eval_func(answers, tex, user_id)
@@ -155,6 +250,14 @@ async def inline_query_handler(client, query):
             )
 
         elif text.split()[0] == "gh_user":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Search Github User.',
+                    switch_pm_parameter='inline',
+                )
+                return
             tex = text.split(None, 1)[1].strip()
             answerss = await github_user_func(answers, tex)
             await client.answer_inline_query(
@@ -164,6 +267,14 @@ async def inline_query_handler(client, query):
             )
 
         elif text.split()[0] == "gh_repo":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Search Github Repo.',
+                    switch_pm_parameter='inline',
+                )
+                return
             tex = text.split(None, 1)[1].strip()
             answerss = await github_repo_func(answers, tex)
             await client.answer_inline_query(
@@ -173,6 +284,14 @@ async def inline_query_handler(client, query):
             )
 
         elif text.split()[0] == "search":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Global Message Search.',
+                    switch_pm_parameter='inline',
+                )
+                return
             user_id = query.from_user.id
             tex = text.split(None, 1)[1].strip()
             answerss = await tg_search_func(answers, tex, user_id)
