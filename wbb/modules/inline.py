@@ -1,12 +1,5 @@
 from wbb import app
-from wbb.utils.inlinefuncs import (
-    google_search_func, urban_func, translate_func,
-    alive_function, webss, shortify, wall_func,
-    saavn_func, deezer_func, inline_help_func,
-    torrent_func, youtube_func, lyrics_func,
-    eval_func, github_user_func, github_repo_func,
-    tg_search_func, deezaudio_func
-)
+from wbb.utils.inlinefuncs import *
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import QueryIdInvalid
 
@@ -302,12 +295,13 @@ async def inline_query_handler(client, query):
             )
 
         elif text.split()[0] == "audio":
-            answerss = await deezaudio_func(answers)
+            answerss = await cached_audio_test_func(answers)
             await client.answer_inline_query(
                 query.id,
                 results=answerss,
                 cache_time=2
             )
 
-    except (IndexError, TypeError, KeyError, ValueError, QueryIdInvalid):
+    except (IndexError, TypeError, KeyError, ValueError, QueryIdInvalid) as e:
+        print(e + "InLine")
         return

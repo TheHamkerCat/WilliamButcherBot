@@ -23,23 +23,7 @@ from wbb import (
     arq, app, app2, USERBOT_USERNAME,
     BOT_USERNAME, LOG_GROUP_ID, USERBOT_ID
 )
-from wbb.core.types.InlineQueryResult import InlineQueryResultAudio
-
-
-async def deezaudio_func(answers):
-    msg = "a"
-    answers.append(
-        InlineQueryResultAudio(
-            audio_url="https://masstamilan2019download.com/tamil/2019%20Tamil%20Mp3/Oh%20My%20Kadavule/Kadhaippoma-Masstamilan.In.mp3",
-            title="a",
-            description="desc",
-            input_message_content=InputTextMessageContent(msg)
-        )
-    )
-    return answers
-
-
-
+from wbb.core.types.InlineQueryResult import InlineQueryResultAudio, InlineQueryResultCachedAudio
 
 
 async def inline_help_func(__HELP__):
@@ -578,4 +562,13 @@ async def tg_search_func(answers, text, user_id):
                 )
         )
         answers.append(result)
+    return answers
+
+
+async def cached_audio_test_func(answers):
+    answers.append(
+        InlineQueryResultCachedAudio(
+            file_id="CQACAgUAAx0EWIlO9AABA5N3YH0yxW2M9qTAMATvsj2-hkXv7NUAAn4CAAL2U-hXv1yOjFTFTiweBA"
+        )
+    )
     return answers
