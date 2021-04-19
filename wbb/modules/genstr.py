@@ -1,6 +1,7 @@
 from wbb import app
 from pyrogram import Client, filters
 from asyncio.exceptions import TimeoutError
+from wbb.core.decorators.errors import capture_err
 from pyrogram.errors import (
     SessionPasswordNeeded, PhoneNumberInvalid,
     PhoneCodeInvalid, PhoneCodeExpired
@@ -19,6 +20,7 @@ Send **/genstr** Command To The Bot In Private And Follow Instructions."""
 
 
 @app.on_message(filters.command("genstr") & filters.private)
+@capture_err
 async def genstr(_, message):
     chat = message.chat
     while True:

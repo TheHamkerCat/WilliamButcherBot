@@ -1,6 +1,6 @@
 from wbb import app, SUDOERS, BOT_ID, BOT_NAME
 from wbb.utils.filter_groups import global_stats_group
-from wbb.utils.errors import capture_err
+from wbb.core.decorators.errors import capture_err
 from wbb.utils.fetch import fetch
 from wbb.modules import ALL_MODULES
 from wbb.utils.dbfunctions import (

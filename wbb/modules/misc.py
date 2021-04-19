@@ -9,7 +9,7 @@ from wbb.utils import random_line
 from wbb.utils.json_prettify import json_prettify
 from wbb.utils.fetch import fetch
 from wbb.utils.pastebin import paste
-from wbb.utils.errors import capture_err
+from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "Misc"
 __HELP__ = '''/commit - Generate Funny Commit Messages

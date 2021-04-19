@@ -3,7 +3,7 @@ import sre_constants
 from wbb import app
 from wbb.utils.filter_groups import regex_group
 from pyrogram import filters
-
+from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "Sed"
 __HELP__ = "**Usage:**\ns/foo/bar"
@@ -13,6 +13,7 @@ DELIMITERS = ("/", ":", "|", "_")
 
 
 @app.on_message(filters.regex(r"s([{}]).*?\1.*".format("".join(DELIMITERS))), group=regex_group)
+@capture_err
 async def sed(_, message):
     sed_result = separate_sed(message.text)
     if message.reply_to_message:

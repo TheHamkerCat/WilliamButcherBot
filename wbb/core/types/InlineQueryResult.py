@@ -1,27 +1,9 @@
-#  Pyrogram - Telegram MTProto API Client Library for Python
-#  Copyright (C) 2017-2020 Dan <https://github.com/delivrance>
-#
-#  This file is part of Pyrogram.
-#
-#  Pyrogram is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU Lesser General Public License as published
-#  by the Free Software Foundation, either version 3 of the License, or
-#  (at your option) any later version.
-#
-#  Pyrogram is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU Lesser General Public License for more details.
-#
-#  You should have received a copy of the GNU Lesser General Public License
-#  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
-
 from typing import Optional, List, Union
-import pyrogram
 from pyrogram import raw, types, utils
-from pyrogram.file_id import FileType
+from pyrogram.file_id import FileType, FileId, PHOTO_TYPES, DOCUMENT_TYPES
 from pyrogram.parser import Parser
 from pyrogram.types import InlineQueryResult
+import pyrogram
 
 
 class InlineQueryResultAudio(InlineQueryResult):
@@ -157,31 +139,44 @@ class InlineQueryResultAudio(InlineQueryResult):
             )
         )
 
+""" 
+    CREDITS:
 
-class InlineQueryResultCachedAudio(InlineQueryResult):
-    """Represents a link to an MP3 audio file stored on the Telegram servers.
+    THE CODE BELOW THIS LINE IS WRITTEN BY https://github.com/Mahesh0253. [https://t.me/DeletedUser420]
+    HERE IS THE ACTUAL ORIGIN:
+    https://github.com/Mahesh0253/pyrogram/blob/inline/pyrogram/types/inline_mode/inline_query_result_cached_document.py
+"""
 
-    By default, this audio file will be sent by the user.
-    Alternatively, you can use input_message_content to send a message with the specified content instead of the audio.    
+
+class InlineQueryResultCachedDocument(InlineQueryResult):
+    """Link to a file stored on the Telegram servers.
+    
+    By default, this file will be sent by the user with an optional caption. 
+    Alternatively, you can use input_message_content to send a message with the specified content instead of the file.
     
     Parameters:
+        title (``str``):
+            Title for the result.
+        
         file_id (``str``):
-            A valid file identifier for the audio file
+            Pass a file_id as string to send a media that exists on the Telegram servers.
             
         id (``str``, *optional*):
             Unique identifier for this result, 1-64 bytes.
             Defaults to a randomly generated UUID4.
             
+        description (``str``, *optional*):
+            Short description of the result.
+            
         caption (``str``, *optional*):
-            Caption, 0-1024 characters after entities parsing.
-
+            Caption of the photo to be sent, 0-1024 characters.
+        
         parse_mode (``str``, *optional*):
             By default, texts are parsed using both Markdown and HTML styles.
             You can combine both syntaxes together.
             Pass "markdown" or "md" to enable Markdown-style parsing only.
             Pass "html" to enable HTML-style parsing only.
             Pass None to completely disable style parsing.
-
         caption_entities (List of :obj:`~pyrogram.types.MessageEntity`):
                 List of special entities that appear in the caption, which can be specified instead of *parse_mode*.
             
@@ -195,34 +190,39 @@ class InlineQueryResultCachedAudio(InlineQueryResult):
     def __init__(
         self,
         file_id: str,
+        title: str= None,
         id: str = None,
+        description: str = None,
         caption: str = "",
         parse_mode: Optional[str] = object,
         caption_entities: List["types.MessageEntity"] = None,
         reply_markup: "types.InlineKeyboardMarkup" = None,
         input_message_content: "types.InputMessageContent" = None
     ):
-        super().__init__("audio", id, input_message_content, reply_markup)
+        super().__init__("file", id, input_message_content, reply_markup)
 
         self.file_id = file_id
+        self.title = title
+        self.description = description
         self.caption = caption
-        self.parse_mode = parse_mode
         self.caption_entities = caption_entities
+        self.parse_mode = parse_mode
         self.reply_markup = reply_markup
         self.input_message_content = input_message_content
 
-
     async def write(self, client: "pyrogram.Client"):
-        audio = utils.get_input_media_from_file_id(self.file_id, FileType.AUDIO)
+        document = get_input_file_from_file_id(self.file_id)
 
         message, entities = (await utils.parse_text_entities(
             client, self.caption, self.parse_mode, self.caption_entities
         )).values()
-        print(audio)
+
         return raw.types.InputBotInlineResultDocument(
             id=self.id,
             type=self.type,
-            document=audio,
+            title=self.title,
+            description=self.description,
+            document=document,
             send_message=(
                 await self.input_message_content.write(client, self.reply_markup)
                 if self.input_message_content
@@ -233,3 +233,37 @@ class InlineQueryResultCachedAudio(InlineQueryResult):
                 )
             )
         )
+
+def get_input_file_from_file_id(
+    file_id: str,
+    expected_file_type: FileType = None
+) -> Union["raw.types.InputPhoto", "raw.types.InputDocument"]:
+    try:
+        decoded = FileId.decode(file_id)
+    except Exception:
+        raise ValueError(f'Failed to decode "{file_id}". The value does not represent an existing local file, '
+                         f'HTTP URL, or valid file id.')
+
+    file_type = decoded.file_type
+
+    if expected_file_type is not None and file_type != expected_file_type:
+        raise ValueError(f'Expected: "{expected_file_type}", got "{file_type}" file_id instead')
+
+    if file_type in (FileType.THUMBNAIL, FileType.CHAT_PHOTO):
+        raise ValueError(f"This file_id can only be used for download: {file_id}")
+
+    if file_type in PHOTO_TYPES:
+        return raw.types.InputPhoto(
+            id=decoded.media_id,
+            access_hash=decoded.access_hash,
+            file_reference=decoded.file_reference
+        )
+
+    if file_type in DOCUMENT_TYPES:
+        return raw.types.InputDocument(
+            id=decoded.media_id,
+            access_hash=decoded.access_hash,
+            file_reference=decoded.file_reference
+        )
+
+    raise ValueError(f"Unknown file id: {file_id}")

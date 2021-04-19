@@ -11,7 +11,7 @@ from wbb import (
     USERBOT_USERNAME, GBAN_LOG_GROUP_ID
 )
 from wbb.utils import formatter
-from wbb.utils.errors import capture_err
+from wbb.core.decorators.errors import capture_err
 from wbb.utils.dbfunctions import (
     is_gbanned_user,
     add_gban_user,

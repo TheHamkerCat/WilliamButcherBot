@@ -1,6 +1,6 @@
 from pyrogram import filters
 from wbb import SUDOERS, app
-from wbb.utils.errors import capture_err
+from wbb.core.decorators.errors import capture_err
 from wbb.modules.admin import list_admins, member_permissions
 import os
 
@@ -10,16 +10,19 @@ __HELP__ = """
 /set_chat_photo - Change The PFP Of A Group/Channel.
 /set_user_title - Change The Administrator Title Of An Admin.
 """
+
+
 @app.on_message(filters.command("set_chat_title") & ~filters.private)
 @capture_err
 async def set_chat_title(_, message):
     try:
         chat_id = message.chat.id
         user_id = message.from_user.id
-        permissions = await member_permissions(chat_id, user_id)
-        if "can_change_info" not in permissions:
-            await message.reply_text("You Don't Have Enough Permissions.")
-            return
+        if user_id not in SUDOERS:
+            permissions = await member_permissions(chat_id, user_id)
+            if "can_change_info" not in permissions:
+                await message.reply_text("You Don't Have Enough Permissions.")
+                return
         if len(message.command) < 2:
             await message.reply_text("**Usage:**\n/set_chat_title NEW NAME")
             return
@@ -39,10 +42,11 @@ async def set_user_title(_, message):
         chat_id = message.chat.id
         user_id = message.from_user.id
         from_user = message.reply_to_message.from_user
-        permissions = await member_permissions(chat_id, user_id)
-        if "can_change_info" not in permissions:
-            await message.reply_text("You Don't Have Enough Permissions.")
-            return
+        if user_id not in SUDOERS:
+            permissions = await member_permissions(chat_id, user_id)
+            if "can_change_info" not in permissions:
+                await message.reply_text("You Don't Have Enough Permissions.")
+                return
         if len(message.command) < 2:
             await message.reply_text("**Usage:**\n/set_user_title NEW ADMINISTRATOR TITLE")
             return
@@ -60,10 +64,11 @@ async def set_chat_photo(_, message):
     try:
         chat_id = message.chat.id
         user_id = message.from_user.id
-        permissions = await member_permissions(chat_id, user_id)
-        if "can_change_info" not in permissions:
-            await message.reply_text("You Don't Have Enough Permissions.")
-            return
+        if user_id not in SUDOERS:
+            permissions = await member_permissions(chat_id, user_id)
+            if "can_change_info" not in permissions:
+                await message.reply_text("You Don't Have Enough Permissions.")
+                return
         if not message.reply_to_message:
             await message.reply_text("Reply to a photo to set it as chat_photo")
             return

@@ -2,7 +2,7 @@ import os
 import imghdr
 from wbb import app, BOT_USERNAME
 from pyrogram import filters
-from wbb.utils.errors import capture_err
+from wbb.core.decorators.errors import capture_err
 from wbb.utils.files import resize_file_to_sticker_size, upload_document, get_document_from_file_id
 from wbb.utils.stickerset import get_sticker_set_by_name, create_sticker, add_sticker_to_set, create_sticker_set
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup

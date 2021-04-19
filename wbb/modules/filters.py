@@ -4,7 +4,7 @@ from wbb.utils.dbfunctions import (
     save_filter, get_filters_names, get_filter, delete_filter
 )
 from pyrogram import filters
-from wbb.utils.errors import capture_err
+from wbb.core.decorators.errors import capture_err
 from wbb.utils.filter_groups import chat_filters_group
 import re
 

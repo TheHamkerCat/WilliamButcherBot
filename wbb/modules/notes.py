@@ -2,7 +2,7 @@ from wbb import app
 from wbb.utils.dbfunctions import (
     save_note, get_note_names, get_note, delete_note
 )
-from wbb.utils.errors import capture_err
+from wbb.core.decorators.errors import capture_err
 from wbb.modules.admin import member_permissions
 from pyrogram import filters
 

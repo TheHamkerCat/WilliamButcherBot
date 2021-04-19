@@ -4,6 +4,7 @@
 from wbb import app
 from pyrogram import filters
 from wbb.modules.admin import member_permissions
+from wbb.core.decorators.errors import capture_err
 from wbb.utils.dbfunctions import is_antiservice_on, antiservice_on, antiservice_off
 
 __MODULE__ = "AntiService"
@@ -15,6 +16,7 @@ Plugin to delete service messages in a chat!
 
 
 @app.on_message(filters.command("antiservice") & ~filters.private)
+@capture_err
 async def anti_service(_, message):
     if len(message.command) != 2:
         await message.reply_text("Usage: /antiservice [enable | disable]")
@@ -38,6 +40,7 @@ async def anti_service(_, message):
 
 
 @app.on_message(filters.service, group=11)
+@capture_err
 async def delete_service(_, message):
     chat_id = message.chat.id
     try:

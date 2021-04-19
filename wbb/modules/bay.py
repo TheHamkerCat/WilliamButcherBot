@@ -5,6 +5,8 @@ import aiofiles
 from wbb import app, SUDOERS
 from pyrogram import filters
 from random import randint
+from wbb.core.decorators.errors import capture_err
+
 
 __MODULE__ = "BAYFILES"
 __HELP__ = """/url [URL] To upload a url to bayfiles. [SUDO ONLY]
@@ -12,6 +14,7 @@ __HELP__ = """/url [URL] To upload a url to bayfiles. [SUDO ONLY]
 
 
 @app.on_message(filters.command("url") & filters.user(SUDOERS))
+@capture_err
 async def url(_, message):
     if len(message.command) != 2:
         await message.reply_text("/url [url]")
@@ -39,6 +42,7 @@ async def url(_, message):
 
 
 @app.on_message(filters.command("tg") & filters.user(SUDOERS))
+@capture_err
 async def tg(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply To A File With /tg To Upload")

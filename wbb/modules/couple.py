@@ -1,5 +1,5 @@
 from wbb import app
-from wbb.utils.errors import capture_err
+from wbb.core.decorators.errors import capture_err
 from wbb.utils.dbfunctions import get_couple, save_couple
 from pyrogram import filters
 import random

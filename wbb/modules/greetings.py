@@ -4,7 +4,7 @@ import asyncio
 import os
 from wbb import app, WELCOME_DELAY_KICK_SEC, SUDOERS
 from wbb.modules.admin import member_permissions
-from wbb.utils.errors import capture_err
+from wbb.core.decorators.errors import capture_err
 from wbb.utils.filter_groups import welcome_captcha_group
 from wbb.utils.functions import generate_captcha
 from wbb.utils.dbfunctions import (

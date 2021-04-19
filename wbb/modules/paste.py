@@ -2,7 +2,7 @@ import os
 from pyrogram import filters
 from wbb.utils.pastebin import paste
 from wbb import app
-from wbb.utils.errors import capture_err
+from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "Paste"
 __HELP__ = "/paste - To Paste Replied Text Or Document To Nekobin"

@@ -19,11 +19,11 @@ from wbb.modules.userbot import eval_executor_func
 from wbb.utils.fetch import fetch
 from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
 from wbb.utils.pastebin import paste
+from wbb.core.types.InlineQueryResult import InlineQueryResultCachedDocument
 from wbb import (
     arq, app, app2, USERBOT_USERNAME,
     BOT_USERNAME, LOG_GROUP_ID, USERBOT_ID
 )
-from wbb.core.types.InlineQueryResult import InlineQueryResultAudio, InlineQueryResultCachedAudio
 
 
 async def inline_help_func(__HELP__):
@@ -319,7 +319,7 @@ async def torrent_func(answers, text):
 **Seeds:** __{seeds}__
 **Leechs:** __{leechs}__
 **Uploaded:** __{upload_date}__
-**Magnet:** __{magnet}__"""
+**Magnet:** `{magnet}`"""
 
         description = f"{size} | {upload_date} | Seeds: {seeds}"
         try:
@@ -550,7 +550,7 @@ async def tg_search_func(answers, text, user_id):
 **Date:** {ctime(message.date)}
 **Text:** >>
 
-{message.text.markdown if message.text else message.caption if message.caption else "[NO_TEXT]"}
+{message.text.markdown if message.text else message.caption if message.caption else '[NO_TEXT]'}
 """
         result = InlineQueryResultArticle(
             title=name,
@@ -559,16 +559,45 @@ async def tg_search_func(answers, text, user_id):
             input_message_content=InputTextMessageContent(
                 caption,
                 disable_web_page_preview=True
-                )
+            )
         )
         answers.append(result)
     return answers
 
 
-async def cached_audio_test_func(answers):
-    answers.append(
-        InlineQueryResultCachedAudio(
-            file_id="CQACAgUAAx0EWIlO9AABA5N3YH0yxW2M9qTAMATvsj2-hkXv7NUAAn4CAAL2U-hXv1yOjFTFTiweBA"
+async def music_inline_func(answers, query):
+    chat_id = -1001445180719
+    group_invite = "https://t.me/joinchat/vSDE2DuGK4Y4Nzll"
+    try:
+        messages = [m async for m in app2.search_messages(chat_id, query, filter="audio", limit=199)]
+        file_and_message_ids = []
+        for f_ in messages:
+            file_and_message_ids.append(
+                {"message_id": f_.message_id, "file_unique_id": f_.audio.file_unique_id}
+                )
+        messages = list(
+            {v["file_unique_id"]: v for v in file_and_message_ids}.values())
+        messages_ids = []
+        for ff_ in messages:
+            messages_ids.append(ff_['message_id'])
+    except Exception as e:
+        print(e)
+        msg = f"You Need To Join Here With Your Bot And Userbot To Get Cached Music.\n{group_invite}"
+        answers.append(
+            InlineQueryResultArticle(
+                title="ERROR",
+                description="Click Here To Know More.",
+                input_message_content=InputTextMessageContent(
+                    msg, disable_web_page_preview=True)
+            )
         )
-    )
+        return answers
+    messages = await app.get_messages(chat_id, messages_ids[0:48])
+    for message_ in messages:
+        answers.append(
+            InlineQueryResultCachedDocument(
+                file_id=message_.audio.file_id,
+                title=message_.audio.title
+            )
+        )
     return answers

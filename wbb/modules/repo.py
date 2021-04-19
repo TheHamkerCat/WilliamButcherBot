@@ -1,6 +1,6 @@
 from pyrogram import filters
 from wbb import app
-from wbb.utils.errors import capture_err
+from wbb.core.decorators.errors import capture_err
 from wbb.utils.fetch import fetch
 
 __MODULE__ = "Repo"

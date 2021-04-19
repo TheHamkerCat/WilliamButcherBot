@@ -2,6 +2,7 @@ from wbb import app
 from wbb.utils.inlinefuncs import *
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import QueryIdInvalid
+from wbb.core.types.InlineQueryResult import InlineQueryResultCachedDocument
 
 __MODULE__ = "Inline"
 __HELP__ = '''```
@@ -294,14 +295,23 @@ async def inline_query_handler(client, query):
                 cache_time=2
             )
 
-        elif text.split()[0] == "audio":
-            answerss = await cached_audio_test_func(answers)
+        elif text.split()[0] == "music":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Search For Music.',
+                    switch_pm_parameter='inline',
+                )
+                return
+            tex = text.split(None, 1)[1].strip()
+            answerss = await music_inline_func(answers, tex)
             await client.answer_inline_query(
                 query.id,
                 results=answerss,
                 cache_time=2
             )
 
-    except (IndexError, TypeError, KeyError, ValueError, QueryIdInvalid) as e:
-        print(e + "InLine")
+    except Exception as e:
+        print(str(e) + "InLine")
         return

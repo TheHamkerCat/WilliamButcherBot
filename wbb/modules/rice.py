@@ -2,7 +2,7 @@ from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.types import InputMediaPhoto, InputMediaVideo
 from wbb import app
-from wbb.utils.errors import capture_err
+from wbb.core.decorators.errors import capture_err
 
 RICE_GROUP = "DE_WM"
 RICE_CHANNEL = "RiceGallery"
