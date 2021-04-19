@@ -1,7 +1,7 @@
-from wbb import (
-    arq, app, app2, USERBOT_USERNAME,
-    BOT_USERNAME, LOG_GROUP_ID, USERBOT_ID
-)
+import aiohttp
+import json
+import sys
+import asyncio
 from pyrogram.types import (
     InlineQueryResultArticle,
     InputTextMessageContent,
@@ -10,19 +10,36 @@ from pyrogram.types import (
 )
 from googletrans import Translator
 from search_engine_parser import GoogleSearch
-from wbb.modules.userbot import eval_executor_func
-from wbb.utils.fetch import fetch
-from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
-from wbb.utils.pastebin import paste
 from pykeyboard import InlineKeyboard
 from sys import version as pyver
 from motor import version as mongover
 from pyrogram import __version__ as pyrover
 from time import time, ctime
-import aiohttp
-import json
-import sys
-import asyncio
+from wbb.modules.userbot import eval_executor_func
+from wbb.utils.fetch import fetch
+from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
+from wbb.utils.pastebin import paste
+from wbb import (
+    arq, app, app2, USERBOT_USERNAME,
+    BOT_USERNAME, LOG_GROUP_ID, USERBOT_ID
+)
+from wbb.core.types.InlineQueryResult import InlineQueryResultAudio
+
+
+async def deezaudio_func(answers):
+    msg = "a"
+    answers.append(
+        InlineQueryResultAudio(
+            audio_url="https://masstamilan2019download.com/tamil/2019%20Tamil%20Mp3/Oh%20My%20Kadavule/Kadhaippoma-Masstamilan.In.mp3",
+            title="a",
+            description="desc",
+            input_message_content=InputTextMessageContent(msg)
+        )
+    )
+    return answers
+
+
+
 
 
 async def inline_help_func(__HELP__):
