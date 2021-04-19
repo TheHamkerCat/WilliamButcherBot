@@ -118,19 +118,22 @@ async def urban_func(answers, text):
         if limit > 48:
             break
         limit += 1
-        msg = f"""
-**Query:** {text}
+        try:
+            msg = f"""
+    **Query:** {text}
 
-**Definition:** __{results[i].definition}__
+    **Definition:** __{results[i].definition}__
 
-**Example:** __{results[i].example}__"""
+    **Example:** __{results[i].example}__"""
 
-        answers.append(
-            InlineQueryResultArticle(
-                title=results[i].word,
-                description=results[i].definition,
-                input_message_content=InputTextMessageContent(msg)
-            ))
+            answers.append(
+                InlineQueryResultArticle(
+                    title=results[i].word,
+                    description=results[i].definition,
+                    input_message_content=InputTextMessageContent(msg)
+                ))
+        except KeyError:
+            pass
     return answers
 
 

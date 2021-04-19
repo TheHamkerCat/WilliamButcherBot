@@ -13,6 +13,7 @@ __HELP__ = '''```
 - webss [URL] - Take Screenshot Of A Website.
 - bitly [URL] - Shorten A Link.
 - wall [QUERY] - Find Wallpapers.
+- music [QUERY] - Get Music.
 - saavn [SONG_NAME] - Get Songs From Saavn.
 - deezer [SONG_NAME] - Get Songs From Deezer.
 - yt [Query] - Youtube Search.
