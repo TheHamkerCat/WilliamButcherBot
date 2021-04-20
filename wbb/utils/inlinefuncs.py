@@ -573,16 +573,6 @@ async def music_inline_func(answers, query):
     group_invite = "https://t.me/joinchat/vSDE2DuGK4Y4Nzll"
     try:
         messages = [m async for m in app2.search_messages(chat_id, query, filter="audio", limit=199)]
-        file_and_message_ids = []
-        for f_ in messages:
-            file_and_message_ids.append(
-                {"message_id": f_.message_id, "file_unique_id": f_.audio.file_unique_id}
-                )
-        messages = list(
-            {v["file_unique_id"]: v for v in file_and_message_ids}.values())
-        messages_ids = []
-        for ff_ in messages:
-            messages_ids.append(ff_['message_id'])
     except Exception as e:
         print(e)
         msg = f"You Need To Join Here With Your Bot And Userbot To Get Cached Music.\n{group_invite}"
@@ -591,10 +581,22 @@ async def music_inline_func(answers, query):
                 title="ERROR",
                 description="Click Here To Know More.",
                 input_message_content=InputTextMessageContent(
-                    msg, disable_web_page_preview=True)
+                    msg,
+                    disable_web_page_preview=True
+                )
             )
         )
         return answers
+    messages_ids_and_duration = []
+    for f_ in messages:
+        messages_ids_and_duration.append(
+            {"message_id": f_.message_id, "duration": f_.audio.duration if f_.audio.duration else 0}
+        )
+    messages = list(
+        {v["duration"]: v for v in messages_ids_and_duration}.values())
+    messages_ids = []
+    for ff_ in messages:
+        messages_ids.append(ff_['message_id'])
     messages = await app.get_messages(chat_id, messages_ids[0:48])
     for message_ in messages:
         answers.append(
