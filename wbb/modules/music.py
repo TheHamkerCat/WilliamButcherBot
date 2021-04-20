@@ -5,10 +5,13 @@ import aiohttp
 import aiofiles
 import os
 from random import randint
+from hurry.filesize import size as format_size
 from pyrogram import filters
 from wbb import app, SUDOERS, arq, MAIN_CHATS
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.pastebin import paste
+from wbb.utils.functions import file_size_from_url
+
 
 __MODULE__ = "Music"
 __HELP__ = """/ytmusic [link] To Download Music From Various Websites Including Youtube.
@@ -108,8 +111,12 @@ async def jssong(_, message):
         song = await download_song(slink)
         await m.edit("Uploading")
         await message.reply_audio(
-                audio=song, title=sname,
-                performer=ssingers, duration=int(songs[0].duration))
+                audio=song,
+                title=sname,
+                caption=f"「 `{format_size(await file_size_from_url(slink))}` 」",
+                performer=ssingers,
+                duration=int(songs[0].duration)
+                )
         os.remove(song)
         await m.delete()
     except Exception as e:
@@ -143,8 +150,11 @@ async def deezsong(_, message):
         await m.edit("Downloading")
         song = await download_song(url)
         await m.edit("Uploading")
-        await message.reply_audio(audio=song, title=title,
-                                  performer=artist)
+        await message.reply_audio(
+                audio=song,
+                title=title,
+                performer=artist,
+                caption=f"「 `{format_size(await file_size_from_url(slink))}` 」")
         os.remove(song)
         await m.delete()
     except Exception as e:

@@ -4,6 +4,7 @@ cryptography
 dnspython
 future
 googletrans==4.0.0-rc1
+hurry.filesize
 motor
 pillow
 psutil

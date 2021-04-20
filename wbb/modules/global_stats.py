@@ -48,13 +48,13 @@ async def global_stats(_, message):
     for chat in chats:
         served_chats.append(int(chat["chat_id"]))
     await m.edit(
-            f"__**Analysing Stats Might Take {len(served_chats)*6}+ Seconds.**__",
+            f"__**Analysing Statistics, Should Take {len(served_chats)*6}+ Seconds.**__",
             disable_web_page_preview=True
             )
     for served_chat in served_chats:
         try:
             await app.get_chat_members(served_chat, BOT_ID)
-            await asyncio.sleep(3)
+            await asyncio.sleep(2)
         except Exception:
             await remove_served_chat(served_chat)
             served_chats.remove(served_chat)
@@ -66,11 +66,10 @@ async def global_stats(_, message):
         except Exception:
             await remove_served_chat(served_chat)
             pass
-        await asyncio.sleep(3)
+        await asyncio.sleep(2)
 
     # Gbans count
     gbans = await get_gbans_count()
-    # Notes count across chats
     _notes = await get_notes_count()
     notes_count = _notes["notes_count"]
     notes_chats_count = _notes["chats_count"]

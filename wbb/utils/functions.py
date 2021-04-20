@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from random import randint
 import speedtest
+import aiohttp
 
 
 def generate_captcha():
@@ -67,3 +68,10 @@ async def test_speedtest():
     download = speed.download()
     upload = speed.upload()
     return [speed_convert(download), speed_convert(upload), info]
+
+
+async def file_size_from_url(url: str) -> int:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            size = int(resp.headers['content-length'])
+    return size

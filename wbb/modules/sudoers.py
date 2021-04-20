@@ -6,7 +6,7 @@ import psutil
 import asyncio
 from sys import version as pyver
 from wbb import (
-    app, SUDOERS, bot_start_time, BOT_ID,
+    app, app2, SUDOERS, bot_start_time, BOT_ID,
     USERBOT_USERNAME, GBAN_LOG_GROUP_ID
 )
 from wbb.utils import formatter
@@ -244,7 +244,7 @@ async def broadcast_message(_, message):
 
 # Update
 
-
+@app2.on_message(filters.command("update", prefixes=".") & filters.user(SUDOERS))
 @app.on_message(filters.command("update") & filters.user(SUDOERS))
 async def update_restart(_, message):
     await message.reply_text(f'```{subprocess.check_output(["git", "pull"]).decode("UTF-8")}```')
