@@ -6,23 +6,26 @@ from pyrogram.types import (
     InlineQueryResultArticle,
     InputTextMessageContent,
     InlineKeyboardButton,
-    InlineQueryResultPhoto
+    InlineQueryResultPhoto,
+    InputMediaPhoto
 )
 from googletrans import Translator
 from search_engine_parser import GoogleSearch
 from pykeyboard import InlineKeyboard
 from sys import version as pyver
 from motor import version as mongover
-from pyrogram import __version__ as pyrover
+from pyrogram import __version__ as pyrover, filters
 from time import time, ctime
 from wbb.modules.userbot import eval_executor_func
 from wbb.utils.fetch import fetch
+from wbb.utils.functions import test_speedtest
 from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
 from wbb.utils.pastebin import paste
 from wbb.core.types.InlineQueryResult import InlineQueryResultCachedDocument
 from wbb import (
     arq, app, app2, USERBOT_USERNAME,
-    BOT_USERNAME, LOG_GROUP_ID, USERBOT_ID
+    BOT_USERNAME, LOG_GROUP_ID, USERBOT_ID,
+    SUDOERS
 )
 
 
@@ -120,11 +123,11 @@ async def urban_func(answers, text):
         limit += 1
         try:
             msg = f"""
-    **Query:** {text}
+**Query:** {text}
 
-    **Definition:** __{results[i].definition}__
+**Definition:** __{results[i].definition}__
 
-    **Example:** __{results[i].example}__"""
+**Example:** __{results[i].example}__"""
 
             answers.append(
                 InlineQueryResultArticle(
@@ -193,7 +196,7 @@ async def saavn_func(answers, text):
                 'Download | Play',
                 url=results[i].media_url
             )
-        )
+       )
         buttons_list.append(buttons)
         duration = await time_convert(results[i].duration)
         caption = f"""
@@ -405,7 +408,7 @@ async def lyrics_func(answers, text):
 
 
 async def eval_func(answers, text, user_id):
-    if user_id != USERBOT_ID:
+    if user_id not in SUDOERS:
         msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
         answers.append(
             InlineQueryResultArticle(
@@ -517,7 +520,7 @@ async def github_repo_func(answers, text):
 
 
 async def tg_search_func(answers, text, user_id):
-    if user_id != USERBOT_ID:
+    if user_id not in SUDOERS:
         msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
         answers.append(
             InlineQueryResultArticle(
@@ -628,3 +631,56 @@ __{data['answer']}__"""
         )
     )
     return answers
+
+
+async def speedtest_init(query):
+    answers = []
+    user_id = query.from_user.id
+    if user_id not in SUDOERS:
+        msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
+        answers.append(
+            InlineQueryResultArticle(
+                title="ERROR",
+                description="THIS FEATURE IS ONLY FOR SUDO USERS",
+                input_message_content=InputTextMessageContent(msg)
+            ))
+        return answers
+    msg = "**Click The Button Below To Perform A Speedtest**"
+    button = InlineKeyboard(row_width=1)
+    button.add(InlineKeyboardButton(text="Test", callback_data="test_speedtest"))
+    answers.append(
+             InlineQueryResultArticle(
+                 title="Click Here",
+                 input_message_content=InputTextMessageContent(msg),
+                 reply_markup=button
+                 )
+             )
+    return answers
+
+""" callback query for the function above """
+
+
+@app.on_callback_query(filters.regex(f"test_speedtest"))
+async def test_speedtest_cq(_, cq):
+    if cq.from_user.id not in SUDOERS:
+        await cq.answer("This Isn't For You!")
+        return
+    inline_message_id = cq.inline_message_id
+    await app.edit_inline_text(
+            inline_message_id,
+            "**Testing**"
+    )
+    download, upload, info = await test_speedtest()
+    msg = f"""
+**Download:** `{download}`
+**Upload:** `{upload}`
+**Latency:** `{info['latency']} ms`
+**Country:** `{info['country']} [{info['cc']}]`
+**Latitude:** `{info['lat']}`
+**Longitude:** `{info['lon']}`
+"""
+    await app.edit_inline_text(
+            inline_message_id,
+            msg
+    )
+

@@ -20,6 +20,7 @@ __HELP__ = '''```
 - torrent [QUERY] - Torrent Search.
 - lyrics [QUERY] - Lyrics Search.
 - wiki [QUERY] - Wikipedia Search.
+- speedtest - Perform A Speedtest.
 - eval [CODE] - Execute Python Code.
 - gh_user [USERNAME | PROFILE_LINK] - Search A Github User.
 - gh_repo [REPO_LINK] - Search A Github Repo.
@@ -331,6 +332,16 @@ async def inline_query_handler(client, query):
                 results=answerss,
                 cache_time=2
             )
+
+        elif text.split()[0] == "speedtest":
+            answerss = await speedtest_init(query)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=2
+            )
+            return
+
     except Exception as e:
         print(str(e) + "InLine")
         return

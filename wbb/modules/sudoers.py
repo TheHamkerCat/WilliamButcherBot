@@ -2,7 +2,6 @@ import time
 import os
 import subprocess
 from pyrogram import filters
-import speedtest
 import psutil
 import asyncio
 from sys import version as pyver
@@ -21,43 +20,13 @@ from wbb.utils.dbfunctions import (
 
 
 __MODULE__ = "Sudoers"
-__HELP__ = '''/speedtest - To Perform A Speedtest.
+__HELP__ = '''
 /stats - To Check System Status.
 /gstats - To Check Bot's Global Stats.
 /gban - To Ban A User Globally.
 /broadcast - To Broadcast A Message To All Groups.
 /update - To Update And Restart The Bot
 /install - To Install A Module'''
-
-
-# SpeedTest Module
-
-
-def speed_convert(size):
-    power = 2 ** 10
-    zero = 0
-    units = {0: "", 1: "Kb/s", 2: "Mb/s", 3: "Gb/s", 4: "Tb/s"}
-    while size > power:
-        size /= power
-        zero += 1
-    return f"{round(size, 2)} {units[zero]}"
-
-
-@app.on_message(
-    filters.user(SUDOERS) & filters.command("speedtest")
-)
-@capture_err
-async def get_speedtest_result(_, message):
-    m = await message.reply_text("`Performing A Speedtest!`")
-    speed = speedtest.Speedtest()
-    i = speed.get_best_server()
-    j = speed.download()
-    k = speed.upload()
-    await m.edit(f'''
-**Download:** `{speed_convert(j)}`
-**Upload:** `{speed_convert(k)}`
-**Latency:** `{round((i["latency"]))} ms`
-''')
 
 # Stats Module
 
@@ -109,7 +78,8 @@ async def ban_globally(_, message):
             await message.reply_text("You want to ban a sudo user? GET REKT!!")
         else:
             served_chats = await get_served_chats()
-            m = await message.reply_text(f"**{user.mention} Will Be Banned  Globally In {len(served_chats)} Seconds.**")
+            m = await message.reply_text(f"**connecting to wbb network to perform a global ban of {user.mention}**\n"
+                                          + f" **this action should take about {len(served_chats)} seconds.**")
             await add_gban_user(user.id)
             number_of_chats = 0
             for served_chat in served_chats:
@@ -160,7 +130,8 @@ __**New Global Ban**__
             await message.reply_text("He's already gbanned, why bully him?")
         else:
             served_chats = await get_served_chats()
-            m = await message.reply_text(f"**{mention} Will Be Banned  Globally In {len(served_chats)} Seconds.**")
+            m = await message.reply_text(f"**connecting to wbb network to perform a global ban of {mention}**\n"
+                                          + f" **this action should take about {len(served_chats)} seconds.**")
             number_of_chats = 0
             for served_chat in served_chats:
                 try:

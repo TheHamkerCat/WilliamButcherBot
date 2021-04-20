@@ -1,5 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from random import randint
+import speedtest
 
 
 def generate_captcha():
@@ -25,10 +26,10 @@ def generate_captcha():
     for _ in range(7):
         wrong_answers.append(gen_wrong_answer())
 
-    width = 120 * 4
-    height = 120
+    width = 80 * 4
+    height = 100
     correct_answer = ""
-    font = ImageFont.truetype("assets/arial.ttf", 90)
+    font = ImageFont.truetype("assets/arial.ttf", 55)
     file = f"assets/{randint(1000, 9999)}.jpg"
     image = Image.new('RGB', (width, height), (255, 255, 255))
     draw = ImageDraw.Draw(image)
@@ -42,7 +43,7 @@ def generate_captcha():
         letter = gen_letter()
         correct_answer += letter
         draw.text(
-            (120 * t + 32, 3),
+            (60 * t + 50, 15),
             letter,
             font=font,
             fill=rndColor2()
@@ -50,3 +51,19 @@ def generate_captcha():
     image = image.filter(ImageFilter.BLUR)
     image.save(file, 'jpeg')
     return [file, correct_answer, wrong_answers]
+
+
+async def test_speedtest():
+    def speed_convert(size):
+        power = 2 ** 10
+        zero = 0
+        units = {0: "", 1: "Kb/s", 2: "Mb/s", 3: "Gb/s", 4: "Tb/s"}
+        while size > power:
+            size /= power
+            zero += 1
+        return f"{round(size, 2)} {units[zero]}"
+    speed = speedtest.Speedtest()
+    info = speed.get_best_server()
+    download = speed.download()
+    upload = speed.upload()
+    return [speed_convert(download), speed_convert(upload), info]

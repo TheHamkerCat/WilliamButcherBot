@@ -107,8 +107,9 @@ async def jssong(_, message):
         await m.edit("Downloading")
         song = await download_song(slink)
         await m.edit("Uploading")
-        await message.reply_audio(audio=song, title=sname,
-                                  performer=ssingers)
+        await message.reply_audio(
+                audio=song, title=sname,
+                performer=ssingers, duration=int(songs[0].duration))
         os.remove(song)
         await m.delete()
     except Exception as e:
