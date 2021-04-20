@@ -154,6 +154,7 @@ async def deezsong(_, message):
                 audio=song,
                 title=title,
                 performer=artist,
+                duration=songs[0].duration,
                 caption=f"「 `{format_size(await file_size_from_url(url))}` 」")
         os.remove(song)
         await m.delete()
