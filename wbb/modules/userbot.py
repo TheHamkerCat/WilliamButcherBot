@@ -1,3 +1,10 @@
+"""
+    CREDITS:
+        THIS MODULE IS WRITTEN BY @Pokurt.
+        SOURCE:
+            https://github.com/pokurt/Nana-Remix/blob/master/nana/plugins/devs.py
+"""
+
 import sys
 import traceback
 from io import StringIO

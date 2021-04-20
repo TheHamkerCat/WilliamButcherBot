@@ -1,3 +1,10 @@
+"""
+    CREDITS:
+        THIS MODULE IS COMPLETELY WRITTEN BY @Pokurt.
+        SOURCE:
+            https://github.com/pokurt/Nana-Remix/blob/master/nana/plugins/devs.py
+"""
+
 import sys
 import traceback
 from io import StringIO
@@ -12,8 +19,6 @@ from pyrogram.types import Message
 __MODULE__ = "Devs"
 __HELP__ = "/eval - Execute Python Code\n/sh - Execute Shell Code"
 
-
-# Eval and Sh module from nana-remix
 
 async def aexec(code, client, message):
     exec(

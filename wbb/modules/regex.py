@@ -77,30 +77,27 @@ def infinite_checker(repl):
 
 
 def separate_sed(sed_string):
-    try:
-        if (
-            len(sed_string) >= 3
-            and sed_string[1] in DELIMITERS
-            and sed_string.count(sed_string[1]) >= 2
-        ):
-            delim = sed_string[1]
-            start = counter = 2
-            while counter < len(sed_string):
-                if sed_string[counter] == "\\":
-                    counter += 1
-
-                elif sed_string[counter] == delim:
-                    replace = sed_string[start:counter]
-                    counter += 1
-                    start = counter
-                    break
-
+    if (
+        len(sed_string) >= 3
+        and sed_string[1] in DELIMITERS
+        and sed_string.count(sed_string[1]) >= 2
+    ):
+        delim = sed_string[1]
+        start = counter = 2
+        while counter < len(sed_string):
+            if sed_string[counter] == "\\":
                 counter += 1
 
-            else:
-                return None
-    except TypeError:
-        return
+            elif sed_string[counter] == delim:
+                replace = sed_string[start:counter]
+                counter += 1
+                start = counter
+                break
+
+            counter += 1
+
+        else:
+            return None
         while counter < len(sed_string):
             if (
                 sed_string[counter] == "\\"
