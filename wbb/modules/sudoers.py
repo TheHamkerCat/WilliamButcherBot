@@ -78,8 +78,8 @@ async def ban_globally(_, message):
             await message.reply_text("You want to ban a sudo user? GET REKT!!")
         else:
             served_chats = await get_served_chats()
-            m = await message.reply_text(f"**connecting to wbb network to perform a global ban of {user.mention}**\n"
-                                          + f" **this action should take about {len(served_chats)} seconds.**")
+            m = await message.reply_text(f"**Initializing WBB Global Ban Sequence To Add Restrictions On {user.mention}**"
+                                         + f" **This Action Should Take About {len(served_chats)} Seconds.**")
             await add_gban_user(user.id)
             number_of_chats = 0
             for served_chat in served_chats:
@@ -105,7 +105,8 @@ __**New Global Ban**__
 **Reason:** __{reason}__
 **Chats:** `{number_of_chats}`"""
             try:
-                await app.send_message(GBAN_LOG_GROUP_ID, text=ban_text)
+                m2 = await app.send_message(GBAN_LOG_GROUP_ID, text=ban_text, disable_web_page_preview=True)
+                await m.edit(f"Banned {user.mention} Globally!\nAction Log: {m2.link}", disable_web_page_preview=True)
             except Exception:
                 await message.reply_text("User Gbanned, But This Gban Wasn't Logged, Add Bot In GBAN_LOG_GROUP")
                 return
@@ -130,8 +131,8 @@ __**New Global Ban**__
             await message.reply_text("He's already gbanned, why bully him?")
         else:
             served_chats = await get_served_chats()
-            m = await message.reply_text(f"**connecting to wbb network to perform a global ban of {mention}**\n"
-                                          + f" **this action should take about {len(served_chats)} seconds.**")
+            m = await message.reply_text(f"**Initializing WBB Global Ban Sequence To Add Restrictions On {mention}**"
+                                         + f" **This Action Should Take About {len(served_chats)} Seconds.**")
             number_of_chats = 0
             for served_chat in served_chats:
                 try:
@@ -158,11 +159,8 @@ __**New Global Ban**__
 **Reason:** __{reason}__
 **Chats:** `{number_of_chats}`"""
             try:
-                await app.send_message(
-                        GBAN_LOG_GROUP_ID,
-                        text=ban_text,
-                        disable_web_page_preview=True
-                        )
+                m2 = await app.send_message(GBAN_LOG_GROUP_ID, text=ban_text, disable_web_page_preview=True)
+                await m.edit(f"Banned {user.mention} Globally!\nAction Log: {m2.link}", disable_web_page_preview=True)
             except Exception:
                 await message.reply_text("User Gbanned, But This Gban Wasn't Logged, Add Bot In GBAN_LOG_GROUP")
                 return
