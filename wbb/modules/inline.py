@@ -19,9 +19,10 @@ __HELP__ = '''```
 - yt [Query] - Youtube Search.
 - torrent [QUERY] - Torrent Search.
 - lyrics [QUERY] - Lyrics Search.
+- wiki [QUERY] - Wikipedia Search.
 - eval [CODE] - Execute Python Code.
-- gh_user [USERNAME] - Search A Github User.
-- gh_repo [USERNAME/REPO] - Search A Github Repo.
+- gh_user [USERNAME | PROFILE_LINK] - Search A Github User.
+- gh_repo [REPO_LINK] - Search A Github Repo.
 - search [QUERY] - Search For A Message Globally.
 ```'''
 
@@ -313,6 +314,23 @@ async def inline_query_handler(client, query):
                 cache_time=2
             )
 
+
+        elif text.split()[0] == "wiki":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Search Wikipedia.',
+                    switch_pm_parameter='inline',
+                )
+                return
+            tex = text.split(None, 1)[1].strip()
+            answerss = await wiki_func(answers, tex)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=2
+            )
     except Exception as e:
         print(str(e) + "InLine")
         return

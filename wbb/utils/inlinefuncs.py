@@ -470,6 +470,10 @@ async def github_user_func(answers, text):
 
 
 async def github_repo_func(answers, text):
+    text = text.replace("https://github.com/", "")
+    text = text.replace("http://github.com/", "")
+    if text[-1] == "/":
+        text = text[0:-1]
     URL = f"https://api.github.com/repos/{text}"
     URL2 = f"https://api.github.com/repos/{text}/contributors"
     results = await asyncio.gather(fetch(URL), fetch(URL2))
@@ -605,4 +609,22 @@ async def music_inline_func(answers, query):
                 title=message_.audio.title
             )
         )
+    return answers
+
+
+async def wiki_func(answers, text):
+    data = await arq.wiki(text)
+    msg = f"""
+**QUERY:**
+{data['title']}
+
+**ANSWER:**
+__{data['answer']}__"""
+    answers.append(
+        InlineQueryResultArticle(
+            title=data['title'],
+            description=data['answer'],
+            input_message_content=InputTextMessageContent(msg)
+        )
+    )
     return answers
