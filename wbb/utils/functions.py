@@ -22,9 +22,9 @@ def generate_captcha():
             word += gen_letter()
         return word
 
-    # Generate 7 wrong captcha answers
+    # Generate 8 wrong captcha answers
     wrong_answers = []
-    for _ in range(7):
+    for _ in range(8):
         wrong_answers.append(gen_wrong_answer())
 
     width = 80 * 4

@@ -54,29 +54,38 @@ async def welcome(_, message: Message):
         captcha = generate_captcha()
         captcha_image = captcha[0]
         captcha_answer = captcha[1]
-        wrong_answers = captcha[2]  # This consists of 7 wrong answers
+        wrong_answers = captcha[2]  # This consists of 8 wrong answers
         correct_button = InlineKeyboardButton(
             f"{captcha_answer}",
             callback_data=f"pressed_button {captcha_answer} {member.id}"
         )
         temp_keyboard_1 = [correct_button]  # Button row 1
         temp_keyboard_2 = []  # Botton row 2
-        for i in range(3):
+        temp_keyboard_3 = []
+        for i in range(2):
             temp_keyboard_1.append(
                 InlineKeyboardButton(
                     f"{wrong_answers[i]}",
                     callback_data=f"pressed_button {wrong_answers[i]} {member.id}"
                 )
             )
-        for i in range(3, 7):
+        for i in range(2, 5):
             temp_keyboard_2.append(
                 InlineKeyboardButton(
                     f"{wrong_answers[i]}",
                     callback_data=f"pressed_button {wrong_answers[i]} {member.id}"
                 )
             )
+        for i in range(5, 8):
+            temp_keyboard_3.append(
+                InlineKeyboardButton(
+                    f"{wrong_answers[i]}",
+                    callback_data=f"pressed_button {wrong_answers[i]} {member.id}"
+                )
+            )
+
         shuffle(temp_keyboard_1)
-        keyboard = [temp_keyboard_1, temp_keyboard_2]
+        keyboard = [temp_keyboard_1, temp_keyboard_2, temp_keyboard_3]
         shuffle(keyboard)
         verification_data = {
             "user_id": member.id,
@@ -122,6 +131,7 @@ async def callback_query_welcome_button(_, callback_query):
             await callback_query.answer("Yeah, It's Wrong.")
             shuffle(keyboard[0])
             shuffle(keyboard[1])
+            shuffle(keyboard[2])
             shuffle(keyboard)
             keyboard = InlineKeyboardMarkup(keyboard)
             await button_message.edit(
