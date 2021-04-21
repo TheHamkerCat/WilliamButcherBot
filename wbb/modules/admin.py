@@ -22,10 +22,10 @@ __HELP__ = '''/ban - Ban A User
 /report | @admins - Report A Message To Admins.'''
 
 
-async def list_admins(group_id):
+async def list_admins(chat_id):
     list_of_admins = []
     async for member in app.iter_chat_members(
-            group_id, filter="administrators"):
+            chat_id, filter="administrators"):
         list_of_admins.append(member.user.id)
     return list_of_admins
 
@@ -51,6 +51,35 @@ async def member_permissions(chat_id, user_id):
         perms.append("can_pin_messages")
     if member.can_manage_voice_chats:
         perms.append("can_manage_voice_chats")
+    return perms
+
+
+async def current_chat_permissions(chat_id):
+    perms = []
+    perm = (await app.get_chat(chat_id)).permissions
+    if perm.can_send_messages:
+        perms.append("can_send_messages")
+    if perm.can_send_media_messages:
+        perms.append("can_send_media_messages")
+    if perm.can_send_stickers:
+        perms.append("can_send_stickers")
+    if perm.can_send_animations:
+        perms.append("can_send_animations")
+    if perm.can_send_games:
+        perms.append("can_send_games")
+    if perm.can_use_inline_bots:
+        perms.append("can_use_inline_bots")
+    if perm.can_add_web_page_previews:
+        perms.append("can_add_web_page_previews")
+    if perm.can_send_polls:
+        perms.append("can_send_polls")
+    if perm.can_change_info:
+        perms.append("can_change_info")
+    if perm.can_invite_users:
+        perms.append("can_invite_users")
+    if perm.can_pin_messages:
+        perms.append("can_pin_messages")
+
     return perms
 
 

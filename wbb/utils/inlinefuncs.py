@@ -21,7 +21,7 @@ from wbb.utils.fetch import fetch
 from wbb.utils.functions import test_speedtest
 from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
 from wbb.utils.pastebin import paste
-from wbb.core.types.InlineQueryResult import InlineQueryResultCachedDocument
+from wbb.core.types import InlineQueryResultCachedDocument
 from wbb import (
     arq, app, app2, USERBOT_USERNAME,
     BOT_USERNAME, LOG_GROUP_ID, USERBOT_ID,

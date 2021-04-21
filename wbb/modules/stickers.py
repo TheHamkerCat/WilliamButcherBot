@@ -6,7 +6,7 @@ from wbb.core.decorators.errors import capture_err
 from wbb.utils.files import resize_file_to_sticker_size, upload_document, get_document_from_file_id
 from wbb.utils.stickerset import get_sticker_set_by_name, create_sticker, add_sticker_to_set, create_sticker_set
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram.errors.exceptions.bad_request_400 import PeerIdInvalid, StickerPngNopng, UserIsBlocked
+from pyrogram.errors.exceptions.bad_request_400 import PeerIdInvalid, StickerPngNopng, UserIsBlocked, StickerPngDimensions
 
 __MODULE__ = "Stickers"
 __HELP__ = """/sticker_id - To Get File ID of A Sticker.
@@ -118,3 +118,5 @@ async def kang(client, message):
         await msg.edit("You Need To Start A Private Chat With Me.", reply_markup=keyboard)
     except StickerPngNopng:
         await message.reply_text("Stickers must be png files but the provided image was not a png")
+    except StickerPngDimensions:
+        await message.reply_text("The sticker png dimensions are invalid.")

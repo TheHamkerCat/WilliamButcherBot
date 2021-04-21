@@ -87,7 +87,7 @@ async def chatbot_status_ubot(_, message):
         return
 
     elif status == "OFF" or status == "off" or status == "Off":
-        if chat_id in active_chats_bot:
+        if chat_id in active_chats_ubot:
             active_chats_bot.remove(chat_id)
             await message.edit("Chatbot Disabled!")
             return

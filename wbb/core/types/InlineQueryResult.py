@@ -28,9 +28,6 @@ class InlineQueryResultAudio(InlineQueryResult):
             Unique identifier for this result, 1-64 bytes.
             Defaults to a randomly generated UUID4.
 
-        voice (``bool``, *optional*):
-            True if the audio is a voice note, defaults to False.
-
         description (``str``, *optional*):
             Short description of the result.
 
@@ -68,7 +65,6 @@ class InlineQueryResultAudio(InlineQueryResult):
         title: str,
         mime_type: str,
         id: str = None,
-        voice: bool = False,
         description: str = None,
         caption: str = "",
         performer: str = "",
@@ -82,7 +78,7 @@ class InlineQueryResultAudio(InlineQueryResult):
 
         self.audio_url = audio_url
         self.thumb_url = thumb_url
-        self.voice = voice
+        self.voice = True if self.mime_type == 'audio/ogg' else False
         self.title = title
         self.caption = caption
         self.description = description
