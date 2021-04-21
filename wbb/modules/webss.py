@@ -1,8 +1,6 @@
 from wbb import app
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.fetch import fetch
 from pyrogram import filters
-import time
 
 
 __MODULE__ = "WebSS"
@@ -16,16 +14,12 @@ async def take_ss(_, message):
         await message.reply_text("Give A Url To Fetch Screenshot.")
         return
     url = message.text.split(None, 1)[1]
-    start_time = time.time()
     m = await message.reply_text("**Taking Screenshot**")
-    screenshot = await fetch(f"https://patheticprogrammers.cf/ss?site={url}")
     await m.edit("**Uploading**")
-    end_time = time.time()
     try:
         await app.send_photo(
             message.chat.id,
-            photo=screenshot['url'],
-            caption=(f"{url}\n__Took {round(end_time - start_time)} Seconds.__")
+            photo=f"https://webshot.amanoteam.com/print?q={url}",
             )
     except TypeError:
         await m.edit("No Such Website.")

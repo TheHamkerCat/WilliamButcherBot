@@ -1,6 +1,5 @@
 import socket
 
-
 async def _netcat(host, port, content):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))

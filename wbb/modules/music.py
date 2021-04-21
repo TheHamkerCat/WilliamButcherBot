@@ -22,11 +22,6 @@ __HELP__ = """/ytmusic [link] To Download Music From Various Websites Including 
 ydl_opts = {
     'format': 'bestaudio/best',
     'writethumbnail': True,
-    'postprocessors': [{
-        'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'mp3',
-        'preferredquality': '192'
-    }]
 }
 
 
@@ -51,7 +46,7 @@ async def music(_, message):
             thumbnail_url = info_dict['thumbnail']
             thumbnail_file = basename + "." + \
                 get_file_extension_from_url(thumbnail_url)
-            audio_file = basename + ".mp3"
+            audio_file = basename + ".webm"
     except Exception as e:
         await m.edit(str(e))
         return

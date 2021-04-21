@@ -72,6 +72,12 @@ async def test_speedtest():
 
 async def file_size_from_url(url: str) -> int:
     async with aiohttp.ClientSession() as session:
-        async with session.get(url) as resp:
+        async with session.head(url) as resp:
             size = int(resp.headers['content-length'])
     return size
+
+
+async def get_http_status_code(url: str)-> int:
+    async with aiohttp.ClientSession() as session:
+        async with session.head(url) as resp:
+            return resp.status

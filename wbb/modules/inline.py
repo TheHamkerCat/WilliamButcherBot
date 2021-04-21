@@ -1,3 +1,4 @@
+import re
 from wbb import app
 from wbb.utils.inlinefuncs import *
 from pyrogram import filters
@@ -10,21 +11,21 @@ __HELP__ = '''```
 - tr [LANG] [QUERY] - Translate Text.
 - ud [QUERY] - Urban Dictionary Query.
 - google [QUERY] - Google Search.
-- webss [URL] - Take Screenshot Of A Website.
 - bitly [URL] - Shorten A Link.
 - wall [QUERY] - Find Wallpapers.
-- music [QUERY] - Get Music.
-- saavn [SONG_NAME] - Get Songs From Saavn.
-- deezer [SONG_NAME] - Get Songs From Deezer.
 - yt [Query] - Youtube Search.
 - torrent [QUERY] - Torrent Search.
 - lyrics [QUERY] - Lyrics Search.
 - wiki [QUERY] - Wikipedia Search.
 - speedtest - Perform A Speedtest.
 - eval [CODE] - Execute Python Code.
+- music [QUERY] - Get Music.
+- saavn [SONG_NAME] - Get Songs From Saavn.
+- deezer [SONG_NAME] - Get Songs From Deezer.
 - gh_user [USERNAME | PROFILE_LINK] - Search A Github User.
 - gh_repo [REPO_LINK] - Search A Github Repo.
 - search [QUERY] - Search For A Message Globally.
+- [MESSAGE_LINK] - To Paste A Message On Pastebin. Text | Document
 ```'''
 
 
@@ -342,6 +343,15 @@ async def inline_query_handler(client, query):
             )
             return
 
-    except Exception as e:
-        print(str(e) + "InLine")
+        elif re.search(r'^https?://t.me/', text.strip()):
+            answerss = await pastebin_func(answers, text.strip())
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=2
+            )
+            return
+
+    except KeyError:
+        print(str(e) + " InLine")
         return

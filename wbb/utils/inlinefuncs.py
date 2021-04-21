@@ -18,7 +18,7 @@ from pyrogram import __version__ as pyrover, filters
 from time import time, ctime
 from wbb.modules.userbot import eval_executor_func
 from wbb.utils.fetch import fetch
-from wbb.utils.functions import test_speedtest
+from wbb.utils.functions import test_speedtest, get_http_status_code
 from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
 from wbb.utils.pastebin import paste
 from wbb.core.types import InlineQueryResultCachedDocument
@@ -196,7 +196,7 @@ async def saavn_func(answers, text):
                 'Download | Play',
                 url=results[i].media_url
             )
-       )
+        )
         buttons_list.append(buttons)
         duration = await time_convert(results[i].duration)
         caption = f"""
@@ -258,26 +258,6 @@ async def deezer_func(answers, text):
         except (KeyError, ValueError):
             pass
     return answers
-
-
-async def webss(url):
-    start_time = time()
-    if "." not in url:
-        return
-    screenshot = await fetch(f"https://patheticprogrammers.cf/ss?site={url}")
-    end_time = time()
-    try:
-        m = await app.send_photo(LOG_GROUP_ID, photo=screenshot['url'])
-    except TypeError:
-        return
-    await m.delete()
-    a = []
-    pic = InlineQueryResultPhoto(
-        photo_url=screenshot['url'],
-        caption=(f"`{url}`\n__Took {round(end_time - start_time)} Seconds.__")
-    )
-    a.append(pic)
-    return a
 
 
 # Used my api key here, don't fuck with it
@@ -597,7 +577,8 @@ async def music_inline_func(answers, query):
     messages_ids_and_duration = []
     for f_ in messages:
         messages_ids_and_duration.append(
-            {"message_id": f_.message_id, "duration": f_.audio.duration if f_.audio.duration else 0}
+            {"message_id": f_.message_id,
+                "duration": f_.audio.duration if f_.audio.duration else 0}
         )
     messages = list(
         {v["duration"]: v for v in messages_ids_and_duration}.values())
@@ -647,14 +628,15 @@ async def speedtest_init(query):
         return answers
     msg = "**Click The Button Below To Perform A Speedtest**"
     button = InlineKeyboard(row_width=1)
-    button.add(InlineKeyboardButton(text="Test", callback_data="test_speedtest"))
+    button.add(InlineKeyboardButton(
+        text="Test", callback_data="test_speedtest"))
     answers.append(
-             InlineQueryResultArticle(
-                 title="Click Here",
-                 input_message_content=InputTextMessageContent(msg),
-                 reply_markup=button
-                 )
-             )
+        InlineQueryResultArticle(
+            title="Click Here",
+            input_message_content=InputTextMessageContent(msg),
+            reply_markup=button
+        )
+    )
     return answers
 
 """ callback query for the function above """
@@ -667,8 +649,8 @@ async def test_speedtest_cq(_, cq):
         return
     inline_message_id = cq.inline_message_id
     await app.edit_inline_text(
-            inline_message_id,
-            "**Testing**"
+        inline_message_id,
+        "**Testing**"
     )
     download, upload, info = await test_speedtest()
     msg = f"""
@@ -680,7 +662,43 @@ async def test_speedtest_cq(_, cq):
 **Longitude:** `{info['lon']}`
 """
     await app.edit_inline_text(
-            inline_message_id,
-            msg
+        inline_message_id,
+        msg
     )
 
+pastebin_cache = {}
+
+
+async def pastebin_func(answers, link):
+    global pastebin_cache
+    link = link.split("/")
+    if link[3] == "c":
+        chat, message_id = int("-100" + link[4]), int(link[5])
+    else:
+        chat, message_id = link[3], link[4]
+    m = await app.get_messages(chat, message_ids=int(message_id))
+    if m.text not in pastebin_cache:
+        link = await paste(m.text)
+        preview = link + "/preview.png"
+        pastebin_cache[m.text] = link
+        status_code = await get_http_status_code(preview)
+        i = 0
+        while status_code != 200:
+            if i == 5:
+                break
+            status_code = await get_http_status_code(preview)
+            await asyncio.sleep(0.2)
+            i += 1 
+        await app.send_photo(USERBOT_ID, preview) # To Pre-cache the media
+    else:
+        link = pastebin_cache[m.text]
+        preview = link + "/preview.png"
+    buttons = InlineKeyboard(row_width=1)
+    buttons.add(InlineKeyboardButton(text="Paste Link", url=link))
+    answers.append(
+        InlineQueryResultPhoto(
+            photo_url=preview,
+            reply_markup=buttons
+        )
+        )
+    return answers
