@@ -53,7 +53,7 @@ $ python3 -m wbb
 ## Generating Pyrogram Session For Heroku
 
 ```
-$ git clone https://github.com/Avijneyam/WilliamButcherBot
+$ git clone https://github.com/TheHamkerCat/WilliamButcherBot
 
 $ cd WilliamButcherBot
 
