@@ -26,6 +26,8 @@
 - Python >= 3.7
 - A [Telegram API key](https://docs.pyrogram.org/intro/setup#api-keys).
 - A [Telegram bot token](https://t.me/botfather).
+<!-- How to get MongoDB -->
+- A [MongoDB](https://telegra.ph/How-To-get-Mongodb-URI-04-06)
 
 
 ## Install Locally Or On A VPS
@@ -45,6 +47,22 @@ Edit **config.py** with your own values
 ```sh
 $ python3 -m wbb
 ```
+
+# Run On Heroku
+
+## Generating Pyrogram Session For Heroku
+
+```
+$ git clone https://github.com/TheHamkerCat/WilliamButcherBot
+
+$ cd WilliamButcherBot
+
+$ pip3 install -U -r requirements.txt
+
+$ python3 str_gen.py
+```
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/thehamkercat/WilliamButcherBot/)
 
 ## Features 
 

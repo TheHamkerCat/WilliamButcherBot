@@ -1,14 +1,15 @@
-from config import (
-    BOT_TOKEN, API_ID, API_HASH, SUDO_USERS_ID, PHONE_NUMBER,
-    LOG_GROUP_ID, FERNET_ENCRYPTION_KEY, MONGO_DB_URI,
-    WELCOME_DELAY_KICK_SEC, ARQ_API_BASE_URL as ARQ_API,
-    MAIN_CHATS, GBAN_LOG_GROUP_ID
-)
 from pyrogram import Client
 from pyromod import listen
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from Python_ARQ import ARQ
+from os import path
 import time
+
+is_config = path.exists('config.py')
+if is_config:
+    from config import *
+else:
+    from sample_config import *
 
 SUDOERS = SUDO_USERS_ID
 MAIN_CHATS = MAIN_CHATS
@@ -22,13 +23,19 @@ bot_start_time = time.time()
 mongo_client = MongoClient(MONGO_DB_URI)
 db = mongo_client.wbb
 
-
-app2 = Client(
-    "userbot",
-    phone_number=PHONE_NUMBER,
-    api_id=API_ID,
-    api_hash=API_HASH
-)
+if not HEROKU:
+    app2 = Client(
+        "userbot",
+        phone_number=PHONE_NUMBER,
+        api_id=API_ID,
+        api_hash=API_HASH
+    )
+else:
+    app2 = Client(
+        SESSION_STRING,
+        api_id=API_ID,
+        api_hash=API_HASH
+    )
 
 app = Client(
     "wbb",
@@ -36,7 +43,6 @@ app = Client(
     api_id=API_ID,
     api_hash=API_HASH
 )
-
 
 BOT_ID = 0
 BOT_NAME = ""
@@ -79,4 +85,4 @@ app2.start()
 get_info(app, app2)
 SUDOERS.append(USERBOT_ID)
 # ARQ client
-arq = ARQ(ARQ_API)
+arq = ARQ(ARQ_API_BASE_URL)
