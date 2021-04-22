@@ -59,8 +59,8 @@
             "required": true
         },
         "ARQ_API_BASE_URL": {
-            "description": "For Music Downloading... Don't change this value",
-            "value": "http://35.240.133.234:8000",
+            "description": "For Music Downloading And Many More Things... Don't change this value",
+            "value": "https://thearq.tech",
             "required": true
         }
     }
