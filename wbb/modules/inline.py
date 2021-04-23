@@ -1,4 +1,4 @@
-# flake8: noqa E405
+# flake8: noqa F405
 """
 MIT License
 

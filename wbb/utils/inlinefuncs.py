@@ -22,8 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import aiohttp
+import aiofiles
 import json
 import sys
+import os
 import asyncio
 from pyrogram.types import (
     InlineQueryResultArticle,
@@ -698,35 +700,44 @@ async def test_speedtest_cq(_, cq):
         msg
     )
 
-pastebin_cache = {}
-
 
 async def pastebin_func(answers, link):
-    global pastebin_cache
     link = link.split("/")
     if link[3] == "c":
         chat, message_id = int("-100" + link[4]), int(link[5])
     else:
         chat, message_id = link[3], link[4]
     m = await app.get_messages(chat, message_ids=int(message_id))
-    if not m.text:
+    if not m.text and not m.document:
         m = await app2.get_messages(chat, message_ids=int(message_id))
-    if m.text not in pastebin_cache:
-        link = await paste(m.text)
-        preview = link + "/preview.png"
-        pastebin_cache[m.text] = link
-        status_code = await get_http_status_code(preview)
-        i = 0
-        while status_code != 200:
-            if i == 5:
-                break
-            status_code = await get_http_status_code(preview)
-            await asyncio.sleep(0.2)
-            i += 1
-        await app.send_photo(USERBOT_ID, preview)  # To Pre-cache the media
+    if m.text:
+        content = m.text
     else:
-        link = pastebin_cache[m.text]
-        preview = link + "/preview.png"
+        if m.document.file_size > 1048576:
+            answers.append(
+                InlineQueryResultArticle(
+                    title="DOCUMENT TOO BIG",
+                    description="Maximum supported size is 1MB",
+                    input_message_content=InputTextMessageContent("DOCUMENT TOO BIG")
+                    
+                )
+            )
+            return answers
+        doc = await m.download()
+        async with aiofiles.open(doc, mode="r") as f:
+            content = await f.read()
+        os.remove(doc)
+    link = await paste(content)
+    preview = link + "/preview.png"
+    status_code = await get_http_status_code(preview)
+    i = 0
+    while status_code != 200:
+        if i == 5:
+            break
+        status_code = await get_http_status_code(preview)
+        await asyncio.sleep(0.2)
+        i += 1
+    await app.send_photo(USERBOT_ID, preview)  # To Pre-cache the media
     buttons = InlineKeyboard(row_width=1)
     buttons.add(InlineKeyboardButton(text="Paste Link", url=link))
     answers.append(
