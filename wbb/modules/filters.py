@@ -1,7 +1,31 @@
+"""
+MIT License
+
+Copyright (c) 2021 TheHamkerCat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 from wbb import app
 from wbb.modules.admin import member_permissions
 from wbb.utils.dbfunctions import (
-    save_filter, get_filters_names, get_filter, delete_filter
+    save_filter, get_filters_names, get_filter,
+    delete_filter, is_served_chat, add_served_chat
 )
 from pyrogram import filters
 from wbb.core.decorators.errors import capture_err
@@ -95,7 +119,13 @@ async def filters_re(_, message):
                     await message.reply_text(data, disable_web_page_preview=True)
                 else:
                     await message.reply_sticker(data)
+
+                """ CHAT WATCHER """
+                served_chat = await is_served_chat(chat_id)
+                if served_chat:
+                    return
+                await add_served_chat(chat_id)
                 return
-    # NOTE When the first letter of the message is an emoji it throws an error, that's why using this
+
     except Exception:
         pass

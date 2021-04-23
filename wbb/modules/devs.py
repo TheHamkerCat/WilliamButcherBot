@@ -14,7 +14,8 @@ import subprocess
 from inspect import getfullargspec
 from wbb import app, SUDOERS
 from pyrogram import filters
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from time import time
 
 __MODULE__ = "Devs"
 __HELP__ = "/eval - Execute Python Code\n/sh - Execute Shell Code"
@@ -41,6 +42,7 @@ async def executor(client, message):
     except IndexError:
         await message.delete()
         return
+    t1 = time()
     reply_to_id = message.message_id
     if message.reply_to_message:
         reply_to_id = message.reply_to_message.message_id
@@ -71,16 +73,41 @@ async def executor(client, message):
         filename = "output.txt"
         with open(filename, "w+", encoding="utf8") as out_file:
             out_file.write(str(evaluation.strip()))
+        t2 = time()
+        keyboard = InlineKeyboardMarkup(
+            [[
+                InlineKeyboardButton(
+                    text="⏳",
+                    callback_data=f"runtime {t2-t1} Seconds"
+                )
+            ]]
+        )
         await message.reply_document(
             document=filename,
             caption=cmd,
             disable_notification=True,
             reply_to_message_id=reply_to_id,
+            reply_markup=keyboard
         )
         os.remove(filename)
         await message.delete()
     else:
-        await edit_or_reply(message, text=final_output)
+        t2 = time()
+        keyboard = InlineKeyboardMarkup(
+            [[
+                InlineKeyboardButton(
+                    text="⏳",
+                    callback_data=f"runtime {t2-t1} Seconds"
+                )
+            ]]
+        )
+        await edit_or_reply(message, text=final_output, reply_markup=keyboard)
+
+
+@app.on_callback_query(filters.regex(r"runtime"))
+async def runtime_func_cq(_, cq):
+    runtime = cq.data.split(None, 1)[1]
+    await cq.answer(runtime, show_alert=True)
 
 
 @app.on_message(

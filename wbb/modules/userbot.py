@@ -1,6 +1,6 @@
 """
     CREDITS:
-        THIS MODULE IS WRITTEN BY @Pokurt.
+        EVAL AND SH FUNCTION IN THIS MODULE IS WRITTEN BY @Pokurt.
         SOURCE:
             https://github.com/pokurt/Nana-Remix/blob/master/nana/plugins/devs.py
 """
@@ -17,7 +17,13 @@ from pyrogram import filters
 from pyrogram.types import Message
 
 __MODULE__ = "Userbot"
-__HELP__ = ".l - Execute Python Code\n.sh - Execute Shell Code"
+__HELP__ = """
+.alive - Send Alive Message.
+.l - Execute Python Code.
+.sh - Execute Shell Code.
+.approve | .disapprove - Approve Or Disapprove A User To PM You.
+.block | .unblock - Block Or Unblock A User.
+"""
 
 
 # Eval and Sh module from nana-remix
@@ -168,7 +174,7 @@ async def aexec2(code, client):
     return await locals()["__aexecc"](client)
 
 
-async def eval_executor_func(code):
+async def eval_executer_func(code):
     old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = StringIO()

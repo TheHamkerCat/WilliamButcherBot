@@ -1,3 +1,4 @@
+""" WRITTEN BY @pokurt, https://github.com/pokurt"""
 import sys
 import traceback
 from functools import wraps

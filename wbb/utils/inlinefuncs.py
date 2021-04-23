@@ -1,3 +1,26 @@
+"""
+MIT License
+
+Copyright (c) 2021 TheHamkerCat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 import aiohttp
 import json
 import sys
@@ -7,7 +30,6 @@ from pyrogram.types import (
     InputTextMessageContent,
     InlineKeyboardButton,
     InlineQueryResultPhoto,
-    InputMediaPhoto
 )
 from googletrans import Translator
 from search_engine_parser import GoogleSearch
@@ -15,17 +37,17 @@ from pykeyboard import InlineKeyboard
 from sys import version as pyver
 from motor import version as mongover
 from pyrogram import __version__ as pyrover, filters
-from time import time, ctime
-from wbb.modules.userbot import eval_executor_func
+from time import ctime
 from wbb.utils.fetch import fetch
+from wbb.modules.userbot import eval_executer_func
 from wbb.utils.functions import test_speedtest, get_http_status_code
 from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
 from wbb.utils.pastebin import paste
 from wbb.core.types import InlineQueryResultCachedDocument
 from wbb import (
     arq, app, app2, USERBOT_USERNAME,
-    BOT_USERNAME, LOG_GROUP_ID, USERBOT_ID,
-    SUDOERS
+    BOT_USERNAME, USERBOT_ID,
+    SUDOERS, USERBOT_NAME
 )
 
 
@@ -408,16 +430,23 @@ async def eval_func(answers, text, user_id):
 
         return answers
     text = text[0:-1]
-    start_time = time()
-    result = await eval_executor_func(text)
+    result = await eval_executer_func(text)
+    res = result[0]
     output = result[1]
-    result = result[0]
-    msg = f"{result}"
-    end_time = time()
+    time_taken = result[2]
+    msg = f"{res}"
+    button = InlineKeyboard(row_width=1)
+    button.add(
+        InlineKeyboardButton(
+            text=f"{time_taken} Seconds",
+            callback_data="ok_lol"
+        )
+    )
     answers.append(
         InlineQueryResultArticle(
-            title=f"Took {round(end_time - start_time)} Seconds.",
+            title=f"Took {time_taken} Seconds.",
             description=output,
+            reply_markup=button,
             input_message_content=InputTextMessageContent(msg)
         ))
     return answers
@@ -642,7 +671,7 @@ async def speedtest_init(query):
 """ callback query for the function above """
 
 
-@app.on_callback_query(filters.regex(f"test_speedtest"))
+@app.on_callback_query(filters.regex("test_speedtest"))
 async def test_speedtest_cq(_, cq):
     if cq.from_user.id not in SUDOERS:
         await cq.answer("This Isn't For You!")
@@ -676,7 +705,10 @@ async def pastebin_func(answers, link):
         chat, message_id = int("-100" + link[4]), int(link[5])
     else:
         chat, message_id = link[3], link[4]
-    m = await app.get_messages(chat, message_ids=int(message_id))
+    try:
+        m = await app.get_messages(chat, message_ids=int(message_id))
+    except AttributeError:
+        m = await app2.get_messages(chat, message_ids=int(message_id))
     if m.text not in pastebin_cache:
         link = await paste(m.text)
         preview = link + "/preview.png"
@@ -688,8 +720,8 @@ async def pastebin_func(answers, link):
                 break
             status_code = await get_http_status_code(preview)
             await asyncio.sleep(0.2)
-            i += 1 
-        await app.send_photo(USERBOT_ID, preview) # To Pre-cache the media
+            i += 1
+        await app.send_photo(USERBOT_ID, preview)  # To Pre-cache the media
     else:
         link = pastebin_cache[m.text]
         preview = link + "/preview.png"
@@ -700,5 +732,38 @@ async def pastebin_func(answers, link):
             photo_url=preview,
             reply_markup=buttons
         )
-        )
+    )
+    return answers
+
+
+async def pmpermit_func(answers, user_id):
+    if user_id != USERBOT_ID:
+        return
+    caption = f"Hi, I'm {USERBOT_NAME}, What are you here for?, You'll be blocked if you send more than 5 messages."
+    buttons = InlineKeyboard(row_width=2)
+    buttons.add(
+            InlineKeyboardButton(
+                text="To Scam You",
+                callback_data="pmpermit to_scam_you"
+                ),
+            InlineKeyboardButton(
+                text="For promotion",
+                callback_data="pmpermit to_scam_you"
+                ),
+                InlineKeyboardButton(
+                text="ChitChats",
+                callback_data="pmpermit chitchats"
+                ),
+            InlineKeyboardButton(
+                text="Approve me",
+                callback_data="pmpermit approve_me"
+                )
+            )
+    answers.append(
+            InlineQueryResultArticle(
+                title="do_not_click_here",
+                reply_markup=buttons,
+                input_message_content=InputTextMessageContent(caption)
+                )
+            )
     return answers

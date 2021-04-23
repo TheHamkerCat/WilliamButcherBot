@@ -1,9 +1,33 @@
+# flake8: noqa E405
+"""
+MIT License
+
+Copyright (c) 2021 TheHamkerCat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 import re
 from wbb import app
 from wbb.utils.inlinefuncs import *
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import QueryIdInvalid
-from wbb.core.types.InlineQueryResult import InlineQueryResultCachedDocument
 
 __MODULE__ = "Inline"
 __HELP__ = '''```
@@ -316,7 +340,6 @@ async def inline_query_handler(client, query):
                 cache_time=2
             )
 
-
         elif text.split()[0] == "wiki":
             if len(text.split()) < 2:
                 await client.answer_inline_query(
@@ -351,7 +374,17 @@ async def inline_query_handler(client, query):
                 cache_time=2
             )
             return
+        
+        elif text.split()[0] == "pmpermit":
+            user_id = query.from_user.id
+            answerss = await pmpermit_func(answers, user_id)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=2
+            )
+            return
 
-    except KeyError:
+    except TypeError:
         print(str(e) + " InLine")
         return

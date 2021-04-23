@@ -1,12 +1,32 @@
+"""
+MIT License
+
+Copyright (c) 2021 TheHamkerCat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 from wbb import app, SUDOERS, BOT_ID, BOT_NAME
-from wbb.utils.filter_groups import global_stats_group
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.fetch import fetch
 from wbb.modules import ALL_MODULES
 from wbb.utils.dbfunctions import (
-    is_served_chat,
     get_served_chats,
-    add_served_chat,
     remove_served_chat,
     get_notes_count,
     get_filters_count,
@@ -15,18 +35,9 @@ from wbb.utils.dbfunctions import (
     get_gbans_count
 )
 from pyrogram import filters
-
 import asyncio
 
-
-@app.on_message(filters.text, group=global_stats_group)
-@capture_err
-async def chat_watcher(_, message):
-    chat_id = message.chat.id
-    served_chat = await is_served_chat(chat_id)
-    if served_chat:
-        return
-    await add_served_chat(chat_id)
+""" CHAT WATCHER IS IN filters.py"""
 
 
 @app.on_message(
@@ -48,9 +59,9 @@ async def global_stats(_, message):
     for chat in chats:
         served_chats.append(int(chat["chat_id"]))
     await m.edit(
-            f"__**Analysing Statistics, Should Take {len(served_chats)*6}+ Seconds.**__",
-            disable_web_page_preview=True
-            )
+        f"__**Generating Statistics Report, Should Take {len(served_chats)*6}+ Seconds.**__",
+        disable_web_page_preview=True
+    )
     for served_chat in served_chats:
         try:
             await app.get_chat_members(served_chat, BOT_ID)

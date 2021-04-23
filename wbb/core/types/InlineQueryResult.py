@@ -1,7 +1,6 @@
 from typing import Optional, List, Union
 from pyrogram import raw, types, utils
 from pyrogram.file_id import FileType, FileId, PHOTO_TYPES, DOCUMENT_TYPES
-from pyrogram.parser import Parser
 from pyrogram.types import InlineQueryResult
 import pyrogram
 
@@ -9,7 +8,7 @@ import pyrogram
 class InlineQueryResultAudio(InlineQueryResult):
     """Link to an audio.
     By default, this audio will be sent by the user with optional caption.
-    Alternatively, you can use *input_message_content* to send a message 
+    Alternatively, you can use *input_message_content* to send a message
     with the specified content instead of the audio.
     Parameters:
         audio_url (``str``):
@@ -23,7 +22,7 @@ class InlineQueryResultAudio(InlineQueryResult):
 
         mime_type (``str``):
             Mime type of the content of audio url, “text/html” or “audio/mp3”.
-        
+
         id (``str``, *optional*):
             Unique identifier for this result, 1-64 bytes.
             Defaults to a randomly generated UUID4.
@@ -49,10 +48,10 @@ class InlineQueryResultAudio(InlineQueryResult):
 
         caption_entities (List of :obj:`~pyrogram.types.MessageEntity`):
             List of special entities that appear in the caption, which can be specified instead of *parse_mode*.
-        
+
         reply_markup (:obj:`~pyrogram.types.InlineKeyboardMarkup`, *optional*):
             An InlineKeyboardMarkup object.
-        
+
         input_message_content (:obj:`~pyrogram.types.InputMessageContent`):
             Content of the message to be sent instead of the audio. This field is required if InlineQueryResultAudio is
             used to send an HTML-page as a result.
@@ -89,10 +88,10 @@ class InlineQueryResultAudio(InlineQueryResult):
         self.caption_entities = caption_entities
         self.reply_markup = reply_markup
         self.input_message_content = input_message_content
-        
-        if mime_type == "text/html" and input_message_content is None:
-            raise ValueError("input_message_content is required for audio with `text/html` mime type")
 
+        if mime_type == "text/html" and input_message_content is None:
+            raise ValueError(
+                "input_message_content is required for audio with `text/html` mime type")
 
     async def write(self, client: "pyrogram.Client"):
         audio = raw.types.InputWebDocument(
@@ -135,7 +134,8 @@ class InlineQueryResultAudio(InlineQueryResult):
             )
         )
 
-""" 
+
+"""
     CREDITS:
 
     THE CODE BELOW THIS LINE IS WRITTEN BY https://github.com/Mahesh0253. [https://t.me/DeletedUser420]
@@ -146,27 +146,27 @@ class InlineQueryResultAudio(InlineQueryResult):
 
 class InlineQueryResultCachedDocument(InlineQueryResult):
     """Link to a file stored on the Telegram servers.
-    
-    By default, this file will be sent by the user with an optional caption. 
+
+    By default, this file will be sent by the user with an optional caption.
     Alternatively, you can use input_message_content to send a message with the specified content instead of the file.
-    
+
     Parameters:
         title (``str``):
             Title for the result.
-        
+
         file_id (``str``):
             Pass a file_id as string to send a media that exists on the Telegram servers.
-            
+
         id (``str``, *optional*):
             Unique identifier for this result, 1-64 bytes.
             Defaults to a randomly generated UUID4.
-            
+
         description (``str``, *optional*):
             Short description of the result.
-            
+
         caption (``str``, *optional*):
             Caption of the photo to be sent, 0-1024 characters.
-        
+
         parse_mode (``str``, *optional*):
             By default, texts are parsed using both Markdown and HTML styles.
             You can combine both syntaxes together.
@@ -175,10 +175,10 @@ class InlineQueryResultCachedDocument(InlineQueryResult):
             Pass None to completely disable style parsing.
         caption_entities (List of :obj:`~pyrogram.types.MessageEntity`):
                 List of special entities that appear in the caption, which can be specified instead of *parse_mode*.
-            
+
         reply_markup (:obj:`~pyrogram.types.InlineKeyboardMarkup`, *optional*):
             Inline keyboard attached to the message.
-            
+
         input_message_content (:obj:`~pyrogram.types.InputMessageContent`):
             Content of the message to be sent.
     """
@@ -186,7 +186,7 @@ class InlineQueryResultCachedDocument(InlineQueryResult):
     def __init__(
         self,
         file_id: str,
-        title: str= None,
+        title: str = None,
         id: str = None,
         description: str = None,
         caption: str = "",
@@ -230,6 +230,7 @@ class InlineQueryResultCachedDocument(InlineQueryResult):
             )
         )
 
+
 def get_input_file_from_file_id(
     file_id: str,
     expected_file_type: FileType = None
@@ -243,10 +244,12 @@ def get_input_file_from_file_id(
     file_type = decoded.file_type
 
     if expected_file_type is not None and file_type != expected_file_type:
-        raise ValueError(f'Expected: "{expected_file_type}", got "{file_type}" file_id instead')
+        raise ValueError(
+            f'Expected: "{expected_file_type}", got "{file_type}" file_id instead')
 
     if file_type in (FileType.THUMBNAIL, FileType.CHAT_PHOTO):
-        raise ValueError(f"This file_id can only be used for download: {file_id}")
+        raise ValueError(
+            f"This file_id can only be used for download: {file_id}")
 
     if file_type in PHOTO_TYPES:
         return raw.types.InputPhoto(

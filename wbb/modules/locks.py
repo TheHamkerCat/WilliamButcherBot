@@ -1,3 +1,26 @@
+"""
+MIT License
+
+Copyright (c) 2021 TheHamkerCat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 from wbb import SUDOERS, app
 from wbb.modules.admin import member_permissions, current_chat_permissions
 from wbb.core.decorators.errors import capture_err
@@ -7,10 +30,12 @@ from pyrogram.errors.exceptions.bad_request_400 import ChatNotModified
 
 __MODULE__ = "Locks"
 __HELP__ = """
-Commands: /lock | /unlock
+Commands: /lock | /unlock | /locks [No Parameters Required]
 
-Parameters: 
-    messages | stickers | gifs | media | games | polls | inline | url | voice | commands | forwards
+Parameters:
+    messages | stickers | gifs | media | games | polls
+
+    inline  | link_previews | group_info | user_add | pin
 
 You can only pass the "all" parameter with /lock, not with /unlock
 
@@ -32,6 +57,7 @@ data = {
     "useradd": "can_invite_users",
     "pin": "can_pin_messages"
 }
+
 
 async def tg_lock(message, permissions: list, perm: str, lock: bool):
     if lock:
@@ -79,3 +105,15 @@ async def locks_func(_, message):
     elif parameter == "all" and state == "lock":
         await app.set_chat_permissions(chat_id, ChatPermissions())
         await message.reply_text("Locked Everything.")
+
+
+@app.on_message(filters.command("locks") & ~filters.private)
+async def locktypes(_, message):
+    permissions = await current_chat_permissions(message.chat.id)
+    if not permissions:
+        await message.reply_text("No Permissions.")
+        return
+    perms = ""
+    for i in permissions:
+        perms += f"__**{i}**__\n"
+    await message.reply_text(perms)

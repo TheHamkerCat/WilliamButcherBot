@@ -1,6 +1,28 @@
+"""
+MIT License
+
+Copyright (c) 2021 TheHamkerCat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 from wbb import db
 from typing import Dict, List, Union
-
 
 notesdb = db.notes
 filtersdb = db.filters
@@ -11,6 +33,7 @@ gbansdb = db.gban
 coupledb = db.couple
 captchadb = db.captcha
 antiservicedb = db.antiservice
+pmpermitdb = db.pmpermit
 
 """ Notes functions """
 
@@ -446,3 +469,27 @@ async def antiservice_off(chat_id: int):
     if not is_antiservice:
         return
     return await antiservicedb.insert_one({"chat_id": chat_id})
+
+
+""" PM PERMIT """
+
+
+async def is_pmpermit_approved(user_id: int) -> bool:
+    user = await pmpermitdb.find_one({"user_id": user_id})
+    if not user:
+        return False
+    return True
+
+
+async def approve_pmpermit(user_id: int):
+    is_pmpermit = await is_pmpermit_approved(user_id)
+    if is_pmpermit:
+        return
+    return await pmpermitdb.inser_one({"user_id": user_id})
+
+
+async def disapprove_pmpermit(user_id: int):
+    is_pmpermit = await is_pmpermit_approved(user_id)
+    if not is_pmpermit:
+        return
+    return await pmpermitdb.delete_one({"user_id": user_id})
