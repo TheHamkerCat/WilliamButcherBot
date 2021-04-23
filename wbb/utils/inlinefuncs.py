@@ -31,13 +31,15 @@ from pyrogram.types import (
     InlineKeyboardButton,
     InlineQueryResultPhoto,
 )
+from pyrogram.raw.functions import Ping
 from googletrans import Translator
 from search_engine_parser import GoogleSearch
 from pykeyboard import InlineKeyboard
 from sys import version as pyver
 from motor import version as mongover
 from pyrogram import __version__ as pyrover, filters
-from time import ctime
+from time import time, ctime
+from random import randint
 from wbb.utils.fetch import fetch
 from wbb.modules.userbot import eval_executer_func
 from wbb.utils.functions import test_speedtest, get_http_status_code
@@ -705,9 +707,8 @@ async def pastebin_func(answers, link):
         chat, message_id = int("-100" + link[4]), int(link[5])
     else:
         chat, message_id = link[3], link[4]
-    try:
-        m = await app.get_messages(chat, message_ids=int(message_id))
-    except AttributeError:
+    m = await app.get_messages(chat, message_ids=int(message_id))
+    if not m.text:
         m = await app2.get_messages(chat, message_ids=int(message_id))
     if m.text not in pastebin_cache:
         link = await paste(m.text)
@@ -764,6 +765,21 @@ async def pmpermit_func(answers, user_id):
                 title="do_not_click_here",
                 reply_markup=buttons,
                 input_message_content=InputTextMessageContent(caption)
+                )
+            )
+    return answers
+
+
+async def ping_func(answers):
+    t1 = time()
+    ping = Ping(ping_id=randint(696969, 6969696))
+    await app.send(ping)
+    t2 = time()
+    ping = f"{str(round((t2 - t1), 2))} Seconds"
+    answers.append(
+            InlineQueryResultArticle(
+                title=ping,
+                input_message_content=InputTextMessageContent(f"__**{ping}**__")
                 )
             )
     return answers

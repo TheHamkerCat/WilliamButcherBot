@@ -33,7 +33,7 @@ flood = {}
 @app2.on_message(filters.private & ~filters.edited & ~filters.me & ~filters.bot & ~filters.user(SUDOERS))
 async def pmpermit_func(_, message):
     user_id = message.from_user.id
-    async for m in app2.iter_history(user_id, limit=10):
+    async for m in app2.iter_history(user_id, limit=6):
         if m.reply_markup:
             await m.delete()
     if await is_pmpermit_approved(user_id):
@@ -76,6 +76,12 @@ async def pm_disapprove(_, message):
     user_id = message.reply_to_message.from_user.id
     if not await is_pmpermit_approved(user_id):
         await message.edit("User is already disapproved to pm")
+        async for m in app2.iter_history(user_id, limit=6):
+            if m.reply_markup:
+                try:
+                    await m.delete()
+                except Exception:
+                    pass
         return
     await disapprove_pmpermit(user_id)
     await message.edit("User is disapproved to pm")
@@ -113,7 +119,7 @@ async def pmpermit_cq(_, cq):
         return
     data = cq.data.split(None, 1)[1]
     if data == "to_scam_you":
-        async for m in app2.iter_history(user_id, limit=10):
+        async for m in app2.iter_history(user_id, limit=6):
             if m.reply_markup:
                 await m.delete()
         await app2.send_message(user_id, "Blocked, Go scam someone else.")

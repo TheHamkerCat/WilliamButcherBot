@@ -32,6 +32,7 @@ from pyrogram.errors.exceptions.bad_request_400 import QueryIdInvalid
 __MODULE__ = "Inline"
 __HELP__ = '''```
 - alive - Check Bot's Stats.
+- ping - Ping Telegram Dataceter
 - tr [LANG] [QUERY] - Translate Text.
 - ud [QUERY] - Urban Dictionary Query.
 - google [QUERY] - Google Search.
@@ -385,6 +386,15 @@ async def inline_query_handler(client, query):
             )
             return
 
-    except TypeError:
+        elif text.split()[0] == "ping":
+            answerss = await ping_func(answers)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=2
+            )
+            return
+
+    except Exception as e:
         print(str(e) + " InLine")
         return
