@@ -738,11 +738,11 @@ async def pastebin_func(answers, link):
     return answers
 
 
-async def pmpermit_func(answers, user_id):
+async def pmpermit_func(answers, user_id, victim):
     if user_id != USERBOT_ID:
         return
     caption = f"Hi, I'm {USERBOT_NAME}, What are you here for?, You'll be blocked if you send more than 5 messages."
-    buttons = InlineKeyboard(row_width=2)
+    buttons = InlineKeyboard(row_width=3)
     buttons.add(
             InlineKeyboardButton(
                 text="To Scam You",
@@ -752,13 +752,17 @@ async def pmpermit_func(answers, user_id):
                 text="For promotion",
                 callback_data="pmpermit to_scam_you"
                 ),
-                InlineKeyboardButton(
+            InlineKeyboardButton(
                 text="ChitChats",
                 callback_data="pmpermit chitchats"
                 ),
             InlineKeyboardButton(
                 text="Approve me",
                 callback_data="pmpermit approve_me"
+                ),
+            InlineKeyboardButton(
+                text="Approve",
+                callback_data=f"pmpermit approve {victim}"
                 )
             )
     answers.append(

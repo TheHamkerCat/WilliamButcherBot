@@ -26,6 +26,7 @@ from wbb import app, app2, BOT_ID, USERBOT_ID, SUDOERS
 from pyrogram import filters
 from wbb.utils.dbfunctions import is_pmpermit_approved, approve_pmpermit, disapprove_pmpermit
 from wbb.modules.chatbot import active_chats_ubot
+import asyncio
 
 flood = {}
 
@@ -46,7 +47,7 @@ async def pmpermit_func(_, message):
         await app2.block_user(user_id)
         await message.reply_text("SPAM DETECTED, USER BLOCKED.")
         return
-    results = await app2.get_inline_bot_results(BOT_ID, "pmpermit")
+    results = await app2.get_inline_bot_results(BOT_ID, f"pmpermit {user_id}")
     await app2.send_inline_bot_result(
             user_id,
             results.query_id,
@@ -65,7 +66,9 @@ async def pm_approve(_, message):
         await message.edit("User is already approved to pm")
         return
     await approve_pmpermit(user_id)
-    await message.edit("User is approved to pm")
+    m = await message.edit("User is approved to pm")
+    await asyncio.sleep(2)
+    await m.delete()
 
 
 @app2.on_message(filters.command("disapprove", prefixes=".") & filters.user(SUDOERS) & ~filters.via_bot)
@@ -114,10 +117,19 @@ async def unblock_user_func(_, message):
 async def pmpermit_cq(_, cq):
     global active_chats_ubot
     user_id = cq.from_user.id
+    data, victim = cq.data.split(None, 2)[1], int(cq.data.split(None, 2)[2])
+
+    if data == "approve":
+        if user_id != USERBOT_ID:
+            await cq.answer("This Button Is Not For You")
+            return
+        await approve_pmpermit(victim)
+        await app.edit_inline_text(cq.inline_message_id, "User Has Been Approved To PM.")
+        return
     if user_id == USERBOT_ID:
         await cq.answer("It's For The Other Person.")
         return
-    data = cq.data.split(None, 1)[1]
+
     if data == "to_scam_you":
         async for m in app2.iter_history(user_id, limit=6):
             if m.reply_markup:

@@ -81,30 +81,34 @@ async def tg_lock(message, permissions: list, perm: str, lock: bool):
 @app.on_message(filters.command(["lock", "unlock"]) & ~filters.private)
 @capture_err
 async def locks_func(_, message):
-    user_id = message.from_user.id
-    chat_id = message.chat.id
-    if len(message.command) != 2:
-        await message.reply_text(incorrect_parameters)
-        return
+    try:
+        user_id = message.from_user.id
+        chat_id = message.chat.id
+        if len(message.command) != 2:
+            await message.reply_text(incorrect_parameters)
+            return
 
-    parameter = message.text.strip().split(None, 1)[1].lower()
-    state = message.command[0].lower()
-    if parameter not in data and parameter != "all":
-        await message.reply_text(incorrect_parameters)
-        return
+        parameter = message.text.strip().split(None, 1)[1].lower()
+        state = message.command[0].lower()
+        if parameter not in data and parameter != "all":
+            await message.reply_text(incorrect_parameters)
+            return
 
-    permissions = await member_permissions(chat_id, user_id)
-    if "can_restrict_members" not in permissions and user_id not in SUDOERS:
-        await message.reply_text("You Don't Have Enough Permissions.")
-        return
+        permissions = await member_permissions(chat_id, user_id)
+        if "can_restrict_members" not in permissions and user_id not in SUDOERS:
+            await message.reply_text("You Don't Have Enough Permissions.")
+            return
 
-    permissions = await current_chat_permissions(chat_id)
-    if parameter in data:
-        await tg_lock(message, permissions, data[parameter], True if state == "lock" else False)
-        return
-    elif parameter == "all" and state == "lock":
-        await app.set_chat_permissions(chat_id, ChatPermissions())
-        await message.reply_text("Locked Everything.")
+        permissions = await current_chat_permissions(chat_id)
+        if parameter in data:
+            await tg_lock(message, permissions, data[parameter], True if state == "lock" else False)
+            return
+        elif parameter == "all" and state == "lock":
+            await app.set_chat_permissions(chat_id, ChatPermissions())
+            await message.reply_text("Locked Everything.")
+    except Exception as e:
+        await message.reply_text(str(e))
+        print(e)
 
 
 @app.on_message(filters.command("locks") & ~filters.private)

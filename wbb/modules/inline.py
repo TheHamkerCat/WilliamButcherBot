@@ -377,9 +377,10 @@ async def inline_query_handler(client, query):
             )
             return
         
-        elif text.split()[0] == "pmpermit":
+        elif text.strip().split()[0] == "pmpermit":
             user_id = query.from_user.id
-            answerss = await pmpermit_func(answers, user_id)
+            victim = text.strip().split()[1]
+            answerss = await pmpermit_func(answers, user_id, victim)
             await client.answer_inline_query(
                 query.id,
                 results=answerss,
