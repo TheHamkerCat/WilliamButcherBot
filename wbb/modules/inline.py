@@ -24,10 +24,11 @@ SOFTWARE.
 """
 
 import re
+import traceback
 from wbb import app
 from wbb.utils.inlinefuncs import *
 from pyrogram import filters
-from pyrogram.errors.exceptions.bad_request_400 import QueryIdInvalid
+
 
 __MODULE__ = "Inline"
 __HELP__ = '''```
@@ -396,5 +397,6 @@ async def inline_query_handler(client, query):
             return
 
     except Exception as e:
-        print(str(e) + " InLine")
+        e = traceback.format_exc()
+        print(e, " InLine")
         return

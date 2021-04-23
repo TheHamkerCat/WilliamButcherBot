@@ -484,6 +484,7 @@ async def github_user_func(answers, text):
 
 
 async def github_repo_func(answers, text):
+    url = text
     text = text.replace("https://github.com/", "")
     text = text.replace("http://github.com/", "")
     if text[-1] == "/":
@@ -512,7 +513,7 @@ async def github_repo_func(answers, text):
 **Is Fork:** `{r['fork']}`
 **Language:** `{r['language']}`
 **Contributors:** `{len(r1)}`
-**License:** `{r['license']['name']}`
+**License:** `{r['license']['name'] if r['license'] else None}`
 **Repo Owner:** [{r['owner']['login']}]({r['owner']['html_url']})
 **Created On:** `{r['created_at']}`
 **Homepage:** {r['homepage']}

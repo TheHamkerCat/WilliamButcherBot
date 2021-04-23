@@ -33,11 +33,11 @@ flood = {}
 @app2.on_message(filters.private & ~filters.edited & ~filters.me & ~filters.bot & ~filters.user(SUDOERS))
 async def pmpermit_func(_, message):
     user_id = message.from_user.id
+    if await is_pmpermit_approved(user_id):
+        return
     async for m in app2.iter_history(user_id, limit=6):
         if m.reply_markup:
             await m.delete()
-    if await is_pmpermit_approved(user_id):
-        return
     if str(user_id) in flood:
         flood[str(user_id)] += 1
     else:

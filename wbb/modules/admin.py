@@ -176,7 +176,7 @@ async def kick(_, message):
                 await message.reply_text("You Wanna Kick The Elevated One?")
             else:
                 await message.chat.kick_member(username)
-                await asyncio.sleep(2)
+                await asyncio.sleep(1)
                 await message.chat.unban_member(username)
                 await message.reply_text("Kicked")
         elif len(message.command) == 1 and message.reply_to_message:
@@ -185,7 +185,7 @@ async def kick(_, message):
                 await message.reply_text("You Wanna Kick The Elevated One?")
             else:
                 await message.reply_to_message.chat.kick_member(user_id)
-                await asyncio.sleep(2)
+                await asyncio.sleep(1)
                 await message.reply_to_message.chat.unban_member(user_id)
                 await message.reply_text("Kicked!")
         else:
