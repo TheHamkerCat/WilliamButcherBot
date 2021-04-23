@@ -30,7 +30,7 @@ from wbb.modules.chatbot import active_chats_ubot
 flood = {}
 
 
-@app2.on_message(filters.private & ~filters.edited & ~filters.me & ~filters.user(SUDOERS))
+@app2.on_message(filters.private & ~filters.edited & ~filters.me & ~filters.bot ~filters.user(SUDOERS))
 async def pmpermit_func(_, message):
     user_id = message.from_user.id
     async for m in app2.iter_history(user_id, limit=10):
