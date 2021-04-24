@@ -25,7 +25,6 @@ SOFTWARE.
 from wbb import app, app2, BOT_ID, USERBOT_ID, SUDOERS
 from pyrogram import filters
 from wbb.utils.dbfunctions import is_pmpermit_approved, approve_pmpermit, disapprove_pmpermit
-from wbb.modules.chatbot import active_chats_ubot
 import asyncio
 
 flood = {}
@@ -115,7 +114,6 @@ async def unblock_user_func(_, message):
 
 @app.on_callback_query(filters.regex("pmpermit"))
 async def pmpermit_cq(_, cq):
-    global active_chats_ubot
     user_id = cq.from_user.id
     data, victim = cq.data.split(None, 2)[1], int(cq.data.split(None, 2)[2])
 
@@ -139,8 +137,3 @@ async def pmpermit_cq(_, cq):
 
     elif data == "approve_me":
         await app2.send_message(user_id, "I'm busy right now, will approve you shortly, DO NOT SPAM.")
-
-    elif data == "chitchats":
-        await approve_pmpermit(user_id)
-        active_chats_ubot.append(user_id)
-        await app2.send_message(user_id, "Hello")

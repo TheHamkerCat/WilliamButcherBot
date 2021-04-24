@@ -26,8 +26,7 @@
 - Python >= 3.7
 - A [Telegram API key](https://docs.pyrogram.org/intro/setup#api-keys).
 - A [Telegram bot token](https://t.me/botfather).
-<!-- How to get MongoDB -->
-- A [MongoDB](https://telegra.ph/How-To-get-Mongodb-URI-04-06)
+- A [MongoDB URI](https://telegra.ph/How-To-get-Mongodb-URI-04-06)
 
 
 ## Install Locally Or On A VPS
@@ -67,14 +66,14 @@ $ python3 str_gen.py
 ## Features 
 
 * Group Management
-* Userbot
+* Userbot [Including Ai PM PERMIT]
 * Music Downloading 
 * AI Chatbot
-* Web Scraping 
-* Get Pictures/Wallpapers  
+* Web Scraping
+* Get Pictures/Wallpapers
 * Dictionary
 * Translation
-* Message Cryptography 
+* Message Cryptography
 * Python Interpreter (Right In Your Telegram Chat!)
 * Nekobin (Paste Code/Text)
 * And Much More...

@@ -753,7 +753,7 @@ async def pmpermit_func(answers, user_id, victim):
     if user_id != USERBOT_ID:
         return
     caption = f"Hi, I'm {USERBOT_NAME}, What are you here for?, You'll be blocked if you send more than 5 messages."
-    buttons = InlineKeyboard(row_width=3)
+    buttons = InlineKeyboard(row_width=2)
     buttons.add(
             InlineKeyboardButton(
                 text="To Scam You",
@@ -762,10 +762,6 @@ async def pmpermit_func(answers, user_id, victim):
             InlineKeyboardButton(
                 text="For promotion",
                 callback_data="pmpermit to_scam_you"
-                ),
-            InlineKeyboardButton(
-                text="ChitChats",
-                callback_data="pmpermit chitchats"
                 ),
             InlineKeyboardButton(
                 text="Approve me",
