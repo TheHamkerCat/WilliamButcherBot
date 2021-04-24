@@ -1,3 +1,4 @@
+# flake8: noqa F405
 """
 MIT License
 
@@ -34,6 +35,8 @@ if is_config:
 else:
     from sample_config import *
 
+listen = listen
+USERBOT_PREFIX = USERBOT_PREFIX
 SUDOERS = SUDO_USERS_ID
 MAIN_CHATS = MAIN_CHATS
 GBAN_LOG_GROUP_ID = GBAN_LOG_GROUP_ID
@@ -43,29 +46,21 @@ LOG_GROUP_ID = LOG_GROUP_ID
 MOD_LOAD = []
 MOD_NOLOAD = []
 bot_start_time = time.time()
-mongo_client = MongoClient(MONGO_DB_URI)
-db = mongo_client.wbb
+
 
 if not HEROKU:
-    app2 = Client(
-        "userbot",
-        phone_number=PHONE_NUMBER,
-        api_id=API_ID,
-        api_hash=API_HASH
-    )
+    app2 = Client("userbot", phone_number=PHONE_NUMBER, api_id=API_ID, api_hash=API_HASH)
 else:
-    app2 = Client(
-        SESSION_STRING,
-        api_id=API_ID,
-        api_hash=API_HASH
-    )
+    app2 = Client(SESSION_STRING, api_id=API_ID, api_hash=API_HASH)
 
-app = Client(
-    "wbb",
-    bot_token=BOT_TOKEN,
-    api_id=API_ID,
-    api_hash=API_HASH
-)
+# Bot client
+app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
+# MongoDB client
+mongo_client = MongoClient(MONGO_DB_URI)
+db = mongo_client.wbb
+# ARQ client
+arq = ARQ(ARQ_API_BASE_URL)
+
 
 BOT_ID = 0
 BOT_NAME = ""
@@ -107,5 +102,3 @@ app.start()
 app2.start()
 get_info(app, app2)
 SUDOERS.append(USERBOT_ID)
-# ARQ client
-arq = ARQ(ARQ_API_BASE_URL)

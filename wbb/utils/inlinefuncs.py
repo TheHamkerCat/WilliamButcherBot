@@ -486,7 +486,6 @@ async def github_user_func(answers, text):
 
 
 async def github_repo_func(answers, text):
-    url = text
     text = text.replace("https://github.com/", "")
     text = text.replace("http://github.com/", "")
     if text[-1] == "/":
@@ -718,8 +717,9 @@ async def pastebin_func(answers, link):
                 InlineQueryResultArticle(
                     title="DOCUMENT TOO BIG",
                     description="Maximum supported size is 1MB",
-                    input_message_content=InputTextMessageContent("DOCUMENT TOO BIG")
-                    
+                    input_message_content=InputTextMessageContent(
+                        "DOCUMENT TOO BIG")
+
                 )
             )
             return answers
@@ -755,30 +755,30 @@ async def pmpermit_func(answers, user_id, victim):
     caption = f"Hi, I'm {USERBOT_NAME}, What are you here for?, You'll be blocked if you send more than 5 messages."
     buttons = InlineKeyboard(row_width=2)
     buttons.add(
-            InlineKeyboardButton(
-                text="To Scam You",
-                callback_data="pmpermit to_scam_you"
-                ),
-            InlineKeyboardButton(
-                text="For promotion",
-                callback_data="pmpermit to_scam_you"
-                ),
-            InlineKeyboardButton(
-                text="Approve me",
-                callback_data="pmpermit approve_me"
-                ),
-            InlineKeyboardButton(
-                text="Approve",
-                callback_data=f"pmpermit approve {victim}"
-                )
-            )
+        InlineKeyboardButton(
+            text="To Scam You",
+            callback_data="pmpermit to_scam_you"
+        ),
+        InlineKeyboardButton(
+            text="For promotion",
+            callback_data="pmpermit to_scam_you"
+        ),
+        InlineKeyboardButton(
+            text="Approve me",
+            callback_data="pmpermit approve_me"
+        ),
+        InlineKeyboardButton(
+            text="Approve",
+            callback_data=f"pmpermit approve {victim}"
+        )
+    )
     answers.append(
-            InlineQueryResultArticle(
-                title="do_not_click_here",
-                reply_markup=buttons,
-                input_message_content=InputTextMessageContent(caption)
-                )
-            )
+        InlineQueryResultArticle(
+            title="do_not_click_here",
+            reply_markup=buttons,
+            input_message_content=InputTextMessageContent(caption)
+        )
+    )
     return answers
 
 
@@ -789,9 +789,10 @@ async def ping_func(answers):
     t2 = time()
     ping = f"{str(round((t2 - t1), 2))} Seconds"
     answers.append(
-            InlineQueryResultArticle(
-                title=ping,
-                input_message_content=InputTextMessageContent(f"__**{ping}**__")
-                )
-            )
+        InlineQueryResultArticle(
+            title=ping,
+            input_message_content=InputTextMessageContent(
+                f"__**{ping}**__")
+        )
+    )
     return answers

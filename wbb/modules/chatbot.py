@@ -21,7 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import app, app2, arq, BOT_ID, SUDOERS, USERBOT_ID, USERBOT_USERNAME
+from wbb import (
+    app, app2, arq, BOT_ID, SUDOERS, USERBOT_ID,
+    USERBOT_USERNAME, USERBOT_PREFIX
+)
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.filter_groups import chatbot_group
 from pyrogram import filters
@@ -90,7 +93,7 @@ async def chatbot_talk(_, message):
 """ FOR USERBOT """
 
 
-@app2.on_message(filters.command("chatbot", prefixes=".") & ~filters.edited & filters.user(SUDOERS))
+@app2.on_message(filters.command("chatbot", prefixes=USERBOT_PREFIX) & ~filters.edited & filters.user(SUDOERS))
 @capture_err
 async def chatbot_status_ubot(_, message):
     global active_chats_ubot

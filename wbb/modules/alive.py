@@ -22,16 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from wbb import app2, BOT_ID, SUDOERS
+from wbb import app2, BOT_ID, SUDOERS, USERBOT_PREFIX
 from pyrogram import filters
 
-@app2.on_message(filters.command("alive", prefixes=".") & filters.user(SUDOERS))
+
+@app2.on_message(filters.command("alive", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS))
 async def alive_command_func(_, message):
     await message.delete()
     results = await app2.get_inline_bot_results(BOT_ID, "alive")
     await app2.send_inline_bot_result(
-            message.chat.id,
-            results.query_id,
-            results.results[0].id,
-            hide_via=True
-            )
+        message.chat.id,
+        results.query_id,
+        results.results[0].id,
+        hide_via=True
+    )

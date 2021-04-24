@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from wbb import app, app2, BOT_ID, USERBOT_ID, SUDOERS
+from wbb import app, app2, BOT_ID, USERBOT_ID, SUDOERS, USERBOT_PREFIX
 from pyrogram import filters
 from wbb.utils.dbfunctions import is_pmpermit_approved, approve_pmpermit, disapprove_pmpermit
 import asyncio
@@ -55,7 +55,7 @@ async def pmpermit_func(_, message):
             )
 
 
-@app2.on_message(filters.command("approve", prefixes=".") & filters.user(SUDOERS) & ~filters.via_bot)
+@app2.on_message(filters.command("approve", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS) & ~filters.via_bot)
 async def pm_approve(_, message):
     if not message.reply_to_message:
         await message.edit("Reply to a user's message to approve.")
@@ -70,7 +70,7 @@ async def pm_approve(_, message):
     await m.delete()
 
 
-@app2.on_message(filters.command("disapprove", prefixes=".") & filters.user(SUDOERS) & ~filters.via_bot)
+@app2.on_message(filters.command("disapprove", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS) & ~filters.via_bot)
 async def pm_disapprove(_, message):
     if not message.reply_to_message:
         await message.edit("Reply to a user's message to approve.")
@@ -89,7 +89,7 @@ async def pm_disapprove(_, message):
     await message.edit("User is disapproved to pm")
 
 
-@app2.on_message(filters.command("block", prefixes=".") & filters.user(SUDOERS) & ~filters.via_bot)
+@app2.on_message(filters.command("block", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS) & ~filters.via_bot)
 async def block_user_func(_, message):
     if not message.reply_to_message:
         await message.edit("Reply to a user's message to approve.")
@@ -99,7 +99,7 @@ async def block_user_func(_, message):
     await message.edit("Successfully blocked the user")
 
 
-@app2.on_message(filters.command("unblock", prefixes=".") & filters.user(SUDOERS) & ~filters.via_bot)
+@app2.on_message(filters.command("unblock", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS) & ~filters.via_bot)
 async def unblock_user_func(_, message):
     if not message.reply_to_message:
         await message.edit("Reply to a user's message to approve.")
