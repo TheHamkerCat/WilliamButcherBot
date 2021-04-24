@@ -757,15 +757,15 @@ async def pmpermit_func(answers, user_id, victim):
     buttons.add(
         InlineKeyboardButton(
             text="To Scam You",
-            callback_data="pmpermit to_scam_you"
+            callback_data="pmpermit to_scam_you a"
         ),
         InlineKeyboardButton(
             text="For promotion",
-            callback_data="pmpermit to_scam_you"
+            callback_data="pmpermit to_scam_you a"
         ),
         InlineKeyboardButton(
             text="Approve me",
-            callback_data="pmpermit approve_me"
+            callback_data="pmpermit approve_me a"
         ),
         InlineKeyboardButton(
             text="Approve",

@@ -12,7 +12,7 @@ import os
 import re
 import subprocess
 from inspect import getfullargspec
-from wbb import app, app2, SUDOERS
+from wbb import app, app2, SUDOERS, USERBOT_PREFIX
 from pyrogram import filters
 from pyrogram.types import Message
 
@@ -43,7 +43,7 @@ async def edit_or_reply(msg: Message, **kwargs):
 
 
 @app2.on_message(filters.user(SUDOERS) & ~filters.forwarded &
-                 ~filters.via_bot & filters.command("l", "."))
+                 ~filters.via_bot & filters.command("l", prefixes=USERBOT_PREFIX))
 async def executor(client, message):
     try:
         cmd = message.text.split(" ", maxsplit=1)[1]
@@ -97,7 +97,7 @@ async def executor(client, message):
     filters.user(SUDOERS)
     & ~filters.forwarded
     & ~filters.via_bot
-    & filters.command('sh', "."),
+    & filters.command('sh', prefixes=USERBOT_PREFIX),
 )
 async def shellrunner(client, message):
     if len(message.command) < 2:

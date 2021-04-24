@@ -115,13 +115,12 @@ async def unblock_user_func(_, message):
 @app.on_callback_query(filters.regex("pmpermit"))
 async def pmpermit_cq(_, cq):
     user_id = cq.from_user.id
-    data, victim = cq.data.split(None, 2)[1], int(cq.data.split(None, 2)[2])
-
+    data, victim = cq.data.split(None, 2)[1], cq.data.split(None, 2)[2]
     if data == "approve":
         if user_id != USERBOT_ID:
             await cq.answer("This Button Is Not For You")
             return
-        await approve_pmpermit(victim)
+        await approve_pmpermit(int(victim))
         await app.edit_inline_text(cq.inline_message_id, "User Has Been Approved To PM.")
         return
     if user_id == USERBOT_ID:

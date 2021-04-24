@@ -28,7 +28,8 @@ import traceback
 from wbb import app
 from wbb.utils.inlinefuncs import *
 from pyrogram import filters
-
+from pykeyboard import InlineKeyboard
+from pyrogram.types import InlineKeyboardButton
 
 __MODULE__ = "Inline"
 __HELP__ = '''```
@@ -54,16 +55,18 @@ __HELP__ = '''```
 - [MESSAGE_LINK] - To Paste A Message On Pastebin. Text | Document
 ```'''
 
-
+"""
 @app.on_message(filters.command("inline"))
 async def inline_help(_, message):
-    await app.send_message(message.chat.id, text=__HELP__)
-
-
+    buttons = InlineKeyboard(row_width=2)
+    buttons_list
+    buttons.add(buttons_list)
+    await message.reply_text("a", reply_markup=buttons)
+"""
 @app.on_inline_query()
 async def inline_query_handler(client, query):
     try:
-        text = query.query.lower()
+        text = query.query.strip().lower()
         answers = []
         if text.strip() == '':
             answerss = await inline_help_func(__HELP__)
@@ -377,9 +380,9 @@ async def inline_query_handler(client, query):
             )
             return
         
-        elif text.strip().split()[0] == "pmpermit":
+        elif text.split()[0] == "pmpermit":
             user_id = query.from_user.id
-            victim = text.strip().split()[1]
+            victim = text.split()[1]
             answerss = await pmpermit_func(answers, user_id, victim)
             await client.answer_inline_query(
                 query.id,
