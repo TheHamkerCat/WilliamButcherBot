@@ -32,37 +32,9 @@ from pykeyboard import InlineKeyboard
 from pyrogram.types import InlineKeyboardButton
 
 __MODULE__ = "Inline"
-__HELP__ = '''```
-- alive - Check Bot's Stats.
-- ping - Ping Telegram Dataceter
-- tr [LANG] [QUERY] - Translate Text.
-- ud [QUERY] - Urban Dictionary Query.
-- google [QUERY] - Google Search.
-- bitly [URL] - Shorten A Link.
-- wall [QUERY] - Find Wallpapers.
-- yt [Query] - Youtube Search.
-- torrent [QUERY] - Torrent Search.
-- lyrics [QUERY] - Lyrics Search.
-- wiki [QUERY] - Wikipedia Search.
-- speedtest - Perform A Speedtest.
-- eval [CODE] - Execute Python Code.
-- music [QUERY] - Get Music.
-- saavn [SONG_NAME] - Get Songs From Saavn.
-- deezer [SONG_NAME] - Get Songs From Deezer.
-- gh_user [USERNAME | PROFILE_LINK] - Search A Github User.
-- gh_repo [REPO_LINK] - Search A Github Repo.
-- search [QUERY] - Search For A Message Globally.
-- [MESSAGE_LINK] - To Paste A Message On Pastebin. Text | Document
-```'''
+__HELP__ = '''See inline for help related to inline'''
 
-"""
-@app.on_message(filters.command("inline"))
-async def inline_help(_, message):
-    buttons = InlineKeyboard(row_width=2)
-    buttons_list
-    buttons.add(buttons_list)
-    await message.reply_text("a", reply_markup=buttons)
-"""
+
 @app.on_inline_query()
 async def inline_query_handler(client, query):
     try:
@@ -88,7 +60,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Translate Text.',
+                    switch_pm_text='Translator | tr [LANG] [TEXT]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -104,7 +76,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Search Urban Dictionary.',
+                    switch_pm_text='Urban Dictionary | ud [QUERY]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -119,7 +91,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Search Google.',
+                    switch_pm_text='Google Search | google [QUERY]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -129,28 +101,12 @@ async def inline_query_handler(client, query):
                 query.id,
                 results=answerss,
             )
-        elif text.split()[0] == "webss":
-            if len(text.split()) < 2:
-                await client.answer_inline_query(
-                    query.id,
-                    results=answers,
-                    switch_pm_text='Take Screenshot Of A Website.',
-                    switch_pm_parameter='inline',
-                )
-                return
-            tex = text.split(None, 1)[1].strip()
-            answerss = await webss(tex)
-            await client.answer_inline_query(
-                query.id,
-                results=answerss,
-                cache_time=2
-            )
         elif text.split()[0] == "bitly":
             if len(text.split()) < 2:
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Shorten A Link.',
+                    switch_pm_text='Link Shortener | bitly [LINK]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -167,7 +123,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Search Wallpapers.',
+                    switch_pm_text='Wallpapers Search | wall [QUERY]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -183,7 +139,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Search Songs On JioSaavn.',
+                    switch_pm_text='JioSaavn Search | saavn [QUERY]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -199,7 +155,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Search Songs On Deezer.',
+                    switch_pm_text='Deezer Search | deezer [QUERY]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -215,7 +171,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Search For Torrent.',
+                    switch_pm_text='Torrent Search | torrent [QUERY]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -231,7 +187,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Search YouTube.',
+                    switch_pm_text='YouTube Search | yt [QUERY]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -247,7 +203,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Search Lyrics.',
+                    switch_pm_text='Lyrics Search | lyrics [QUERY]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -263,7 +219,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Excute Python Code.',
+                    switch_pm_text='Evaluate Code | eval [CODE]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -281,7 +237,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Search Github User.',
+                    switch_pm_text='Github User | gh_user [USERNAME/LINK]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -298,7 +254,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Search Github Repo.',
+                    switch_pm_text='Github Repo Search | [LINK]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -315,7 +271,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Global Message Search.',
+                    switch_pm_text='Global Message Search. | search [QUERY]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -333,7 +289,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Search For Music.',
+                    switch_pm_text='Music Search | music [QUERY]',
                     switch_pm_parameter='inline',
                 )
                 return
@@ -350,7 +306,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text='Search Wikipedia.',
+                    switch_pm_text='Wikipedia | wiki [QUERY]',
                     switch_pm_parameter='inline',
                 )
                 return

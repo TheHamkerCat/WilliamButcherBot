@@ -56,22 +56,21 @@ from wbb import (
 
 
 async def inline_help_func(__HELP__):
-    buttons = InlineKeyboard(row_width=2)
-    buttons.add(
-        InlineKeyboardButton(
-            'Get More Help.',
-            url=f"t.me/{BOT_USERNAME}?start=start"
-        ),
-        InlineKeyboardButton(
-            "Go Inline!",
-            switch_inline_query_current_chat=""
-        )
-    )
+    buttons = InlineKeyboard(row_width=3)
+    keywords_list = [
+        "alive", "ping", "tr", "ud", "google", "bitly",
+        "wall", "yt", "torrent", "lyrics", "wiki",
+        "speedtest", "eval", "music", "saavn", "deezer",
+        "gh_repo", "gh_user", "search", "pastebin"
+    ]
+    buttons.add(*[(InlineKeyboardButton(
+        text=i, switch_inline_query_current_chat=i)) for i in keywords_list])
     answerss = [
         InlineQueryResultArticle(
             title="Inline Commands",
             description="Help Related To Inline Usage.",
-            input_message_content=InputTextMessageContent(__HELP__),
+            input_message_content=InputTextMessageContent(
+                "Click A Button To Get Started."),
             thumb_url="https://hamker.me/cy00x5x.png",
             reply_markup=buttons
         )
