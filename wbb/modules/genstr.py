@@ -28,9 +28,9 @@ async def genstr(_, message):
         if not number.text:
             continue
         phone = number.text.strip()
-        confirm = await app.ask(chat.id, f'`Is "{phone}" correct?` \n\nSend: `y`\nSend: `n`')
         if phone.text.startswith("/") :
             return
+        confirm = await app.ask(chat.id, f'`Is "{phone}" correct?` \n\nSend: `y`\nSend: `n`')
         if confirm.text.startswith("/") :
             return
         if "y" in confirm.text.lower():
