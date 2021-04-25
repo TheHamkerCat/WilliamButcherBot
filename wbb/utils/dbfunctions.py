@@ -34,6 +34,7 @@ coupledb = db.couple
 captchadb = db.captcha
 antiservicedb = db.antiservice
 pmpermitdb = db.pmpermit
+welcomedb = db.welcome_text
 
 """ Notes functions """
 
@@ -493,3 +494,28 @@ async def disapprove_pmpermit(user_id: int):
     if not is_pmpermit:
         return
     return await pmpermitdb.delete_one({"user_id": user_id})
+
+
+""" WELCOME FUNCTIONS """
+
+
+
+async def get_welcome(chat_id: int)-> str:
+    text = await welcomedb.find_one({"chat_id": chat_id})
+    return text['text']
+
+
+async def set_welcome(chat_id: int, text: str):
+    return await welcomedb.update_one(
+        {"chat_id": chat_id},
+        {
+            "$set": {
+                "text": text
+            }
+        },
+        upsert=True
+    )
+
+
+async def del_welcome(chat_id: int):
+    return await welcomedb.delete_one({"chat_id": chat_id})

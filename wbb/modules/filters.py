@@ -103,11 +103,11 @@ async def del_filter(_, message):
                 ~filters.private & ~filters.via_bot &
                 ~filters.forwarded, group=chat_filters_group)
 async def filters_re(_, message):
+    text = message.text.lower().strip()
+    if not text:
+        return
+    chat_id = message.chat.id
     try:
-        text = message.text.lower().strip()
-        if not text:
-            return
-        chat_id = message.chat.id
         list_of_filters = await get_filters_names(chat_id)
         for word in list_of_filters:
             pattern = r"( |^|[^\w])" + re.escape(word) + r"( |$|[^\w])"
@@ -119,13 +119,12 @@ async def filters_re(_, message):
                     await message.reply_text(data, disable_web_page_preview=True)
                 else:
                     await message.reply_sticker(data)
-
-                """ CHAT WATCHER """
-                served_chat = await is_served_chat(chat_id)
-                if served_chat:
-                    return
-                await add_served_chat(chat_id)
-                return
-
     except Exception:
         pass
+
+    """ CHAT WATCHER """
+    served_chat = await is_served_chat(chat_id)
+    if served_chat:
+        return
+    await add_served_chat(chat_id)
+    return

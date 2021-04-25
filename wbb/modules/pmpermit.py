@@ -111,6 +111,8 @@ async def unblock_user_func(_, message):
 
 """ CALLBACK QUERY HANDLER """
 
+flood2 = {}
+
 
 @app.on_callback_query(filters.regex("pmpermit"))
 async def pmpermit_cq(_, cq):
@@ -135,4 +137,12 @@ async def pmpermit_cq(_, cq):
         await app2.block_user(user_id)
 
     elif data == "approve_me":
+        if str(user_id) in flood2:
+            flood2[str(user_id)] += 1
+        else:
+            flood2[str(user_id)] = 1
+        if flood2[str(user_id)] > 5:
+            await app2.block_user(user_id)
+            await message.reply_text("SPAM DETECTED, USER BLOCKED.")
+            return
         await app2.send_message(user_id, "I'm busy right now, will approve you shortly, DO NOT SPAM.")
