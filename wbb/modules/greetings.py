@@ -316,11 +316,12 @@ async def captcha_state(_, message):
 @app.on_message(filters.command("set_welcome") & ~filters.private)
 @capture_err
 async def set_welcome_func(_, message):
+    usage = "You need to reply to a text, check the Greetings module in /help"
     if not message.reply_to_message:
-        await message.reply_text("You need to reply to a text, check the Welcome module in /help")
+        await message.reply_text(usage)
         return
     if not message.reply_to_message.text:
-        await message.reply_text("You need to reply to a text, check the Welcome module in /help")
+        await message.reply_text(usage)
         return
     user_id = message.from_user.id
     chat_id = message.chat.id
@@ -330,7 +331,7 @@ async def set_welcome_func(_, message):
         return
     raw_text = str(message.reply_to_message.text.markdown)
     await set_welcome(chat_id, raw_text)
-    await message.reply_text("Welcome message has been set, Send /show_welcome to see what's been set.")
+    await message.reply_text("Welcome message has been successfully set.")
 
 
 @app.on_message(filters.command("del_welcome") & ~filters.private)

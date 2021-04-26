@@ -290,38 +290,28 @@ async def promote(_, message):
         if "can_promote_members" not in permissions and from_user_id not in SUDOERS:
             await message.reply_text("You don't have enough permissions")
             return
+        bot = get_chat_member(chat_id, BOT_ID)
         if len(message.command) == 2:
             username = message.text.split(None, 1)[1]
             user_id = (await app.get_users(username)).id
-            await message.chat.promote_member(
-                user_id=user_id,
-                can_change_info=True,
-                can_invite_users=True,
-                can_delete_messages=True,
-                can_restrict_members=False,
-                can_pin_messages=True,
-                can_promote_members=True,
-                can_manage_chat=True,
-                can_manage_voice_chats=True
-            )
-            await message.reply_text('Promoted!')
-
         elif len(message.command) == 1 and message.reply_to_message:
             user_id = message.reply_to_message.from_user.id
-            await message.chat.promote_member(
-                user_id=user_id,
-                can_change_info=True,
-                can_invite_users=True,
-                can_delete_messages=True,
-                can_restrict_members=False,
-                can_pin_messages=True,
-                can_promote_members=True,
-                can_manage_chat=True,
-                can_manage_voice_chats=True
-            )
-            await message.reply_text('Promoted!')
         else:
             await message.reply_text("Reply To A User's Message Or Give A Username To Promote.")
+
+        await message.chat.promote_member(
+            user_id=user_id,
+            can_change_info=bot.can_change_info,
+            can_invite_users=bot.can_invite_users,
+            can_delete_messages=bot.can_delete_messages,
+            can_restrict_members=bot.can_restrict_members,
+            can_pin_messages=bot.can_pin_messages,
+            can_promote_members=bot.can_promote_members,
+            can_manage_chat=bot.can_manage_chat,
+            can_manage_voice_chats=bot.can_manage_voice_chats
+        )
+        await message.reply_text('Promoted!')
+
     except Exception as e:
         await message.reply_text(str(e))
 
@@ -478,7 +468,7 @@ async def warn_user(_, message):
                         await add_warn(chat_id, await int_to_alpha(user_id), warn)
                         await message.reply_text(f"Warned {mention} !, 1/3 warnings now.")
                         return
-                    if warns >= 3:
+                    if warns >= 2:
                         await message.chat.kick_member(user_id)
                         await message.reply_text(f"Number of warns of {mention} exceeded, Banned!")
                         await remove_warns(chat_id, await int_to_alpha(user_id))

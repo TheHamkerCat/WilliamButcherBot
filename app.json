@@ -29,10 +29,6 @@
             "description": "Need for Userbot Module So u can execute .sh & .l cmd",
             "required": false
         },
-        "MAIN_CHATS": {
-            "description": "These are the chats where main functions of bot will work, like music downloading etc.",
-            "required": true
-        },
         "SUDO_USERS_ID": {
             "description": "Sudo users have full access to everythin, don't trust anyone... ex:- 123456 654311 123456",
             "required": true
@@ -61,6 +57,10 @@
         "ARQ_API_BASE_URL": {
             "description": "For Music Downloading And Many More Things... Don't change this value",
             "value": "https://thearq.tech",
+            "required": true
+        },
+        "IMGBB_API_KEY": {
+            "description": "Get From Here. https://api.imgbb.com/",
             "required": true
         }
     }
