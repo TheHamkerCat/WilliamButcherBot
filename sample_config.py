@@ -10,6 +10,7 @@ if HEROKU:
     SUDO_USERS_ID = list(int(x) for x in environ.get("SUDO_USERS_ID", "").split())
     LOG_GROUP_ID = int(environ.get("LOG_GROUP_ID", None))
     GBAN_LOG_GROUP_ID = int(environ.get("GBAN_LOG_GROUP_ID", None))
+    MESSAGE_DUMP_CHAT = int(environ.get("MESSAGE_DUMP_CHAT", None))
     FERNET_ENCRYPTION_KEY = environ.get("FERNET_ENCRYPTION_KEY", None)
     WELCOME_DELAY_KICK_SEC = int(environ.get("WELCOME_DELAY_KICK_SEC", None))
     MONGO_DB_URI = environ.get("MONGO_DB_URI", None)
@@ -25,6 +26,7 @@ else:
     SUDO_USERS_ID = [4543744343, 543214651351] # Sudo users have full access to everythin, don't trust anyone
     LOG_GROUP_ID = -100125431255
     GBAN_LOG_GROUP_ID = -100125431255
+    MESSAGE_DUMP_CHAT = -1001181696437
     FERNET_ENCRYPTION_KEY = "iKMq0WZMnJKjMQxZWKtv-cplMuF_LoyshXj0XbTGGWM=" # Leave this as it is
     WELCOME_DELAY_KICK_SEC = 300
     MONGO_DB_URI = "mongodb+srv://username:password@cluster0.ksiis.mongodb.net/YourDataBaseName?retryWrites=true&w=majority"

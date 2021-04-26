@@ -171,25 +171,18 @@ async def kick(_, message):
             await message.reply_text("You don't have enough permissions.")
             return
         if len(message.command) == 2:
-            username = message.text.split(None, 1)[1]
-            if (await app.get_users(username)).id in SUDOERS:
-                await message.reply_text("You Wanna Kick The Elevated One?")
-            else:
-                await message.chat.kick_member(username)
-                await asyncio.sleep(1)
-                await message.chat.unban_member(username)
-                await message.reply_text("Kicked")
+            user_id = (await app.get_users(message.text.split(None, 1)[1])).id
         elif len(message.command) == 1 and message.reply_to_message:
             user_id = message.reply_to_message.from_user.id
-            if user_id in SUDOERS:
-                await message.reply_text("You Wanna Kick The Elevated One?")
-            else:
-                await message.reply_to_message.chat.kick_member(user_id)
-                await asyncio.sleep(1)
-                await message.reply_to_message.chat.unban_member(user_id)
-                await message.reply_text("Kicked!")
         else:
             await message.reply_text("Provide a username or reply to a user's message to kick.")
+        if user_id in SUDOERS:
+            await message.reply_text("You Wanna Kick The Elevated One?")
+        else:
+            await message.reply_to_message.chat.kick_member(user_id)
+            await asyncio.sleep(1)
+            await message.reply_to_message.chat.unban_member(user_id)
+            await message.reply_text("Kicked!")
     except Exception as e:
         print(e)
         await message.reply_text(e)
@@ -208,22 +201,16 @@ async def ban(_, message):
             await message.reply_text("You don't have enough permissions.")
             return
         if len(message.command) == 2:
-            username = message.text.split(None, 1)[1]
-            if (await app.get_users(username)).id in SUDOERS:
-                await message.reply_text("You Wanna Ban The Elevated One?")
-            else:
-                await message.chat.kick_member(username)
-                await message.reply_text("Banned!")
-
+            user_id = (await app.get_users(message.text.split(None, 1)[1])).id
         elif len(message.command) == 1 and message.reply_to_message:
             user_id = message.reply_to_message.from_user.id
-            if user_id in SUDOERS:
-                await message.reply_text("You Wanna Ban The Elevated One?")
-            else:
-                await message.reply_to_message.chat.kick_member(user_id)
-                await message.reply_text("Banned!")
         else:
             await message.reply_text("Provide a username or reply to a user's message to ban.")
+        if user_id in SUDOERS:
+            await message.reply_text("You Wanna Ban The Elevated One?")
+        else:
+            await message.chat.kick_member(user_id)
+            await message.reply_text("Banned!")
     except Exception as e:
         await message.reply_text(str(e))
 
@@ -242,15 +229,13 @@ async def unban(_, message):
             await message.reply_text("You don't have enough permissions.")
             return
         if len(message.command) == 2:
-            username = message.text.split(None, 1)[1]
-            await message.chat.unban_member(username)
-            await message.reply_text("Unbanned!")
+            user = message.text.split(None, 1)[1]
         elif len(message.command) == 1 and message.reply_to_message:
-            user_id = message.reply_to_message.from_user.id
-            await message.chat.unban_member(user_id)
-            await message.reply_text("Unbanned!")
+            user = message.reply_to_message.from_user.id
         else:
             await message.reply_text("Provide a username or reply to a user's message to unban.")
+        await message.chat.unban_member(user)
+        await message.reply_text("Unbanned!")
     except Exception as e:
         await message.reply_text(str(e))
 
@@ -290,7 +275,7 @@ async def promote(_, message):
         if "can_promote_members" not in permissions and from_user_id not in SUDOERS:
             await message.reply_text("You don't have enough permissions")
             return
-        bot = get_chat_member(chat_id, BOT_ID)
+        bot = await app.get_chat_member(chat_id, BOT_ID)
         if len(message.command) == 2:
             username = message.text.split(None, 1)[1]
             user_id = (await app.get_users(username)).id
@@ -298,13 +283,12 @@ async def promote(_, message):
             user_id = message.reply_to_message.from_user.id
         else:
             await message.reply_text("Reply To A User's Message Or Give A Username To Promote.")
-
         await message.chat.promote_member(
             user_id=user_id,
             can_change_info=bot.can_change_info,
             can_invite_users=bot.can_invite_users,
             can_delete_messages=bot.can_delete_messages,
-            can_restrict_members=bot.can_restrict_members,
+            can_restrict_members=False,
             can_pin_messages=bot.can_pin_messages,
             can_promote_members=bot.can_promote_members,
             can_manage_chat=bot.can_manage_chat,
@@ -350,29 +334,20 @@ async def mute(_, message):
             await message.reply_text("You don't have enough permissions.")
             return
         if len(message.command) == 2:
-            username = message.text.split(None, 1)[1]
-            user_id = (await app.get_users(username)).id
-            if user_id in SUDOERS:
-                await message.reply_text("You Wanna Mute The Elevated One?")
-            else:
-                await message.chat.restrict_member(
-                    user_id,
-                    permissions=ChatPermissions()
-                )
-                await message.reply_text("Muted!")
-
+            user_id = (await app.get_users(message.text.split(None, 1)[1])).id
         elif len(message.command) == 1 and message.reply_to_message:
             user_id = message.reply_to_message.from_user.id
-            if user_id in SUDOERS:
-                await message.reply_text("You Wanna Mute The Elevated One?")
-            else:
-                await message.chat.restrict_member(
-                    user_id,
-                    permissions=ChatPermissions()
-                )
-                await message.reply_text("Muted!")
         else:
             await message.reply_text("Provide a username or reply to a user's message to mute.")
+
+        if user_id in SUDOERS:
+            await message.reply_text("You Wanna Mute The Elevated One?")
+            return
+        await message.chat.restrict_member(
+            user_id,
+            permissions=ChatPermissions()
+        )
+        await message.reply_text("Muted!")
     except Exception as e:
         await message.reply_text(str(e))
 
@@ -390,15 +365,13 @@ async def unmute(_, message):
             await message.reply_text("You don't have enough permissions.")
             return
         if len(message.command) == 2:
-            username = message.text.split(None, 1)[1]
-            await message.chat.unban_member(username)
-            await message.reply_text("Unmuted!")
+            user = message.text.split(None, 1)[1]
         elif len(message.command) == 1 and message.reply_to_message:
-            user_id = message.reply_to_message.from_user.id
-            await message.chat.unban_member(user_id)
-            await message.reply_text("Unmuted!")
+            user = message.reply_to_message.from_user.id
         else:
             await message.reply_text("Provide a username or reply to a user's message to Unmute")
+        await message.chat.unban_member(user)
+        await message.reply_text("Unmuted!")
     except Exception as e:
         await message.reply_text(str(e))
 

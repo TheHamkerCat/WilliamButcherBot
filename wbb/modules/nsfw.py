@@ -1,4 +1,4 @@
-from wbb import app, arq, SUDOERS, IMGBB_API_KEY
+from wbb import app, arq, SUDOERS, IMGBB_API_KEY, MESSAGE_DUMP_CHAT
 from wbb.utils.filter_groups import nsfw_detect_group
 from pyrogram import filters
 from random import randint
@@ -9,6 +9,8 @@ import os
 
 @app.on_message(filters.document | filters.photo & ~filters.private, group=nsfw_detect_group)
 async def detect_nsfw(_, message):
+    if message.from_user.id in SUDOERS:
+        return
     if message.document:
         if int(message.document.file_size) > 3145728:
             return
@@ -18,10 +20,10 @@ async def detect_nsfw(_, message):
     image = await message.download(f"{randint(6666, 9999)}.jpg")
     async with aiofiles.open(image, mode='rb') as f:
         payload = {
-        "key": IMGBB_API_KEY,
-        "image": await f.read(),
-        "expiration": "60"
-    }
+            "key": IMGBB_API_KEY,
+            "image": await f.read(),
+            "expiration": "60"
+        }
     async with aiohttp.ClientSession() as session:
         async with session.post("https://api.imgbb.com/1/upload", data=payload) as resp:
             data = await resp.json()
@@ -36,16 +38,20 @@ async def detect_nsfw(_, message):
         return
     if neutral > 30:
         return
-    await message.delete()
     user_mention = message.from_user.mention
     user_id = message.from_user.id
+    m = await message.forward(MESSAGE_DUMP_CHAT)
+    try:
+        await message.delete()
+    except Exception:
+        pass
     await message.reply_text(f"""
-**NSFW Image Detected & Deleted Successfully!
+**NSFW [Image]({m.link}) Detected & Deleted Successfully!
 ————————————————————————**
 
 **User:** {user_mention} [`{user_id}`]
-**Safe:** `{neutral}`
-**Porn:** `{porn}`
-**Adult:** `{sexy}`
-**Hentai:** `{hentai}`
+**Safe:** `{neutral}` %
+**Porn:** `{porn}` %
+**Adult:** `{sexy}` %
+**Hentai:** `{hentai}` %
 """)
