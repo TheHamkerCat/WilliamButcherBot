@@ -2,6 +2,7 @@ from wbb import app, arq, IMGBB_API_KEY, MESSAGE_DUMP_CHAT
 from wbb.utils.filter_groups import nsfw_detect_group
 from wbb.utils.dbfunctions import is_nsfw_on, nsfw_on, nsfw_off
 from wbb.modules.admin import member_permissions
+from wbb.core.decorators.errors import capture_err
 from pyrogram import filters
 from random import randint
 import aiohttp
@@ -9,7 +10,15 @@ import aiofiles
 import os
 
 
+__MODULE__ = "NSFW"
+__HELP__ = """
+/nsfw_scan - Manually Scan An Image/Sticker/Document.
+/anti_nsfw [ENABLE | DISABLE] - Turn This Module On/Off
+"""
+
+
 @app.on_message((filters.document | filters.photo | filters.sticker) & ~filters.private, group=nsfw_detect_group)
+@capture_err
 async def detect_nsfw(_, message):
     if message.document:
         if int(message.document.file_size) > 3145728:
@@ -39,10 +48,13 @@ async def detect_nsfw(_, message):
     hentai = results.data.hentai
     sexy = results.data.sexy
     porn = results.data.porn
+    drawings = results.data.drawings
     neutral = results.data.neutral
-    if hentai < 80 and porn < 70 and sexy < 95:
+    if neutral > 80:
         return
-    if neutral > 30:
+    if (hentai + porn + sexy) < 85:
+        return
+    if neutral > 20:
         return
     user_mention = message.from_user.mention
     user_id = message.from_user.id
@@ -54,16 +66,19 @@ async def detect_nsfw(_, message):
     await message.reply_text(f"""
 **NSFW [Image]({m.link}) Detected & Deleted Successfully!
 ————————————————————————**
-
 **User:** {user_mention} [`{user_id}`]
-**Safe:** `{neutral}` %
-**Porn:** `{porn}` %
-**Adult:** `{sexy}` %
-**Hentai:** `{hentai}` %
+**Safe:** `{neutral} %`
+**Porn:** `{porn} %`
+**Adult:** `{sexy} %`
+**Hentai:** `{hentai} %`
+**Drawings:** `{drawings} %`
+**————————————————————————**
+__Use '/anti_nsfw disable' to disable this.__
 """)
 
 
 @app.on_message(filters.command("nsfw_scan"))
+@capture_err
 async def nsfw_scan_command(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply to an image or document to scan it.")
@@ -100,16 +115,19 @@ async def nsfw_scan_command(_, message):
     hentai = results.data.hentai
     sexy = results.data.sexy
     porn = results.data.porn
+    drawings = results.data.drawings
     neutral = results.data.neutral
     await m.edit(f"""
-**Neutral:** `{neutral}`
-**Porn:** `{porn}`
-**Hentai:** `{hentai}`
-**sexy:** `{sexy}`
+**Neutral:** `{neutral} %`
+**Porn:** `{porn} %`
+**Hentai:** `{hentai} %`
+**Sexy:** `{sexy} %`
+**Drawings:** `{drawings} %`
 """)
 
 
 @app.on_message(filters.command("anti_nsfw") & ~filters.private)
+@capture_err
 async def nsfw_enable_disable(_, message):
     if len(message.command) != 2:
         await message.reply_text("Usage: /anti_nsfw [enable | disable]")

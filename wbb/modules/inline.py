@@ -353,6 +353,23 @@ async def inline_query_handler(client, query):
             )
             return
 
+        elif text.split()[0] == "nsfw_scan":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='NSFW Scan | nsfw_scan [url]',
+                    switch_pm_parameter='inline',
+                )
+                return
+            tex = text.split(None, 1)[1].strip()
+            answerss = await nsfw_scan_func(answers, tex)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=2
+            )
+
     except Exception as e:
         e = traceback.format_exc()
         print(e, " InLine")

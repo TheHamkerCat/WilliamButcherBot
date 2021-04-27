@@ -25,12 +25,14 @@ SOFTWARE.
 from wbb import app, app2, BOT_ID, USERBOT_ID, SUDOERS, USERBOT_PREFIX
 from pyrogram import filters
 from wbb.utils.dbfunctions import is_pmpermit_approved, approve_pmpermit, disapprove_pmpermit
+from wbb.core.decorators.errors import capture_err
 import asyncio
 
 flood = {}
 
 
 @app2.on_message(filters.private & ~filters.edited & ~filters.me & ~filters.bot & ~filters.user(SUDOERS))
+@capture_err
 async def pmpermit_func(_, message):
     user_id = message.from_user.id
     if await is_pmpermit_approved(user_id):
@@ -56,6 +58,7 @@ async def pmpermit_func(_, message):
 
 
 @app2.on_message(filters.command("approve", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS) & ~filters.via_bot)
+@capture_err
 async def pm_approve(_, message):
     if not message.reply_to_message:
         await message.edit("Reply to a user's message to approve.")
@@ -90,6 +93,7 @@ async def pm_disapprove(_, message):
 
 
 @app2.on_message(filters.command("block", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS) & ~filters.via_bot)
+@capture_err
 async def block_user_func(_, message):
     if not message.reply_to_message:
         await message.edit("Reply to a user's message to approve.")

@@ -61,7 +61,7 @@ async def inline_help_func(__HELP__):
         "alive", "ping", "tr", "ud", "google", "bitly",
         "wall", "yt", "torrent", "lyrics", "wiki",
         "speedtest", "eval", "music", "saavn", "deezer",
-        "gh_repo", "gh_user", "search", "pastebin"
+        "gh_repo", "gh_user", "search", "pastebin", "nsfw_scan"
     ]
     buttons.add(*[(InlineKeyboardButton(
         text=i, switch_inline_query_current_chat=i)) for i in keywords_list])
@@ -786,7 +786,7 @@ async def ping_func(answers):
     ping = Ping(ping_id=randint(696969, 6969696))
     await app.send(ping)
     t2 = time()
-    ping = f"{str(round((t2 - t1), 4))} Seconds"
+    ping = f"{str(round((t2 - t1), 6))} Seconds"
     answers.append(
         InlineQueryResultArticle(
             title=ping,
@@ -795,3 +795,28 @@ async def ping_func(answers):
         )
     )
     return answers
+
+
+async def nsfw_scan_func(answers, url:str):
+    t1 = time()
+    data = (await arq.nsfw_scan(url)).data
+    t2 = time()
+    tt = round(t2-t1, 4)
+    content = f"""
+**Scanned [Image]({url}) In {tt} Seconds.**
+
+**Drawings:** `{data.drawings} %`
+**Neutral:** `{data.neutral} %`
+**Hentai:** `{data.hentai} %`
+**Porn:** `{data.porn} %`
+**Sexy:** `{data.sexy} %`
+    """
+    answers.append(
+            InlineQueryResultArticle(
+                title="Scanned",
+                description=f"Took {tt} Seconds.",
+                input_message_content=InputTextMessageContent(content)
+                )
+            )
+    return answers
+
