@@ -161,7 +161,10 @@ async def welcome(_, message: Message):
 
 
 async def send_welcome_message(callback_query, pending_user_id):
-        raw_text = await get_welcome(callback_query.message.chat.id)
+        try:
+            raw_text = await get_welcome(callback_query.message.chat.id)
+        except TypeError:
+            return
         raw_text = raw_text.strip().replace("`", "")
         if not raw_text:
             return
