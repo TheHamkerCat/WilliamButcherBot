@@ -78,6 +78,7 @@ async def nsfw_scan_command(_, message):
         mime_type = message.reply_to_message.document.mime_type
         if mime_type != "image/png" and mime_type != "image/jpeg":
             return
+    m = await message.reply_text("Scanning")
     image = await message.reply_to_message.download(f"{randint(6666, 9999)}.jpg")
     async with aiofiles.open(image, mode='rb') as f:
         payload = {
@@ -94,13 +95,13 @@ async def nsfw_scan_command(_, message):
         results = await arq.nsfw_scan(url)
     except Exception as e:
         print(e)
-        await message.reply_text(str(e))
+        await m.edit(str(e))
         return
     hentai = results.data.hentai
     sexy = results.data.sexy
     porn = results.data.porn
     neutral = results.data.neutral
-    await message.reply_text(f"""
+    await m.edit(f"""
 **Neutral:** `{neutral}`
 **Porn:** `{porn}`
 **Hentai:** `{hentai}`

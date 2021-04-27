@@ -27,9 +27,6 @@ import re
 import traceback
 from wbb import app
 from wbb.utils.inlinefuncs import *
-from pyrogram import filters
-from pykeyboard import InlineKeyboard
-from pyrogram.types import InlineKeyboardButton
 
 __MODULE__ = "Inline"
 __HELP__ = '''See inline for help related to inline'''
