@@ -380,7 +380,8 @@ async def inline_query_handler(client, query):
                 )
                 return
             tex = query.query.split(None, 1)[1].strip()
-            answerss = await yt_music_func(answers, tex)
+            user_id = query.from_user.id
+            answerss = await yt_music_func(answers, tex, user_id)
             await client.answer_inline_query(
                 query.id,
                 results=answerss,

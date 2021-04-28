@@ -829,7 +829,16 @@ async def nsfw_scan_func(answers, url: str):
     return answers
 
 
-async def yt_music_func(answers, url):
+async def yt_music_func(answers, url, user_id):
+    if user_id not in SUDOERS:
+        msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
+        answers.append(
+            InlineQueryResultArticle(
+                title="ERROR",
+                description="THIS FEATURE IS ONLY FOR SUDO USERS",
+                input_message_content=InputTextMessageContent(msg)
+            ))
+        return answers
     title, performer, duration, audio_file = await download_youtube_audio(url)
     m = await app.send_audio(MESSAGE_DUMP_CHAT, audio_file)
     answers.append(

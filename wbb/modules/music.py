@@ -31,14 +31,14 @@ import ffmpeg
 from random import randint
 from hurry.filesize import size as format_size
 from pyrogram import filters
-from wbb import app, arq
+from wbb import app, arq, SUDOERS
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.pastebin import paste
 from wbb.utils.functions import file_size_from_url
 
 
 __MODULE__ = "Music"
-__HELP__ = """/ytmusic [link] To Download Music From Various Websites Including Youtube.
+__HELP__ = """/ytmusic [link] To Download Music From Various Websites Including Youtube. [SUDOERS]
 /saavn [query] To Download Music From Saavn.
 /deezer [query] To Download Music From Deezer.
 /lyrics [query] To Get Lyrics Of A Song."""
@@ -70,7 +70,7 @@ async def download_youtube_audio(url: str, m = 0):
     return [title, performer, duration, audio_file]
 
 
-@app.on_message(filters.command("ytmusic") & ~filters.edited)
+@app.on_message(filters.command("ytmusic") & ~filters.edited & filters.user(SUDOERS))
 @capture_err
 async def music(_, message):
     global is_downloading
