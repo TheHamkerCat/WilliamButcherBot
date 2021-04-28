@@ -38,7 +38,10 @@ async def detect_nsfw(_, message):
     async with aiohttp.ClientSession() as session:
         async with session.post("https://api.imgbb.com/1/upload", data=payload) as resp:
             data = await resp.json()
-        url = data['data']['url']
+        try:
+            url = data['data']['url']
+        except KeyError:
+            return
     os.remove(image)
     try:
         results = await arq.nsfw_scan(url)
@@ -104,7 +107,10 @@ async def nsfw_scan_command(_, message):
     async with aiohttp.ClientSession() as session:
         async with session.post("https://api.imgbb.com/1/upload", data=payload) as resp:
             data = await resp.json()
-        url = data['data']['url']
+        try:
+            url = data['data']['url']
+        except KeyError:
+            await m.edit("Failed to upload this to api server.")
     os.remove(image)
     try:
         results = await arq.nsfw_scan(url)

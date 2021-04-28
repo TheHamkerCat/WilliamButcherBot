@@ -122,19 +122,25 @@ async def alive_function(answers):
 async def translate_func(answers, lang, tex):
     i = Translator().translate(tex, dest=lang)
     msg = f"""
-__**Translated to {lang}**__
+__**Translated from {i.src} to {lang}**__
 
 **INPUT:**
 {tex}
 
 **OUTPUT:**
 {i.text}"""
-    answers.append(
-        InlineQueryResultArticle(
-            title=f'Translated to {lang}',
-            description=i.text,
-            input_message_content=InputTextMessageContent(msg)
-        )
+    answers.extend(
+        [
+            InlineQueryResultArticle(
+                title=f'Translated from {i.src} to {lang}.',
+                description=i.text,
+                input_message_content=InputTextMessageContent(msg)
+            ),
+            InlineQueryResultArticle(
+                title=i.text,
+                input_message_content=InputTextMessageContent(i.text)
+            )
+        ]
     )
     return answers
 
@@ -300,7 +306,7 @@ async def shortify(url):
     async with aiohttp.ClientSession() as session:
         async with session.post("https://api-ssl.bitly.com/v4/shorten", headers=header, data=payload) as resp:
             data = await resp.json()
-    msg = f"**Original Url:** {url}\n**Shortened Url:** {data['link']}"
+    msg = data['link']
     a = []
     b = InlineQueryResultArticle(
         title="Link Shortened!",
@@ -797,7 +803,7 @@ async def ping_func(answers):
     return answers
 
 
-async def nsfw_scan_func(answers, url:str):
+async def nsfw_scan_func(answers, url: str):
     t1 = time()
     data = (await arq.nsfw_scan(url)).data
     t2 = time()
@@ -812,11 +818,10 @@ async def nsfw_scan_func(answers, url:str):
 **Sexy:** `{data.sexy} %`
     """
     answers.append(
-            InlineQueryResultArticle(
-                title="Scanned",
-                description=f"Took {tt} Seconds.",
-                input_message_content=InputTextMessageContent(content)
-                )
-            )
+        InlineQueryResultArticle(
+            title="Scanned",
+            description=f"Took {tt} Seconds.",
+            input_message_content=InputTextMessageContent(content)
+        )
+    )
     return answers
-

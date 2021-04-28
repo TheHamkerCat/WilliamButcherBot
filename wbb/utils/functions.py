@@ -23,8 +23,15 @@ SOFTWARE.
 """
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from random import randint
+from wbb.utils import aiodownloader
 import speedtest
 import aiohttp
+
+"""
+Just import 'downloader' anywhere and do downloader.download() to
+download file from a given url
+"""
+downloader = aiodownloader.Handler()
 
 
 def generate_captcha():
@@ -104,3 +111,4 @@ async def get_http_status_code(url: str) -> int:
     async with aiohttp.ClientSession() as session:
         async with session.head(url) as resp:
             return resp.status
+
