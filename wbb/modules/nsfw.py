@@ -16,6 +16,18 @@ __HELP__ = """
 /anti_nsfw [ENABLE | DISABLE] - Turn This Module On/Off
 """
 
+def calculate_horny(hentai_value, neutral_value, porn_value, sexy_value):
+    weight_hentai = 0.18
+    weight_neutral = 0.32
+    weight_sexy = 0.22
+    weight_porn = 0.28
+    prominent = max (hentai_value, porn_value, sexy_value)
+    if neutral < prominent:
+        factor_calculation = weight_hentai * hentai_value - weight_neutral * neutral_value + weight_sexy * sexy_value + weight_porn * porn_value
+        horny_factor = ((1 - factor_calculation/prominent) * 100)
+        return horny_factor
+    else: 
+        return -1 * neutral_value
 
 @app.on_message((filters.document | filters.photo | filters.sticker) & ~filters.private, group=nsfw_detect_group)
 @capture_err
@@ -53,12 +65,20 @@ async def detect_nsfw(_, message):
     porn = results.data.porn
     drawings = results.data.drawings
     neutral = results.data.neutral
-    if neutral > 80:
+    hornyfactor = calculate_horny(hentai,neutral,porn,sexy)
+    if hornyfactor >= 70:
+        pass
+    elif hornyfactor >= 50:
+        # The reason its like this is because later on the plan is to
+        # Allow the moderator to decide the maximum allowed nsfw content
+        pass
+    elif hornyfactor >= 30:
+        # This should be okay but still returning True
+        # For now only strict checking is implemented
+        pass
+    else:
         return
-    if (hentai + porn + sexy) < 85:
-        return
-    if neutral > 20:
-        return
+
     user_mention = message.from_user.mention
     user_id = message.from_user.id
     m = await message.forward(MESSAGE_DUMP_CHAT)
