@@ -176,6 +176,7 @@ async def kick(_, message):
             user_id = message.reply_to_message.from_user.id
         else:
             await message.reply_text("Provide a username or reply to a user's message to kick.")
+            return
         if user_id in SUDOERS:
             await message.reply_text("You Wanna Kick The Elevated One?")
         else:
@@ -206,6 +207,7 @@ async def ban(_, message):
             user_id = message.reply_to_message.from_user.id
         else:
             await message.reply_text("Provide a username or reply to a user's message to ban.")
+            return
         if user_id in SUDOERS:
             await message.reply_text("You Wanna Ban The Elevated One?")
         else:
@@ -234,6 +236,7 @@ async def unban(_, message):
             user = message.reply_to_message.from_user.id
         else:
             await message.reply_text("Provide a username or reply to a user's message to unban.")
+            return
         await message.chat.unban_member(user)
         await message.reply_text("Unbanned!")
     except Exception as e:
@@ -283,6 +286,7 @@ async def promote(_, message):
             user_id = message.reply_to_message.from_user.id
         else:
             await message.reply_text("Reply To A User's Message Or Give A Username To Promote.")
+            return
         await message.chat.promote_member(
             user_id=user_id,
             can_change_info=bot.can_change_info,
@@ -316,6 +320,7 @@ async def pin(_, message):
             await message.reply_to_message.pin(disable_notification=True)
         else:
             await message.reply_text("You're Not An Admin, Stop Spamming!")
+            return
     except Exception as e:
         await message.reply_text(str(e))
 
@@ -339,7 +344,7 @@ async def mute(_, message):
             user_id = message.reply_to_message.from_user.id
         else:
             await message.reply_text("Provide a username or reply to a user's message to mute.")
-
+            return
         if user_id in SUDOERS:
             await message.reply_text("You Wanna Mute The Elevated One?")
             return
@@ -370,6 +375,7 @@ async def unmute(_, message):
             user = message.reply_to_message.from_user.id
         else:
             await message.reply_text("Provide a username or reply to a user's message to Unmute")
+            return
         await message.chat.unban_member(user)
         await message.reply_text("Unmuted!")
     except Exception as e:
