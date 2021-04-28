@@ -67,17 +67,17 @@ async def detect_nsfw(_, message):
     neutral = results.data.neutral
     hornyfactor = calculate_horny(hentai,neutral,porn,sexy)
     if hornyfactor >= 70:
-        return True
+        pass
     elif hornyfactor >= 50:
         # The reason its like this is because later on the plan is to
         # Allow the moderator to decide the maximum allowed nsfw content
-        return True
+        pass
     elif hornyfactor >= 30:
         # This should be okay but still returning True
         # For now only strict checking is implemented
-        return True
+        pass
     else:
-        return False
+        return
 
     user_mention = message.from_user.mention
     user_id = message.from_user.id
