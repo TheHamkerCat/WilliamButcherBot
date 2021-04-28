@@ -31,7 +31,7 @@ import ffmpeg
 from random import randint
 from hurry.filesize import size as format_size
 from pyrogram import filters
-from wbb import app, SUDOERS, arq
+from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.pastebin import paste
 from wbb.utils.functions import file_size_from_url
@@ -46,6 +46,30 @@ __HELP__ = """/ytmusic [link] To Download Music From Various Websites Including 
 is_downloading = False
 
 
+async def download_youtube_audio(url: str, m = 0):
+    global is_downloading
+    with youtube_dl.YoutubeDL({'format': 'bestaudio'}) as ydl:
+        info_dict = ydl.extract_info(url, download=False)
+        if int(float(info_dict['duration'])) > 600:
+            if m != 0:
+                await m.edit("This music cannot be downloaded as it's too long.")
+            is_downloading = False
+            return
+        ydl.process_info(info_dict)
+        audio_file = ydl.prepare_filename(info_dict)
+        basename = audio_file.rsplit(".", 1)[-2]
+        if info_dict['ext'] == 'webm':
+            audio_file_opus = basename + ".opus"
+            ffmpeg.input(audio_file).output(audio_file_opus,
+                                            codec="copy", loglevel='error').run()
+            os.remove(audio_file)
+            audio_file = audio_file_opus
+        title = info_dict['title']
+        performer = info_dict['uploader']
+        duration = int(float(info_dict['duration']))
+    return [title, performer, duration, audio_file]
+
+
 @app.on_message(filters.command("ytmusic") & ~filters.edited)
 @capture_err
 async def music(_, message):
@@ -53,37 +77,20 @@ async def music(_, message):
     if len(message.command) != 2:
         await message.reply_text("/ytmusic needs a link as argument")
         return
-    link = message.text.split(None, 1)[1]
+    url = message.text.split(None, 1)[1]
     if is_downloading:
         await message.reply_text("Another download is in progress, try again after sometime.")
         return
     is_downloading = True
-    m = await message.reply_text(f"Downloading {link}",
+    m = await message.reply_text(f"Downloading {url}",
                                  disable_web_page_preview=True)
     try:
-        with youtube_dl.YoutubeDL({'format': 'bestaudio'}) as ydl:
-            info_dict = ydl.extract_info(link, download=False)
-            if int(float(info_dict['duration'])) > 600:
-                await m.edit("This music cannot be downloaded as it's too long.")
-                is_downloading = False
-                return
-            ydl.process_info(info_dict)
-            audio_file = ydl.prepare_filename(info_dict)
-            basename = audio_file.rsplit(".", 1)[-2]
-            if info_dict['ext'] == 'webm':
-                audio_file_opus = basename + ".opus"
-                ffmpeg.input(audio_file).output(audio_file_opus, codec="copy").run()
-                os.remove(audio_file)
-                audio_file = audio_file_opus
-            title = info_dict['title']
-            performer = info_dict['uploader']
-            duration = int(float(info_dict['duration']))
+        title, performer, duration, audio_file = await download_youtube_audio(url, message)
     except Exception as e:
         is_downloading = False
         await m.edit(str(e))
         return
-    await message.reply_audio(audio_file, duration=duration, performer=performer,
-                              title=title)
+    await message.reply_audio(audio_file, duration=duration, performer=performer, title=title)
     await m.delete()
     os.remove(audio_file)
     is_downloading = False
@@ -99,7 +106,6 @@ async def download_song(url):
                 await f.write(await resp.read())
                 await f.close()
     return song_name
-
 
 # Jiosaavn Music
 
@@ -127,12 +133,12 @@ async def jssong(_, message):
         song = await download_song(slink)
         await m.edit("Uploading")
         await message.reply_audio(
-                audio=song,
-                title=sname,
-                caption=f"「 `{format_size(await file_size_from_url(slink))}` 」",
-                performer=ssingers,
-                duration=int(songs[0].duration)
-                )
+            audio=song,
+            title=sname,
+            caption=f"「 `{format_size(await file_size_from_url(slink))}` 」",
+            performer=ssingers,
+            duration=int(songs[0].duration)
+        )
         os.remove(song)
         await m.delete()
     except Exception as e:
@@ -167,11 +173,11 @@ async def deezsong(_, message):
         song = await download_song(url)
         await m.edit("Uploading")
         await message.reply_audio(
-                audio=song,
-                title=title,
-                performer=artist,
-                duration=songs[0].duration,
-                caption=f"「 `{format_size(await file_size_from_url(url))}` 」")
+            audio=song,
+            title=title,
+            performer=artist,
+            duration=songs[0].duration,
+            caption=f"「 `{format_size(await file_size_from_url(url))}` 」")
         os.remove(song)
         await m.delete()
     except Exception as e:

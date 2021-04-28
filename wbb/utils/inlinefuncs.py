@@ -44,6 +44,7 @@ from time import time, ctime
 from random import randint
 from wbb.utils.fetch import fetch
 from wbb.modules.userbot import eval_executer_func
+from wbb.modules.music import download_youtube_audio
 from wbb.utils.functions import test_speedtest, get_http_status_code
 from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
 from wbb.utils.pastebin import paste
@@ -51,7 +52,7 @@ from wbb.core.types import InlineQueryResultCachedDocument
 from wbb import (
     arq, app, app2, USERBOT_USERNAME,
     BOT_USERNAME, USERBOT_ID,
-    SUDOERS, USERBOT_NAME
+    SUDOERS, USERBOT_NAME, MESSAGE_DUMP_CHAT
 )
 
 
@@ -61,7 +62,8 @@ async def inline_help_func(__HELP__):
         "alive", "ping", "tr", "ud", "google", "bitly",
         "wall", "yt", "torrent", "lyrics", "wiki",
         "speedtest", "eval", "music", "saavn", "deezer",
-        "gh_repo", "gh_user", "search", "pastebin", "nsfw_scan"
+        "gh_repo", "gh_user", "search", "pastebin",
+        "nsfw_scan", "ytmusic"
     ]
     buttons.add(*[(InlineKeyboardButton(
         text=i, switch_inline_query_current_chat=i)) for i in keywords_list])
@@ -742,7 +744,7 @@ async def pastebin_func(answers, link):
         status_code = await get_http_status_code(preview)
         await asyncio.sleep(0.2)
         i += 1
-    await app.send_photo(USERBOT_ID, preview)  # To Pre-cache the media
+    await app.send_photo(MESSAGE_DUMP_CHAT, preview)  # To Pre-cache the media
     buttons = InlineKeyboard(row_width=1)
     buttons.add(InlineKeyboardButton(text="Paste Link", url=link))
     answers.append(
@@ -822,6 +824,18 @@ async def nsfw_scan_func(answers, url: str):
             title="Scanned",
             description=f"Took {tt} Seconds.",
             input_message_content=InputTextMessageContent(content)
+        )
+    )
+    return answers
+
+
+async def yt_music_func(answers, url):
+    title, performer, duration, audio_file = await download_youtube_audio(url)
+    m = await app.send_audio(MESSAGE_DUMP_CHAT, audio_file)
+    answers.append(
+        InlineQueryResultCachedDocument(
+            title=title,
+            file_id=m.audio.file_id
         )
     )
     return answers
