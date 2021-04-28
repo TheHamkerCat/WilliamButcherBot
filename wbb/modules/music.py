@@ -27,6 +27,7 @@ import youtube_dl
 import aiohttp
 import aiofiles
 import os
+import ffmpeg
 from random import randint
 from hurry.filesize import size as format_size
 from pyrogram import filters
@@ -42,53 +43,50 @@ __HELP__ = """/ytmusic [link] To Download Music From Various Websites Including 
 /deezer [query] To Download Music From Deezer.
 /lyrics [query] To Get Lyrics Of A Song."""
 
-ydl_opts = {
-    'format': 'bestaudio/best',
-    'writethumbnail': True,
-}
+is_downloading = False
 
 
-# Ytmusic
-
-@app.on_message(filters.command("ytmusic") & ~filters.edited & filters.user(SUDOERS))
+@app.on_message(filters.command("ytmusic") & ~filters.edited)
 @capture_err
 async def music(_, message):
+    global is_downloading
     if len(message.command) != 2:
         await message.reply_text("/ytmusic needs a link as argument")
         return
     link = message.text.split(None, 1)[1]
+    if is_downloading:
+        await message.reply_text("Another download is in progress, try again after sometime.")
+        return
+    is_downloading = True
     m = await message.reply_text(f"Downloading {link}",
                                  disable_web_page_preview=True)
     try:
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        with youtube_dl.YoutubeDL({'format': 'bestaudio'}) as ydl:
             info_dict = ydl.extract_info(link, download=False)
-            audio_file = ydl.prepare_filename(info_dict)
+            if int(float(info_dict['duration'])) > 600:
+                await m.edit("This music cannot be downloaded as it's too long.")
+                is_downloading = False
+                return
             ydl.process_info(info_dict)
-            # .webm -> .weba
+            audio_file = ydl.prepare_filename(info_dict)
             basename = audio_file.rsplit(".", 1)[-2]
-            thumbnail_url = info_dict['thumbnail']
-            thumbnail_file = basename + "." + \
-                get_file_extension_from_url(thumbnail_url)
-            audio_file = basename + ".webm"
+            if info_dict['ext'] == 'webm':
+                audio_file_opus = basename + ".opus"
+                ffmpeg.input(audio_file).output(audio_file_opus, codec="copy").run()
+                os.remove(audio_file)
+                audio_file = audio_file_opus
+            title = info_dict['title']
+            performer = info_dict['uploader']
+            duration = int(float(info_dict['duration']))
     except Exception as e:
+        is_downloading = False
         await m.edit(str(e))
         return
-        # info
-    title = info_dict['title']
-    performer = info_dict['uploader']
-    duration = int(float(info_dict['duration']))
-    await m.delete()
-    await message.reply_chat_action("upload_document")
     await message.reply_audio(audio_file, duration=duration, performer=performer,
-                              title=title, thumb=thumbnail_file)
+                              title=title)
+    await m.delete()
     os.remove(audio_file)
-    os.remove(thumbnail_file)
-
-
-def get_file_extension_from_url(url):
-    url_path = urlparse(url).path
-    basename = os.path.basename(url_path)
-    return basename.split(".")[-1]
+    is_downloading = False
 
 
 # Funtion To Download Song
@@ -102,7 +100,7 @@ async def download_song(url):
                 await f.close()
     return song_name
 
-is_downloading = False
+
 # Jiosaavn Music
 
 
