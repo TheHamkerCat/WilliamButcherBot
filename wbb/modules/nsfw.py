@@ -66,6 +66,8 @@ async def detect_nsfw(_, message):
     drawings = results.data.drawings
     neutral = results.data.neutral
     hornyfactor = calculate_horny(hentai,neutral,porn,sexy)
+    if neutral >= 25:
+        return
     if hornyfactor >= 70:
         pass
     elif hornyfactor >= 50:
