@@ -18,7 +18,7 @@ Usage :
 
 @app.on_message(filters.command("tgphoto"))
 @capture_err
-async def tgphoto(_, message):
+async def tgphoto(client, message):
     if not message.reply_to_message.photo:
         await message.reply_text("Works only for Photos")
         return
@@ -38,7 +38,7 @@ async def tgphoto(_, message):
    
 @app.on_message(filters.command("tgvideo"))
 @capture_err
-async def tgvideo(_, message):
+async def tgvideo(client, message):
     if not message.reply_to_message.video:
         await message.reply_text("Works only for Videos")
         return
