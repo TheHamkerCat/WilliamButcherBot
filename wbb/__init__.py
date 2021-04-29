@@ -24,8 +24,10 @@ SOFTWARE.
 """
 from pyrogram import Client
 from pyromod import listen
+import aiohttp
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from Python_ARQ import ARQ
+from telegraph import Telegraph
 from os import path
 import time
 
@@ -60,6 +62,12 @@ mongo_client = MongoClient(MONGO_DB_URI)
 db = mongo_client.wbb
 # ARQ client
 arq = ARQ(ARQ_API_BASE_URL)
+
+telegraph = Telegraph()
+telegraph.create_account(short_name="wbb")
+
+session = aiohttp.ClientSession()
+
 
 
 BOT_ID = 0
