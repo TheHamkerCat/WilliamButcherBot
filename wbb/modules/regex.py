@@ -36,7 +36,6 @@ DELIMITERS = ("/", ":", "|", "_")
 
 
 @app.on_message(filters.regex(r"s([{}]).*?\1.*".format("".join(DELIMITERS))), group=regex_group)
-@capture_err
 async def sed(_, message):
     sed_result = separate_sed(message.text)
     if message.reply_to_message:

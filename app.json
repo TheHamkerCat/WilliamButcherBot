@@ -67,10 +67,6 @@
             "value": "https://thearq.tech",
             "required": true
         },
-        "IMGBB_API_KEY": {
-            "description": "Get From Here. https://api.imgbb.com/",
-            "required": true
-        },
         "MESSAGE_DUMP_CHAT": {
             "description": "Chat_id of the group where useless things will go",
             "required": true
