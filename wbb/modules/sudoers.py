@@ -29,8 +29,7 @@ import psutil
 import asyncio
 from sys import version as pyver
 from wbb import (
-    app, SUDOERS, bot_start_time, BOT_ID,
-    USERBOT_USERNAME, GBAN_LOG_GROUP_ID
+    app, SUDOERS, bot_start_time, BOT_ID, BOT_NAME, USERBOT_USERNAME, GBAN_LOG_GROUP_ID
 )
 from wbb.utils import formatter
 from wbb.core.decorators.errors import capture_err

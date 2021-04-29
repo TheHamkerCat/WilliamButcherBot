@@ -24,6 +24,7 @@ SOFTWARE.
 import secrets
 import string
 import aiohttp
+import html
 from pyrogram import filters
 from googletrans import Translator
 from cryptography.fernet import Fernet
@@ -67,25 +68,51 @@ async def runs(_, message):
     await message.reply_text((await random_line('wbb/utils/runs.txt')))
 
 
-@app.on_message(filters.command("id") & ~filters.edited)
-@capture_err
-async def get_id(_, message):
-    if len(message.command) != 1:
-        username = message.text.split(None, 1)[1]
-        user_id = (await app.get_users(username)).id
-        msg = f"{username}'s ID is `{user_id}`"
-        await message.reply_text(msg)
-
-    elif len(message.command) == 1 and not message.reply_to_message:
-        chat_id = message.chat.id
-        msg = f"{message.chat.title}'s ID is `{chat_id}`"
-        await message.reply_text(msg)
-
-    elif len(message.command) == 1 and message.reply_to_message:
-        from_user_id = message.reply_to_message.from_user.id
-        from_user_mention = message.reply_to_message.from_user.mention
-        msg = f"{from_user_mention}'s ID is `{from_user_id}`"
-        await message.reply_text(msg)
+@app.on_message(filters.command(["id"]))
+async def getid(_, message):
+    text_unping = "<b>Chat ID:</b>"
+    if message.chat.username:
+        text_unping = (
+            f'<a href="https://t.me/{message.chat.username}">{text_unping}</a>'
+        )
+    text_unping += f" <code>{message.chat.id}</code>\n"
+    text = "<b>Message ID:</b>"
+    if message.link:
+        text = f'<a href="{message.link}">{text}</a>'
+    text += f" <code>{message.message_id}</code>\n"
+    text_unping += text
+    if message.from_user:
+        text_unping += f'<b><a href="tg://user?id={message.from_user.id}">User ID:</a></b> <code>{message.from_user.id}</code>\n'
+    text_ping = text_unping
+    reply = message.reply_to_message
+    if not getattr(reply, "empty", True):
+        text_unping += "\n"
+        text = "<b>Replied Message ID:</b>"
+        if reply.link:
+            text = f'<a href="{reply.link}">{text}</a>'
+        text += f" <code>{reply.message_id}</code>\n"
+        text_unping += text
+        text_ping = text_unping
+        if reply.from_user:
+            text = "<b>Replied User ID:</b>"
+            if reply.from_user.username:
+                text = f'<a href="https://t.me/{reply.from_user.username}">{text}</a>'
+            text += f" <code>{reply.from_user.id}</code>\n"
+            text_unping += text
+            text_ping += f'<b><a href="tg://user?id={reply.from_user.id}">Replied User ID:</a></b> <code>{reply.from_user.id}</code>\n'
+        if reply.forward_from:
+            text_unping += "\n"
+            text = "<b>Forwarded User ID:</b>"
+            if reply.forward_from.username:
+                text = (
+                    f'<a href="https://t.me/{reply.forward_from.username}">{text}</a>'
+                )
+            text += f" <code>{reply.forward_from.id}</code>\n"
+            text_unping += text
+            text_ping += f'\n<b><a href="tg://user?id={reply.forward_from.id}">Forwarded User ID:</a></b> <code>{reply.forward_from.id}</code>\n'
+    reply = await message.reply_text(text_unping, disable_web_page_preview=True)
+    if text_unping != text_ping:
+        await reply.edit_text(text_ping, disable_web_page_preview=True)
 
 # Random
 
