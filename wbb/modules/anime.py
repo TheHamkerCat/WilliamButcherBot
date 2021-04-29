@@ -18,7 +18,7 @@ from wbb import app, telegraph, session
 from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "Anime"
-__HELP__ = "•Anime uwu•\n\n/anime - search anime on AniList\n /manga - search manga on Anilist\n /char - search character on Anilist\n /wa by replying to a media - find what anime a media is from\n /nhentai ID - returns the nhentai in telegraph instant preview format."
+__HELP__ = "•Anime uwu•\n\n/anime - search anime on AniList\n /manga - search manga on Anilist\n /char - search character on Anilist\n /nhentai ID - returns the nhentai in telegraph instant preview format."
 
 def shorten(description, info='anilist.co'):
     ms_g = ""
