@@ -46,9 +46,15 @@ __HELP__ = """/ytmusic [link] To Download Music From Various Websites Including 
 is_downloading = False
 
 
+def get_file_extension_from_url(url):
+    url_path = urlparse(url).path
+    basename = os.path.basename(url_path)
+    return basename.split(".")[-1]
+
+
 async def download_youtube_audio(url: str, m = 0):
     global is_downloading
-    with youtube_dl.YoutubeDL({'format': 'bestaudio'}) as ydl:
+    with youtube_dl.YoutubeDL({'format': 'bestaudio', 'writethumbnail': True,}) as ydl:
         info_dict = ydl.extract_info(url, download=False)
         if int(float(info_dict['duration'])) > 600:
             if m != 0:
@@ -64,10 +70,13 @@ async def download_youtube_audio(url: str, m = 0):
                                             codec="copy", loglevel='error').overwrite_output().run()
             os.remove(audio_file)
             audio_file = audio_file_opus
+        thumbnail_url = info_dict['thumbnail']
+        thumbnail_file = basename + "." + \
+            get_file_extension_from_url(thumbnail_url)
         title = info_dict['title']
         performer = info_dict['uploader']
         duration = int(float(info_dict['duration']))
-    return [title, performer, duration, audio_file]
+    return [title, performer, duration, audio_file, thumbnail_file]
 
 
 @app.on_message(filters.command("ytmusic") & ~filters.edited & filters.user(SUDOERS))
@@ -85,14 +94,18 @@ async def music(_, message):
     m = await message.reply_text(f"Downloading {url}",
                                  disable_web_page_preview=True)
     try:
-        title, performer, duration, audio_file = await download_youtube_audio(url, message)
+        title, performer, duration, audio_file, thumbnail_file = await download_youtube_audio(url, message)
     except Exception as e:
         is_downloading = False
         await m.edit(str(e))
         return
-    await message.reply_audio(audio_file, duration=duration, performer=performer, title=title)
+    await message.reply_audio(
+            audio_file, duration=duration,
+            performer=performer, title=title, thumb=thumbnail_file
+            )
     await m.delete()
     os.remove(audio_file)
+    os.remove(thumbnail_file)
     is_downloading = False
 
 

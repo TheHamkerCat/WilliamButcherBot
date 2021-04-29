@@ -839,8 +839,17 @@ async def yt_music_func(answers, url, user_id):
                 input_message_content=InputTextMessageContent(msg)
             ))
         return answers
-    title, performer, duration, audio_file = await download_youtube_audio(url)
-    m = await app.send_audio(MESSAGE_DUMP_CHAT, audio_file)
+    title, performer, duration, audio, thumbnail = await download_youtube_audio(url)
+    m = await app.send_audio(
+            MESSAGE_DUMP_CHAT,
+            audio_file,
+            title=title,
+            duration=duration,
+            performer=performer,
+            thumb=thumbnail
+            )
+    os.remove(audio)
+    os.remove(thumbnail)
     answers.append(
         InlineQueryResultCachedDocument(
             title=title,
