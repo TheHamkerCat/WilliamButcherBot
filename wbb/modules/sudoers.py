@@ -293,13 +293,3 @@ async def install_module(_, message):
     await m.edit("**Restarting**")
     os.execvp(f"python{str(pyver.split(' ')[0])[:3]}", [
               f"python{str(pyver.split(' ')[0])[:3]}", "-m", "wbb"])
-              
-@app.on_message(filters.user(SUDOERS) & filters.command("botip"))
-async def public_ip(_, message):
-    if message.chat.type == "private":
-        botip = requests.get("https://api.ipify.org").text
-        await message.reply_text(f"**{BOT_NAME}'s IP Address:**\n`{botip}`")
-        return
-    if message.chat.type != "private":
-        await message.reply_text("Usage in PM only")
-        return
