@@ -1,3 +1,4 @@
+ffmpeg-python
 aiohttp
 aiofiles
 cryptography
