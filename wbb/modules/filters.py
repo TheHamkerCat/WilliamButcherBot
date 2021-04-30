@@ -120,8 +120,10 @@ async def filters_re(_, message):
                 data = _filter['data']
                 if data_type == "text":
                     await message.reply_text(data, disable_web_page_preview=True)
+                    break
                 else:
                     await message.reply_sticker(data)
+                    break
     except Exception:
         pass
 
