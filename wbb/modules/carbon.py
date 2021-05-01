@@ -10,6 +10,7 @@ __HELP__ = "/carbon - Make Carbon Of Code."
 
 
 @app.on_message(filters.command("carbon"))
+@capture_err
 async def carbon_func(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply to a text message to make carbon.")

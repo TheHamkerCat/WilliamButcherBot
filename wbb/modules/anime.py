@@ -12,6 +12,7 @@ from wbb.core.decorators.errors import capture_err
 __MODULE__ = "Anime"
 __HELP__ = "•Anime uwu•\n\n/anime - search anime on AniList\n /manga - search manga on Anilist\n /char - search character on Anilist\n /nhentai ID - returns the nhentai in telegraph instant preview format."
 
+
 def shorten(description, info='anilist.co'):
     ms_g = ""
     if len(description) > 700:
@@ -43,8 +44,8 @@ def t(milliseconds: int) -> str:
 
 
 airing_query = '''
-    query ($id: Int,$search: String) { 
-      Media (id: $id, type: ANIME,search: $search) { 
+    query ($id: Int,$search: String) {
+      Media (id: $id, type: ANIME,search: $search) {
         id
         episodes
         title {
@@ -57,14 +58,14 @@ airing_query = '''
            airingAt
            timeUntilAiring
            episode
-        } 
+        }
       }
     }
     '''
 
 fav_query = """
-query ($id: Int) { 
-      Media (id: $id, type: ANIME) { 
+query ($id: Int) {
+      Media (id: $id, type: ANIME) {
         id
         title {
           romaji
@@ -76,8 +77,8 @@ query ($id: Int) {
 """
 
 anime_query = '''
-   query ($id: Int,$search: String) { 
-      Media (id: $id, type: ANIME,search: $search) { 
+   query ($id: Int,$search: String) {
+      Media (id: $id, type: ANIME,search: $search) {
         id
         idMal
         title {
@@ -103,7 +104,7 @@ anime_query = '''
           }
           trailer{
                id
-               site 
+               site
                thumbnail
           }
           averageScore
@@ -132,8 +133,8 @@ character_query = """
 """
 
 manga_query = """
-query ($id: Int,$search: String) { 
-      Media (id: $id, type: MANGA,search: $search) { 
+query ($id: Int,$search: String) {
+      Media (id: $id, type: MANGA,search: $search) {
         id
         title {
           romaji
@@ -155,11 +156,12 @@ query ($id: Int,$search: String) {
     }
 """
 
+
 def format_bytes(size):
     size = int(size)
     power = 1024
     n = 0
-    power_labels = {0 : '', 1: 'K', 2: 'M', 3: 'G', 4: 'T'}
+    power_labels = {0: '', 1: 'K', 2: 'M', 3: 'G', 4: 'T'}
     while size > power:
         size /= power
         n += 1
@@ -177,7 +179,8 @@ def calculate_eta(current, total, start_time):
     end_time = time.time()
     elapsed_time = end_time - start_time
     seconds = (elapsed_time * (total / current)) - elapsed_time
-    thing = ''.join(str(timedelta(seconds=seconds)).split('.')[:-1]).split(', ')
+    thing = ''.join(str(timedelta(seconds=seconds)
+                        ).split('.')[:-1]).split(', ')
     thing[-1] = thing[-1].rjust(8, '0')
     return ', '.join(thing)
 
@@ -217,17 +220,17 @@ async def anime_search(_, message):
         image = info.replace('anilist.co/anime/', 'img.anili.st/media/')
         if trailer:
             buttons = [
-                    [InlineKeyboardButton("More Info", url=info),
-                    InlineKeyboardButton("Trailer", url=trailer)]
-                    ]
+                [InlineKeyboardButton("More Info", url=info),
+                 InlineKeyboardButton("Trailer", url=trailer)]
+            ]
         else:
             buttons = [
-                    [InlineKeyboardButton("More Info", url=info)]
-                    ]
+                [InlineKeyboardButton("More Info", url=info)]
+            ]
         if image:
             try:
                 await message.reply_photo(image, caption=msg, reply_markup=InlineKeyboardMarkup(buttons))
-            except:
+            except Exception:
                 msg += f" [✔️️]({image})"
                 await message.edit(msg)
         else:
@@ -270,7 +273,7 @@ async def manga_search(_, message):
         if image:
             try:
                 await message.reply_photo(image, caption=ms_g)
-            except:
+            except Exception:
                 ms_g += f" [✔️️]({image})"
                 await message.reply(ms_g)
         else:
@@ -307,7 +310,8 @@ async def nhentai(_, message):
         await message.delete()
         return
     query = message.text.split(None, 1)[1]
-    title, tags, artist, total_pages, post_url, cover_image = nhentai_data(query)
+    title, tags, artist, total_pages, post_url, cover_image = nhentai_data(
+        query)
     await message.reply_text(
         f"<code>{title}</code>\n\n<b>Tags:</b>\n{tags}\n<b>Artists:</b>\n{artist}\n<b>Pages:</b>\n{total_pages}",
         reply_markup=InlineKeyboardMarkup(
@@ -334,9 +338,9 @@ def nhentai_data(noombers):
     artist = ''
     total_pages = res['num_pages']
     extensions = {
-        'j':'jpg',
-        'p':'png',
-        'g':'gif'
+        'j': 'jpg',
+        'p': 'png',
+        'g': 'gif'
     }
     for i, x in enumerate(pages):
         media_id = res["media_id"]
@@ -346,20 +350,20 @@ def nhentai_data(noombers):
         links.append(link)
 
     for i in info:
-        if i["type"]=="tag":
+        if i["type"] == "tag":
             tag = i['name']
             tag = tag.split(" ")
             tag = "_".join(tag)
-            tags+=f"#{tag} "
-        if i["type"]=="artist":
-            artist=f"{i['name']} "
+            tags += f"#{tag} "
+        if i["type"] == "artist":
+            artist = f"{i['name']} "
 
     post_content = "".join(f"<img src={link}><br>" for link in links)
 
     post = telegraph.create_page(
         f"{title}",
         html_content=post_content,
-        author_name="@WilliamButcherBot", 
+        author_name="@WilliamButcherBot",
         author_url="https://t.me/WilliamButcherBot"
     )
-    return title,tags,artist,total_pages,post['url'],links[0]
+    return title, tags, artist, total_pages, post['url'], links[0]

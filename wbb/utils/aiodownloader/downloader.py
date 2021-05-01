@@ -88,9 +88,9 @@ class Handler:
     Top level interface with the downloader. It creates the download jobs and handles them.
 
     :param loop: asyncio loop. if not provided asyncio.get_event_loop() will be used
-    :param session: aiohttp session to be used on all downloads. If not provided it will be 
-    created 
-    :param chunk_size: chunk bytes sizes to get from the file source. Defaults to 1024 bytes 
+    :param session: aiohttp session to be used on all downloads. If not provided it will be
+    created
+    :param chunk_size: chunk bytes sizes to get from the file source. Defaults to 1024 bytes
     """
 
     def __init__(self,
@@ -109,7 +109,7 @@ class Handler:
         Shortcut for creating a download job. It adds the session and the chunk size.
         :param file_url: url where the file is located
         :param save_path: save path for the download
-        :return: 
+        :return:
         """
 
         return DownloadJob(self._session, file_url, save_path, self._chunk_size)

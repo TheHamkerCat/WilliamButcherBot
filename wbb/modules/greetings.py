@@ -47,7 +47,7 @@ __MODULE__ = "Greetings"
 __HELP__ = """
 /captcha [ON|OFF] - Enable/Disable captcha.
 
-/set_welcome - Reply this to a message containing correct 
+/set_welcome - Reply this to a message containing correct
 format for a welcome message, check end of this message.
 
 /del_welcome - Delete the welcome message.
@@ -68,7 +68,7 @@ button2=[Github, https://github.com]
 
 **NOTES ->**
 
-for /rules, you can do /filter rules to a message 
+for /rules, you can do /filter rules to a message
 containing rules of your groups whenever a user
 sends /rules, he'll get the message
 """
@@ -88,12 +88,12 @@ async def welcome(_, message: Message):
         try:
             if member.id in SUDOERS:
                 continue  # ignore sudos
-            """if await is_gbanned_user(member.id):
+            if await is_gbanned_user(member.id):
                 await message.chat.kick_member(member.id)
                 await message.reply_text(f"{member.mention} was globally banned, and got removed,"
                                          + " if you think this is a false gban, you can appeal"
                                          + " for this ban in support chat.")
-               continue"""
+               continue
             if member.is_bot:
                 continue  # ignore bots
             await message.chat.restrict_member(member.id, ChatPermissions())
@@ -161,41 +161,41 @@ async def welcome(_, message: Message):
 
 
 async def send_welcome_message(callback_query, pending_user_id):
-        try:
-            raw_text = await get_welcome(callback_query.message.chat.id)
-        except TypeError:
-            return
-        raw_text = raw_text.strip().replace("`", "")
-        if not raw_text:
-            return
-        text = raw_text.split("~")[0].strip()
-        buttons_text_list = raw_text.split("~")[1].strip().splitlines()
-        if "{chat}" in text:
-            text = text.replace("{chat}", callback_query.message.chat.title)
-        if "{name}" in text:
-            text = text.replace("{name}", (await app.get_users(pending_user_id)).mention)
-        buttons = InlineKeyboard(row_width=2)
-        list_of_buttons = []
-        for button_string in buttons_text_list:
-            button_string = button_string.strip().split("=")[1].strip()
-            button_string = button_string.replace("[", "").strip()
-            button_string = button_string.replace("]", "").strip()
-            button_string = button_string.split(",")
-            button_text = button_string[0].strip()
-            button_url = button_string[1].strip()
-            list_of_buttons.append(
-                    InlineKeyboardButton(
-                        text=button_text,
-                        url=button_url
-                        )
-                    )
-        buttons.add(*list_of_buttons)
-        await app.send_message(
-                callback_query.message.chat.id,
-                text=text,
-                reply_markup=buttons,
-                disable_web_page_preview=True
-                )
+    try:
+        raw_text = await get_welcome(callback_query.message.chat.id)
+    except TypeError:
+        return
+    raw_text = raw_text.strip().replace("`", "")
+    if not raw_text:
+        return
+    text = raw_text.split("~")[0].strip()
+    buttons_text_list = raw_text.split("~")[1].strip().splitlines()
+    if "{chat}" in text:
+        text = text.replace("{chat}", callback_query.message.chat.title)
+    if "{name}" in text:
+        text = text.replace("{name}", (await app.get_users(pending_user_id)).mention)
+    buttons = InlineKeyboard(row_width=2)
+    list_of_buttons = []
+    for button_string in buttons_text_list:
+        button_string = button_string.strip().split("=")[1].strip()
+        button_string = button_string.replace("[", "").strip()
+        button_string = button_string.replace("]", "").strip()
+        button_string = button_string.split(",")
+        button_text = button_string[0].strip()
+        button_url = button_string[1].strip()
+        list_of_buttons.append(
+            InlineKeyboardButton(
+                text=button_text,
+                url=button_url
+            )
+        )
+    buttons.add(*list_of_buttons)
+    await app.send_message(
+        callback_query.message.chat.id,
+        text=text,
+        reply_markup=buttons,
+        disable_web_page_preview=True
+    )
 
 
 @app.on_callback_query(filters.regex("pressed_button"))

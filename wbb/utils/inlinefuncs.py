@@ -63,7 +63,7 @@ async def inline_help_func(__HELP__):
         "wall", "yt", "torrent", "lyrics", "wiki",
         "speedtest", "eval", "music", "saavn", "deezer",
         "gh_repo", "gh_user", "search", "pastebin",
-        "nsfw_scan", "ytmusic"
+        "nsfw_scan", "ytmusic", "carbon"
     ]
     buttons.add(*[(InlineKeyboardButton(
         text=i, switch_inline_query_current_chat=i)) for i in keywords_list])
@@ -841,13 +841,13 @@ async def yt_music_func(answers, url, user_id):
         return answers
     title, performer, duration, audio, thumbnail = await download_youtube_audio(url)
     m = await app.send_audio(
-            MESSAGE_DUMP_CHAT,
-            audio,
-            title=title,
-            duration=duration,
-            performer=performer,
-            thumb=thumbnail
-            )
+        MESSAGE_DUMP_CHAT,
+        audio,
+        title=title,
+        duration=duration,
+        performer=performer,
+        thumb=thumbnail
+    )
     os.remove(audio)
     os.remove(thumbnail)
     answers.append(
@@ -888,7 +888,8 @@ async def carbon_inline_func(answers, link):
         os.remove(doc)
     image = await make_carbon(content)
     link = await paste(content)
-    carbon = await app.send_document(MESSAGE_DUMP_CHAT, image)  # To Pre-cache the media
+    # To Pre-cache the media
+    carbon = await app.send_document(MESSAGE_DUMP_CHAT, image)
     os.remove(image)
     buttons = InlineKeyboard(row_width=1)
     buttons.add(InlineKeyboardButton(text="Paste Link", url=link))

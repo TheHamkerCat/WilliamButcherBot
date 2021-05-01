@@ -146,7 +146,7 @@ async def pmpermit_cq(_, cq):
         else:
             flood2[str(user_id)] = 1
         if flood2[str(user_id)] > 5:
+            await app2.send_message(user_id, "SPAM DETECTED, USER BLOCKED.")
             await app2.block_user(user_id)
-            await message.reply_text("SPAM DETECTED, USER BLOCKED.")
             return
         await app2.send_message(user_id, "I'm busy right now, will approve you shortly, DO NOT SPAM.")

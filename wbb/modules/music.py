@@ -52,9 +52,9 @@ def get_file_extension_from_url(url):
     return basename.split(".")[-1]
 
 
-async def download_youtube_audio(url: str, m = 0):
+async def download_youtube_audio(url: str, m=0):
     global is_downloading
-    with youtube_dl.YoutubeDL({'format': 'bestaudio', 'writethumbnail': True,}) as ydl:
+    with youtube_dl.YoutubeDL({'format': 'bestaudio', 'writethumbnail': True, }) as ydl:
         info_dict = ydl.extract_info(url, download=False)
         if int(float(info_dict['duration'])) > 600:
             if m != 0:
@@ -100,9 +100,9 @@ async def music(_, message):
         await m.edit(str(e))
         return
     await message.reply_audio(
-            audio_file, duration=duration,
-            performer=performer, title=title, thumb=thumbnail_file
-            )
+        audio_file, duration=duration,
+        performer=performer, title=title, thumb=thumbnail_file
+    )
     await m.delete()
     os.remove(audio_file)
     os.remove(thumbnail_file)

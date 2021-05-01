@@ -27,7 +27,6 @@ import subprocess
 from pyrogram import filters
 import psutil
 import asyncio
-from sys import version as pyver
 from wbb import (
     app, SUDOERS, bot_start_time, BOT_ID, USERBOT_USERNAME, GBAN_LOG_GROUP_ID
 )

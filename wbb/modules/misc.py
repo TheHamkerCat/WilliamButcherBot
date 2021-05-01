@@ -24,7 +24,6 @@ SOFTWARE.
 import secrets
 import string
 import aiohttp
-import html
 from pyrogram import filters
 from googletrans import Translator
 from cryptography.fernet import Fernet
