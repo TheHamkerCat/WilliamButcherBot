@@ -23,6 +23,7 @@ SOFTWARE.
 """
 from wbb import app
 from wbb.core.decorators.errors import capture_err
+from wbb.modules.admin import member_permissions
 from wbb.utils.dbfunctions import (update_karma, get_karma, get_karmas,
                                    int_to_alpha, alpha_to_int, is_karma_on,
                                    karma_on, karma_off)
@@ -32,6 +33,7 @@ from pyrogram import filters
 __MODULE__ = "Karma"
 __HELP__ = """[UPVOTE] - Use upvote keywords like "+", "+1", "thanks" etc to upvote a message.
 [DOWNVOTE] - Use downvote keywords like "-", "-1", etc to downvote a message.
+/karma_toggle [ON|OFF] - Enable or Disable Karma System In Your Chat.
 Reply to a message with /karma to check a user's karma
 Send /karma without replying to any message to chek karma list of top 10 users"""
 
