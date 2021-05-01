@@ -24,8 +24,10 @@ SOFTWARE.
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from random import randint
 from wbb.utils import aiodownloader
+from carbonnow import Carbon
 import speedtest
 import aiohttp
+
 
 """
 Just import 'downloader' anywhere and do downloader.download() to
@@ -112,3 +114,8 @@ async def get_http_status_code(url: str) -> int:
         async with session.head(url) as resp:
             return resp.status
 
+
+async def make_carbon(code):
+    carbon = Carbon(code=code)
+    image = await carbon.save(str(randint(1000, 10000)))
+    return image

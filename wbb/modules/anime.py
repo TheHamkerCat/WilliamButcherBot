@@ -1,20 +1,12 @@
 # Part of Pull Req #2 by @MaskedVirus | github.com/swatv3nub
 
-import os
-import html
-import math
 import time
 import requests
-import json
-import asyncio
-import tempfile
-from decimal import Decimal
 from datetime import timedelta
-from urllib.parse import quote as urlencode
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from wbb import app, telegraph, session
+from wbb import app, telegraph
 from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "Anime"
@@ -196,12 +188,10 @@ url = 'https://graphql.anilist.co'
 @app.on_message(filters.command("anime"))
 @capture_err
 async def anime_search(_, message):
-    search = message.text.split(' ', 1)
-    if len(search) == 1:
+    if len(message.command) < 2:
         await message.delete()
         return
-    else:
-        search = search[1]
+    search = message.text.split(None, 1)[1]
     variables = {'search': search}
     json = requests.post(url, json={'query': anime_query, 'variables': variables}).json()[
         'data'].get('Media', None)
@@ -247,11 +237,10 @@ async def anime_search(_, message):
 @app.on_message(filters.command("manga"))
 @capture_err
 async def manga_search(_, message):
-    search = message.text.split(' ', 1)
-    if len(search) == 1:
+    if len(message.command) < 2:
         await message.delete()
         return
-    search = search[1]
+    search = message.text.split(None, 1)[1]
     variables = {'search': search}
     json = requests.post(url, json={'query': manga_query, 'variables': variables}).json()[
         'data'].get('Media', None)
@@ -291,11 +280,10 @@ async def manga_search(_, message):
 @app.on_message(filters.command("char"))
 @capture_err
 async def character_search(_, message):
-    search = message.text.split(' ', 1)
-    if len(search) == 1:
+    if len(message.command) < 2:
         await message.delete()
         return
-    search = search[1]
+    search = message.text.split(None, 1)[1]
     variables = {'query': search}
     json = requests.post(url, json={'query': character_query, 'variables': variables}).json()[
         'data'].get('Character', None)
@@ -315,7 +303,10 @@ async def character_search(_, message):
 @app.on_message(filters.command("nhentai"))
 @capture_err
 async def nhentai(_, message):
-    query = message.text.split(" ")[1]
+    if len(message.command) < 2:
+        await message.delete()
+        return
+    query = message.text.split(None, 1)[1]
     title, tags, artist, total_pages, post_url, cover_image = nhentai_data(query)
     await message.reply_text(
         f"<code>{title}</code>\n\n<b>Tags:</b>\n{tags}\n<b>Artists:</b>\n{artist}\n<b>Pages:</b>\n{total_pages}",

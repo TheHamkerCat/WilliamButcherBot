@@ -324,15 +324,42 @@ async def inline_query_handler(client, query):
             )
             return
 
-        elif re.search(r'^https?://t.me/', text.strip()):
-            answerss = await pastebin_func(answers, text.strip())
+        elif text.split()[0] == "paste":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Pastebin | paste [TG_MESSAGE_LINK]',
+                    switch_pm_parameter='inline',
+                )
+                return
+            link = text.strip().split()[1]
+            answerss = await pastebin_func(answers, link)
             await client.answer_inline_query(
                 query.id,
                 results=answerss,
                 cache_time=2
             )
             return
-        
+
+        elif text.split()[0] == "carbon":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='Carbon | carbon [TG_MESSAGE_LINK]',
+                    switch_pm_parameter='inline',
+                )
+                return
+            link = text.strip().split()[1]
+            answerss = await carbon_inline_func(answers, link)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=2
+            )
+            return
+
         elif text.split()[0] == "pmpermit":
             user_id = query.from_user.id
             victim = text.split()[1]

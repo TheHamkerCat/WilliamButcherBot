@@ -4,7 +4,7 @@
 
 import os
 from telegraph import upload_file
-from pyrogram import filters, Client
+from pyrogram import filters
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 
@@ -19,6 +19,9 @@ Usage :
 @app.on_message(filters.command("tgphoto"))
 @capture_err
 async def tgphoto(client, message):
+    if not message.reply_to_message:
+        await message.reply_text("Reply to a photo.")
+        return
     if not message.reply_to_message.photo:
         await message.reply_text("Works only for Photos")
         return
@@ -35,10 +38,12 @@ async def tgphoto(client, message):
       os.remove(path)
    
    
-   
 @app.on_message(filters.command("tgvideo"))
 @capture_err
 async def tgvideo(client, message):
+    if not message.reply_to_message:
+        await message.reply_text("Reply to a Video.")
+        return
     if not message.reply_to_message.video:
         await message.reply_text("Works only for Videos")
         return

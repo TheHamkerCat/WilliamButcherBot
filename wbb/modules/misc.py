@@ -68,8 +68,12 @@ async def runs(_, message):
     await message.reply_text((await random_line('wbb/utils/runs.txt')))
 
 
-@app.on_message(filters.command(["id"]))
+@app.on_message(filters.command("id"))
 async def getid(_, message):
+    if len(message.command) == 2:
+        id = (await app.get_users(message.text.split(None, 1)[1])).id
+        text = f"<b>ID:</b> {id}"
+        return
     text_unping = "<b>Chat ID:</b>"
     if message.chat.username:
         text_unping = (
