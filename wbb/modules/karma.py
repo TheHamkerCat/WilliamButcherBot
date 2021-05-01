@@ -53,7 +53,7 @@ regex_downvote = r"^(\-|\-\-|\-1|👎)$"
 )
 @capture_err
 async def upvote(_, message):
-    if not await is_karma_on:
+    if not await is_karma_on(message.chat.id):
         return
     if message.reply_to_message.from_user.id == message.from_user.id:
         return
@@ -88,7 +88,7 @@ async def upvote(_, message):
 )
 @capture_err
 async def downvote(_, message):
-    if not await is_karma_on:
+    if not await is_karma_on(message.chat.id):
         return
     if message.reply_to_message.from_user.id == message.from_user.id:
         return

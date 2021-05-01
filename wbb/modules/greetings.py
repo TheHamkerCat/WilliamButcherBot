@@ -93,7 +93,7 @@ async def welcome(_, message: Message):
                 await message.reply_text(f"{member.mention} was globally banned, and got removed,"
                                          + " if you think this is a false gban, you can appeal"
                                          + " for this ban in support chat.")
-               continue
+                continue
             if member.is_bot:
                 continue  # ignore bots
             await message.chat.restrict_member(member.id, ChatPermissions())
