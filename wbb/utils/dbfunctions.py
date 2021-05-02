@@ -343,7 +343,7 @@ async def update_karma(chat_id: int, name: str, karma: dict):
 
 
 async def is_karma_on(chat_id: int) -> bool:
-    chat = await karmadb.find_one({"chat_id": chat_id})
+    chat = await karmadb.find_one({"chat_id_toggle": chat_id})
     if not chat:
         return True
     return False
@@ -353,14 +353,14 @@ async def karma_on(chat_id: int):
     is_karma = await is_karma_on(chat_id)
     if is_karma:
         return
-    return await karmadb.delete_one({"chat_id": chat_id})
+    return await karmadb.delete_one({"chat_id_toggle": chat_id})
 
 
 async def karma_off(chat_id: int):
     is_karma = await is_karma_on(chat_id)
     if not is_karma:
         return
-    return await karmadb.insert_one({"chat_id": chat_id})
+    return await karmadb.insert_one({"chat_id_toggle": chat_id})
 
 
 """ Chats log functions """
