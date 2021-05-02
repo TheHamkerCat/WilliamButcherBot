@@ -351,7 +351,7 @@ async def inline_query_handler(client, query):
                     switch_pm_parameter='inline',
                 )
                 return
-            link = text.strip().split()[1]
+            link = text.split()[1]
             answerss = await carbon_inline_func(answers, link)
             await client.answer_inline_query(
                 query.id,
@@ -409,6 +409,23 @@ async def inline_query_handler(client, query):
             tex = query.query.split(None, 1)[1].strip()
             user_id = query.from_user.id
             answerss = await yt_music_func(answers, tex, user_id)
+            await client.answer_inline_query(
+                query.id,
+                results=answerss,
+                cache_time=2
+            )
+
+        elif text.split()[0] == "info":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text='User Info | info [USERNAME|ID]',
+                    switch_pm_parameter='inline',
+                )
+                return
+            tex = text.split()[1].strip()
+            answerss = await user_info_inline_func(answers, tex)
             await client.answer_inline_query(
                 query.id,
                 results=answerss,

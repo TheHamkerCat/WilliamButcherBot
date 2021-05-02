@@ -14,6 +14,7 @@ if HEROKU:
     FERNET_ENCRYPTION_KEY = environ.get("FERNET_ENCRYPTION_KEY", None)
     WELCOME_DELAY_KICK_SEC = int(environ.get("WELCOME_DELAY_KICK_SEC", None))
     MONGO_DB_URI = environ.get("MONGO_DB_URI", None)
+    SPAMWATCH_API_KEY = environ.get("SPAMWATCH_API_KEY", None)
     ARQ_API_BASE_URL = environ.get("ARQ_API_BASE_URL", None)
 
 else:
@@ -29,5 +30,6 @@ else:
     FERNET_ENCRYPTION_KEY = "iKMq0WZMnJKjMQxZWKtv-cplMuF_LoyshXj0XbTGGWM=" # Leave this as it is
     WELCOME_DELAY_KICK_SEC = 300
     MONGO_DB_URI = "mongodb+srv://username:password@cluster0.ksiis.mongodb.net/YourDataBaseName?retryWrites=true&w=majority"
+    SPAMWATCH_API_KEY = "Get this from @SpamWatchBot"
     # NOTE Don't make changes below this line
     ARQ_API_BASE_URL = "http://thearq.tech"

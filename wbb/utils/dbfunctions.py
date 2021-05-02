@@ -300,6 +300,17 @@ async def get_karmas_count() -> dict:
     }
 
 
+async def user_global_karma(user_id) -> int:
+    chats = karmadb.find({"chat_id": {"$lt": 0}})
+    if not chats:
+        return 0
+    total_karma = 0
+    for chat in await chats.to_list(length=1000000):
+        karma = await get_karma(chat['chat_id'], await int_to_alpha(user_id))
+        total_karma += int(karma['karma']) if karma else 0
+    return total_karma
+
+
 async def get_karmas(chat_id: int) -> Dict[str, int]:
     karma = await karmadb.find_one({"chat_id": chat_id})
     if karma:

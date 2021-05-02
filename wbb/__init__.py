@@ -30,7 +30,7 @@ from Python_ARQ import ARQ
 from telegraph import Telegraph
 from os import path
 import time
-
+import spamwatch as spamwatch_
 is_config = path.exists('config.py')
 if is_config:
     from config import *
@@ -39,6 +39,7 @@ else:
 
 listen = listen
 USERBOT_PREFIX = USERBOT_PREFIX
+SPAMWATCH_API_KEY = SPAMWATCH_API_KEY
 SUDOERS = SUDO_USERS_ID
 GBAN_LOG_GROUP_ID = GBAN_LOG_GROUP_ID
 FERNET_ENCRYPTION_KEY = FERNET_ENCRYPTION_KEY
@@ -62,13 +63,12 @@ mongo_client = MongoClient(MONGO_DB_URI)
 db = mongo_client.wbb
 # ARQ client
 arq = ARQ(ARQ_API_BASE_URL)
-
+# Telegram client
 telegraph = Telegraph()
 telegraph.create_account(short_name="wbb")
-
 session = aiohttp.ClientSession()
-
-
+# Spamwatch client
+spamwatch = spamwatch_.Client(SPAMWATCH_API_KEY)
 
 BOT_ID = 0
 BOT_NAME = ""

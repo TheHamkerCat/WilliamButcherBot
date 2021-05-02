@@ -43,6 +43,7 @@ from pyrogram import __version__ as pyrover, filters
 from time import time, ctime
 from random import randint
 from wbb.utils.fetch import fetch
+from wbb.modules.user_info import get_user_info
 from wbb.modules.userbot import eval_executer_func
 from wbb.modules.music import download_youtube_audio
 from wbb.utils.functions import test_speedtest, get_http_status_code, make_carbon
@@ -898,6 +899,17 @@ async def carbon_inline_func(answers, link):
             file_id=carbon.document.file_id,
             title="Carbon",
             reply_markup=buttons
+        )
+    )
+    return answers
+
+
+async def user_info_inline_func(answers, user):
+    caption, photo_id = await get_user_info(user)
+    answers.append(
+        InlineQueryResultArticle(
+            title="Found User.",
+            input_message_content=InputTextMessageContent(caption)
         )
     )
     return answers
