@@ -40,10 +40,12 @@ async def get_user_info(user):
 @app.on_message(filters.command("info"))
 async def info_func(_, message):
     try:
-        if len(message.command) != 2:
-            await message.reply_text("**Usage:**/info [USERNAME|ID]")
-            return
-        user = message.text.split(None, 1)[1]
+        if message.reply_to_message:
+            user = message.reply_to_message.from_user.id
+        elif not message.reply_to_message and len(message.command) == 1:
+            user = message.from_user.id
+        elif not message.reply_to_message and len(message.command) != 1:
+            user = message.text.split(None, 1)[1]
         info_caption, photo_id = await get_user_info(user)
         if not photo_id:
             await app.send_message(message.chat.id, text=info_caption)
