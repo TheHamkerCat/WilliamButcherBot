@@ -106,7 +106,7 @@ async def del_filter(_, message):
                 ~filters.private & ~filters.via_bot &
                 ~filters.forwarded, group=chat_filters_group)
 async def filters_re(_, message):
-    text = message.text.strip()
+    text = message.text.lower().strip()
     if not text:
         return
     chat_id = message.chat.id
@@ -114,13 +114,13 @@ async def filters_re(_, message):
         list_of_filters = await get_filters_names(chat_id)
         for word in list_of_filters:
             pattern = r"( |^|[^\w])" + re.escape(word) + r"( |$|[^\w])"
-            if re.search(pattern, text):
+            if re.search(pattern, text, flags=re.IGNORECASE):
                 _filter = await get_filter(chat_id, word)
                 data_type = _filter['type']
                 data = _filter['data']
                 if data_type == "text":
                     if message.reply_to_message:
-                        m = await message.reply_to_message.reply_text(data, disable_web_page_preview=True)
+                        await message.reply_to_message.reply_text(data, disable_web_page_preview=True)
                         if text == word:
                             await message.delete()
                         return
