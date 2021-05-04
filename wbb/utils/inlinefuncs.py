@@ -44,7 +44,6 @@ from time import time, ctime
 from random import randint
 from wbb.utils.fetch import fetch
 from wbb.modules.user_info import get_user_info
-from wbb.modules.userbot import eval_executer_func
 from wbb.modules.music import download_youtube_audio
 from wbb.utils.functions import test_speedtest, get_http_status_code, make_carbon
 from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
@@ -62,7 +61,7 @@ async def inline_help_func(__HELP__):
     keywords_list = [
         "alive", "ping", "tr", "ud", "google", "bitly",
         "wall", "yt", "torrent", "lyrics", "wiki",
-        "speedtest", "eval", "music", "saavn", "deezer",
+        "speedtest", "music", "saavn", "deezer",
         "gh_repo", "gh_user", "search", "pastebin",
         "nsfw_scan", "ytmusic", "carbon", "info"
     ]
@@ -416,49 +415,6 @@ async def lyrics_func(answers, text):
         InlineQueryResultArticle(
             title=song_name,
             description=artist,
-            input_message_content=InputTextMessageContent(msg)
-        ))
-    return answers
-
-
-async def eval_func(answers, text, user_id):
-    if user_id not in SUDOERS:
-        msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
-        answers.append(
-            InlineQueryResultArticle(
-                title="ERROR",
-                description="THIS FEATURE IS ONLY FOR SUDO USERS",
-                input_message_content=InputTextMessageContent(msg)
-            ))
-        return answers
-    if str(text)[-1] != ":":
-        msg = "**ERROR**\n__Put A ':' After The Code To Execute It__"
-        answers.append(
-            InlineQueryResultArticle(
-                title="ERROR",
-                description="Put A ':' After The Code To Execute It",
-                input_message_content=InputTextMessageContent(msg)
-            ))
-
-        return answers
-    text = text[0:-1]
-    result = await eval_executer_func(text)
-    res = result[0]
-    output = result[1]
-    time_taken = result[2]
-    msg = f"{res}"
-    button = InlineKeyboard(row_width=1)
-    button.add(
-        InlineKeyboardButton(
-            text=f"{time_taken} Seconds",
-            callback_data="ok_lol"
-        )
-    )
-    answers.append(
-        InlineQueryResultArticle(
-            title=f"Took {time_taken} Seconds.",
-            description=output,
-            reply_markup=button,
             input_message_content=InputTextMessageContent(msg)
         ))
     return answers
@@ -840,6 +796,9 @@ async def yt_music_func(answers, url, user_id):
                 input_message_content=InputTextMessageContent(msg)
             ))
         return answers
+    if "http" not in url:
+        url = await arq.youtube(url)[0]
+        url = f"https://youtube.com{url.url_suffix}"
     title, performer, duration, audio, thumbnail = await download_youtube_audio(url)
     m = await app.send_audio(
         MESSAGE_DUMP_CHAT,

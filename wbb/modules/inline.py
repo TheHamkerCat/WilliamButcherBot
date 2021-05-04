@@ -210,24 +210,6 @@ async def inline_query_handler(client, query):
                 results=answerss
             )
 
-        elif text.split()[0] == "eval":
-            if len(text.split()) < 2:
-                await client.answer_inline_query(
-                    query.id,
-                    results=answers,
-                    switch_pm_text='Evaluate Code | eval [CODE]',
-                    switch_pm_parameter='inline',
-                )
-                return
-            user_id = query.from_user.id
-            tex = text.split(None, 1)[1].strip()
-            answerss = await eval_func(answers, tex, user_id)
-            await client.answer_inline_query(
-                query.id,
-                results=answerss,
-                cache_time=2
-            )
-
         elif text.split()[0] == "gh_user":
             if len(text.split()) < 2:
                 await client.answer_inline_query(
