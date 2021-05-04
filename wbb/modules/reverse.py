@@ -1,4 +1,4 @@
-from wbb import app
+from wbb import app, SUDOERS
 from wbb.core.decorators.errors import capture_err
 from pyrogram import filters
 from bs4 import BeautifulSoup
@@ -9,12 +9,15 @@ import requests
 import os
 
 __MODULE__ = "Reverse"
-__HELP__ = "/reverse  - Reverse search an image."
+__HELP__ = "/reverse  - Reverse search an image. [SUDOERS ONLY]"
 
 
 @app.on_message(filters.command("reverse"))
 @capture_err
 async def reverse_image_search(_, message):
+    if message.from_user.id not in SUDOERS:
+        await message.reply_text("THIS FEATURE IS ONLY FOR SUDO USERS.")
+        return
     if not message.reply_to_message:
         await message.reply_text("Reply to a message to reverse search it.")
         return
