@@ -72,6 +72,7 @@ async def getid(_, message):
     if len(message.command) == 2:
         id = (await app.get_users(message.text.split(None, 1)[1])).id
         text = f"<b>ID:</b> {id}"
+        await message.reply_text(text)
         return
     text_unping = "<b>Chat ID:</b>"
     if message.chat.username:

@@ -64,7 +64,7 @@ async def inline_help_func(__HELP__):
         "wall", "yt", "torrent", "lyrics", "wiki",
         "speedtest", "eval", "music", "saavn", "deezer",
         "gh_repo", "gh_user", "search", "pastebin",
-        "nsfw_scan", "ytmusic", "carbon"
+        "nsfw_scan", "ytmusic", "carbon", "info"
     ]
     buttons.add(*[(InlineKeyboardButton(
         text=i, switch_inline_query_current_chat=i)) for i in keywords_list])
