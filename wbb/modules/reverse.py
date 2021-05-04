@@ -31,6 +31,7 @@ async def reverse_image_search(_, message):
         if mime_type != "image/png" and mime_type != "image/jpeg":
             await m.edit("Document Mimetype Invalid")
             return
+        file_id = reply.document.file_id
     if reply.sticker:
         if reply.sticker.is_animated:
             if not reply.sticker.thumbs:
