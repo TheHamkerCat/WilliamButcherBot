@@ -29,7 +29,6 @@ import aiofiles
 import os
 import ffmpeg
 from random import randint
-from hurry.filesize import size as format_size
 from pyrogram import filters
 from wbb import app, arq, SUDOERS
 from wbb.core.decorators.errors import capture_err
@@ -148,9 +147,7 @@ async def jssong(_, message):
         await message.reply_audio(
             audio=song,
             title=sname,
-            caption=f"「 `{format_size(await file_size_from_url(slink))}` 」",
             performer=ssingers,
-            duration=int(songs[0].duration)
         )
         os.remove(song)
         await m.delete()
@@ -189,8 +186,6 @@ async def deezsong(_, message):
             audio=song,
             title=title,
             performer=artist,
-            duration=songs[0].duration,
-            caption=f"「 `{format_size(await file_size_from_url(url))}` 」")
         os.remove(song)
         await m.delete()
     except Exception as e:
