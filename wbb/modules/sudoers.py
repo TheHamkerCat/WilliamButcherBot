@@ -184,7 +184,7 @@ __**New Global Ban**__
 **Chats:** `{number_of_chats}`"""
             try:
                 m2 = await app.send_message(GBAN_LOG_GROUP_ID, text=ban_text, disable_web_page_preview=True)
-                await m.edit(f"Banned {user.mention} Globally!\nAction Log: {m2.link}", disable_web_page_preview=True)
+                await m.edit(f"Banned {mention} Globally!\nAction Log: {m2.link}", disable_web_page_preview=True)
             except Exception:
                 await message.reply_text("User Gbanned, But This Gban Wasn't Logged, Add Bot In GBAN_LOG_GROUP")
                 return
