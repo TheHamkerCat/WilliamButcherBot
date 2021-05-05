@@ -185,10 +185,9 @@ async def deezsong(_, message):
         await message.reply_audio(
             audio=song,
             title=title,
-            performer=artist,
+            performer=artist,)
         os.remove(song)
         await m.delete()
-        )
     except Exception as e:
         is_downloading = False
         await m.edit(str(e))
