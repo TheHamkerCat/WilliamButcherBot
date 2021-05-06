@@ -256,7 +256,7 @@ async def delete(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_delete_messages" not in permissions or from_user_id not in SUDOERS:
+        if "can_delete_messages" not in permissions and from_user_id not in SUDOERS:
             await message.reply_text("You Don't Have Enough Permissions,"
                                      + " Consider Deleting Yourself!")
             return
