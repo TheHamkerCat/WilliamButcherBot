@@ -62,7 +62,7 @@ async def inline_help_func(__HELP__):
         "alive", "ping", "tr", "ud", "google", "bitly",
         "wall", "yt", "torrent", "lyrics", "wiki",
         "speedtest", "music", "saavn", "deezer",
-        "gh_repo", "gh_user", "search", "pastebin",
+        "gh_repo", "gh_user", "search", "paste",
         "nsfw_scan", "ytmusic", "carbon", "info"
     ]
     buttons.add(*[(InlineKeyboardButton(
