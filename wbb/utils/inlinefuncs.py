@@ -797,7 +797,7 @@ async def yt_music_func(answers, url, user_id):
             ))
         return answers
     if "http" not in url:
-        url = await arq.youtube(url)[0]
+        url = (await arq.youtube(url))[0]
         url = f"https://youtube.com{url.url_suffix}"
     title, performer, duration, audio, thumbnail = await download_youtube_audio(url)
     m = await app.send_audio(
