@@ -44,7 +44,8 @@ __HELP__ = '''/commit - Generate Funny Commit Messages
 /cheat [Language] [Query] - Get Programming Related Help
 /weather [City] - To Get Weather Info
 /tr [en] - Translate A Message
-/json [URL] - Get Response From An API or Something.
+/json [URL] - Get JSON Response From An API or Something.
+/ocr - Perform OCR on an image.
 #RTFM - Check it lol'''
 
 

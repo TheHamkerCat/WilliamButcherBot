@@ -27,7 +27,7 @@ from wbb.utils import aiodownloader
 from carbonnow import Carbon
 import speedtest
 import aiohttp
-
+import aiofiles
 
 """
 Just import 'downloader' anywhere and do downloader.download() to
@@ -119,3 +119,12 @@ async def make_carbon(code):
     carbon = Carbon(code=code)
     image = await carbon.save(str(randint(1000, 10000)))
     return image
+
+
+async def transfer_sh(file):
+    async with aiofiles.open(file, 'rb') as f:
+        params = {file: await f.read()}
+    async with aiohttp.ClientSession() as session:
+        async with session.post('https://transfer.sh/', data=params) as resp:
+            download_link = str(await resp.text()).strip()
+    return download_link
