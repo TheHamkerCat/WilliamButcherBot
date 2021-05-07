@@ -31,7 +31,8 @@ from wbb.utils.filter_groups import welcome_captcha_group
 from wbb.utils.functions import generate_captcha
 from wbb.utils.dbfunctions import (
     is_gbanned_user, is_captcha_on, captcha_on, captcha_off,
-    set_welcome, del_welcome, get_welcome
+    set_welcome, del_welcome, get_welcome, get_captcha_cache,
+    update_captcha_cache
 )
 from pykeyboard import InlineKeyboard
 from pyrogram.types import (
@@ -81,6 +82,8 @@ answers_dicc = []
 @capture_err
 async def welcome(_, message: Message):
     global answers_dicc
+    """ Get cached answers from mongodb in case of bot's been restarted or crashed. """
+    answers_dicc = await get_captcha_cache()
     """Mute new member and send message with button"""
     if not await is_captcha_on(message.chat.id):
         return
@@ -139,6 +142,7 @@ async def welcome(_, message: Message):
         keyboard = [temp_keyboard_1, temp_keyboard_2, temp_keyboard_3]
         shuffle(keyboard)
         verification_data = {
+            "chat_id": message.chat.id,
             "user_id": member.id,
             "answer": captcha_answer,
             "keyboard": keyboard,
@@ -155,6 +159,8 @@ async def welcome(_, message: Message):
             quote=True
         )
         os.remove(captcha_image)
+        """ Save captcha answers etc in mongodb in case bot gets crashed or restarted. """
+        await update_captcha_cache(answers_dicc)
         asyncio.create_task(kick_restricted_after_delay(
             WELCOME_DELAY_KICK_SEC, button_message, member))
         await asyncio.sleep(0.5)
@@ -213,14 +219,14 @@ async def callback_query_welcome_button(_, callback_query):
     answer = data.split(None, 2)[1]
     if len(answers_dicc) != 0:
         for i in answers_dicc:
-            if i['user_id'] == pending_user_id:
+            if i['user_id'] == pending_user_id and i['chat_id'] == button_message.chat.id:
                 correct_answer = i['answer']
                 keyboard = i['keyboard']
     if pending_user_id == pressed_user_id:
         if answer != correct_answer:
             await callback_query.answer("Yeah, It's Wrong.")
             for iii in answers_dicc:
-                if iii['user_id'] == pending_user_id:
+                if iii['user_id'] == pending_user_id  and iii['chat_id'] == button_message.chat.id:
                     attempts = iii['attempts']
                     if attempts >= 3:
                         answers_dicc.remove(iii)
@@ -247,7 +253,7 @@ async def callback_query_welcome_button(_, callback_query):
         await button_message.delete()
         if len(answers_dicc) != 0:
             for ii in answers_dicc:
-                if ii['user_id'] == pending_user_id:
+                if ii['user_id'] == pending_user_id and ii['chat_id'] == button_message.chat.id:
                     answers_dicc.remove(ii)
 
         """ send welcome message """

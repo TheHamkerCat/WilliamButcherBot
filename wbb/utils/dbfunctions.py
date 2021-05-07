@@ -23,6 +23,7 @@ SOFTWARE.
 """
 from wbb import db
 from typing import Dict, List, Union
+from wbb.utils.functions import obj_to_str, str_to_obj
 
 notesdb = db.notes
 filtersdb = db.filters
@@ -36,7 +37,7 @@ antiservicedb = db.antiservice
 pmpermitdb = db.pmpermit
 welcomedb = db.welcome_text
 nsfwdb = db.nsfw
-
+capcha_cachedb = db.captcha_cache
 
 """ Notes functions """
 
@@ -578,3 +579,29 @@ async def nsfw_off(chat_id: int):
     if not is_nsfw:
         return
     return await nsfwdb.insert_one({"chat_id": chat_id})
+
+
+""" CAPTCHA CACHE SYSTEM """
+
+
+async def update_captcha_cache(captcha_dict):
+    pickle = obj_to_str(captcha_dict)
+    if not pickle:
+        await capcha_cachedb.delete_one({"captcha": "cache"})
+        return
+    await captcha_cachedb.update_one(
+        {"captcha": "cache"},
+        {
+            "$set": {
+                "pickled": pickle
+            }
+        },
+        upsert=True
+    )
+
+
+async def get_captcha_cache():
+    cache = await capcha_cachedb.find_one({"captcha": "cache"})
+    if not cache:
+        return []
+    return str_to_obj(cache['pickled'])

@@ -49,6 +49,6 @@ async def arq_stats(_, message):
 **Disk:** `{disk}`
 **Platform:** `{platform}`
 **Python:** `{python_version}`
-**SERVER_URI**: {ARQ_API_BASE_URL}
+**Address:** {ARQ_API_BASE_URL}
 """
     await message.reply_text(statistics)
