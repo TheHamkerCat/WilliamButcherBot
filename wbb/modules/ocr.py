@@ -25,8 +25,8 @@ from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.functions import transfer_sh
 from pyrogram import filters
-from random import randint
 import os
+
 
 @app.on_message(filters.command("ocr"))
 @capture_err
@@ -70,10 +70,11 @@ async def image_ocr(_, message):
         if not reply.video.thumbs:
             return
         file_id = reply.video.thumbs[0].file_id
-
-    filename = f"{randint(1000, 10000)}.jpg"
     file = await app.download_media(file_id)
     url = await transfer_sh(file)
     os.remove(file)
     data = await arq.ocr(url)
+    if not data.ocr:
+        await m.edit("There's no text in that image.")
+        return
     await m.edit(data.ocr)

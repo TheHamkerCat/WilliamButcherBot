@@ -33,7 +33,6 @@ from pyrogram import filters
 from wbb import app, arq, SUDOERS
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.pastebin import paste
-from wbb.utils.functions import file_size_from_url
 
 
 __MODULE__ = "Music"
