@@ -76,6 +76,14 @@ sends /rules, he'll get the message
 
 
 answers_dicc = []
+loop = asyncio.get_running_loop()
+
+async def get_initial_captcha_cache():
+    global answers_dicc
+    answers_dicc = await get_captcha_cache()
+    return
+
+loop.create_task(get_initial_captcha_cache())
 
 
 @app.on_message(filters.new_chat_members, group=welcome_captcha_group)
@@ -234,6 +242,7 @@ async def callback_query_welcome_button(_, callback_query):
                         await asyncio.sleep(1)
                         await button_message.chat.unban_member(pending_user_id)
                         await button_message.delete()
+                        await update_captcha_cache(answers_dicc)
                         return
                     else:
                         iii['attempts'] += 1
@@ -255,7 +264,7 @@ async def callback_query_welcome_button(_, callback_query):
             for ii in answers_dicc:
                 if ii['user_id'] == pending_user_id and ii['chat_id'] == button_message.chat.id:
                     answers_dicc.remove(ii)
-
+                    await update_captcha_cache(answers_dicc)
         """ send welcome message """
         await send_welcome_message(callback_query, pending_user_id)
         return
@@ -279,6 +288,7 @@ async def kick_restricted_after_delay(delay, button_message: Message, user: User
         for i in answers_dicc:
             if i['user_id'] == user_id:
                 answers_dicc.remove(i)
+                await update_captcha_cache(answers_dicc)
     await _ban_restricted_user_until_date(group_chat, user_id, duration=delay)
 
 
