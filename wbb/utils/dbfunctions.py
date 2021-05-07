@@ -586,8 +586,8 @@ async def nsfw_off(chat_id: int):
 
 async def update_captcha_cache(captcha_dict):
     pickle = obj_to_str(captcha_dict)
+    await captcha_cachedb.delete_one({"captcha": "cache"})
     if not pickle:
-        await captcha_cachedb.delete_one({"captcha": "cache"})
         return
     await captcha_cachedb.update_one(
         {"captcha": "cache"},
