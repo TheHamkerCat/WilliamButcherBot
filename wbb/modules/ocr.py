@@ -25,6 +25,7 @@ from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.functions import transfer_sh
 from pyrogram import filters
+from pyrogram.errors.exceptions.bad_request_400 import MessageEmpty
 import os
 
 
@@ -74,7 +75,9 @@ async def image_ocr(_, message):
     url = await transfer_sh(file)
     os.remove(file)
     data = await arq.ocr(url)
-    if not data.ocr:
+    try:
+        await m.edit(data.ocr)
+    except MessageEmpty:
         await m.edit("There's no text in that image.")
         return
-    await m.edit(data.ocr)
+    
