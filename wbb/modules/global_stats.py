@@ -33,7 +33,8 @@ from wbb.utils.dbfunctions import (
     get_filters_count,
     get_warns_count,
     get_karmas_count,
-    get_gbans_count
+    get_gbans_count,
+    get_blacklist_filters_count
 )
 from pyrogram import filters
 import asyncio

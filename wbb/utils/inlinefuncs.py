@@ -759,7 +759,7 @@ async def ping_func(answers):
     ping = Ping(ping_id=randint(696969, 6969696))
     await app.send(ping)
     t2 = time()
-    ping = f"{str(round((t2 - t1), 6))} Seconds"
+    ping = f"{str(round((t2 - t1), 6)) * 100} ms"
     answers.append(
         InlineQueryResultArticle(
             title=ping,
