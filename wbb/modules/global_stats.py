@@ -25,6 +25,7 @@ from wbb import app, SUDOERS, BOT_ID, BOT_NAME
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.fetch import fetch
 from wbb.modules import ALL_MODULES
+from wbb.utils.inlinefuncs import keywords_list
 from wbb.utils.dbfunctions import (
     get_served_chats,
     remove_served_chat,
@@ -90,6 +91,11 @@ async def global_stats(_, message):
     filters_count = _filters["filters_count"]
     filters_chats_count = _filters["chats_count"]
 
+    # Blacklisted filters count across chats
+    _filters = await get_blacklist_filters_count()
+    blacklist_filters_count = _filters["filters_count"]
+    blacklist_filters_chats_count = _filters["chats_count"]
+
     # Warns count across chats
     _warns = await get_warns_count()
     warns_count = _warns["warns_count"]
@@ -108,19 +114,20 @@ async def global_stats(_, message):
     for developer in developers:
         commits += developer['contributions']
     developers = len(developers)
-
     # Modules info
     modules_count = len(ALL_MODULES)
 
     msg = f"""
 **Global Stats of {BOT_NAME}**:
 **{modules_count}** Modules Loaded
+**{len(keywords_list)}** Inline Modules Loaded.
 **{gbans}** Globally banned users.
 **{filters_count}** Filters, Across **{filters_chats_count}** chats.
+**{blacklist_filters_count}** Blacklist Filters, Across **{blacklist_filters_chats_count}** chats.
 **{notes_count}** Notes, Across **{notes_chats_count}** chats.
 **{warns_count}** Warns, Across **{warns_chats_count}** chats.
 **{karmas_count}** Karma, Across **{karmas_chats_count}** chats.
 **{total_users}** Users, Across **{len(served_chats)}** chats.
-**{developers}** Developers And **{commits}** Commits On **[Github]({rurl})**."""
-
+**{developers}** Developers And **{commits}** Commits On **[Github]({rurl})**.
+"""
     await m.edit(msg, disable_web_page_preview=True)

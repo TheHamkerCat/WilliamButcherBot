@@ -86,7 +86,7 @@ async def get_stats(_, message):
 async def ban_globally(_, message):
     if not message.reply_to_message:
         if len(message.command) < 3:
-            await message.reply_text("**Usage**\n/gban [USERNAME | USER_ID] [REASON]")
+            await message.reply_text("**Usage:**\n/gban [USERNAME | USER_ID] [REASON]")
             return
         user = message.text.split(None, 2)[1]
         reason = message.text.split(None, 2)[2]
@@ -136,7 +136,7 @@ __**New Global Ban**__
                 return
         return
     if len(message.command) < 2:
-        await message.reply_text("**Usage**\n/gban [REASON]")
+        await message.reply_text("**Usage:**\n/gban [REASON]")
         return
     reason = message.text.strip().split(None, 1)[1]
     from_user_id = message.from_user.id

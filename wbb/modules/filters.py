@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import app
+from wbb import app, SUDOERS
 from wbb.modules.admin import member_permissions
 from wbb.utils.dbfunctions import (
     save_filter, get_filters_names, get_filter,
@@ -31,6 +31,7 @@ from pyrogram import filters
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.filter_groups import chat_filters_group
 import re
+import traceback
 
 
 __MODULE__ = "Filters"
@@ -45,26 +46,29 @@ You can use markdown or html to save text too."""
 @app.on_message(filters.command("filter") & ~filters.edited & ~filters.private)
 @capture_err
 async def save_filters(_, message):
+    chat_id = message.chat.id
+    user_id = message.from_user.id
     if len(message.command) < 2 or not message.reply_to_message:
         await message.reply_text("Usage:\nReply to a text or sticker with /filter [FILTER_NAME] to save it.")
-
-    elif not message.reply_to_message.text and not message.reply_to_message.sticker:
+        return
+    if not message.reply_to_message.text and not message.reply_to_message.sticker:
         await message.reply_text("__**You can only save text or stickers in filters.**__")
-
-    elif len(await member_permissions(message.chat.id, message.from_user.id)) < 1:
+        return
+    permissions = await member_permissions(chat_id, user_id)
+    if "can_restrict_members" not in permissions and user_id not in SUDOERS:
         await message.reply_text("**You don't have enough permissions**")
-    else:
-        name = message.text.split(None, 1)[1].strip()
-        if not name:
-            await message.reply_text("**Usage**\n__/filter [FILTER_NAME]__")
-            return
-        _type = "text" if message.reply_to_message.text else "sticker"
-        _filter = {
-            "type": _type,
-            "data": message.reply_to_message.text.markdown if _type == "text" else message.reply_to_message.sticker.file_id
-        }
-        await save_filter(message.chat.id, name, _filter)
-        await message.reply_text(f"__**Saved filter {name}.**__")
+        return
+    name = message.text.split(None, 1)[1].strip()
+    if not name:
+        await message.reply_text("**Usage**\n__/filter [FILTER_NAME]__")
+        return
+    _type = "text" if message.reply_to_message.text else "sticker"
+    _filter = {
+        "type": _type,
+        "data": message.reply_to_message.text.markdown if _type == "text" else message.reply_to_message.sticker.file_id
+    }
+    await save_filter(chat_id, name, _filter)
+    await message.reply_text(f"__**Saved filter {name}.**__")
 
 
 @app.on_message(filters.command("filters") & ~filters.edited & ~filters.private)
@@ -83,23 +87,24 @@ async def get_filterss(_, message):
 @app.on_message(filters.command("stop") & ~filters.edited & ~filters.private)
 @capture_err
 async def del_filter(_, message):
+    chat_id = message.chat.id
+    user_id = message.from_user.id
     if len(message.command) < 2:
         await message.reply_text("**Usage**\n__/stop [FILTER_NAME]__")
-
-    elif len(await member_permissions(message.chat.id, message.from_user.id)) < 1:
+        return
+    permissions = await member_permissions(chat_id, user_id)
+    if "can_restrict_members" not in permissions and user_id not in SUDOERS:
         await message.reply_text("**You don't have enough permissions**")
-
+        return
+    name = message.text.split(None, 1)[1].strip()
+    if not name:
+        await message.reply_text("**Usage**\n__/stop [FILTER_NAME]__")
+        return
+    deleted = await delete_filter(chat_id, name)
+    if deleted:
+        await message.reply_text(f"**Deleted filter {name}.**")
     else:
-        name = message.text.split(None, 1)[1].strip()
-        if not name:
-            await message.reply_text("**Usage**\n__/stop [FILTER_NAME]__")
-            return
-        chat_id = message.chat.id
-        deleted = await delete_filter(chat_id, name)
-        if deleted:
-            await message.reply_text(f"**Deleted filter {name}.**")
-        else:
-            await message.reply_text("**No such filter.**")
+        await message.reply_text("**No such filter.**")
 
 
 @app.on_message(filters.text & ~filters.edited &
@@ -133,6 +138,7 @@ async def filters_re(_, message):
                         return
                     await message.reply_sticker(data)
     except Exception as e:
+        e = traceback.format_exc()
         print(e)
         pass
 

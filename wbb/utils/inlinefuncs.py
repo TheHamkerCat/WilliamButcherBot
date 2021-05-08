@@ -55,16 +55,16 @@ from wbb import (
     SUDOERS, USERBOT_NAME, MESSAGE_DUMP_CHAT
 )
 
+keywords_list = [
+    "alive", "ping", "tr", "ud", "google", "bitly",
+    "wall", "yt", "torrent", "lyrics", "wiki",
+    "speedtest", "music", "saavn", "deezer",
+    "gh_repo", "gh_user", "search", "paste",
+    "nsfw_scan", "ytmusic", "carbon", "info"
+]
 
 async def inline_help_func(__HELP__):
     buttons = InlineKeyboard(row_width=3)
-    keywords_list = [
-        "alive", "ping", "tr", "ud", "google", "bitly",
-        "wall", "yt", "torrent", "lyrics", "wiki",
-        "speedtest", "music", "saavn", "deezer",
-        "gh_repo", "gh_user", "search", "paste",
-        "nsfw_scan", "ytmusic", "carbon", "info"
-    ]
     buttons.add(*[(InlineKeyboardButton(
         text=i, switch_inline_query_current_chat=i)) for i in keywords_list])
     answerss = [
@@ -75,7 +75,15 @@ async def inline_help_func(__HELP__):
                 "Click A Button To Get Started."),
             thumb_url="https://hamker.me/cy00x5x.png",
             reply_markup=buttons
-        )
+        ),
+        InlineQueryResultArticle(
+            title="Github Repo",
+            description="Get Github Respository Of Bot.",
+            input_message_content=InputTextMessageContent(
+                "https://github.com/thehamkercat/WilliamButcherBot"
+                ),
+            thumb_url="https://hamker.me/gjc9fo3.png"
+            )
     ]
     answerss = await alive_function(answerss)
     return answerss

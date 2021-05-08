@@ -38,6 +38,7 @@ pmpermitdb = db.pmpermit
 welcomedb = db.welcome_text
 nsfwdb = db.nsfw
 captcha_cachedb = db.captcha_cache
+blacklist_filtersdb = db.blaclist_filters
 
 """ Notes functions """
 
@@ -605,3 +606,65 @@ async def get_captcha_cache():
     if not cache:
         return []
     return str_to_obj(cache['pickled'])
+
+
+""" BLACKLIST FILTERS SYSTEM """
+
+
+async def get_blacklist_filters_count() -> dict:
+    chats = blacklist_filtersdb.find({"chat_id": {"$lt": 0}})
+    if not chats:
+        return {}
+    chats_count = 0
+    filters_count = 0
+    for chat in await chats.to_list(length=1000000000):
+        filters = await get_blacklisted_words(chat['chat_id'])
+        filters_count += len(filters)
+        chats_count += 1
+    return {
+        "chats_count": chats_count,
+        "filters_count": filters_count
+    }
+
+
+async def get_blacklisted_words(chat_id: int) -> List[str]:
+    _filters = await blacklist_filtersdb.find_one({"chat_id": chat_id})
+    if _filters:
+        _filters = _filters['filters']
+    else:
+        _filters = []
+    return _filters
+
+
+async def save_blacklist_filter(chat_id: int, word: str):
+    word = word.lower().strip()
+    _filters = await get_blacklisted_words(chat_id)
+    _filters.append(word)
+    await blacklist_filtersdb.update_one(
+        {"chat_id": chat_id},
+        {
+            "$set": {
+                "filters": _filters
+            }
+        },
+        upsert=True
+    )
+
+
+async def delete_blacklist_filter(chat_id: int, word: str) -> bool:
+    filtersd = await get_blacklisted_words(chat_id)
+    word = word.lower().strip()
+    if word in filtersd:
+        filtersd.remove(word)
+        await blacklist_filtersdb.update_one(
+            {"chat_id": chat_id},
+            {
+                "$set": {
+                    "filters": filtersd
+                }
+            },
+            upsert=True
+        )
+        return True
+    return False
+
