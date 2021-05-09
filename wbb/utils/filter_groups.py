@@ -30,3 +30,4 @@ welcome_captcha_group = 6
 antiflood_group = 7
 nsfw_detect_group = 8
 blacklist_filters_group = 9
+pipes_group = 10

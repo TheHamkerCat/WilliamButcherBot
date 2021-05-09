@@ -35,7 +35,8 @@ from wbb.utils.pastebin import paste
 from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "Misc"
-__HELP__ = '''/commit - Generate Funny Commit Messages
+__HELP__ = '''
+/commit - Generate Funny Commit Messages
 /runs  - Idk Test Yourself
 /id - Get Chat_ID or User_ID
 /random [Length] - Generate Random Complex Passwords
@@ -45,8 +46,10 @@ __HELP__ = '''/commit - Generate Funny Commit Messages
 /weather [City] - To Get Weather Info
 /tr [en] - Translate A Message
 /json [URL] - Get JSON Response From An API or Something.
-/ocr - Perform OCR on an image.
-#RTFM - Check it lol'''
+/ocr - Perform OCR On An Image.
+/arq - Statistics Of ARQ API.
+#RTFM - Check it lol
+'''
 
 
 @app.on_message(filters.command("commit") & ~filters.edited)

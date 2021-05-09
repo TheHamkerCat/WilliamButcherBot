@@ -39,6 +39,7 @@ welcomedb = db.welcome_text
 nsfwdb = db.nsfw
 captcha_cachedb = db.captcha_cache
 blacklist_filtersdb = db.blaclist_filters
+pipesdb = db.pipes
 
 """ Notes functions """
 
@@ -61,11 +62,9 @@ async def get_notes_count() -> dict:
 
 async def _get_notes(chat_id: int) -> Dict[str, int]:
     _notes = await notesdb.find_one({"chat_id": chat_id})
-    if _notes:
-        _notes = _notes["notes"]
-    else:
-        _notes = {}
-    return _notes
+    if not _notes:
+        return {}
+    return _notes["notes"]
 
 
 async def get_note_names(chat_id: int) -> List[str]:
@@ -139,11 +138,9 @@ async def get_filters_count() -> dict:
 
 async def _get_filters(chat_id: int) -> Dict[str, int]:
     _filters = await filtersdb.find_one({"chat_id": chat_id})
-    if _filters:
-        _filters = _filters['filters']
-    else:
-        _filters = {}
-    return _filters
+    if not _filters:
+        return []
+    return _filters['filters']
 
 
 async def get_filters_names(chat_id: int) -> List[str]:
@@ -235,11 +232,9 @@ async def get_warns_count() -> dict:
 
 async def get_warns(chat_id: int) -> Dict[str, int]:
     warns = await warnsdb.find_one({"chat_id": chat_id})
-    if warns:
-        warns = warns['warns']
-    else:
-        warns = {}
-    return warns
+    if not warns:
+        return {}
+    return warns['warns']
 
 
 async def get_warn(chat_id: int, name: str) -> Union[bool, dict]:
@@ -317,11 +312,9 @@ async def user_global_karma(user_id) -> int:
 
 async def get_karmas(chat_id: int) -> Dict[str, int]:
     karma = await karmadb.find_one({"chat_id": chat_id})
-    if karma:
-        karma = karma['karma']
-    else:
-        karma = {}
-    return karma
+    if not karma:
+        return {}
+    return karma['karma']
 
 
 async def get_karma(chat_id: int, name: str) -> Union[bool, dict]:
@@ -435,11 +428,9 @@ async def remove_gban_user(user_id: int):
 
 async def _get_lovers(chat_id: int):
     lovers = await coupledb.find_one({"chat_id": chat_id})
-    if lovers:
-        lovers = lovers["couple"]
-    else:
-        lovers = {}
-    return lovers
+    if not lovers:
+        return {}
+    return lovers["couple"]
 
 
 async def get_couple(chat_id: int, date: str):
@@ -629,11 +620,9 @@ async def get_blacklist_filters_count() -> dict:
 
 async def get_blacklisted_words(chat_id: int) -> List[str]:
     _filters = await blacklist_filtersdb.find_one({"chat_id": chat_id})
-    if _filters:
-        _filters = _filters['filters']
-    else:
-        _filters = []
-    return _filters
+    if not _filters:
+        return []
+    return _filters['filters']
 
 
 async def save_blacklist_filter(chat_id: int, word: str):
@@ -668,3 +657,54 @@ async def delete_blacklist_filter(chat_id: int, word: str) -> bool:
         return True
     return False
 
+""" PIPES SYSTEM """
+
+
+async def activate_pipe(from_chat_id: int, to_chat_id: int, fetcher: str):
+    pipes = await show_pipes()
+    pipe = {
+        "from_chat_id": from_chat_id,
+        "to_chat_id": to_chat_id,
+        "fetcher": fetcher
+    }
+    pipes.append(pipe)
+    return await pipesdb.update_one(
+        {"pipe": "pipe"},
+        {
+            "$set": {
+                "pipes": pipes
+            }
+        },
+        upsert=True
+    )
+
+
+async def deactivate_pipe(from_chat_id: int, to_chat_id: int):
+    pipes = await show_pipes()
+    if not pipes:
+        return
+    for pipe in pipes:
+        if pipe['from_chat_id'] == from_chat_id and pipe['to_chat_id'] == to_chat_id:
+            pipes.remove(pipe)
+    return await pipesdb.update_one(
+        {"pipe": "pipe"},
+        {
+            "$set": {
+                "pipes": pipes
+            }
+        },
+        upsert=True
+    )
+
+
+async def is_pipe_active(from_chat_id: int, to_chat_id: int) -> bool:
+    for pipe in await show_pipes():
+        if pipe['from_chat_id'] == from_chat_id and pipe['to_chat_id'] == to_chat_id:
+            return True
+
+
+async def show_pipes() -> list:
+    pipes = await pipesdb.find_one({"pipe": "pipe"})
+    if not pipes:
+        return []
+    return pipes['pipes']

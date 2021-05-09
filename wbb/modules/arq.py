@@ -24,9 +24,6 @@ SOFTWARE.
 from wbb import app, arq, ARQ_API_BASE_URL
 from pyrogram import filters
 
-__MODULE__ = "ARQ"
-__HELP__ = "/arq - Stats Of ARQ API."
-
 
 @app.on_message(filters.command("arq"))
 async def arq_stats(_, message):

@@ -104,6 +104,8 @@ async def blacklist_filters_re(_, message):
         return
     chat_id = message.chat.id
     user = message.from_user
+    if not user:
+        return
     if user.id in SUDOERS:
         return
     try:

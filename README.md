@@ -63,17 +63,7 @@ $ python3 str_gen.py
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/thehamkercat/WilliamButcherBot/)
 
-## Features 
 
-* Group Management
-* Userbot [Including Ai PM PERMIT]
-* Music Downloading 
-* AI Chatbot
-* Web Scraping
-* Get Pictures/Wallpapers
-* Dictionary
-* Translation
-* Message Cryptography
-* Python Interpreter (Right In Your Telegram Chat!)
-* Nekobin (Paste Code/Text)
-* And Much More...
+## Note
+
+1. Support Chat: https://t.me/wbbsupport
