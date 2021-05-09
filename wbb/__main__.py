@@ -184,7 +184,16 @@ async def help_button(client, query):
     next_match = re.match(r"help_next\((.+?)\)", query.data)
     back_match = re.match(r"help_back", query.data)
     create_match = re.match(r"help_create", query.data)
+    top_text = f"""
+Hello {query.from_user.first_name}! My name is {BOT_NAME}!
+I'm a group management bot with some usefule features.
+You can choose an option below, by clicking a button.
+Also you can ask anything in Support Group.
 
+General command are:
+ - /start: Start the bot
+ - /help: Give this message
+ """
     if mod_match:
         module = mod_match.group(1)
         text = (
@@ -205,10 +214,7 @@ async def help_button(client, query):
     elif prev_match:
         curr_page = int(prev_match.group(1))
         await query.message.edit(
-            text="Hi {first_name}. I am {bot_name}".format(
-                first_name=query.from_user.first_name,
-                bot_name=BOT_NAME,
-            ),
+            text=top_text,
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(curr_page - 1, HELPABLE, "help")
             ),
@@ -218,10 +224,7 @@ async def help_button(client, query):
     elif next_match:
         next_page = int(next_match.group(1))
         await query.message.edit(
-            text="Hi {first_name}. I am {bot_name}".format(
-                first_name=query.from_user.first_name,
-                bot_name=BOT_NAME,
-            ),
+            text=top_text,
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(next_page + 1, HELPABLE, "help")
             ),
@@ -230,10 +233,7 @@ async def help_button(client, query):
 
     elif back_match:
         await query.message.edit(
-            text="Hi {first_name}. I am {bot_name}".format(
-                first_name=query.from_user.first_name,
-                bot_name=BOT_NAME,
-            ),
+            text=top_text,
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(0, HELPABLE, "help")
             ),
