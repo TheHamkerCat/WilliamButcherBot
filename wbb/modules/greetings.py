@@ -220,9 +220,8 @@ async def callback_query_welcome_button(_, callback_query):
     """
     global answers_dicc
     data = callback_query.data
-    pending_user = await app.get_users(int(data.split(None, 2)[2]))
     pressed_user_id = callback_query.from_user.id
-    pending_user_id = pending_user.id
+    pending_user_id = int(data.split(None, 2)[2])
     button_message = callback_query.message
     answer = data.split(None, 2)[1]
     if len(answers_dicc) != 0:
