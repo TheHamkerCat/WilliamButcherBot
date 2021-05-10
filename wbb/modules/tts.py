@@ -30,23 +30,24 @@ from pyrogram import filters
 from io import BytesIO
 
 __MODULE__ = "TTS"
-__HELP__ = """/tts - Convert Text To Speech."""
+__HELP__ = "/tts - Convert Text To Speech."
 
 
 @app.on_message(filters.command("tts"))
 @capture_err
 async def text_to_speech(_, message: Message):
-    if not message.reply_to_message:
-        await message.reply_text("Reply to some text ffs.")
-        return
-    m = await message.reply_text("Processing")
-    audio = BytesIO()
-    text = message.reply_to_message.text
-    i = Translator().translate(text, dest="en")
-    lang = i.src
-    tts = gTTS(text, lang=lang)
-    audio.name = lang + ".mp3"
-    tts.write_to_fp(audio)
-    await m.delete()
-    await message.reply_audio(audio)
-    audio.close()
+    if message.reply_to_message:
+        if message.reply_to_message.text:
+            m = await message.reply_text("Processing")
+            audio = BytesIO()
+            text = message.reply_to_message.text
+            i = Translator().translate(text, dest="en")
+            lang = i.src
+            tts = gTTS(text, lang=lang)
+            audio.name = lang + ".mp3"
+            tts.write_to_fp(audio)
+            await m.delete()
+            await message.reply_audio(audio)
+            audio.close()
+            return
+    await message.reply_text("Reply to some text ffs.")
