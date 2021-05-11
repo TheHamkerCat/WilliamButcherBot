@@ -75,8 +75,8 @@ async def runs(_, message):
 async def getid(_, message):
     if len(message.command) == 2:
         id = (await app.get_users(message.text.split(None, 1)[1])).id
-        text = f"<b>ID:</b> {id}"
-        await message.reply_text(text)
+        text = f"**ID:** `{id}`"
+        await message.reply_text(text, parse_mode="html")
         return
     text_unping = "<b>Chat ID:</b>"
     if message.chat.username:
@@ -118,9 +118,9 @@ async def getid(_, message):
             text += f" <code>{reply.forward_from.id}</code>\n"
             text_unping += text
             text_ping += f'\n<b><a href="tg://user?id={reply.forward_from.id}">Forwarded User ID:</a></b> <code>{reply.forward_from.id}</code>\n'
-    reply = await message.reply_text(text_unping, disable_web_page_preview=True)
+    reply = await message.reply_text(text_unping, disable_web_page_preview=True, parse_mode="html")
     if text_unping != text_ping:
-        await reply.edit_text(text_ping, disable_web_page_preview=True)
+        await reply.edit_text(text_ping, disable_web_page_preview=True, parse_mode="html")
 
 # Random
 

@@ -43,7 +43,7 @@ from pyrogram import __version__ as pyrover, filters
 from time import time, ctime
 from random import randint
 from wbb.utils.fetch import fetch
-from wbb.modules.user_info import get_user_info
+from wbb.modules.info import get_user_info, get_chat_info
 from wbb.modules.music import download_youtube_audio
 from wbb.utils.functions import test_speedtest, get_http_status_code, make_carbon
 from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
@@ -60,7 +60,8 @@ keywords_list = [
     "wall", "yt", "torrent", "lyrics", "wiki",
     "speedtest", "music", "saavn", "deezer",
     "gh_repo", "gh_user", "search", "paste",
-    "nsfw_scan", "ytmusic", "carbon", "info"
+    "nsfw_scan", "ytmusic", "carbon", "info",
+    "chat_info"
 ]
 
 
@@ -877,7 +878,24 @@ async def user_info_inline_func(answers, user):
     answers.append(
         InlineQueryResultArticle(
             title="Found User.",
-            input_message_content=InputTextMessageContent(caption)
+            input_message_content=InputTextMessageContent(
+                caption,
+                disable_web_page_preview=True
+            )
+        )
+    )
+    return answers
+
+
+async def chat_info_inline_func(answers, chat):
+    caption, photo_id = await get_chat_info(chat)
+    answers.append(
+        InlineQueryResultArticle(
+            title="Found Chat.",
+            input_message_content=InputTextMessageContent(
+                caption,
+                disable_web_page_preview=True
+            )
         )
     )
     return answers
