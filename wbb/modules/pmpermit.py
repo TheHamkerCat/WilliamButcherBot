@@ -61,14 +61,14 @@ async def pmpermit_func(_, message):
 @capture_err
 async def pm_approve(_, message):
     if not message.reply_to_message:
-        await message.edit("Reply to a user's message to approve.")
+        await edit_or_reply(message, text="Reply to a user's message to approve.")
         return
     user_id = message.reply_to_message.from_user.id
     if await is_pmpermit_approved(user_id):
-        await message.edit("User is already approved to pm")
+        await edit_or_reply(message, text="User is already approved to pm")
         return
     await approve_pmpermit(user_id)
-    m = await message.edit("User is approved to pm")
+    m = await edit_or_reply(message, text="User is approved to pm")
     await asyncio.sleep(2)
     await m.delete()
 
@@ -76,11 +76,11 @@ async def pm_approve(_, message):
 @app2.on_message(filters.command("disapprove", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS) & ~filters.via_bot)
 async def pm_disapprove(_, message):
     if not message.reply_to_message:
-        await message.edit("Reply to a user's message to approve.")
+        await edit_or_reply(message, text="Reply to a user's message to approve.")
         return
     user_id = message.reply_to_message.from_user.id
     if not await is_pmpermit_approved(user_id):
-        await message.edit("User is already disapproved to pm")
+        await edit_or_reply(message, text="User is already disapproved to pm")
         async for m in app2.iter_history(user_id, limit=6):
             if m.reply_markup:
                 try:
@@ -89,28 +89,28 @@ async def pm_disapprove(_, message):
                     pass
         return
     await disapprove_pmpermit(user_id)
-    await message.edit("User is disapproved to pm")
+    await edit_or_reply(message, text="User is disapproved to pm")
 
 
 @app2.on_message(filters.command("block", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS) & ~filters.via_bot)
 @capture_err
 async def block_user_func(_, message):
     if not message.reply_to_message:
-        await message.edit("Reply to a user's message to approve.")
+        await edit_or_reply(message, text="Reply to a user's message to block.")
         return
     user_id = message.reply_to_message.from_user.id
     await app2.block_user(user_id)
-    await message.edit("Successfully blocked the user")
+    await edit_or_reply(message, text="Successfully blocked the user")
 
 
 @app2.on_message(filters.command("unblock", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS) & ~filters.via_bot)
 async def unblock_user_func(_, message):
     if not message.reply_to_message:
-        await message.edit("Reply to a user's message to approve.")
+        await edit_or_reply(message, text="Reply to a user's message to unblock.")
         return
     user_id = message.reply_to_message.from_user.id
     await app2.unblock_user(user_id)
-    await message.edit("Successfully Unblocked the user")
+    await edit_or_reply(message, text="Successfully Unblocked the user")
 
 
 """ CALLBACK QUERY HANDLER """

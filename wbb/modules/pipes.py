@@ -58,6 +58,7 @@ pipes_list_userbot = []
 
 
 async def load_pipes():
+    print("[INFO]: LOADING PIPES")
     global pipes_list_bot, pipes_list_userbot
     pipes_list_bot = []
     pipes_list_userbot = []

@@ -1,6 +1,5 @@
 ffmpeg-python
 gTTS
-spamwatch
 carbonnow
 aiohttp
 aiofiles

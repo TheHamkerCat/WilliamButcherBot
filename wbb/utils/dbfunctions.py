@@ -40,6 +40,7 @@ nsfwdb = db.nsfw
 captcha_cachedb = db.captcha_cache
 blacklist_filtersdb = db.blaclist_filters
 pipesdb = db.pipes
+sudoersdb = db.sudoers
 
 """ Notes functions """
 
@@ -139,7 +140,7 @@ async def get_filters_count() -> dict:
 async def _get_filters(chat_id: int) -> Dict[str, int]:
     _filters = await filtersdb.find_one({"chat_id": chat_id})
     if not _filters:
-        return []
+        return {}
     return _filters['filters']
 
 
@@ -708,3 +709,44 @@ async def show_pipes() -> list:
     if not pipes:
         return []
     return pipes['pipes']
+
+
+""" SUDOERS FUNCTIONS """
+
+
+async def get_sudoers() -> list:
+    sudoers = await sudoersdb.find_one({"sudo": "sudo"})
+    if not sudoers:
+        return []
+    return sudoers['sudoers']
+
+
+async def add_sudo(user_id: int) -> bool:
+    sudoers = await get_sudoers()
+    sudoers.append(user_id)
+    await sudoersdb.update_one(
+        {"sudo": "sudo"},
+        {
+            "$set": {
+                "sudoers": sudoers
+            }
+        },
+        upsert=True
+    )
+    return True
+
+
+async def remove_sudo(user_id: int) -> bool:
+    sudoers = await get_sudoers()
+    sudoers.remove(user_id)
+    await sudoersdb.update_one(
+        {"sudo": "sudo"},
+        {
+            "$set": {
+                "sudoers": sudoers
+            }
+        },
+        upsert=True
+    )
+    return True
+

@@ -26,6 +26,7 @@ from wbb import (
     USERBOT_USERNAME, USERBOT_PREFIX
 )
 from wbb.core.decorators.errors import capture_err
+from wbb.modules.userbot import edit_or_reply
 from wbb.utils.filter_groups import chatbot_group
 from pyrogram import filters
 
@@ -98,7 +99,7 @@ async def chatbot_talk(_, message):
 async def chatbot_status_ubot(_, message):
     global active_chats_ubot
     if len(message.text.split()) != 2:
-        await message.edit("**Usage**\n.chatbot [ON|OFF]")
+        await edit_or_reply(message, text="**Usage**\n.chatbot [ON|OFF]")
         return
     status = message.text.split(None, 1)[1]
     chat_id = message.chat.id
@@ -107,21 +108,21 @@ async def chatbot_status_ubot(_, message):
             active_chats_ubot.append(chat_id)
             text = "Chatbot Enabled Reply To Any Message " \
                    + "Of Mine To Get A Reply"
-            await message.edit(text)
+            await edit_or_reply(message, text=text)
             return
-        await message.edit("ChatBot Is Already Enabled.")
+        await edit_or_reply(message, text="ChatBot Is Already Enabled.")
         return
 
     elif status == "OFF" or status == "off" or status == "Off":
         if chat_id in active_chats_ubot:
             active_chats_ubot.remove(chat_id)
-            await message.edit("Chatbot Disabled!")
+            await edit_or_reply(message, text="Chatbot Disabled!")
             return
-        await message.edit("ChatBot Is Already Disabled.")
+        await edit_or_reply(message, text="ChatBot Is Already Disabled.")
         return
 
     else:
-        await message.edit("**Usage**\n/chatbot [ON|OFF]")
+        await edit_or_reply(message, text="**Usage**\n/chatbot [ON|OFF]")
 
 
 @app2.on_message(~filters.me & ~filters.private & filters.text & ~filters.edited, group=chatbot_group)

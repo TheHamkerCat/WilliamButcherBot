@@ -33,6 +33,5 @@ async def alive_command_func(_, message):
     await app2.send_inline_bot_result(
         message.chat.id,
         results.query_id,
-        results.results[0].id,
-        hide_via=True
+        results.results[0].id
     )

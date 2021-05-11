@@ -67,8 +67,8 @@ async def start_bot():
     print("+===============+===============+===============+===============+")
     print(bot_modules)
     print("+===============+===============+===============+===============+")
-    print(f"BOT Started Successfully as {BOT_NAME}!")
-    print(f"USERBOT Started Successfully as {USERBOT_NAME}!")
+    print(f"[INFO]: BOT STARTED AS {BOT_NAME}!")
+    print(f"[INFO]: USERBOT STARTED AS {USERBOT_NAME}!")
     await idle()
 
 

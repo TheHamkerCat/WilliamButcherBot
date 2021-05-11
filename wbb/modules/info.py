@@ -1,4 +1,4 @@
-from wbb import app, SUDOERS, spamwatch
+from wbb import app, SUDOERS
 from pyrogram import filters
 from pyrogram.types import Message
 from wbb.core.decorators.errors import capture_err
@@ -24,7 +24,6 @@ async def get_user_info(user):
     is_gbanned = await is_gbanned_user(user_id)
     is_sudo = user_id in SUDOERS
     karma = await user_global_karma(user_id)
-    banned_in_spamwatch = False if not spamwatch.get_ban(user_id) else True
     caption = f"""
 **ID:** `{user_id}`
 **DC:** {dc_id}
@@ -35,7 +34,6 @@ async def get_user_info(user):
 **Sudo:** {is_sudo}
 **Karma:** {karma}
 **Gbanned:** {is_gbanned}
-**Spamwatch Restricted:** {banned_in_spamwatch}
 """
     return [caption, photo_id]
 
