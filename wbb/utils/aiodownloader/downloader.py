@@ -111,12 +111,11 @@ class Handler:
         :param save_path: save path for the download
         :return:
         """
-
         return DownloadJob(self._session, file_url, save_path, self._chunk_size)
 
     async def download(self,
-                       *files_url: str,
-                       save_path: Optional[str] = None) -> List[DownloadJob]:
+                       url: str,
+                       save_path: Optional[str] = None) -> DownloadJob:
         """
         Downloads a bulk of files from the given list of urls to the given path.
 
@@ -124,11 +123,11 @@ class Handler:
         :param save_path: path to be used for saving the files. Defaults to the current dir
         """
 
-        jobs = [self._job_factory(url, save_path=save_path)
-                for url in files_url]
+        job = self._job_factory(url, save_path=save_path)
 
-        tasks = [asyncio.ensure_future(job.download()) for job in jobs]
+        task = asyncio.ensure_future(job.download())
 
-        await asyncio.gather(*tasks)
-
-        return [task.result() for task in tasks]
+        await task
+        file_name = url.split("/")[-1]
+        path = os.getcwd() + "/" + file_name if not save_path else save_path
+        return path
