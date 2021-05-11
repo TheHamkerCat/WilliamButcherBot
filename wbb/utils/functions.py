@@ -23,13 +23,16 @@ SOFTWARE.
 """
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from random import randint
+from math import sin, cos, sqrt, atan2, radians
 from wbb.utils import aiodownloader
+from wbb.utils.fetch import fetch
 from carbonnow import Carbon
 import speedtest
 import aiohttp
 import aiofiles
 import pickle
 import codecs
+from asyncio import gather
 
 """
 Just import 'downloader' anywhere and do downloader.download() to
@@ -131,12 +134,32 @@ async def transfer_sh(file):
             download_link = str(await resp.text()).strip()
     return download_link
 
+
 def obj_to_str(object):
     if not object:
         return False
     string = codecs.encode(pickle.dumps(object), "base64").decode()
     return string
 
+
 def str_to_obj(string: str):
     object = pickle.loads(codecs.decode(string.encode(), "base64"))
     return object
+
+
+async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
+    Radius_Earth = 6371.0088
+    data1, data2 = await gather(
+        fetch(f"http://ipinfo.io/{ip1}"),
+        fetch(f"http://ipinfo.io/{ip2}")
+    )
+    lat1, lon1 = data1['loc'].split(",")
+    lat2, lon2 = data2['loc'].split(",")
+    lat1, lon1 = radians(float(lat1)), radians(float(lon1))
+    lat2, lon2 = radians(float(lat2)), radians(float(lon2))
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    distance = Radius_Earth * c
+    return distance

@@ -63,6 +63,7 @@ keywords_list = [
     "nsfw_scan", "ytmusic", "carbon", "info"
 ]
 
+
 async def inline_help_func(__HELP__):
     buttons = InlineKeyboard(row_width=3)
     buttons.add(*[(InlineKeyboardButton(
@@ -81,9 +82,9 @@ async def inline_help_func(__HELP__):
             description="Get Github Respository Of Bot.",
             input_message_content=InputTextMessageContent(
                 "https://github.com/thehamkercat/WilliamButcherBot"
-                ),
+            ),
             thumb_url="https://hamker.me/gjc9fo3.png"
-            )
+        )
     ]
     answerss = await alive_function(answerss)
     return answerss

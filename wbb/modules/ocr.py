@@ -80,4 +80,3 @@ async def image_ocr(_, message):
     except MessageEmpty:
         await m.edit("There's no text in that image.")
         return
-    

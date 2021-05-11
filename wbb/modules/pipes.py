@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import app, app2, SUDOERS, MESSAGE_DUMP_CHAT, USERBOT_ID, BOT_ID
+from wbb import app, app2, SUDOERS, USERBOT_ID, BOT_ID
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.filter_groups import pipes_group
 from wbb.utils.dbfunctions import is_pipe_active, activate_pipe, deactivate_pipe, show_pipes
@@ -73,6 +73,7 @@ loop.create_task(load_pipes())
 
 
 @app.on_message(~filters.me, group=pipes_group)
+@capture_err
 async def pipes_worker_bot(_, message: Message):
     for pipe in pipes_list_bot:
         if pipe['from_chat_id'] == message.chat.id:
@@ -80,6 +81,7 @@ async def pipes_worker_bot(_, message: Message):
 
 
 @app2.on_message(~filters.me, group=pipes_group)
+@capture_err
 async def pipes_worker_userbot(_, message: Message):
     for pipe in pipes_list_userbot:
         if pipe['from_chat_id'] == message.chat.id:
@@ -107,6 +109,7 @@ async def pipes_worker_userbot(_, message: Message):
 
 
 @app.on_message(filters.command("activate_pipe") & filters.user(SUDOERS))
+@capture_err
 async def activate_pipe_func(_, message: Message):
     if len(message.command) != 4:
         await message.reply_text("**Usage:**\n/activate_pipe [FROM_CHAT_ID] [TO_CHAT_ID] [BOT|USERBOT]")
@@ -118,7 +121,6 @@ async def activate_pipe_func(_, message: Message):
     if fetcher != "bot" and fetcher != "userbot":
         await message.reply_text("Wrong fetcher, see help menu.")
         return
-    chat_id = message.chat.id
     if await is_pipe_active(from_chat, to_chat):
         await message.reply_text("This pipe is already active.")
         return
@@ -128,6 +130,7 @@ async def activate_pipe_func(_, message: Message):
 
 
 @app.on_message(filters.command("deactivate_pipe") & filters.user(SUDOERS))
+@capture_err
 async def deactivate_pipe_func(_, message: Message):
     if len(message.command) != 3:
         await message.reply_text("**Usage:**\n/deactivate_pipe [FROM_CHAT_ID] [TO_CHAT_ID]")
@@ -135,7 +138,6 @@ async def deactivate_pipe_func(_, message: Message):
     text = message.text.strip().split()
     from_chat = int(text[1])
     to_chat = int(text[2])
-    chat_id = message.chat.id
     if not await is_pipe_active(from_chat, to_chat):
         await message.reply_text("This pipe is already inactive.")
         return
@@ -145,6 +147,7 @@ async def deactivate_pipe_func(_, message: Message):
 
 
 @app.on_message(filters.command("pipes") & filters.user(SUDOERS))
+@capture_err
 async def show_pipes_func(_, message: Message):
     pipes = pipes_list_bot + pipes_list_userbot
     if not pipes:

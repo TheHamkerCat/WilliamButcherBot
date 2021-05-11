@@ -78,6 +78,7 @@ sends /rules, he'll get the message
 answers_dicc = []
 loop = asyncio.get_running_loop()
 
+
 async def get_initial_captcha_cache():
     global answers_dicc
     answers_dicc = await get_captcha_cache()
@@ -233,7 +234,7 @@ async def callback_query_welcome_button(_, callback_query):
         if answer != correct_answer:
             await callback_query.answer("Yeah, It's Wrong.")
             for iii in answers_dicc:
-                if iii['user_id'] == pending_user_id  and iii['chat_id'] == button_message.chat.id:
+                if iii['user_id'] == pending_user_id and iii['chat_id'] == button_message.chat.id:
                     attempts = iii['attempts']
                     if attempts >= 3:
                         answers_dicc.remove(iii)

@@ -20,8 +20,7 @@ async def get_user_info(user):
     is_gbanned = await is_gbanned_user(user_id)
     is_sudo = user_id in SUDOERS
     karma = await user_global_karma(user_id)
-    banned_in_spamwatch = False if spamwatch.get_ban(
-        user_id) == False else True
+    banned_in_spamwatch = False if not spamwatch.get_ban(user_id) else True
     caption = f"""
 **ID:** `{user_id}`
 **DC:** {dc_id}
