@@ -25,6 +25,7 @@ SOFTWARE.
 from wbb import app, app2, BOT_ID, USERBOT_ID, SUDOERS, USERBOT_PREFIX
 from pyrogram import filters
 from wbb.utils.dbfunctions import is_pmpermit_approved, approve_pmpermit, disapprove_pmpermit
+from wbb.modules.userbot import edit_or_reply
 from wbb.core.decorators.errors import capture_err
 import asyncio
 

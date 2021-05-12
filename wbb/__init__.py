@@ -130,7 +130,7 @@ def get_info(app, app2):
 
 print("[INFO]: STARTING BOT CLIENT")
 app.start()
-print("[info]: starting userbot client")
+print("[INFO]: STARTING USERBOT CLIENT")
 app2.start()
 get_info(app, app2)
 
