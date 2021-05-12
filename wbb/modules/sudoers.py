@@ -116,7 +116,7 @@ async def ban_globally(_, message):
             try:
                 await app.send_message(
                     user.id, f"Hello, You have been globally banned by {from_user.mention},"
-                    + " You can appeal for this ban by talking to {from_user.mention}.")
+                    + " You can appeal for this ban in @WBBSupport.")
             except Exception:
                 pass
             await m.edit(f"Banned {user.mention} Globally!")
@@ -170,7 +170,7 @@ __**New Global Ban**__
                 await app.send_message(
                     user_id, f"""
 Hello, You have been globally banned by {from_user_mention},
-You can appeal for this ban by talking to {from_user_mention}.""")
+You can appeal for this ban in @WBBSupport.""")
             except Exception:
                 pass
             await m.edit(f"Banned {mention} Globally!")
