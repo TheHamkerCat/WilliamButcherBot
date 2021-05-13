@@ -29,7 +29,8 @@ from pyrogram import filters
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.admin import member_permissions
-from wbb.utils.dbfunctions import (add_served_chat, delete_filter, get_filter,
+from wbb.utils.dbfunctions import (add_served_chat, blacklisted_chats,
+                                   delete_filter, get_filter,
                                    get_filters_names, is_served_chat,
                                    save_filter)
 from wbb.utils.filter_groups import chat_filters_group
@@ -134,21 +135,18 @@ async def filters_re(_, message):
                 _filter = await get_filter(chat_id, word)
                 data_type = _filter["type"]
                 data = _filter["data"]
+                if text == word:
+                    await message.delete()
+                return
                 if data_type == "text":
                     if message.reply_to_message:
                         await message.reply_to_message.reply_text(
                             data, disable_web_page_preview=True
                         )
-                        if text == word:
-                            await message.delete()
-                        return
                     await message.reply_text(data, disable_web_page_preview=True)
                 else:
                     if message.reply_to_message:
                         await message.reply_to_message.reply_sticker(data)
-                        if text == word:
-                            await message.delete()
-                        return
                     await message.reply_sticker(data)
     except Exception as e:
         e = traceback.format_exc()
@@ -156,6 +154,10 @@ async def filters_re(_, message):
         pass
 
     """ CHAT WATCHER """
+    blacklisted_chats_list = await blacklisted_chats()
+    if chat_id in blacklisted_chats_list:
+        await app.leave_chat(chat_id)
+        return
     served_chat = await is_served_chat(chat_id)
     if served_chat:
         return

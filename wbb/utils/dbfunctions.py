@@ -39,9 +39,10 @@ pmpermitdb = db.pmpermit
 welcomedb = db.welcome_text
 nsfwdb = db.nsfw
 captcha_cachedb = db.captcha_cache
-blacklist_filtersdb = db.blaclist_filters
+blacklist_filtersdb = db.blacklist_filters
 pipesdb = db.pipes
 sudoersdb = db.sudoers
+blacklist_chatdb = db.blacklist_chat
 
 """ Notes functions """
 
@@ -637,5 +638,33 @@ async def remove_sudo(user_id: int) -> bool:
     sudoers.remove(user_id)
     await sudoersdb.update_one(
         {"sudo": "sudo"}, {"$set": {"sudoers": sudoers}}, upsert=True
+    )
+    return True
+
+
+""" BLACKLIST CHATS FUNCTIONS """
+
+
+async def blacklisted_chats() -> list:
+    chats = await blacklist_chatdb.find_one({"chat": "chat"})
+    if not chats:
+        return []
+    return chats["chats"]
+
+
+async def blacklist_chat(chat_id: int) -> bool:
+    chats = await blacklisted_chats()
+    chats.append(chats)
+    await blacklist_chatdb.update_one(
+        {"chat": "chat"}, {"$set": {"chats": chats}}, upsert=True
+    )
+    return True
+
+
+async def whitelist_chat(chat_id: int) -> bool:
+    chats = await blacklisted_chats()
+    chats.remove(chats)
+    await blacklist_chatdb.update_one(
+        {"chat": "chat"}, {"$set": {"chats": chats}}, upsert=True
     )
     return True
