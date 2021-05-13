@@ -22,18 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from __future__ import unicode_literals
-from urllib.parse import urlparse
-import youtube_dl
-import aiohttp
-import aiofiles
+
 import os
-import ffmpeg
 from random import randint
+from urllib.parse import urlparse
+
+import aiofiles
+import aiohttp
+import ffmpeg
+import youtube_dl
 from pyrogram import filters
-from wbb import app, arq, SUDOERS
+
+from wbb import SUDOERS, app, arq
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.pastebin import paste
-
 
 __MODULE__ = "Music"
 __HELP__ = """/ytmusic [link] To Download Music From Various Websites Including Youtube. [SUDOERS]
@@ -52,9 +54,14 @@ def get_file_extension_from_url(url):
 
 async def download_youtube_audio(url: str, m=0):
     global is_downloading
-    with youtube_dl.YoutubeDL({'format': 'bestaudio', 'writethumbnail': True, }) as ydl:
+    with youtube_dl.YoutubeDL(
+        {
+            "format": "bestaudio",
+            "writethumbnail": True,
+        }
+    ) as ydl:
         info_dict = ydl.extract_info(url, download=False)
-        if int(float(info_dict['duration'])) > 600:
+        if int(float(info_dict["duration"])) > 600:
             if m != 0:
                 await m.edit("This music cannot be downloaded as it's too long.")
             is_downloading = False
@@ -62,18 +69,18 @@ async def download_youtube_audio(url: str, m=0):
         ydl.process_info(info_dict)
         audio_file = ydl.prepare_filename(info_dict)
         basename = audio_file.rsplit(".", 1)[-2]
-        if info_dict['ext'] == 'webm':
+        if info_dict["ext"] == "webm":
             audio_file_opus = basename + ".opus"
-            ffmpeg.input(audio_file).output(audio_file_opus,
-                                            codec="copy", loglevel='error').overwrite_output().run()
+            ffmpeg.input(audio_file).output(
+                audio_file_opus, codec="copy", loglevel="error"
+            ).overwrite_output().run()
             os.remove(audio_file)
             audio_file = audio_file_opus
-        thumbnail_url = info_dict['thumbnail']
-        thumbnail_file = basename + "." + \
-            get_file_extension_from_url(thumbnail_url)
-        title = info_dict['title']
-        performer = info_dict['uploader']
-        duration = int(float(info_dict['duration']))
+        thumbnail_url = info_dict["thumbnail"]
+        thumbnail_file = basename + "." + get_file_extension_from_url(thumbnail_url)
+        title = info_dict["title"]
+        performer = info_dict["uploader"]
+        duration = int(float(info_dict["duration"]))
     return [title, performer, duration, audio_file, thumbnail_file]
 
 
@@ -86,20 +93,30 @@ async def music(_, message):
         return
     url = message.text.split(None, 1)[1]
     if is_downloading:
-        await message.reply_text("Another download is in progress, try again after sometime.")
+        await message.reply_text(
+            "Another download is in progress, try again after sometime."
+        )
         return
     is_downloading = True
-    m = await message.reply_text(f"Downloading {url}",
-                                 disable_web_page_preview=True)
+    m = await message.reply_text(f"Downloading {url}", disable_web_page_preview=True)
     try:
-        title, performer, duration, audio_file, thumbnail_file = await download_youtube_audio(url, message)
+        (
+            title,
+            performer,
+            duration,
+            audio_file,
+            thumbnail_file,
+        ) = await download_youtube_audio(url, message)
     except Exception as e:
         is_downloading = False
         await m.edit(str(e))
         return
     await message.reply_audio(
-        audio_file, duration=duration,
-        performer=performer, title=title, thumb=thumbnail_file
+        audio_file,
+        duration=duration,
+        performer=performer,
+        title=title,
+        thumb=thumbnail_file,
     )
     await m.delete()
     os.remove(audio_file)
@@ -113,10 +130,11 @@ async def download_song(url):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
             if resp.status == 200:
-                f = await aiofiles.open(song_name, mode='wb')
+                f = await aiofiles.open(song_name, mode="wb")
                 await f.write(await resp.read())
                 await f.close()
     return song_name
+
 
 # Jiosaavn Music
 
@@ -129,7 +147,9 @@ async def jssong(_, message):
         await message.reply_text("/saavn requires an argument.")
         return
     if is_downloading:
-        await message.reply_text("Another download is in progress, try again after sometime.")
+        await message.reply_text(
+            "Another download is in progress, try again after sometime."
+        )
         return
     is_downloading = True
     text = message.text.split(None, 1)[1]
@@ -156,6 +176,7 @@ async def jssong(_, message):
         return
     is_downloading = False
 
+
 # Deezer Music
 
 
@@ -167,7 +188,9 @@ async def deezsong(_, message):
         await message.reply_text("/deezer requires an argument.")
         return
     if is_downloading:
-        await message.reply_text("Another download is in progress, try again after sometime.")
+        await message.reply_text(
+            "Another download is in progress, try again after sometime."
+        )
         return
     is_downloading = True
     text = message.text.split(None, 1)[1]
@@ -184,7 +207,8 @@ async def deezsong(_, message):
         await message.reply_audio(
             audio=song,
             title=title,
-            performer=artist,)
+            performer=artist,
+        )
         os.remove(song)
         await m.delete()
     except Exception as e:
@@ -192,6 +216,7 @@ async def deezsong(_, message):
         await m.edit(str(e))
         return
     is_downloading = False
+
 
 # Lyrics
 

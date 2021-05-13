@@ -21,17 +21,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import app, SUDOERS
-from wbb.modules.admin import member_permissions, list_admins
-from wbb.utils.dbfunctions import (
-    save_blacklist_filter, get_blacklisted_words, delete_blacklist_filter
-)
-from pyrogram import filters
-from pyrogram.types import ChatPermissions
-from wbb.core.decorators.errors import capture_err
-from wbb.utils.filter_groups import blacklist_filters_group
 import re
 import traceback
+
+from pyrogram import filters
+from pyrogram.types import ChatPermissions
+
+from wbb import SUDOERS, app
+from wbb.core.decorators.errors import capture_err
+from wbb.modules.admin import list_admins, member_permissions
+from wbb.utils.dbfunctions import (delete_blacklist_filter,
+                                   get_blacklisted_words,
+                                   save_blacklist_filter)
+from wbb.utils.filter_groups import blacklist_filters_group
 
 __MODULE__ = "Blacklist"
 __HELP__ = """
@@ -119,8 +121,11 @@ async def blacklist_filters_re(_, message):
                     await message.chat.restrict_member(user.id, ChatPermissions())
                 except Exception:
                     return
-                await app.send_message(chat_id, f"Muted {user.mention} [`{user.id}`] due to a blacklist "
-                                       + f"match on {word}.")
+                await app.send_message(
+                    chat_id,
+                    f"Muted {user.mention} [`{user.id}`] due to a blacklist "
+                    + f"match on {word}.",
+                )
                 return
     except Exception as e:
         e = traceback.format_exc()

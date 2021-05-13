@@ -1,8 +1,9 @@
-from typing import Optional, List, Union
-from pyrogram import raw, types, utils
-from pyrogram.file_id import FileType, FileId, PHOTO_TYPES, DOCUMENT_TYPES
-from pyrogram.types import InlineQueryResult
+from typing import List, Optional, Union
+
 import pyrogram
+from pyrogram import raw, types, utils
+from pyrogram.file_id import DOCUMENT_TYPES, PHOTO_TYPES, FileId, FileType
+from pyrogram.types import InlineQueryResult
 
 
 class InlineQueryResultAudio(InlineQueryResult):
@@ -71,13 +72,13 @@ class InlineQueryResultAudio(InlineQueryResult):
         parse_mode: Optional[str] = object,
         caption_entities: List["types.MessageEntity"] = None,
         reply_markup: "types.InlineKeyboardMarkup" = None,
-        input_message_content: "types.InputMessageContent" = None
+        input_message_content: "types.InputMessageContent" = None,
     ):
         super().__init__("audio", id, input_message_content, reply_markup)
 
         self.audio_url = audio_url
         self.thumb_url = thumb_url
-        self.voice = True if self.mime_type == 'audio/ogg' else False
+        self.voice = True if self.mime_type == "audio/ogg" else False
         self.title = title
         self.caption = caption
         self.description = description
@@ -91,31 +92,33 @@ class InlineQueryResultAudio(InlineQueryResult):
 
         if mime_type == "text/html" and input_message_content is None:
             raise ValueError(
-                "input_message_content is required for audio with `text/html` mime type")
+                "input_message_content is required for audio with `text/html` mime type"
+            )
 
     async def write(self, client: "pyrogram.Client"):
         audio = raw.types.InputWebDocument(
-            url=self.audio_url,
-            size=0,
-            mime_type=self.mime_type,
-            attributes=[]
+            url=self.audio_url, size=0, mime_type=self.mime_type, attributes=[]
         )
 
         thumb = raw.types.InputWebDocument(
             url=self.thumb_url,
             size=0,
             mime_type="image/jpeg",
-            attributes=[raw.types.DocumentAttributeAudio(
-                duration=self.duration,
-                voice=self.voice,
-                title=self.title,
-                performer=self.performer,
-            )]
+            attributes=[
+                raw.types.DocumentAttributeAudio(
+                    duration=self.duration,
+                    voice=self.voice,
+                    title=self.title,
+                    performer=self.performer,
+                )
+            ],
         )
 
-        message, entities = (await utils.parse_text_entities(
-            client, self.caption, self.parse_mode, self.caption_entities
-        )).values()
+        message, entities = (
+            await utils.parse_text_entities(
+                client, self.caption, self.parse_mode, self.caption_entities
+            )
+        ).values()
 
         return raw.types.InputBotInlineResult(
             id=self.id,
@@ -128,10 +131,13 @@ class InlineQueryResultAudio(InlineQueryResult):
                 await self.input_message_content.write(client, self.reply_markup)
                 if self.input_message_content
                 else raw.types.InputBotInlineMessageMediaAuto(
-                    reply_markup=await self.reply_markup.write(client) if self.reply_markup else None,
+                    reply_markup=await self.reply_markup.write(client)
+                    if self.reply_markup
+                    else None,
                     message=message,
-                    entities=entities)
-            )
+                    entities=entities,
+                )
+            ),
         )
 
 
@@ -193,7 +199,7 @@ class InlineQueryResultCachedDocument(InlineQueryResult):
         parse_mode: Optional[str] = object,
         caption_entities: List["types.MessageEntity"] = None,
         reply_markup: "types.InlineKeyboardMarkup" = None,
-        input_message_content: "types.InputMessageContent" = None
+        input_message_content: "types.InputMessageContent" = None,
     ):
         super().__init__("file", id, input_message_content, reply_markup)
 
@@ -209,9 +215,11 @@ class InlineQueryResultCachedDocument(InlineQueryResult):
     async def write(self, client: "pyrogram.Client"):
         document = get_input_file_from_file_id(self.file_id)
 
-        message, entities = (await utils.parse_text_entities(
-            client, self.caption, self.parse_mode, self.caption_entities
-        )).values()
+        message, entities = (
+            await utils.parse_text_entities(
+                client, self.caption, self.parse_mode, self.caption_entities
+            )
+        ).values()
 
         return raw.types.InputBotInlineResultDocument(
             id=self.id,
@@ -223,46 +231,49 @@ class InlineQueryResultCachedDocument(InlineQueryResult):
                 await self.input_message_content.write(client, self.reply_markup)
                 if self.input_message_content
                 else raw.types.InputBotInlineMessageMediaAuto(
-                    reply_markup=await self.reply_markup.write(client) if self.reply_markup else None,
+                    reply_markup=await self.reply_markup.write(client)
+                    if self.reply_markup
+                    else None,
                     message=message,
-                    entities=entities
+                    entities=entities,
                 )
-            )
+            ),
         )
 
 
 def get_input_file_from_file_id(
-    file_id: str,
-    expected_file_type: FileType = None
+    file_id: str, expected_file_type: FileType = None
 ) -> Union["raw.types.InputPhoto", "raw.types.InputDocument"]:
     try:
         decoded = FileId.decode(file_id)
     except Exception:
-        raise ValueError(f'Failed to decode "{file_id}". The value does not represent an existing local file, '
-                         f'HTTP URL, or valid file id.')
+        raise ValueError(
+            f'Failed to decode "{file_id}". The value does not represent an existing local file, '
+            f"HTTP URL, or valid file id."
+        )
 
     file_type = decoded.file_type
 
     if expected_file_type is not None and file_type != expected_file_type:
         raise ValueError(
-            f'Expected: "{expected_file_type}", got "{file_type}" file_id instead')
+            f'Expected: "{expected_file_type}", got "{file_type}" file_id instead'
+        )
 
     if file_type in (FileType.THUMBNAIL, FileType.CHAT_PHOTO):
-        raise ValueError(
-            f"This file_id can only be used for download: {file_id}")
+        raise ValueError(f"This file_id can only be used for download: {file_id}")
 
     if file_type in PHOTO_TYPES:
         return raw.types.InputPhoto(
             id=decoded.media_id,
             access_hash=decoded.access_hash,
-            file_reference=decoded.file_reference
+            file_reference=decoded.file_reference,
         )
 
     if file_type in DOCUMENT_TYPES:
         return raw.types.InputDocument(
             id=decoded.media_id,
             access_hash=decoded.access_hash,
-            file_reference=decoded.file_reference
+            file_reference=decoded.file_reference,
         )
 
     raise ValueError(f"Unknown file id: {file_id}")

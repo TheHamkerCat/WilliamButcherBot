@@ -22,16 +22,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import asyncio
 import time
 from os import path
-from telegraph import Telegraph
-from Python_ARQ import ARQ
+
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
-import asyncio
-from pyromod import listen
 from pyrogram import Client
+from pyromod import listen
+from Python_ARQ import ARQ
+from telegraph import Telegraph
+
 print("[INFO]: INITIALIZING")
-is_config = path.exists('config.py')
+is_config = path.exists("config.py")
 if is_config:
     from config import *
 else:
@@ -54,29 +56,30 @@ print("[INFO]: LOADING MONGODB")
 mongo_client = MongoClient(MONGO_DB_URI)
 db = mongo_client.wbb
 
+
 async def load_sudoers():
     global SUDOERS
     print("[INFO]: LOADING SUDOERS")
     sudoersdb = db.sudoers
     sudoers = await sudoersdb.find_one({"sudo": "sudo"})
-    sudoers = [] if not sudoers else sudoers['sudoers']
+    sudoers = [] if not sudoers else sudoers["sudoers"]
     for user_id in SUDOERS:
         if user_id not in sudoers:
             sudoers.append(user_id)
             await sudoersdb.update_one(
-                {"sudo": "sudo"},
-                {"$set": {"sudoers": sudoers}},
-                upsert=True
+                {"sudo": "sudo"}, {"$set": {"sudoers": sudoers}}, upsert=True
             )
     SUDOERS = (SUDOERS + sudoers) if sudoers else SUDOERS
+
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(load_sudoers())
 
 if not HEROKU:
     print("[INFO]: LOADING USERBOT CLIENT")
-    app2 = Client("userbot", phone_number=PHONE_NUMBER,
-                  api_id=API_ID, api_hash=API_HASH)
+    app2 = Client(
+        "userbot", phone_number=PHONE_NUMBER, api_id=API_ID, api_hash=API_HASH
+    )
 else:
     print("[INFO]: LOADING USERBOT CLIENT")
     app2 = Client(SESSION_STRING, api_id=API_ID, api_hash=API_HASH)

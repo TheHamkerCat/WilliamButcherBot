@@ -21,37 +21,29 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import app, SUDOERS, BOT_ID, BOT_NAME
-from wbb.core.decorators.errors import capture_err
-from wbb.utils.fetch import fetch
-from wbb.modules import ALL_MODULES
-from wbb.utils.inlinefuncs import keywords_list
-from wbb.utils.dbfunctions import (
-    get_served_chats,
-    remove_served_chat,
-    get_notes_count,
-    get_filters_count,
-    get_warns_count,
-    get_karmas_count,
-    get_gbans_count,
-    get_blacklist_filters_count
-)
-from pyrogram import filters
 import asyncio
+
+from pyrogram import filters
+
+from wbb import BOT_ID, BOT_NAME, SUDOERS, app
+from wbb.core.decorators.errors import capture_err
+from wbb.modules import ALL_MODULES
+from wbb.utils.dbfunctions import (get_blacklist_filters_count,
+                                   get_filters_count, get_gbans_count,
+                                   get_karmas_count, get_notes_count,
+                                   get_served_chats, get_warns_count,
+                                   remove_served_chat)
+from wbb.utils.fetch import fetch
+from wbb.utils.inlinefuncs import keywords_list
 
 """ CHAT WATCHER IS IN filters.py"""
 
 
-@app.on_message(
-    filters.command("gstats") & filters.user(SUDOERS)
-    & ~filters.edited
-)
+@app.on_message(filters.command("gstats") & filters.user(SUDOERS) & ~filters.edited)
 @capture_err
 async def global_stats(_, message):
     m = await app.send_message(
-        message.chat.id,
-        text="__**Analysing Stats**__",
-        disable_web_page_preview=True
+        message.chat.id, text="__**Analysing Stats**__", disable_web_page_preview=True
     )
 
     # For bot served chat and users count
@@ -62,7 +54,7 @@ async def global_stats(_, message):
         served_chats.append(int(chat["chat_id"]))
     await m.edit(
         f"__**Generating Statistics Report, Should Take {len(served_chats)*6}+ Seconds.**__",
-        disable_web_page_preview=True
+        disable_web_page_preview=True,
     )
     for served_chat in served_chats:
         try:
@@ -113,7 +105,7 @@ async def global_stats(_, message):
     developers = await fetch(url)
     commits = 0
     for developer in developers:
-        commits += developer['contributions']
+        commits += developer["contributions"]
     developers = len(developers)
     # Modules info
     modules_count = len(ALL_MODULES)

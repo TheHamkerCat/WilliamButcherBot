@@ -21,12 +21,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import app
-from wbb.core.decorators.errors import capture_err
-from wbb.utils.json_prettify import json_prettify
-from wbb.utils.fetch import fetch
 from pyrogram import filters
 
+from wbb import app
+from wbb.core.decorators.errors import capture_err
+from wbb.utils.fetch import fetch
+from wbb.utils.json_prettify import json_prettify
 
 __MODULE__ = "Covid"
 __HELP__ = """/covid - To Get Global Stats of Covid.

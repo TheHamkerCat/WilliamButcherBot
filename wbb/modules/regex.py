@@ -23,9 +23,11 @@ SOFTWARE.
 """
 import re
 import sre_constants
+
+from pyrogram import filters
+
 from wbb import app
 from wbb.utils.filter_groups import regex_group
-from pyrogram import filters
 
 __MODULE__ = "Sed"
 __HELP__ = "**Usage:**\ns/foo/bar"
@@ -34,7 +36,9 @@ __HELP__ = "**Usage:**\ns/foo/bar"
 DELIMITERS = ("/", ":", "|", "_")
 
 
-@app.on_message(filters.regex(r"s([{}]).*?\1.*".format("".join(DELIMITERS))), group=regex_group)
+@app.on_message(
+    filters.regex(r"s([{}]).*?\1.*".format("".join(DELIMITERS))), group=regex_group
+)
 async def sed(_, message):
     sed_result = separate_sed(message.text)
     if message.reply_to_message:
@@ -64,8 +68,7 @@ async def sed(_, message):
             if "i" in flags and "g" in flags:
                 text = re.sub(repl, repl_with, to_fix, flags=re.I).strip()
             elif "i" in flags:
-                text = re.sub(repl, repl_with, to_fix,
-                              count=1, flags=re.I).strip()
+                text = re.sub(repl, repl_with, to_fix, count=1, flags=re.I).strip()
             elif "g" in flags:
                 text = re.sub(repl, repl_with, to_fix).strip()
             else:
@@ -125,7 +128,7 @@ def separate_sed(sed_string):
                 and counter + 1 < len(sed_string)
                 and sed_string[counter + 1] == delim
             ):
-                sed_string = sed_string[:counter] + sed_string[counter + 1:]
+                sed_string = sed_string[:counter] + sed_string[counter + 1 :]
 
             elif sed_string[counter] == delim:
                 replace_with = sed_string[start:counter]

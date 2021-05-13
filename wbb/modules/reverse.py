@@ -1,12 +1,14 @@
-from wbb import app, SUDOERS
-from wbb.core.decorators.errors import capture_err
-from pyrogram import filters
-from bs4 import BeautifulSoup
-from random import randint
-import aiohttp
-import aiofiles
-import requests
 import os
+from random import randint
+
+import aiofiles
+import aiohttp
+import requests
+from bs4 import BeautifulSoup
+from pyrogram import filters
+
+from wbb import SUDOERS, app
+from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "Reverse"
 __HELP__ = "/reverse  - Reverse search an image. [SUDOERS ONLY]"
@@ -22,8 +24,16 @@ async def reverse_image_search(_, message):
         await message.reply_text("Reply to a message to reverse search it.")
         return
     reply = message.reply_to_message
-    if not reply.document and not reply.photo and not reply.sticker and not reply.animation and not reply.video:
-        await message.reply_text("Reply to an image/document/sticker/animation to reverse search it.")
+    if (
+        not reply.document
+        and not reply.photo
+        and not reply.sticker
+        and not reply.animation
+        and not reply.video
+    ):
+        await message.reply_text(
+            "Reply to an image/document/sticker/animation to reverse search it."
+        )
         return
     m = await message.reply_text("Searching")
     if reply.document:
@@ -61,10 +71,7 @@ async def reverse_image_search(_, message):
     async with aiofiles.open(image, "rb") as f:
         if image:
             search_url = "http://www.google.com/searchbyimage/upload"
-            multipart = {
-                "encoded_image": (image, await f.read()),
-                "image_content": ""
-            }
+            multipart = {"encoded_image": (image, await f.read()), "image_content": ""}
             response = requests.post(search_url, files=multipart, allow_redirects=False)
             location = response.headers.get("Location")
             os.remove(image)
@@ -82,10 +89,10 @@ async def reverse_image_search(_, message):
     text = anchor_element.text
     try:
         await app.send_photo(
-                message.chat.id,
-                photo=f"https://webshot.amanoteam.com/print?q={location}",
-                caption=f"**Query** [{text}]({location})"
-                )
+            message.chat.id,
+            photo=f"https://webshot.amanoteam.com/print?q={location}",
+            caption=f"**Query** [{text}]({location})",
+        )
         await m.delete()
     except Exception:
         text = f"**Result**: [Link]({location})"

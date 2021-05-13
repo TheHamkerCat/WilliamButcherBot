@@ -1,11 +1,13 @@
 # Written By [MaskedVirus | swatv3nub] for William and Ryūga
 # Kang With Proper Credits
 
-from wbb import app
 from pyrogram import filters
-from wbb.modules.admin import member_permissions
+
+from wbb import app
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.dbfunctions import is_antiservice_on, antiservice_on, antiservice_off
+from wbb.modules.admin import member_permissions
+from wbb.utils.dbfunctions import (antiservice_off, antiservice_on,
+                                   is_antiservice_on)
 
 __MODULE__ = "AntiService"
 __HELP__ = """
@@ -31,10 +33,14 @@ async def anti_service(_, message):
         return
     if status == "enable":
         await antiservice_on(chat_id)
-        await message.reply_text("Enabled AntiService System. I will Delete Service Messages from Now on.")
+        await message.reply_text(
+            "Enabled AntiService System. I will Delete Service Messages from Now on."
+        )
     elif status == "disable":
         await antiservice_off(chat_id)
-        await message.reply_text("Disabled AntiService System. I won't Be Deleting Service Message from Now on.")
+        await message.reply_text(
+            "Disabled AntiService System. I won't Be Deleting Service Message from Now on."
+        )
     else:
         await message.reply_text("Unknown Suffix, Use /antiservice [enable|disable]")
 

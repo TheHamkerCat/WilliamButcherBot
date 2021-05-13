@@ -21,13 +21,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from io import BytesIO
+
+from googletrans import Translator
+from gtts import gTTS
+from pyrogram import filters
+from pyrogram.types import Message
+
 from wbb import app
 from wbb.core.decorators.errors import capture_err
-from gtts import gTTS
-from googletrans import Translator
-from pyrogram.types import Message
-from pyrogram import filters
-from io import BytesIO
 
 __MODULE__ = "TTS"
 __HELP__ = "/tts - Convert Text To Speech."

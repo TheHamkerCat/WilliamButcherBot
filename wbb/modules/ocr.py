@@ -21,12 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import os
+
+from pyrogram import filters
+from pyrogram.errors.exceptions.bad_request_400 import MessageEmpty
+
 from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.functions import transfer_sh
-from pyrogram import filters
-from pyrogram.errors.exceptions.bad_request_400 import MessageEmpty
-import os
 
 
 @app.on_message(filters.command("ocr"))
@@ -36,8 +38,16 @@ async def image_ocr(_, message):
         await message.reply_text("Reply to an image or document to perform OCR on it.")
         return
     reply = message.reply_to_message
-    if not reply.document and not reply.photo and not reply.sticker and not reply.animation and not reply.video:
-        await message.reply_text("Reply to an image/document/sticker/animation to perform OCR on it.")
+    if (
+        not reply.document
+        and not reply.photo
+        and not reply.sticker
+        and not reply.animation
+        and not reply.video
+    ):
+        await message.reply_text(
+            "Reply to an image/document/sticker/animation to perform OCR on it."
+        )
         return
     m = await message.reply_text("Scanning")
     if reply.document:

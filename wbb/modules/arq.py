@@ -21,8 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import app, arq, ARQ_API_BASE_URL
 from pyrogram import filters
+
+from wbb import ARQ_API_BASE_URL, app, arq
 
 
 @app.on_message(filters.command("arq"))

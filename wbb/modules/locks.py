@@ -21,12 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import SUDOERS, app
-from wbb.modules.admin import member_permissions, current_chat_permissions
-from wbb.core.decorators.errors import capture_err
 from pyrogram import filters
-from pyrogram.types import ChatPermissions
 from pyrogram.errors.exceptions.bad_request_400 import ChatNotModified
+from pyrogram.types import ChatPermissions
+
+from wbb import SUDOERS, app
+from wbb.core.decorators.errors import capture_err
+from wbb.modules.admin import current_chat_permissions, member_permissions
 
 __MODULE__ = "Locks"
 __HELP__ = """
@@ -55,7 +56,7 @@ data = {
     "polls": "can_send_polls",
     "group_info": "can_change_info",
     "useradd": "can_invite_users",
-    "pin": "can_pin_messages"
+    "pin": "can_pin_messages",
 }
 
 
@@ -101,7 +102,12 @@ async def locks_func(_, message):
 
         permissions = await current_chat_permissions(chat_id)
         if parameter in data:
-            await tg_lock(message, permissions, data[parameter], True if state == "lock" else False)
+            await tg_lock(
+                message,
+                permissions,
+                data[parameter],
+                True if state == "lock" else False,
+            )
             return
         elif parameter == "all" and state == "lock":
             await app.set_chat_permissions(chat_id, ChatPermissions())

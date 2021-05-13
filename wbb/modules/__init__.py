@@ -24,8 +24,8 @@ SOFTWARE.
 import glob
 import importlib
 import sys
+from os.path import basename, dirname, isfile
 
-from os.path import dirname, basename, isfile
 from wbb import MOD_LOAD, MOD_NOLOAD
 
 

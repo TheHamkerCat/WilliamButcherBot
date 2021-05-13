@@ -21,15 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import (
-    app, app2, arq, BOT_ID, SUDOERS, USERBOT_ID,
-    USERBOT_USERNAME, USERBOT_PREFIX
-)
+from pyrogram import filters
+
+from wbb import (BOT_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX, USERBOT_USERNAME,
+                 app, app2, arq)
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.userbot import edit_or_reply
 from wbb.utils.filter_groups import chatbot_group
-from pyrogram import filters
-
 
 __MODULE__ = "ChatBot"
 __HELP__ = """
@@ -56,8 +54,7 @@ async def chatbot_status(_, message):
     if status == "ON" or status == "on" or status == "On":
         if chat_id not in active_chats_bot:
             active_chats_bot.append(chat_id)
-            text = "Chatbot Enabled Reply To Any Message " \
-                   + "Of Mine To Get A Reply"
+            text = "Chatbot Enabled Reply To Any Message " + "Of Mine To Get A Reply"
             await message.reply_text(text)
             return
         await message.reply_text("ChatBot Is Already Enabled.")
@@ -75,8 +72,10 @@ async def chatbot_status(_, message):
         await message.reply_text("**Usage**\n/chatbot [ON|OFF]")
 
 
-@app.on_message(filters.text & filters.reply & ~filters.bot &
-                ~filters.via_bot & ~filters.forwarded, group=chatbot_group)
+@app.on_message(
+    filters.text & filters.reply & ~filters.bot & ~filters.via_bot & ~filters.forwarded,
+    group=chatbot_group,
+)
 @capture_err
 async def chatbot_talk(_, message):
     if message.chat.id not in active_chats_bot:
@@ -94,7 +93,11 @@ async def chatbot_talk(_, message):
 """ FOR USERBOT """
 
 
-@app2.on_message(filters.command("chatbot", prefixes=USERBOT_PREFIX) & ~filters.edited & filters.user(SUDOERS))
+@app2.on_message(
+    filters.command("chatbot", prefixes=USERBOT_PREFIX)
+    & ~filters.edited
+    & filters.user(SUDOERS)
+)
 @capture_err
 async def chatbot_status_ubot(_, message):
     global active_chats_ubot
@@ -106,8 +109,7 @@ async def chatbot_status_ubot(_, message):
     if status == "ON" or status == "on" or status == "On":
         if chat_id not in active_chats_ubot:
             active_chats_ubot.append(chat_id)
-            text = "Chatbot Enabled Reply To Any Message " \
-                   + "Of Mine To Get A Reply"
+            text = "Chatbot Enabled Reply To Any Message " + "Of Mine To Get A Reply"
             await edit_or_reply(message, text=text)
             return
         await edit_or_reply(message, text="ChatBot Is Already Enabled.")
@@ -125,15 +127,20 @@ async def chatbot_status_ubot(_, message):
         await edit_or_reply(message, text="**Usage**\n/chatbot [ON|OFF]")
 
 
-@app2.on_message(~filters.me & ~filters.private & filters.text & ~filters.edited, group=chatbot_group)
+@app2.on_message(
+    ~filters.me & ~filters.private & filters.text & ~filters.edited, group=chatbot_group
+)
 @capture_err
 async def chatbot_talk_ubot(_, message):
     if message.chat.id not in active_chats_ubot:
         return
-    username = ("@" + str(USERBOT_USERNAME))
+    username = "@" + str(USERBOT_USERNAME)
     query = message.text
     if message.reply_to_message:
-        if message.reply_to_message.from_user.id != USERBOT_ID and username not in query:
+        if (
+            message.reply_to_message.from_user.id != USERBOT_ID
+            and username not in query
+        ):
             return
     else:
         if username not in query:
@@ -143,7 +150,10 @@ async def chatbot_talk_ubot(_, message):
     await message.reply_text(response)
 
 
-@app2.on_message(filters.text & filters.private & ~filters.me & ~filters.edited, group=(chatbot_group+1))
+@app2.on_message(
+    filters.text & filters.private & ~filters.me & ~filters.edited,
+    group=(chatbot_group + 1),
+)
 @capture_err
 async def chatbot_talk_ubot_pm(_, message):
     if message.chat.id not in active_chats_ubot:

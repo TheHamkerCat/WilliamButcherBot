@@ -21,18 +21,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+import codecs
+import pickle
+from asyncio import gather
+from math import atan2, cos, radians, sin, sqrt
 from random import randint
-from math import sin, cos, sqrt, atan2, radians
+
+import aiofiles
+import aiohttp
+import speedtest
+from carbonnow import Carbon
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
+
 from wbb.utils import aiodownloader
 from wbb.utils.fetch import fetch
-from carbonnow import Carbon
-import speedtest
-import aiohttp
-import aiofiles
-import pickle
-import codecs
-from asyncio import gather
 
 """
 Just import 'downloader' anywhere and do downloader.download() to
@@ -69,7 +71,7 @@ def generate_captcha():
     correct_answer = ""
     font = ImageFont.truetype("assets/arial.ttf", 55)
     file = f"assets/{randint(1000, 9999)}.jpg"
-    image = Image.new('RGB', (width, height), (255, 255, 255))
+    image = Image.new("RGB", (width, height), (255, 255, 255))
     draw = ImageDraw.Draw(image)
 
     # Draw random points on image
@@ -80,14 +82,9 @@ def generate_captcha():
     for t in range(4):
         letter = gen_letter()
         correct_answer += letter
-        draw.text(
-            (60 * t + 50, 15),
-            letter,
-            font=font,
-            fill=rndColor2()
-        )
+        draw.text((60 * t + 50, 15), letter, font=font, fill=rndColor2())
     image = image.filter(ImageFilter.BLUR)
-    image.save(file, 'jpeg')
+    image.save(file, "jpeg")
     return [file, correct_answer, wrong_answers]
 
 
@@ -100,6 +97,7 @@ async def test_speedtest():
             size /= power
             zero += 1
         return f"{round(size, 2)} {units[zero]}"
+
     speed = speedtest.Speedtest()
     info = speed.get_best_server()
     download = speed.download()
@@ -110,7 +108,7 @@ async def test_speedtest():
 async def file_size_from_url(url: str) -> int:
     async with aiohttp.ClientSession() as session:
         async with session.head(url) as resp:
-            size = int(resp.headers['content-length'])
+            size = int(resp.headers["content-length"])
     return size
 
 
@@ -127,10 +125,10 @@ async def make_carbon(code):
 
 
 async def transfer_sh(file):
-    async with aiofiles.open(file, 'rb') as f:
+    async with aiofiles.open(file, "rb") as f:
         params = {file: await f.read()}
     async with aiohttp.ClientSession() as session:
-        async with session.post('https://transfer.sh/', data=params) as resp:
+        async with session.post("https://transfer.sh/", data=params) as resp:
             download_link = str(await resp.text()).strip()
     return download_link
 
@@ -150,16 +148,15 @@ def str_to_obj(string: str):
 async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
     Radius_Earth = 6371.0088
     data1, data2 = await gather(
-        fetch(f"http://ipinfo.io/{ip1}"),
-        fetch(f"http://ipinfo.io/{ip2}")
+        fetch(f"http://ipinfo.io/{ip1}"), fetch(f"http://ipinfo.io/{ip2}")
     )
-    lat1, lon1 = data1['loc'].split(",")
-    lat2, lon2 = data2['loc'].split(",")
+    lat1, lon1 = data1["loc"].split(",")
+    lat2, lon2 = data2["loc"].split(",")
     lat1, lon1 = radians(float(lat1)), radians(float(lon1))
     lat2, lon2 = radians(float(lat2)), radians(float(lon2))
     dlon = lon2 - lon1
     dlat = lat2 - lat1
-    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     distance = Radius_Earth * c
     return distance

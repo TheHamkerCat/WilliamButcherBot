@@ -21,18 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import app, SUDOERS
-from wbb.modules.admin import member_permissions
-from wbb.utils.dbfunctions import (
-    save_filter, get_filters_names, get_filter,
-    delete_filter, is_served_chat, add_served_chat
-)
-from pyrogram import filters
-from wbb.core.decorators.errors import capture_err
-from wbb.utils.filter_groups import chat_filters_group
 import re
 import traceback
 
+from pyrogram import filters
+
+from wbb import SUDOERS, app
+from wbb.core.decorators.errors import capture_err
+from wbb.modules.admin import member_permissions
+from wbb.utils.dbfunctions import (add_served_chat, delete_filter, get_filter,
+                                   get_filters_names, is_served_chat,
+                                   save_filter)
+from wbb.utils.filter_groups import chat_filters_group
 
 __MODULE__ = "Filters"
 __HELP__ = """/filters To Get All The Filters In The Chat.
@@ -49,10 +49,14 @@ async def save_filters(_, message):
     chat_id = message.chat.id
     user_id = message.from_user.id
     if len(message.command) < 2 or not message.reply_to_message:
-        await message.reply_text("Usage:\nReply to a text or sticker with /filter [FILTER_NAME] to save it.")
+        await message.reply_text(
+            "**Usage:**\nReply to a text or sticker with /filter [FILTER_NAME] to save it."
+        )
         return
     if not message.reply_to_message.text and not message.reply_to_message.sticker:
-        await message.reply_text("__**You can only save text or stickers in filters.**__")
+        await message.reply_text(
+            "__**You can only save text or stickers in filters.**__"
+        )
         return
     permissions = await member_permissions(chat_id, user_id)
     if "can_restrict_members" not in permissions and user_id not in SUDOERS:
@@ -65,7 +69,9 @@ async def save_filters(_, message):
     _type = "text" if message.reply_to_message.text else "sticker"
     _filter = {
         "type": _type,
-        "data": message.reply_to_message.text.markdown if _type == "text" else message.reply_to_message.sticker.file_id
+        "data": message.reply_to_message.text.markdown
+        if _type == "text"
+        else message.reply_to_message.sticker.file_id,
     }
     await save_filter(chat_id, name, _filter)
     await message.reply_text(f"__**Saved filter {name}.**__")
@@ -107,9 +113,14 @@ async def del_filter(_, message):
         await message.reply_text("**No such filter.**")
 
 
-@app.on_message(filters.text & ~filters.edited &
-                ~filters.private & ~filters.via_bot &
-                ~filters.forwarded, group=chat_filters_group)
+@app.on_message(
+    filters.text
+    & ~filters.edited
+    & ~filters.private
+    & ~filters.via_bot
+    & ~filters.forwarded,
+    group=chat_filters_group,
+)
 async def filters_re(_, message):
     text = message.text.lower().strip()
     if not text:
@@ -121,11 +132,13 @@ async def filters_re(_, message):
             pattern = r"( |^|[^\w])" + re.escape(word) + r"( |$|[^\w])"
             if re.search(pattern, text, flags=re.IGNORECASE):
                 _filter = await get_filter(chat_id, word)
-                data_type = _filter['type']
-                data = _filter['data']
+                data_type = _filter["type"]
+                data = _filter["data"]
                 if data_type == "text":
                     if message.reply_to_message:
-                        await message.reply_to_message.reply_text(data, disable_web_page_preview=True)
+                        await message.reply_to_message.reply_text(
+                            data, disable_web_page_preview=True
+                        )
                         if text == word:
                             await message.delete()
                         return

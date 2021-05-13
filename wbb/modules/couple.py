@@ -21,12 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import random
+from datetime import datetime
+
+from pyrogram import filters
+
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.dbfunctions import get_couple, save_couple
-from pyrogram import filters
-import random
-from datetime import datetime
 
 __MODULE__ = "Shippering"
 __HELP__ = "/detect_gay - To Choose Couple Of The Day"
@@ -36,13 +38,18 @@ __HELP__ = "/detect_gay - To Choose Couple Of The Day"
 def dt():
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M")
-    dt_list = dt_string.split(' ')
+    dt_list = dt_string.split(" ")
     return dt_list
 
 
 def dt_tom():
-    a = str(int(dt()[0].split('/')[0]) + 1)+"/" + \
-        dt()[0].split('/')[1]+"/" + dt()[0].split('/')[2]
+    a = (
+        str(int(dt()[0].split("/")[0]) + 1)
+        + "/"
+        + dt()[0].split("/")[1]
+        + "/"
+        + dt()[0].split("/")[2]
+    )
     return a
 
 
@@ -78,29 +85,20 @@ async def couple(_, message):
 {c1_mention} + {c2_mention} = ❤️
 
 __New couple of the day may be chosen at 12AM {tomorrow}__"""
-            await app.send_message(
-                message.chat.id,
-                text=couple_selection_message
-            )
-            couple = {
-                "c1_id": c1_id,
-                "c2_id": c2_id
-            }
+            await app.send_message(message.chat.id, text=couple_selection_message)
+            couple = {"c1_id": c1_id, "c2_id": c2_id}
             await save_couple(chat_id, today, couple)
 
         elif is_selected:
-            c1_id = int(is_selected['c1_id'])
-            c2_id = int(is_selected['c2_id'])
+            c1_id = int(is_selected["c1_id"])
+            c2_id = int(is_selected["c2_id"])
             c1_name = (await app.get_users(c1_id)).first_name
             c2_name = (await app.get_users(c2_id)).first_name
             couple_selection_message = f"""Couple of the day:
 [{c1_name}](tg://openmessage?user_id={c1_id}) + [{c2_name}](tg://openmessage?user_id={c2_id}) = ❤️
 
 __New couple of the day may be chosen at 12AM {tomorrow}__"""
-            await app.send_message(
-                message.chat.id,
-                text=couple_selection_message
-            )
+            await app.send_message(message.chat.id, text=couple_selection_message)
     except Exception as e:
         print(e)
         await message.reply_text(e)

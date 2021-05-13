@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from pyrogram import filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from pyrogram.types import InputMediaPhoto, InputMediaVideo
+from pyrogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
+                            InputMediaPhoto, InputMediaVideo, Message)
+
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 
@@ -31,11 +32,13 @@ RICE_GROUP = "DE_WM"
 RICE_CHANNEL = "RiceGallery"
 
 
-@app.on_message(filters.chat(RICE_GROUP)
-                & (filters.photo | filters.video | filters.document)
-                & filters.regex(r"^\[RICE\] ")
-                & ~filters.forwarded
-                & ~filters.edited)
+@app.on_message(
+    filters.chat(RICE_GROUP)
+    & (filters.photo | filters.video | filters.document)
+    & filters.regex(r"^\[RICE\] ")
+    & ~filters.forwarded
+    & ~filters.edited
+)
 @capture_err
 async def rice(_, message: Message):
     """Forward media and media_group messages which has caption starts
@@ -47,19 +50,13 @@ async def rice(_, message: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(
-                        "Approve (Forward)",
-                        callback_data="forward"
-                    ),
-                    InlineKeyboardButton(
-                        "Ignore",
-                        callback_data="ignore"
-                    )
+                    InlineKeyboardButton("Approve (Forward)", callback_data="forward"),
+                    InlineKeyboardButton("Ignore", callback_data="ignore"),
                 ]
             ]
         ),
         quote=True,
-        parse_mode="markdown"
+        parse_mode="markdown",
     )
 
 
@@ -82,13 +79,11 @@ async def callback_query_forward_rice(_, callback_query):
         arg_media = []
         for m in media_group:
             if m.photo and m.caption:
-                arg_media.append(InputMediaPhoto(m.photo.file_id,
-                                                 caption=arg_caption))
+                arg_media.append(InputMediaPhoto(m.photo.file_id, caption=arg_caption))
             elif m.photo:
                 arg_media.append(InputMediaPhoto(m.photo.file_id))
             elif m.video and m.caption:
-                arg_media.append(InputMediaVideo(m.video.file_id,
-                                                 caption=arg_caption))
+                arg_media.append(InputMediaVideo(m.video.file_id, caption=arg_caption))
             elif m.video:
                 arg_media.append(InputMediaVideo(m.video.file_id))
         m_cp = await app.send_media_group(RICE_CHANNEL, arg_media)
@@ -97,9 +92,11 @@ async def callback_query_forward_rice(_, callback_query):
         m_cp = await m_op.copy(RICE_CHANNEL, caption=arg_caption)
         link = m_cp.link
     await callback_query.message.delete()
-    reply_text = (f"**OP**: {u_op.mention()}\n"
-                  f"**Approver**: {u_approver.mention()}\n"
-                  f"**Forwarded**: [Rice Gallery]({link})")
+    reply_text = (
+        f"**OP**: {u_op.mention()}\n"
+        f"**Approver**: {u_approver.mention()}\n"
+        f"**Forwarded**: [Rice Gallery]({link})"
+    )
     await m_op.reply_text(reply_text, disable_web_page_preview=True)
 
 

@@ -21,11 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import os
+
 from pyrogram import filters
+
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.admin import member_permissions
-import os
 
 __MODULE__ = "Admin Miscs"
 __HELP__ = """
@@ -52,7 +54,9 @@ async def set_chat_title(_, message):
         old_title = message.chat.title
         new_title = message.text.split(None, 1)[1]
         await message.chat.set_title(new_title)
-        await message.reply_text(f"Successfully Changed Group Title From {old_title} To {new_title}")
+        await message.reply_text(
+            f"Successfully Changed Group Title From {old_title} To {new_title}"
+        )
     except Exception as e:
         print(e)
         await message.reply_text(e)
@@ -71,11 +75,15 @@ async def set_user_title(_, message):
                 await message.reply_text("You Don't Have Enough Permissions.")
                 return
         if len(message.command) < 2:
-            await message.reply_text("**Usage:**\n/set_user_title NEW ADMINISTRATOR TITLE")
+            await message.reply_text(
+                "**Usage:**\n/set_user_title NEW ADMINISTRATOR TITLE"
+            )
             return
         title = message.text.split(None, 1)[1]
         await app.set_administrator_title(chat_id, from_user.id, title)
-        await message.reply_text(f"Successfully Changed {from_user.mention}'s Admin Title To {title}")
+        await message.reply_text(
+            f"Successfully Changed {from_user.mention}'s Admin Title To {title}"
+        )
     except Exception as e:
         print(e)
         await message.reply_text(e)

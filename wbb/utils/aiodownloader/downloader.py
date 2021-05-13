@@ -1,9 +1,9 @@
-import os
 import asyncio
-from typing import Optional, List
+import os
+from typing import Optional
 
-import aiohttp
 import aiofiles
+import aiohttp
 
 
 class DownloadJob:
@@ -16,19 +16,22 @@ class DownloadJob:
     :param save_path: dir where the file should be saved. Defaults to the current dir
     """
 
-    def __init__(self,
-                 session: aiohttp.ClientSession,
-                 file_url: str,
-                 save_path: Optional[str] = None,
-                 chunk_size: Optional[int] = 1024):
+    def __init__(
+        self,
+        session: aiohttp.ClientSession,
+        file_url: str,
+        save_path: Optional[str] = None,
+        chunk_size: Optional[int] = 1024,
+    ):
 
         self.file_url = file_url
         self._session = session
         self._chunk_size = chunk_size
 
-        self.file_name = file_url.split('/')[~0]
-        self.file_path = os.path.join(
-            save_path, self.file_name) if save_path else self.file_name
+        self.file_name = file_url.split("/")[~0]
+        self.file_path = (
+            os.path.join(save_path, self.file_name) if save_path else self.file_name
+        )
 
         self.completed = False
         self.progress = 0
@@ -42,12 +45,13 @@ class DownloadJob:
         if not self.size:
             async with self._session.get(self.file_url) as resp:
                 if 200 <= resp.status < 300:
-                    self.size = int(resp.headers['Content-Length'])
+                    self.size = int(resp.headers["Content-Length"])
 
                 else:
                     raise aiohttp.errors.HttpProcessingError(
-                        message=f'There was a problem processing {self.file_url}',
-                        code=resp.status)
+                        message=f"There was a problem processing {self.file_url}",
+                        code=resp.status,
+                    )
 
         return self.size
 
@@ -68,7 +72,7 @@ class DownloadJob:
             # Checkning the response code
             if 200 <= resp.status < 300:
                 # Saving the data to the file chunk by chunk.
-                async with aiofiles.open(self.file_path, 'wb') as file:
+                async with aiofiles.open(self.file_path, "wb") as file:
 
                     # Downloading the file using the aiohttp.StreamReader
                     async for data in resp.content.iter_chunked(self._chunk_size):
@@ -80,7 +84,9 @@ class DownloadJob:
 
             else:
                 raise aiohttp.errors.HttpProcessingError(
-                    message=f'There was a problem processing {self.file_url}', code=resp.status)
+                    message=f"There was a problem processing {self.file_url}",
+                    code=resp.status,
+                )
 
 
 class Handler:
@@ -93,18 +99,20 @@ class Handler:
     :param chunk_size: chunk bytes sizes to get from the file source. Defaults to 1024 bytes
     """
 
-    def __init__(self,
-                 loop: Optional[asyncio.BaseEventLoop] = None,
-                 session: Optional[aiohttp.ClientSession] = None,
-                 chunk_size: Optional[int] = 1024):
+    def __init__(
+        self,
+        loop: Optional[asyncio.BaseEventLoop] = None,
+        session: Optional[aiohttp.ClientSession] = None,
+        chunk_size: Optional[int] = 1024,
+    ):
 
         self._loop = loop or asyncio.get_event_loop()
         self._session = session or aiohttp.ClientSession(loop=self._loop)
         self._chunk_size = chunk_size
 
-    def _job_factory(self,
-                     file_url: str,
-                     save_path: Optional[str] = None) -> DownloadJob:
+    def _job_factory(
+        self, file_url: str, save_path: Optional[str] = None
+    ) -> DownloadJob:
         """
         Shortcut for creating a download job. It adds the session and the chunk size.
         :param file_url: url where the file is located
@@ -113,9 +121,7 @@ class Handler:
         """
         return DownloadJob(self._session, file_url, save_path, self._chunk_size)
 
-    async def download(self,
-                       url: str,
-                       save_path: Optional[str] = None) -> DownloadJob:
+    async def download(self, url: str, save_path: Optional[str] = None) -> DownloadJob:
         """
         Downloads a bulk of files from the given list of urls to the given path.
 

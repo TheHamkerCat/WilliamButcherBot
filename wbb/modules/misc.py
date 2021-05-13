@@ -23,19 +23,21 @@ SOFTWARE.
 """
 import secrets
 import string
+
 import aiohttp
-from pyrogram import filters
-from googletrans import Translator
 from cryptography.fernet import Fernet
-from wbb import app, FERNET_ENCRYPTION_KEY
-from wbb.utils import random_line
-from wbb.utils.json_prettify import json_prettify
-from wbb.utils.fetch import fetch
-from wbb.utils.pastebin import paste
+from googletrans import Translator
+from pyrogram import filters
+
+from wbb import FERNET_ENCRYPTION_KEY, app
 from wbb.core.decorators.errors import capture_err
+from wbb.utils import random_line
+from wbb.utils.fetch import fetch
+from wbb.utils.json_prettify import json_prettify
+from wbb.utils.pastebin import paste
 
 __MODULE__ = "Misc"
-__HELP__ = '''
+__HELP__ = """
 /commit - Generate Funny Commit Messages
 /runs  - Idk Test Yourself
 /id - Get Chat_ID or User_ID
@@ -49,12 +51,12 @@ __HELP__ = '''
 /ocr - Perform OCR On An Image.
 /arq - Statistics Of ARQ API.
 #RTFM - Check it lol
-'''
+"""
 
 
 @app.on_message(filters.command("commit") & ~filters.edited)
 async def commit(_, message):
-    await message.reply_text((await random_line('wbb/utils/commit.txt')))
+    await message.reply_text((await random_line("wbb/utils/commit.txt")))
 
 
 @app.on_message(filters.command("RTFM", "#"))
@@ -68,7 +70,7 @@ async def rtfm(_, message):
 
 @app.on_message(filters.command("runs") & ~filters.edited)
 async def runs(_, message):
-    await message.reply_text((await random_line('wbb/utils/runs.txt')))
+    await message.reply_text((await random_line("wbb/utils/runs.txt")))
 
 
 @app.on_message(filters.command("id"))
@@ -118,61 +120,67 @@ async def getid(_, message):
             text += f" <code>{reply.forward_from.id}</code>\n"
             text_unping += text
             text_ping += f'\n<b><a href="tg://user?id={reply.forward_from.id}">Forwarded User ID:</a></b> <code>{reply.forward_from.id}</code>\n'
-    reply = await message.reply_text(text_unping, disable_web_page_preview=True, parse_mode="html")
+    reply = await message.reply_text(
+        text_unping, disable_web_page_preview=True, parse_mode="html"
+    )
     if text_unping != text_ping:
-        await reply.edit_text(text_ping, disable_web_page_preview=True, parse_mode="html")
+        await reply.edit_text(
+            text_ping, disable_web_page_preview=True, parse_mode="html"
+        )
+
 
 # Random
 
 
-@app.on_message(filters.command('random') & ~filters.edited)
+@app.on_message(filters.command("random") & ~filters.edited)
 @capture_err
 async def random(_, message):
     if len(message.command) != 2:
-        await message.reply_text('"/random" Needs An Argurment.'
-                                 ' Ex: `/random 5`')
+        await message.reply_text('"/random" Needs An Argurment.' " Ex: `/random 5`")
         return
     length = message.text.split(None, 1)[1]
 
     try:
         if 1 < int(length) < 1000:
             alphabet = string.ascii_letters + string.digits
-            password = ''.join(secrets.choice(alphabet) for i in
-                               range(int(length)))
+            password = "".join(secrets.choice(alphabet) for i in range(int(length)))
             await message.reply_text(f"`{password}`")
         else:
-            await message.reply_text('Specify A Length Between 1-1000')
+            await message.reply_text("Specify A Length Between 1-1000")
     except ValueError:
-        await message.reply_text("Strings Won't Work!, Pass A"
-                                 + " Positive Integer Between 1-1000")
+        await message.reply_text(
+            "Strings Won't Work!, Pass A" + " Positive Integer Between 1-1000"
+        )
+
 
 # Encrypt
 
 
-@app.on_message(filters.command('encrypt') & ~filters.edited)
+@app.on_message(filters.command("encrypt") & ~filters.edited)
 @capture_err
 async def encrypt(_, message):
     if not message.reply_to_message:
-        await message.reply_text('Reply To A Message To Encrypt It.')
+        await message.reply_text("Reply To A Message To Encrypt It.")
         return
     text = message.reply_to_message.text
-    text_in_bytes = bytes(text, 'utf-8')
+    text_in_bytes = bytes(text, "utf-8")
     cipher_suite = Fernet(FERNET_ENCRYPTION_KEY)
     encrypted_text = cipher_suite.encrypt(text_in_bytes)
     bytes_in_text = encrypted_text.decode("utf-8")
     await message.reply_text(bytes_in_text)
 
+
 # Decrypt
 
 
-@app.on_message(filters.command('decrypt') & ~filters.edited)
+@app.on_message(filters.command("decrypt") & ~filters.edited)
 @capture_err
 async def decrypt(_, message):
     if not message.reply_to_message:
-        await message.reply_text('Reply To A Message To Decrypt It.')
+        await message.reply_text("Reply To A Message To Decrypt It.")
         return
     text = message.reply_to_message.text
-    text_in_bytes = bytes(text, 'utf-8')
+    text_in_bytes = bytes(text, "utf-8")
     cipher_suite = Fernet(FERNET_ENCRYPTION_KEY)
     decoded_text = cipher_suite.decrypt(text_in_bytes)
     bytes_in_text = decoded_text.decode("utf-8")
@@ -210,6 +218,7 @@ async def cheat(_, message):
         await m.edit(str(e))
         print(str(e))
 
+
 # Weather
 
 
@@ -223,6 +232,7 @@ async def weather(_, message):
     m = await message.reply_text("Fetching Data")
     data = await fetch_text(f"https://wttr.in/{city}?mnTC0")
     await m.edit(f"`{data}`")
+
 
 # Translate
 
@@ -278,18 +288,24 @@ async def json_fetch(_, message):
             await message.reply_text(data)
         else:
             link = await paste(data)
-            await message.reply_text(f"[OUTPUT_TOO_LONG]({link})", disable_web_page_preview=True)
+            await message.reply_text(
+                f"[OUTPUT_TOO_LONG]({link})", disable_web_page_preview=True
+            )
     except Exception as e:
         await message.reply_text(str(e))
         print(str(e))
 
 
-@app.on_message(filters.command('bun'))
+@app.on_message(filters.command("bun"))
 async def bunn(_, message):
     if message.reply_to_message:
-        await message.reply_to_message.reply_sticker('CAACAgUAAx0CWIlO9AABARyRYBhyjKXFATVhu7AGQwip3TzSFiMAAuMBAAJ7usBUIu2xBtXTmuweBA')
+        await message.reply_to_message.reply_sticker(
+            "CAACAgUAAx0CWIlO9AABARyRYBhyjKXFATVhu7AGQwip3TzSFiMAAuMBAAJ7usBUIu2xBtXTmuweBA"
+        )
         await app.send_message(message.chat.id, text="Eat Bun")
         return
     if not message.reply_to_message:
-        await message.reply_sticker('CAACAgUAAx0CWIlO9AABARyRYBhyjKXFATVhu7AGQwip3TzSFiMAAuMBAAJ7usBUIu2xBtXTmuweBA')
+        await message.reply_sticker(
+            "CAACAgUAAx0CWIlO9AABARyRYBhyjKXFATVhu7AGQwip3TzSFiMAAuMBAAJ7usBUIu2xBtXTmuweBA"
+        )
         await app.send_message(message.chat.id, text="Eat Bun")

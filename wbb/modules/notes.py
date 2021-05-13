@@ -21,14 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import app
-from wbb.utils.dbfunctions import (
-    save_note, get_note_names, get_note, delete_note
-)
-from wbb.core.decorators.errors import capture_err
-from wbb.modules.admin import member_permissions
 from pyrogram import filters
 
+from wbb import app
+from wbb.core.decorators.errors import capture_err
+from wbb.modules.admin import member_permissions
+from wbb.utils.dbfunctions import (delete_note, get_note, get_note_names,
+                                   save_note)
 
 __MODULE__ = "Notes"
 __HELP__ = """/notes To Get All The Notes In The Chat.
@@ -41,7 +40,9 @@ __HELP__ = """/notes To Get All The Notes In The Chat.
 @capture_err
 async def save_notee(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
-        await message.reply_text("Usage:\nReply to a text or sticker with /save [NOTE_NAME] to save it.")
+        await message.reply_text(
+            "**Usage:**\nReply to a text or sticker with /save [NOTE_NAME] to save it."
+        )
 
     elif not message.reply_to_message.text and not message.reply_to_message.sticker:
         await message.reply_text("__**You can only save text or stickers in notes.**__")
@@ -56,7 +57,9 @@ async def save_notee(_, message):
         _type = "text" if message.reply_to_message.text else "sticker"
         note = {
             "type": _type,
-            "data": message.reply_to_message.text.markdown if _type == "text" else message.reply_to_message.sticker.file_id
+            "data": message.reply_to_message.text.markdown
+            if _type == "text"
+            else message.reply_to_message.sticker.file_id,
         }
         await save_note(message.chat.id, name, note)
         await message.reply_text(f"__**Saved note {name}.**__")

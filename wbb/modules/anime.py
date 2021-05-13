@@ -1,10 +1,12 @@
 # Part of Pull Req #2 by @MaskedVirus | github.com/swatv3nub
 
 import time
-import requests
 from datetime import timedelta
+
+import requests
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 
@@ -16,10 +18,10 @@ __HELP__ = """
 """
 
 
-def shorten(description, info='anilist.co'):
+def shorten(description, info="anilist.co"):
     ms_g = ""
     if len(description) > 700:
-        description = description[0:500] + '....'
+        description = description[0:500] + "...."
         ms_g += f"\n**Description**: __{description}__[More here]({info})"
     else:
         ms_g += f"\n**Description**: __{description}__"
@@ -38,15 +40,17 @@ def t(milliseconds: int) -> str:
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
-    tmp = ((str(days) + " Days, ") if days else "") + \
-        ((str(hours) + " Hours, ") if hours else "") + \
-        ((str(minutes) + " Minutes, ") if minutes else "") + \
-        ((str(seconds) + " Seconds, ") if seconds else "") + \
-        ((str(milliseconds) + " ms, ") if milliseconds else "")
+    tmp = (
+        ((str(days) + " Days, ") if days else "")
+        + ((str(hours) + " Hours, ") if hours else "")
+        + ((str(minutes) + " Minutes, ") if minutes else "")
+        + ((str(seconds) + " Seconds, ") if seconds else "")
+        + ((str(milliseconds) + " ms, ") if milliseconds else "")
+    )
     return tmp[:-2]
 
 
-airing_query = '''
+airing_query = """
     query ($id: Int,$search: String) {
       Media (id: $id, type: ANIME,search: $search) {
         id
@@ -64,7 +68,7 @@ airing_query = '''
         }
       }
     }
-    '''
+    """
 
 fav_query = """
 query ($id: Int) {
@@ -79,7 +83,7 @@ query ($id: Int) {
 }
 """
 
-anime_query = '''
+anime_query = """
    query ($id: Int,$search: String) {
       Media (id: $id, type: ANIME,search: $search) {
         id
@@ -115,7 +119,7 @@ anime_query = '''
           bannerImage
       }
     }
-'''
+"""
 character_query = """
     query ($query: String) {
         Character (search: $query) {
@@ -164,7 +168,7 @@ def format_bytes(size):
     size = int(size)
     power = 1024
     n = 0
-    power_labels = {0: '', 1: 'K', 2: 'M', 3: 'G', 4: 'T'}
+    power_labels = {0: "", 1: "K", 2: "M", 3: "G", 4: "T"}
     while size > power:
         size /= power
         n += 1
@@ -173,22 +177,21 @@ def format_bytes(size):
 
 def return_progress_string(current, total):
     filled_length = int(30 * current // total)
-    return '[' + '=' * filled_length + ' ' * (30 - filled_length) + ']'
+    return "[" + "=" * filled_length + " " * (30 - filled_length) + "]"
 
 
 def calculate_eta(current, total, start_time):
     if not current:
-        return '00:00:00'
+        return "00:00:00"
     end_time = time.time()
     elapsed_time = end_time - start_time
     seconds = (elapsed_time * (total / current)) - elapsed_time
-    thing = ''.join(str(timedelta(seconds=seconds)
-                        ).split('.')[:-1]).split(', ')
-    thing[-1] = thing[-1].rjust(8, '0')
-    return ', '.join(thing)
+    thing = "".join(str(timedelta(seconds=seconds)).split(".")[:-1]).split(", ")
+    thing[-1] = thing[-1].rjust(8, "0")
+    return ", ".join(thing)
 
 
-url = 'https://graphql.anilist.co'
+url = "https://graphql.anilist.co"
 
 
 @app.on_message(filters.command("anime"))
@@ -198,41 +201,50 @@ async def anime_search(_, message):
         await message.delete()
         return
     search = message.text.split(None, 1)[1]
-    variables = {'search': search}
-    json = requests.post(url, json={'query': anime_query, 'variables': variables}).json()[
-        'data'].get('Media', None)
+    variables = {"search": search}
+    json = (
+        requests.post(url, json={"query": anime_query, "variables": variables})
+        .json()["data"]
+        .get("Media", None)
+    )
     if json:
         msg = f"**{json['title']['romaji']}**(`{json['title']['native']}`)\n**Type**: {json['format']}\n**Status**: {json['status']}\n**Episodes**: {json.get('episodes', 'N/A')}\n**Duration**: {json.get('duration', 'N/A')} Per Ep.\n**Score**: {json['averageScore']}\n**Genres**: `"
-        for x in json['genres']:
+        for x in json["genres"]:
             msg += f"{x}, "
-        msg = msg[:-2] + '`\n'
+        msg = msg[:-2] + "`\n"
         msg += "**Studios**: `"
-        for x in json['studios']['nodes']:
+        for x in json["studios"]["nodes"]:
             msg += f"{x['name']}, "
-        msg = msg[:-2] + '`\n'
-        info = json.get('siteUrl')
-        trailer = json.get('trailer', None)
+        msg = msg[:-2] + "`\n"
+        info = json.get("siteUrl")
+        trailer = json.get("trailer", None)
         if trailer:
-            trailer_id = trailer.get('id', None)
-            site = trailer.get('site', None)
+            trailer_id = trailer.get("id", None)
+            site = trailer.get("site", None)
             if site == "youtube":
-                trailer = 'https://youtu.be/' + trailer_id
-        description = json.get(
-            'description', 'N/A').replace('<i>', '').replace('</i>', '').replace('<br>', '')
+                trailer = "https://youtu.be/" + trailer_id
+        description = (
+            json.get("description", "N/A")
+            .replace("<i>", "")
+            .replace("</i>", "")
+            .replace("<br>", "")
+        )
         msg += shorten(description, info)
-        image = info.replace('anilist.co/anime/', 'img.anili.st/media/')
+        image = info.replace("anilist.co/anime/", "img.anili.st/media/")
         if trailer:
             buttons = [
-                [InlineKeyboardButton("More Info", url=info),
-                 InlineKeyboardButton("Trailer", url=trailer)]
+                [
+                    InlineKeyboardButton("More Info", url=info),
+                    InlineKeyboardButton("Trailer", url=trailer),
+                ]
             ]
         else:
-            buttons = [
-                [InlineKeyboardButton("More Info", url=info)]
-            ]
+            buttons = [[InlineKeyboardButton("More Info", url=info)]]
         if image:
             try:
-                await message.reply_photo(image, caption=msg, reply_markup=InlineKeyboardMarkup(buttons))
+                await message.reply_photo(
+                    image, caption=msg, reply_markup=InlineKeyboardMarkup(buttons)
+                )
             except Exception:
                 msg += f" [✔️️]({image})"
                 await message.edit(msg)
@@ -247,15 +259,22 @@ async def manga_search(_, message):
         await message.delete()
         return
     search = message.text.split(None, 1)[1]
-    variables = {'search': search}
-    json = requests.post(url, json={'query': manga_query, 'variables': variables}).json()[
-        'data'].get('Media', None)
-    ms_g = ''
+    variables = {"search": search}
+    json = (
+        requests.post(url, json={"query": manga_query, "variables": variables})
+        .json()["data"]
+        .get("Media", None)
+    )
+    ms_g = ""
     if json:
-        title, title_native = json['title'].get(
-            'romaji', False), json['title'].get('native', False)
-        start_date, status, score = json['startDate'].get('year', False), json.get(
-            'status', False), json.get('averageScore', False)
+        title, title_native = json["title"].get("romaji", False), json["title"].get(
+            "native", False
+        )
+        start_date, status, score = (
+            json["startDate"].get("year", False),
+            json.get("status", False),
+            json.get("averageScore", False),
+        )
         if title:
             ms_g += f"**{title}**"
             if title_native:
@@ -266,8 +285,8 @@ async def manga_search(_, message):
             ms_g += f"\n**Status** - `{status}`"
         if score:
             ms_g += f"\n**Score** - `{score}`"
-        ms_g += '\n**Genres** - '
-        for x in json.get('genres', []):
+        ms_g += "\n**Genres** - "
+        for x in json.get("genres", []):
             ms_g += f"{x}, "
         ms_g = ms_g[:-2]
 
@@ -290,17 +309,22 @@ async def character_search(_, message):
         await message.delete()
         return
     search = message.text.split(None, 1)[1]
-    variables = {'query': search}
-    json = requests.post(url, json={'query': character_query, 'variables': variables}).json()[
-        'data'].get('Character', None)
+    variables = {"query": search}
+    json = (
+        requests.post(url, json={"query": character_query, "variables": variables})
+        .json()["data"]
+        .get("Character", None)
+    )
     if json:
-        ms_g = f"**{json.get('name').get('full')}**(`{json.get('name').get('native')}`)\n"
+        ms_g = (
+            f"**{json.get('name').get('full')}**(`{json.get('name').get('native')}`)\n"
+        )
         description = f"{json['description']}"
-        site_url = json.get('siteUrl')
+        site_url = json.get("siteUrl")
         ms_g += shorten(description, site_url)
-        image = json.get('image', None)
+        image = json.get("image", None)
         if image:
-            image = image.get('large')
+            image = image.get("large")
             await message.reply_photo(image, caption=ms_g)
         else:
             await message.reply(ms_g)

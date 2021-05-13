@@ -21,62 +21,82 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import aiohttp
-import aiofiles
-import json
-import sys
-import os
 import asyncio
-from pyrogram.types import (
-    InlineQueryResultArticle,
-    InputTextMessageContent,
-    InlineKeyboardButton,
-    InlineQueryResultPhoto,
-)
-from pyrogram.raw.functions import Ping
-from googletrans import Translator
-from search_engine_parser import GoogleSearch
-from pykeyboard import InlineKeyboard
-from sys import version as pyver
-from motor import version as mongover
-from pyrogram import __version__ as pyrover, filters
-from time import time, ctime
+import json
+import os
+import sys
 from random import randint
-from wbb.utils.fetch import fetch
-from wbb.modules.info import get_user_info, get_chat_info
-from wbb.modules.music import download_youtube_audio
-from wbb.utils.functions import test_speedtest, get_http_status_code, make_carbon
-from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
-from wbb.utils.pastebin import paste
+from sys import version as pyver
+from time import ctime, time
+
+import aiofiles
+import aiohttp
+from googletrans import Translator
+from motor import version as mongover
+from pykeyboard import InlineKeyboard
+from pyrogram import __version__ as pyrover
+from pyrogram import filters
+from pyrogram.raw.functions import Ping
+from pyrogram.types import (InlineKeyboardButton, InlineQueryResultArticle,
+                            InlineQueryResultPhoto, InputTextMessageContent)
+from search_engine_parser import GoogleSearch
+
+from wbb import (BOT_USERNAME, MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_ID,
+                 USERBOT_NAME, USERBOT_USERNAME, app, app2, arq)
 from wbb.core.types import InlineQueryResultCachedDocument
-from wbb import (
-    arq, app, app2, USERBOT_USERNAME,
-    BOT_USERNAME, USERBOT_ID,
-    SUDOERS, USERBOT_NAME, MESSAGE_DUMP_CHAT
-)
+from wbb.modules.info import get_chat_info, get_user_info
+from wbb.modules.music import download_youtube_audio
+from wbb.utils.fetch import fetch
+from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
+from wbb.utils.functions import (get_http_status_code, make_carbon,
+                                 test_speedtest)
+from wbb.utils.pastebin import paste
 
 keywords_list = [
-    "alive", "ping", "tr", "ud", "google", "bitly",
-    "wall", "yt", "torrent", "lyrics", "wiki",
-    "speedtest", "music", "saavn", "deezer",
-    "gh_repo", "gh_user", "search", "paste",
-    "nsfw_scan", "ytmusic", "carbon", "info",
-    "chat_info"
+    "alive",
+    "ping",
+    "tr",
+    "ud",
+    "google",
+    "bitly",
+    "wall",
+    "yt",
+    "torrent",
+    "lyrics",
+    "wiki",
+    "speedtest",
+    "music",
+    "saavn",
+    "deezer",
+    "gh_repo",
+    "gh_user",
+    "search",
+    "paste",
+    "nsfw_scan",
+    "ytmusic",
+    "carbon",
+    "info",
+    "chat_info",
 ]
 
 
 async def inline_help_func(__HELP__):
-    buttons = InlineKeyboard(row_width=3)
-    buttons.add(*[(InlineKeyboardButton(
-        text=i, switch_inline_query_current_chat=i)) for i in keywords_list])
+    buttons = InlineKeyboard(row_width=4)
+    buttons.add(
+        *[
+            (InlineKeyboardButton(text=i, switch_inline_query_current_chat=i))
+            for i in keywords_list
+        ]
+    )
     answerss = [
         InlineQueryResultArticle(
             title="Inline Commands",
             description="Help Related To Inline Usage.",
             input_message_content=InputTextMessageContent(
-                "Click A Button To Get Started."),
+                "Click A Button To Get Started."
+            ),
             thumb_url="https://hamker.me/cy00x5x.png",
-            reply_markup=buttons
+            reply_markup=buttons,
         ),
         InlineQueryResultArticle(
             title="Github Repo",
@@ -84,8 +104,8 @@ async def inline_help_func(__HELP__):
             input_message_content=InputTextMessageContent(
                 "https://github.com/thehamkercat/WilliamButcherBot"
             ),
-            thumb_url="https://hamker.me/gjc9fo3.png"
-        )
+            thumb_url="https://hamker.me/gjc9fo3.png",
+        ),
     ]
     answerss = await alive_function(answerss)
     return answerss
@@ -93,17 +113,11 @@ async def inline_help_func(__HELP__):
 
 async def alive_function(answers):
     buttons = InlineKeyboard(row_width=2)
-    bot_state = 'Dead' if not await app.get_me() else 'Alive'
-    ubot_state = 'Dead' if not await app2.get_me() else 'Alive'
+    bot_state = "Dead" if not await app.get_me() else "Alive"
+    ubot_state = "Dead" if not await app2.get_me() else "Alive"
     buttons.add(
-        InlineKeyboardButton(
-            'Stats',
-            callback_data='stats_callback'
-        ),
-        InlineKeyboardButton(
-            "Go Inline!",
-            switch_inline_query_current_chat=""
-        )
+        InlineKeyboardButton("Stats", callback_data="stats_callback"),
+        InlineKeyboardButton("Go Inline!", switch_inline_query_current_chat=""),
     )
 
     msg = f"""
@@ -118,12 +132,11 @@ async def alive_function(answers):
 """
     answers.append(
         InlineQueryResultArticle(
-            title='Alive',
+            title="Alive",
             description="Check Bot's Stats",
             thumb_url="https://static2.aniimg.com/upload/20170515/414/c/d/7/cd7EEF.jpg",
             input_message_content=InputTextMessageContent(
-                msg,
-                disable_web_page_preview=True
+                msg, disable_web_page_preview=True
             ),
             reply_markup=buttons,
         )
@@ -144,14 +157,13 @@ __**Translated from {i.src} to {lang}**__
     answers.extend(
         [
             InlineQueryResultArticle(
-                title=f'Translated from {i.src} to {lang}.',
+                title=f"Translated from {i.src} to {lang}.",
                 description=i.text,
-                input_message_content=InputTextMessageContent(msg)
+                input_message_content=InputTextMessageContent(msg),
             ),
             InlineQueryResultArticle(
-                title=i.text,
-                input_message_content=InputTextMessageContent(i.text)
-            )
+                title=i.text, input_message_content=InputTextMessageContent(i.text)
+            ),
         ]
     )
     return answers
@@ -176,8 +188,9 @@ async def urban_func(answers, text):
                 InlineQueryResultArticle(
                     title=results[i].word,
                     description=results[i].definition,
-                    input_message_content=InputTextMessageContent(msg)
-                ))
+                    input_message_content=InputTextMessageContent(msg),
+                )
+            )
         except KeyError:
             pass
     return answers
@@ -198,13 +211,13 @@ async def google_search_func(answers, text):
 
             answers.append(
                 InlineQueryResultArticle(
-                    title=i['titles'],
-                    description=i['descriptions'],
+                    title=i["titles"],
+                    description=i["descriptions"],
                     input_message_content=InputTextMessageContent(
-                        msg,
-                        disable_web_page_preview=True
-                    )
-                ))
+                        msg, disable_web_page_preview=True
+                    ),
+                )
+            )
         except KeyError:
             pass
     return answers
@@ -222,8 +235,9 @@ async def wall_func(answers, text):
                 InlineQueryResultPhoto(
                     photo_url=results[i].url_image,
                     thumb_url=results[i].url_thumb,
-                    caption=f"[Source]({results[i].url_image})"
-                ))
+                    caption=f"[Source]({results[i].url_image})",
+                )
+            )
         except KeyError:
             pass
     return answers
@@ -234,12 +248,7 @@ async def saavn_func(answers, text):
     results = await arq.saavn(text)
     for i in results:
         buttons = InlineKeyboard(row_width=1)
-        buttons.add(
-            InlineKeyboardButton(
-                'Download | Play',
-                url=results[i].media_url
-            )
-        )
+        buttons.add(InlineKeyboardButton("Download | Play", url=results[i].media_url))
         buttons_list.append(buttons)
         duration = await time_convert(results[i].duration)
         caption = f"""
@@ -248,20 +257,22 @@ async def saavn_func(answers, text):
 **Duration:** {duration}
 **Release:** {results[i].year}
 **Singers:** {results[i].singers}"""
-        description = f"{results[i].album} | {duration} " \
+        description = (
+            f"{results[i].album} | {duration} "
             + f"| {results[i].singers} ({results[i].year})"
+        )
         try:
             answers.append(
                 InlineQueryResultArticle(
                     title=results[i].song,
                     input_message_content=InputTextMessageContent(
-                        caption,
-                        disable_web_page_preview=True
+                        caption, disable_web_page_preview=True
                     ),
                     description=description,
                     thumb_url=results[i].image,
-                    reply_markup=buttons_list[i]
-                ))
+                    reply_markup=buttons_list[i],
+                )
+            )
         except (KeyError, ValueError):
             pass
     return answers
@@ -272,12 +283,7 @@ async def deezer_func(answers, text):
     results = await arq.deezer(text, 5)
     for i in results:
         buttons = InlineKeyboard(row_width=1)
-        buttons.add(
-            InlineKeyboardButton(
-                'Download | Play',
-                url=results[i].url
-            )
-        )
+        buttons.add(InlineKeyboardButton("Download | Play", url=results[i].url))
         buttons_list.append(buttons)
         duration = await time_convert(results[i].duration)
         caption = f"""
@@ -293,11 +299,11 @@ async def deezer_func(answers, text):
                     thumb_url=results[i].thumbnail,
                     description=description,
                     input_message_content=InputTextMessageContent(
-                        caption,
-                        disable_web_page_preview=True
+                        caption, disable_web_page_preview=True
                     ),
-                    reply_markup=buttons_list[i]
-                ))
+                    reply_markup=buttons_list[i],
+                )
+            )
         except (KeyError, ValueError):
             pass
     return answers
@@ -309,22 +315,23 @@ async def shortify(url):
         return
     header = {
         "Authorization": "Bearer ad39983fa42d0b19e4534f33671629a4940298dc",
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
     }
-    payload = {
-        "long_url": f"{url}"
-    }
+    payload = {"long_url": f"{url}"}
     payload = json.dumps(payload)
     async with aiohttp.ClientSession() as session:
-        async with session.post("https://api-ssl.bitly.com/v4/shorten", headers=header, data=payload) as resp:
+        async with session.post(
+            "https://api-ssl.bitly.com/v4/shorten", headers=header, data=payload
+        ) as resp:
             data = await resp.json()
-    msg = data['link']
+    msg = data["link"]
     a = []
     b = InlineQueryResultArticle(
         title="Link Shortened!",
-        description=data['link'],
+        description=data["link"],
         input_message_content=InputTextMessageContent(
-            msg, disable_web_page_preview=True)
+            msg, disable_web_page_preview=True
+        ),
     )
     a.append(b)
     return a
@@ -357,9 +364,8 @@ async def torrent_func(answers, text):
                     title=title,
                     description=description,
                     input_message_content=InputTextMessageContent(
-                        caption,
-                        disable_web_page_preview=True
-                    )
+                        caption, disable_web_page_preview=True
+                    ),
                 )
             )
             limit += 1
@@ -377,12 +383,7 @@ async def youtube_func(answers, text):
         limit += 1
         buttons = InlineKeyboard(row_width=1)
         video_url = f"https://youtube.com{results[i].url_suffix}"
-        buttons.add(
-            InlineKeyboardButton(
-                'Watch',
-                url=video_url
-            )
-        )
+        buttons.add(InlineKeyboardButton("Watch", url=video_url))
         caption = f"""
 **Title:** {results[i].title}
 **Views:** {results[i].views}
@@ -390,8 +391,10 @@ async def youtube_func(answers, text):
 **Duration:** {results[i].duration}
 **Uploaded:** {results[i].publish_time}
 **Description:** {results[i].long_desc}"""
-        description = f"{results[i].views} | {results[i].channel} | " \
+        description = (
+            f"{results[i].views} | {results[i].channel} | "
             + f"{results[i].duration} | {results[i].publish_time}"
+        )
         try:
             answers.append(
                 InlineQueryResultArticle(
@@ -399,11 +402,11 @@ async def youtube_func(answers, text):
                     thumb_url=results[i].thumbnails[0],
                     description=description,
                     input_message_content=InputTextMessageContent(
-                        caption,
-                        disable_web_page_preview=True
+                        caption, disable_web_page_preview=True
                     ),
-                    reply_markup=buttons
-                ))
+                    reply_markup=buttons,
+                )
+            )
         except (KeyError, ValueError):
             pass
     return answers
@@ -425,8 +428,9 @@ async def lyrics_func(answers, text):
         InlineQueryResultArticle(
             title=song_name,
             description=artist,
-            input_message_content=InputTextMessageContent(msg)
-        ))
+            input_message_content=InputTextMessageContent(msg),
+        )
+    )
     return answers
 
 
@@ -434,10 +438,9 @@ async def github_user_func(answers, text):
     URL = f"https://api.github.com/users/{text}"
     result = await fetch(URL)
     buttons = InlineKeyboard(row_width=1)
-    buttons.add(InlineKeyboardButton(
-        text="Open On Github",
-        url=f"https://github.com/{text}"
-    ))
+    buttons.add(
+        InlineKeyboardButton(text="Open On Github", url=f"https://github.com/{text}")
+    )
     caption = f"""
 **Info Of {result['name']}**
 **Username:** `{text}`
@@ -452,10 +455,9 @@ async def github_user_func(answers, text):
 **Following:** `{result['following']}`"""
     answers.append(
         InlineQueryResultPhoto(
-            photo_url=result['avatar_url'],
-            caption=caption,
-            reply_markup=buttons
-        ))
+            photo_url=result["avatar_url"], caption=caption, reply_markup=buttons
+        )
+    )
     return answers
 
 
@@ -471,13 +473,10 @@ async def github_repo_func(answers, text):
     r1 = results[1]
     commits = 0
     for developer in r1:
-        commits += developer['contributions']
+        commits += developer["contributions"]
     buttons = InlineKeyboard(row_width=1)
     buttons.add(
-        InlineKeyboardButton(
-            'Open On Github',
-            url=f"https://github.com/{text}"
-        )
+        InlineKeyboardButton("Open On Github", url=f"https://github.com/{text}")
     )
     caption = f"""
 **Info Of {r['full_name']}**
@@ -499,10 +498,10 @@ async def github_repo_func(answers, text):
             description=text,
             reply_markup=buttons,
             input_message_content=InputTextMessageContent(
-                caption,
-                disable_web_page_preview=True
-            )
-        ))
+                caption, disable_web_page_preview=True
+            ),
+        )
+    )
     return answers
 
 
@@ -513,8 +512,9 @@ async def tg_search_func(answers, text, user_id):
             InlineQueryResultArticle(
                 title="ERROR",
                 description="THIS FEATURE IS ONLY FOR SUDO USERS",
-                input_message_content=InputTextMessageContent(msg)
-            ))
+                input_message_content=InputTextMessageContent(msg),
+            )
+        )
         return answers
     if str(text)[-1] != ":":
         msg = "**ERROR**\n__Put A ':' After The Text To Search__"
@@ -522,8 +522,9 @@ async def tg_search_func(answers, text, user_id):
             InlineQueryResultArticle(
                 title="ERROR",
                 description="Put A ':' After The Text To Search",
-                input_message_content=InputTextMessageContent(msg)
-            ))
+                input_message_content=InputTextMessageContent(msg),
+            )
+        )
 
         return answers
     text = text[0:-1]
@@ -532,14 +533,15 @@ async def tg_search_func(answers, text, user_id):
         buttons.add(
             InlineKeyboardButton(
                 text="Origin",
-                url=message.link if message.link else "https://t.me/telegram"
+                url=message.link if message.link else "https://t.me/telegram",
             ),
             InlineKeyboardButton(
-                text="Search again",
-                switch_inline_query_current_chat="search"
-            )
+                text="Search again", switch_inline_query_current_chat="search"
+            ),
         )
-        name = message.from_user.first_name if message.from_user.first_name else "NO NAME"
+        name = (
+            message.from_user.first_name if message.from_user.first_name else "NO NAME"
+        )
         caption = f"""
 **Query:** {text}
 **Name:** {str(name)} [`{message.from_user.id}`]
@@ -554,9 +556,8 @@ async def tg_search_func(answers, text, user_id):
             description=message.text if message.text else "[NO_TEXT]",
             reply_markup=buttons,
             input_message_content=InputTextMessageContent(
-                caption,
-                disable_web_page_preview=True
-            )
+                caption, disable_web_page_preview=True
+            ),
         )
         answers.append(result)
     return answers
@@ -566,7 +567,12 @@ async def music_inline_func(answers, query):
     chat_id = -1001445180719
     group_invite = "https://t.me/joinchat/vSDE2DuGK4Y4Nzll"
     try:
-        messages = [m async for m in app2.search_messages(chat_id, query, filter="audio", limit=199)]
+        messages = [
+            m
+            async for m in app2.search_messages(
+                chat_id, query, filter="audio", limit=199
+            )
+        ]
     except Exception as e:
         print(e)
         msg = f"You Need To Join Here With Your Bot And Userbot To Get Cached Music.\n{group_invite}"
@@ -575,29 +581,28 @@ async def music_inline_func(answers, query):
                 title="ERROR",
                 description="Click Here To Know More.",
                 input_message_content=InputTextMessageContent(
-                    msg,
-                    disable_web_page_preview=True
-                )
+                    msg, disable_web_page_preview=True
+                ),
             )
         )
         return answers
     messages_ids_and_duration = []
     for f_ in messages:
         messages_ids_and_duration.append(
-            {"message_id": f_.message_id,
-                "duration": f_.audio.duration if f_.audio.duration else 0}
+            {
+                "message_id": f_.message_id,
+                "duration": f_.audio.duration if f_.audio.duration else 0,
+            }
         )
-    messages = list(
-        {v["duration"]: v for v in messages_ids_and_duration}.values())
+    messages = list({v["duration"]: v for v in messages_ids_and_duration}.values())
     messages_ids = []
     for ff_ in messages:
-        messages_ids.append(ff_['message_id'])
+        messages_ids.append(ff_["message_id"])
     messages = await app.get_messages(chat_id, messages_ids[0:48])
     for message_ in messages:
         answers.append(
             InlineQueryResultCachedDocument(
-                file_id=message_.audio.file_id,
-                title=message_.audio.title
+                file_id=message_.audio.file_id, title=message_.audio.title
             )
         )
     return answers
@@ -613,9 +618,9 @@ async def wiki_func(answers, text):
 __{data['answer']}__"""
     answers.append(
         InlineQueryResultArticle(
-            title=data['title'],
-            description=data['answer'],
-            input_message_content=InputTextMessageContent(msg)
+            title=data["title"],
+            description=data["answer"],
+            input_message_content=InputTextMessageContent(msg),
         )
     )
     return answers
@@ -630,21 +635,22 @@ async def speedtest_init(query):
             InlineQueryResultArticle(
                 title="ERROR",
                 description="THIS FEATURE IS ONLY FOR SUDO USERS",
-                input_message_content=InputTextMessageContent(msg)
-            ))
+                input_message_content=InputTextMessageContent(msg),
+            )
+        )
         return answers
     msg = "**Click The Button Below To Perform A Speedtest**"
     button = InlineKeyboard(row_width=1)
-    button.add(InlineKeyboardButton(
-        text="Test", callback_data="test_speedtest"))
+    button.add(InlineKeyboardButton(text="Test", callback_data="test_speedtest"))
     answers.append(
         InlineQueryResultArticle(
             title="Click Here",
             input_message_content=InputTextMessageContent(msg),
-            reply_markup=button
+            reply_markup=button,
         )
     )
     return answers
+
 
 """ callback query for the function above """
 
@@ -655,10 +661,7 @@ async def test_speedtest_cq(_, cq):
         await cq.answer("This Isn't For You!")
         return
     inline_message_id = cq.inline_message_id
-    await app.edit_inline_text(
-        inline_message_id,
-        "**Testing**"
-    )
+    await app.edit_inline_text(inline_message_id, "**Testing**")
     download, upload, info = await test_speedtest()
     msg = f"""
 **Download:** `{download}`
@@ -668,10 +671,7 @@ async def test_speedtest_cq(_, cq):
 **Latitude:** `{info['lat']}`
 **Longitude:** `{info['lon']}`
 """
-    await app.edit_inline_text(
-        inline_message_id,
-        msg
-    )
+    await app.edit_inline_text(inline_message_id, msg)
 
 
 async def pastebin_func(answers, link):
@@ -691,9 +691,7 @@ async def pastebin_func(answers, link):
                 InlineQueryResultArticle(
                     title="DOCUMENT TOO BIG",
                     description="Maximum supported size is 1MB",
-                    input_message_content=InputTextMessageContent(
-                        "DOCUMENT TOO BIG")
-
+                    input_message_content=InputTextMessageContent("DOCUMENT TOO BIG"),
                 )
             )
             return answers
@@ -714,12 +712,7 @@ async def pastebin_func(answers, link):
     await app.send_photo(MESSAGE_DUMP_CHAT, preview)  # To Pre-cache the media
     buttons = InlineKeyboard(row_width=1)
     buttons.add(InlineKeyboardButton(text="Paste Link", url=link))
-    answers.append(
-        InlineQueryResultPhoto(
-            photo_url=preview,
-            reply_markup=buttons
-        )
-    )
+    answers.append(InlineQueryResultPhoto(photo_url=preview, reply_markup=buttons))
     return answers
 
 
@@ -730,27 +723,21 @@ async def pmpermit_func(answers, user_id, victim):
     buttons = InlineKeyboard(row_width=2)
     buttons.add(
         InlineKeyboardButton(
-            text="To Scam You",
-            callback_data="pmpermit to_scam_you a"
+            text="To Scam You", callback_data="pmpermit to_scam_you a"
         ),
         InlineKeyboardButton(
-            text="For promotion",
-            callback_data="pmpermit to_scam_you a"
+            text="For promotion", callback_data="pmpermit to_scam_you a"
         ),
+        InlineKeyboardButton(text="Approve me", callback_data="pmpermit approve_me a"),
         InlineKeyboardButton(
-            text="Approve me",
-            callback_data="pmpermit approve_me a"
+            text="Approve", callback_data=f"pmpermit approve {victim}"
         ),
-        InlineKeyboardButton(
-            text="Approve",
-            callback_data=f"pmpermit approve {victim}"
-        )
     )
     answers.append(
         InlineQueryResultArticle(
             title="do_not_click_here",
             reply_markup=buttons,
-            input_message_content=InputTextMessageContent(caption)
+            input_message_content=InputTextMessageContent(caption),
         )
     )
     return answers
@@ -764,9 +751,7 @@ async def ping_func(answers):
     ping = f"{str(round((t2 - t1), 6)) * 100} ms"
     answers.append(
         InlineQueryResultArticle(
-            title=ping,
-            input_message_content=InputTextMessageContent(
-                f"__**{ping}**__")
+            title=ping, input_message_content=InputTextMessageContent(f"__**{ping}**__")
         )
     )
     return answers
@@ -776,7 +761,7 @@ async def nsfw_scan_func(answers, url: str):
     t1 = time()
     data = (await arq.nsfw_scan(url)).data
     t2 = time()
-    tt = round(t2-t1, 4)
+    tt = round(t2 - t1, 4)
     content = f"""
 **Scanned [Image]({url}) In {tt} Seconds.**
 
@@ -790,7 +775,7 @@ async def nsfw_scan_func(answers, url: str):
         InlineQueryResultArticle(
             title="Scanned",
             description=f"Took {tt} Seconds.",
-            input_message_content=InputTextMessageContent(content)
+            input_message_content=InputTextMessageContent(content),
         )
     )
     return answers
@@ -803,8 +788,9 @@ async def yt_music_func(answers, url, user_id):
             InlineQueryResultArticle(
                 title="ERROR",
                 description="THIS FEATURE IS ONLY FOR SUDO USERS",
-                input_message_content=InputTextMessageContent(msg)
-            ))
+                input_message_content=InputTextMessageContent(msg),
+            )
+        )
         return answers
     if "http" not in url:
         url = (await arq.youtube(url))[0]
@@ -816,15 +802,12 @@ async def yt_music_func(answers, url, user_id):
         title=title,
         duration=duration,
         performer=performer,
-        thumb=thumbnail
+        thumb=thumbnail,
     )
     os.remove(audio)
     os.remove(thumbnail)
     answers.append(
-        InlineQueryResultCachedDocument(
-            title=title,
-            file_id=m.audio.file_id
-        )
+        InlineQueryResultCachedDocument(title=title, file_id=m.audio.file_id)
     )
     return answers
 
@@ -846,9 +829,7 @@ async def carbon_inline_func(answers, link):
                 InlineQueryResultArticle(
                     title="DOCUMENT TOO BIG",
                     description="Maximum supported size is 1MB",
-                    input_message_content=InputTextMessageContent(
-                        "DOCUMENT TOO BIG")
-
+                    input_message_content=InputTextMessageContent("DOCUMENT TOO BIG"),
                 )
             )
             return answers
@@ -865,9 +846,7 @@ async def carbon_inline_func(answers, link):
     buttons.add(InlineKeyboardButton(text="Paste Link", url=link))
     answers.append(
         InlineQueryResultCachedDocument(
-            file_id=carbon.document.file_id,
-            title="Carbon",
-            reply_markup=buttons
+            file_id=carbon.document.file_id, title="Carbon", reply_markup=buttons
         )
     )
     return answers
@@ -879,9 +858,8 @@ async def user_info_inline_func(answers, user):
         InlineQueryResultArticle(
             title="Found User.",
             input_message_content=InputTextMessageContent(
-                caption,
-                disable_web_page_preview=True
-            )
+                caption, disable_web_page_preview=True
+            ),
         )
     )
     return answers
@@ -893,9 +871,8 @@ async def chat_info_inline_func(answers, chat):
         InlineQueryResultArticle(
             title="Found Chat.",
             input_message_content=InputTextMessageContent(
-                caption,
-                disable_web_page_preview=True
-            )
+                caption, disable_web_page_preview=True
+            ),
         )
     )
     return answers

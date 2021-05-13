@@ -21,10 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import app
-from wbb.core.decorators.errors import capture_err
 from pyrogram import filters
 
+from wbb import app
+from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "WebSS"
 __HELP__ = "/webss | .webss [URL] - Take A Screenshot Of A Webpage"
@@ -44,7 +44,7 @@ async def take_ss(_, message):
             await app.send_photo(
                 message.chat.id,
                 photo=f"https://webshot.amanoteam.com/print?q={url}",
-                )
+            )
         except TypeError:
             await m.edit("No Such Website.")
             return
