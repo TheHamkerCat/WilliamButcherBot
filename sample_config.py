@@ -37,4 +37,4 @@ else:
     MONGO_DB_URI = "mongodb+srv://username:password@cluster0.ksiis.mongodb.net/YourDataBaseName?retryWrites=true&w=majority"
     ARQ_API_KEY = "Get this from @ARQRobot"
     # NOTE Don't make changes below this line
-    ARQ_API_BASE_URL = "http://thearq.tech"
+    ARQ_API_URL = "http://thearq.tech"
