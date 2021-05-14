@@ -23,12 +23,16 @@ SOFTWARE.
 """
 from pyrogram import filters
 
-from wbb import ARQ_API_BASE_URL, app, arq
+from wbb import ARQ_API_URL, app, arq
 
 
 @app.on_message(filters.command("arq"))
 async def arq_stats(_, message):
     data = await arq.stats()
+    if not data.ok:
+        await message.reply_text(data.result)
+        return
+    data = data.result
     uptime = data.uptime
     requests = data.requests
     cpu = data.cpu
@@ -37,6 +41,7 @@ async def arq_stats(_, message):
     disk = data.disk
     platform = data.platform
     python_version = data.python
+    users = data.users
     statistics = f"""
 **Uptime:** `{uptime}`
 **Requests:** `{requests}`
@@ -47,6 +52,7 @@ async def arq_stats(_, message):
 **Disk:** `{disk}`
 **Platform:** `{platform}`
 **Python:** `{python_version}`
-**Address:** {ARQ_API_BASE_URL}
+**Users:** `{users}`
+**Address:** {ARQ_API_URL}
 """
     await message.reply_text(statistics)

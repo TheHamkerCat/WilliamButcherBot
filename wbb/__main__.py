@@ -69,12 +69,6 @@ async def start_bot():
 @app.on_message(filters.command(["help", "start"]))
 async def help_command(_, message):
     if message.chat.type != "private":
-        if len(message.command) >= 2 and message.command[1] == "help":
-            text, keyboard = await help_parser(message)
-            await message.reply(
-                text, reply_markup=keyboard, disable_web_page_preview=True
-            )
-            return
         keyboard = InlineKeyboardMarkup(
             [
                 [

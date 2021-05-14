@@ -157,9 +157,12 @@ async def jssong(_, message):
     m = await message.reply_text("Searching...")
     try:
         songs = await arq.saavn(query)
-        sname = songs[0].song
-        slink = songs[0].media_url
-        ssingers = songs[0].singers
+        if not songs.ok:
+            await message.reply_text(songs.result)
+            return
+        sname = songs.result[0].song
+        slink = songs.result[0].media_url
+        ssingers = songs.result[0].singers
         await m.edit("Downloading")
         song = await download_song(slink)
         await m.edit("Uploading")
@@ -198,9 +201,12 @@ async def deezsong(_, message):
     m = await message.reply_text("Searching...")
     try:
         songs = await arq.deezer(query, 1)
-        title = songs[0].title
-        url = songs[0].url
-        artist = songs[0].artist
+        if not songs.ok:
+            await message.reply_text(songs.result)
+            return
+        title = songs.result[0].title
+        url = songs.result[0].url
+        artist = songs.result[0].artist
         await m.edit("Downloading")
         song = await download_song(url)
         await m.edit("Uploading")
@@ -229,7 +235,7 @@ async def lyrics_func(_, message):
     m = await message.reply_text("**Searching**")
     query = message.text.strip().split(None, 1)[1]
     song = await arq.lyrics(query)
-    lyrics = song.lyrics
+    lyrics = song.result
     if len(lyrics) < 4095:
         await m.edit(f"__{lyrics}__")
         return

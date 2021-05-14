@@ -86,7 +86,7 @@ async def image_ocr(_, message):
     os.remove(file)
     data = await arq.ocr(url)
     try:
-        await m.edit(data.ocr)
+        await m.edit(data.result)
     except MessageEmpty:
         await m.edit("There's no text in that image.")
         return
