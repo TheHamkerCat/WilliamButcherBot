@@ -42,11 +42,16 @@ async def reddit(_, message):
         await message.reply_text(reddit.result)
         return
     reddit = reddit.result
+    nsfw = reddit.nsfw
     sreddit = reddit.subreddit
     title = reddit.title
     image = reddit.url
     link = reddit.postLink
+    if nsfw:
+        await message.reply_text("NSFW RESULTS COULD NOT BE SHOWN.")
+        return
     caption = f"""**Title:** `{title}`
 **Subreddit:** {sreddit}
-**PostLink:** {link}"""
+**PostLink:** {link}
+"""
     await message.reply_photo(photo=image, caption=caption)

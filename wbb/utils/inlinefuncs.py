@@ -281,10 +281,7 @@ async def saavn_func(answers, text):
 **Duration:** {duration}
 **Release:** {i.year}
 **Singers:** {i.singers}"""
-        description = (
-            f"{i.album} | {duration} "
-            + f"| {i.singers} ({i.year})"
-        )
+        description = f"{i.album} | {duration} " + f"| {i.singers} ({i.year})"
         answers.append(
             InlineQueryResultArticle(
                 title=i.song,
@@ -437,10 +434,7 @@ async def youtube_func(answers, text):
 **Duration:** {i.duration}
 **Uploaded:** {i.publish_time}
 **Description:** {i.long_desc}"""
-        description = (
-            f"{i.views} | {i.channel} | "
-            + f"{i.duration} | {i.publish_time}"
-        )
+        description = f"{i.views} | {i.channel} | " + f"{i.duration} | {i.publish_time}"
         answers.append(
             InlineQueryResultArticle(
                 title=i.title,
