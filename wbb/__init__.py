@@ -89,8 +89,8 @@ print("[INFO]: LOADING BOT CLIENT")
 app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
 # ARQ client
 print("[INFO]: LOADING ARQ")
-arq = ARQ(ARQ_API_BASE_URL)
-# Telegram client
+arq = ARQ(ARQ_API_URL, ARQ_API_KEY)
+# Telegraph client
 print("[INFO]: LOADING TELEGRAPH")
 telegraph = Telegraph()
 telegraph.create_account(short_name="wbb")

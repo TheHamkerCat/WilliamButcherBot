@@ -72,6 +72,11 @@ async def chatbot_status(_, message):
         await message.reply_text("**Usage**\n/chatbot [ON|OFF]")
 
 
+async def lunaQuery(query):
+    luna = await arq.luna(query)
+    return luna.result
+
+
 @app.on_message(
     filters.text & filters.reply & ~filters.bot & ~filters.via_bot & ~filters.forwarded,
     group=chatbot_group,
@@ -85,8 +90,7 @@ async def chatbot_talk(_, message):
     if message.reply_to_message.from_user.id != BOT_ID:
         return
     query = message.text
-    luna = await arq.luna(query)
-    response = luna.response
+    response = await lunaQuery(query)
     await message.reply_text(response)
 
 
@@ -145,8 +149,7 @@ async def chatbot_talk_ubot(_, message):
     else:
         if username not in query:
             return
-    luna = await arq.luna(query)
-    response = luna.response
+    response = await lunaQuery(query)
     await message.reply_text(response)
 
 
@@ -160,7 +163,6 @@ async def chatbot_talk_ubot_pm(_, message):
         return
     query = message.text
     await app2.send_chat_action(message.chat.id, "typing")
-    luna = await arq.luna(query)
-    response = luna.response
+    response = await lunaQuery(query)
     await message.reply_text(response)
     await app2.send_chat_action(message.chat.id, "cancel")

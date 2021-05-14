@@ -171,28 +171,35 @@ __**Translated from {i.src} to {lang}**__
 
 async def urban_func(answers, text):
     results = await arq.urbandict(text)
+    if not results.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=results.result,
+                input_message_content=InputTextMessageContent(results.result),
+            )
+        )
+        return answers
+    results = results.result
     limit = 0
     for i in results:
         if limit > 48:
             break
         limit += 1
-        try:
-            msg = f"""
+        msg = f"""
 **Query:** {text}
 
-**Definition:** __{results[i].definition}__
+**Definition:** __{i.definition}__
 
-**Example:** __{results[i].example}__"""
+**Example:** __{i.example}__"""
 
-            answers.append(
-                InlineQueryResultArticle(
-                    title=results[i].word,
-                    description=results[i].definition,
-                    input_message_content=InputTextMessageContent(msg),
-                )
+        answers.append(
+            InlineQueryResultArticle(
+                title=i.word,
+                description=i.definition,
+                input_message_content=InputTextMessageContent(msg),
             )
-        except KeyError:
-            pass
+        )
     return answers
 
 
@@ -225,87 +232,108 @@ async def google_search_func(answers, text):
 
 async def wall_func(answers, text):
     results = await arq.wall(text)
+    if not results.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=results.result,
+                input_message_content=InputTextMessageContent(results.result),
+            )
+        )
+        return answers
     limit = 0
+    results = results.result
     for i in results:
         if limit > 48:
             break
         limit += 1
-        try:
-            answers.append(
-                InlineQueryResultPhoto(
-                    photo_url=results[i].url_image,
-                    thumb_url=results[i].url_thumb,
-                    caption=f"[Source]({results[i].url_image})",
-                )
+        answers.append(
+            InlineQueryResultPhoto(
+                photo_url=i.url_image,
+                thumb_url=i.url_thumb,
+                caption=f"[Source]({i.url_image})",
             )
-        except KeyError:
-            pass
+        )
     return answers
 
 
 async def saavn_func(answers, text):
     buttons_list = []
     results = await arq.saavn(text)
-    for i in results:
-        buttons = InlineKeyboard(row_width=1)
-        buttons.add(InlineKeyboardButton("Download | Play", url=results[i].media_url))
-        buttons_list.append(buttons)
-        duration = await time_convert(results[i].duration)
-        caption = f"""
-**Title:** {results[i].song}
-**Album:** {results[i].album}
-**Duration:** {duration}
-**Release:** {results[i].year}
-**Singers:** {results[i].singers}"""
-        description = (
-            f"{results[i].album} | {duration} "
-            + f"| {results[i].singers} ({results[i].year})"
-        )
-        try:
-            answers.append(
-                InlineQueryResultArticle(
-                    title=results[i].song,
-                    input_message_content=InputTextMessageContent(
-                        caption, disable_web_page_preview=True
-                    ),
-                    description=description,
-                    thumb_url=results[i].image,
-                    reply_markup=buttons_list[i],
-                )
+    if not results.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=results.result,
+                input_message_content=InputTextMessageContent(results.result),
             )
-        except (KeyError, ValueError):
-            pass
+        )
+        return answers
+    results = results.result
+    for count, i in enumerate(results):
+        buttons = InlineKeyboard(row_width=1)
+        buttons.add(InlineKeyboardButton("Download | Play", url=i.media_url))
+        buttons_list.append(buttons)
+        duration = await time_convert(i.duration)
+        caption = f"""
+**Title:** {i.song}
+**Album:** {i.album}
+**Duration:** {duration}
+**Release:** {i.year}
+**Singers:** {i.singers}"""
+        description = (
+            f"{i.album} | {duration} "
+            + f"| {i.singers} ({i.year})"
+        )
+        answers.append(
+            InlineQueryResultArticle(
+                title=i.song,
+                input_message_content=InputTextMessageContent(
+                    caption, disable_web_page_preview=True
+                ),
+                description=description,
+                thumb_url=i.image,
+                reply_markup=buttons_list[count],
+            )
+        )
     return answers
 
 
 async def deezer_func(answers, text):
     buttons_list = []
     results = await arq.deezer(text, 5)
-    for i in results:
-        buttons = InlineKeyboard(row_width=1)
-        buttons.add(InlineKeyboardButton("Download | Play", url=results[i].url))
-        buttons_list.append(buttons)
-        duration = await time_convert(results[i].duration)
-        caption = f"""
-**Title:** {results[i].title}
-**Artist:** {results[i].artist}
-**Duration:** {duration}
-**Source:** [Deezer]({results[i].source})"""
-        description = f"{results[i].artist} | {duration}"
-        try:
-            answers.append(
-                InlineQueryResultArticle(
-                    title=results[i].title,
-                    thumb_url=results[i].thumbnail,
-                    description=description,
-                    input_message_content=InputTextMessageContent(
-                        caption, disable_web_page_preview=True
-                    ),
-                    reply_markup=buttons_list[i],
-                )
+    if not results.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=results.result,
+                input_message_content=InputTextMessageContent(results.result),
             )
-        except (KeyError, ValueError):
-            pass
+        )
+        return answers
+    results = results.result
+    for count, i in enumerate(results):
+        buttons = InlineKeyboard(row_width=1)
+        buttons.add(InlineKeyboardButton("Download | Play", url=i.url))
+        buttons_list.append(buttons)
+        duration = await time_convert(i.duration)
+        caption = f"""
+**Title:** {i.title}
+**Artist:** {i.artist}
+**Duration:** {duration}
+**Source:** [Deezer]({i.source})"""
+        description = f"{i.artist} | {duration}"
+        answers.append(
+            InlineQueryResultArticle(
+                title=i.title,
+                thumb_url=i.thumbnail,
+                description=description,
+                input_message_content=InputTextMessageContent(
+                    caption, disable_web_page_preview=True
+                ),
+                reply_markup=buttons_list[count],
+            )
+        )
     return answers
 
 
@@ -339,16 +367,26 @@ async def shortify(url):
 
 async def torrent_func(answers, text):
     results = await arq.torrent(text)
+    if not results.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=results.result,
+                input_message_content=InputTextMessageContent(results.result),
+            )
+        )
+        return answers
     limit = 0
+    results = results.result
     for i in results:
         if limit > 48:
             break
-        title = results[i].name
-        size = results[i].size
-        seeds = results[i].seeds
-        leechs = results[i].leechs
-        upload_date = results[i].uploaded + " Ago"
-        magnet = results[i].magnet
+        title = i.name
+        size = i.size
+        seeds = i.seeds
+        leechs = i.leechs
+        upload_date = i.uploaded + " Ago"
+        magnet = i.magnet
         caption = f"""
 **Title:** __{title}__
 **Size:** __{size}__
@@ -358,63 +396,77 @@ async def torrent_func(answers, text):
 **Magnet:** `{magnet}`"""
 
         description = f"{size} | {upload_date} | Seeds: {seeds}"
-        try:
-            answers.append(
-                InlineQueryResultArticle(
-                    title=title,
-                    description=description,
-                    input_message_content=InputTextMessageContent(
-                        caption, disable_web_page_preview=True
-                    ),
-                )
+        answers.append(
+            InlineQueryResultArticle(
+                title=title,
+                description=description,
+                input_message_content=InputTextMessageContent(
+                    caption, disable_web_page_preview=True
+                ),
             )
-            limit += 1
-        except (KeyError, ValueError):
-            pass
+        )
+        limit += 1
+        pass
     return answers
 
 
 async def youtube_func(answers, text):
     results = await arq.youtube(text)
+    if not results.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=results.result,
+                input_message_content=InputTextMessageContent(results.result),
+            )
+        )
+        return answers
     limit = 0
+    results = results.result
     for i in results:
         if limit > 48:
             break
         limit += 1
         buttons = InlineKeyboard(row_width=1)
-        video_url = f"https://youtube.com{results[i].url_suffix}"
+        video_url = f"https://youtube.com{i.url_suffix}"
         buttons.add(InlineKeyboardButton("Watch", url=video_url))
         caption = f"""
-**Title:** {results[i].title}
-**Views:** {results[i].views}
-**Channel:** {results[i].channel}
-**Duration:** {results[i].duration}
-**Uploaded:** {results[i].publish_time}
-**Description:** {results[i].long_desc}"""
+**Title:** {i.title}
+**Views:** {i.views}
+**Channel:** {i.channel}
+**Duration:** {i.duration}
+**Uploaded:** {i.publish_time}
+**Description:** {i.long_desc}"""
         description = (
-            f"{results[i].views} | {results[i].channel} | "
-            + f"{results[i].duration} | {results[i].publish_time}"
+            f"{i.views} | {i.channel} | "
+            + f"{i.duration} | {i.publish_time}"
         )
-        try:
-            answers.append(
-                InlineQueryResultArticle(
-                    title=results[i].title,
-                    thumb_url=results[i].thumbnails[0],
-                    description=description,
-                    input_message_content=InputTextMessageContent(
-                        caption, disable_web_page_preview=True
-                    ),
-                    reply_markup=buttons,
-                )
+        answers.append(
+            InlineQueryResultArticle(
+                title=i.title,
+                thumb_url=i.thumbnails[0],
+                description=description,
+                input_message_content=InputTextMessageContent(
+                    caption, disable_web_page_preview=True
+                ),
+                reply_markup=buttons,
             )
-        except (KeyError, ValueError):
-            pass
+        )
     return answers
 
 
 async def lyrics_func(answers, text):
     song = await arq.lyrics(text)
-    lyrics = song.lyrics
+    if not song.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=song.result,
+                input_message_content=InputTextMessageContent(song.result),
+            )
+        )
+        return answers
+    lyrics = song.result
     song = lyrics.splitlines()
     song_name = song[0]
     artist = song[1]
@@ -610,16 +662,26 @@ async def music_inline_func(answers, query):
 
 async def wiki_func(answers, text):
     data = await arq.wiki(text)
+    if not data.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=data.result,
+                input_message_content=InputTextMessageContent(data.result),
+            )
+        )
+        return answers
+    data = data.result
     msg = f"""
 **QUERY:**
-{data['title']}
+{data.title}
 
 **ANSWER:**
-__{data['answer']}__"""
+__{data.answer}__"""
     answers.append(
         InlineQueryResultArticle(
-            title=data["title"],
-            description=data["answer"],
+            title=data.title,
+            description=data.answer,
             input_message_content=InputTextMessageContent(msg),
         )
     )
@@ -748,7 +810,7 @@ async def ping_func(answers):
     ping = Ping(ping_id=randint(696969, 6969696))
     await app.send(ping)
     t2 = time()
-    ping = f"{str(round((t2 - t1), 6)) * 100} ms"
+    ping = f"{str(round((t2 - t1), 6) * 100)} ms"
     answers.append(
         InlineQueryResultArticle(
             title=ping, input_message_content=InputTextMessageContent(f"__**{ping}**__")
@@ -759,9 +821,19 @@ async def ping_func(answers):
 
 async def nsfw_scan_func(answers, url: str):
     t1 = time()
-    data = (await arq.nsfw_scan(url)).data
+    data = await arq.nsfw_scan(url)
+    if not data.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=data.result,
+                input_message_content=InputTextMessageContent(data.result),
+            )
+        )
+        return answers
     t2 = time()
     tt = round(t2 - t1, 4)
+    data = data.result
     content = f"""
 **Scanned [Image]({url}) In {tt} Seconds.**
 
@@ -793,7 +865,7 @@ async def yt_music_func(answers, url, user_id):
         )
         return answers
     if "http" not in url:
-        url = (await arq.youtube(url))[0]
+        url = (await arq.youtube(url)).result[0]
         url = f"https://youtube.com{url.url_suffix}"
     title, performer, duration, audio, thumbnail = await download_youtube_audio(url)
     m = await app.send_audio(

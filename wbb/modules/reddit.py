@@ -37,16 +37,16 @@ async def reddit(_, message):
         await message.reply_text("/reddit needs an argument")
         return
     subreddit = message.text.split(None, 1)[1]
-    try:
-        reddit = await arq.reddit(subreddit)
-        sreddit = reddit.subreddit
-        title = reddit.title
-        image = reddit.url
-        link = reddit.postLink
-        caption = f"""**Title:** `{title}`
+    reddit = await arq.reddit(subreddit)
+    if not reddit.ok:
+        await message.reply_text(reddit.result)
+        return
+    reddit = reddit.result
+    sreddit = reddit.subreddit
+    title = reddit.title
+    image = reddit.url
+    link = reddit.postLink
+    caption = f"""**Title:** `{title}`
 **Subreddit:** {sreddit}
 **PostLink:** {link}"""
-        await message.reply_photo(photo=image, caption=caption)
-    except Exception as e:
-        print(str(e))
-        await message.reply_text(str(e))
+    await message.reply_photo(photo=image, caption=caption)
