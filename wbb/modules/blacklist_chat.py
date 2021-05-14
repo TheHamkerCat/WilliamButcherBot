@@ -54,7 +54,7 @@ async def whitelist_chat_func(_, message: Message):
 @app.on_message(filters.command("blacklisted_chats") & filters.user(SUDOERS))
 async def blacklisted_chats_func(_, message: Message):
     text = ""
-    for count, chat_id in enumerate(await blacklisted_chats()):
+    for count, chat_id in enumerate(await blacklisted_chats(), 1):
         title = (await app.get_chat(chat_id)).title
-        text += f"**{count}. {title}** [`chat_id`]\n"
+        text += f"**{count}. {title}** [`{chat_id}`]\n"
     await message.reply_text(text)

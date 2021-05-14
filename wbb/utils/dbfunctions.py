@@ -39,10 +39,10 @@ pmpermitdb = db.pmpermit
 welcomedb = db.welcome_text
 nsfwdb = db.nsfw
 captcha_cachedb = db.captcha_cache
-blacklist_filtersdb = db.blacklist_filters
+blacklist_filtersdb = db.blacklistFilters
 pipesdb = db.pipes
 sudoersdb = db.sudoers
-blacklist_chatdb = db.blacklist_chat
+blacklist_chatdb = db.blacklistChat
 
 """ Notes functions """
 
@@ -642,29 +642,23 @@ async def remove_sudo(user_id: int) -> bool:
     return True
 
 
-""" BLACKLIST CHATS FUNCTIONS """
+""" BLACKLISTED CHATS """
 
 
 async def blacklisted_chats() -> list:
-    chats = await blacklist_chatdb.find_one({"chat": "chat"})
-    if not chats:
-        return []
-    return chats["chats"]
+    chats = blacklist_chatdb.find({"chat_id": {"$lt": 0}})
+    return [chat["chat_id"] for chat in await chats.to_list(length=1000000000)]
 
 
 async def blacklist_chat(chat_id: int) -> bool:
-    chats = await blacklisted_chats()
-    chats.append(chats)
-    await blacklist_chatdb.update_one(
-        {"chat": "chat"}, {"$set": {"chats": chats}}, upsert=True
-    )
-    return True
+    if not await blacklist_chatdb.find_one({"chat_id": chat_id}):
+        await blacklist_chatdb.insert_one({"chat_id": chat_id})
+        return True
+    return False
 
 
 async def whitelist_chat(chat_id: int) -> bool:
-    chats = await blacklisted_chats()
-    chats.remove(chats)
-    await blacklist_chatdb.update_one(
-        {"chat": "chat"}, {"$set": {"chats": chats}}, upsert=True
-    )
-    return True
+    if await blacklist_chatdb.find_one({"chat_id": chat_id}):
+        await blacklist_chatdb.delete_one({"chat_id": chat_id})
+        return True
+    return False
