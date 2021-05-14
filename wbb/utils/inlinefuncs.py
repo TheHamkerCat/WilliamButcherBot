@@ -242,6 +242,7 @@ async def wall_func(answers, text):
         )
         return answers
     limit = 0
+    results = results.result
     for i in results:
         if limit > 48:
             break
@@ -268,6 +269,7 @@ async def saavn_func(answers, text):
             )
         )
         return answers
+    results = results.result
     for count, i in enumerate(results):
         buttons = InlineKeyboard(row_width=1)
         buttons.add(InlineKeyboardButton("Download | Play", url=i.media_url))
@@ -309,6 +311,7 @@ async def deezer_func(answers, text):
             )
         )
         return answers
+    results = results.result
     for count, i in enumerate(results):
         buttons = InlineKeyboard(row_width=1)
         buttons.add(InlineKeyboardButton("Download | Play", url=i.url))
@@ -374,6 +377,7 @@ async def torrent_func(answers, text):
         )
         return answers
     limit = 0
+    results = results.result
     for i in results:
         if limit > 48:
             break
@@ -392,17 +396,17 @@ async def torrent_func(answers, text):
 **Magnet:** `{magnet}`"""
 
         description = f"{size} | {upload_date} | Seeds: {seeds}"
-            answers.append(
-                InlineQueryResultArticle(
-                    title=title,
-                    description=description,
-                    input_message_content=InputTextMessageContent(
-                        caption, disable_web_page_preview=True
-                    ),
-                )
+        answers.append(
+            InlineQueryResultArticle(
+                title=title,
+                description=description,
+                input_message_content=InputTextMessageContent(
+                    caption, disable_web_page_preview=True
+                ),
             )
-            limit += 1
-            pass
+        )
+        limit += 1
+        pass
     return answers
 
 
@@ -418,6 +422,7 @@ async def youtube_func(answers, text):
         )
         return answers
     limit = 0
+    results = results.result
     for i in results:
         if limit > 48:
             break
