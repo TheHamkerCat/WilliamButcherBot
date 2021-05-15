@@ -58,6 +58,10 @@ regex_downvote = r"^(\-|\-\-|\-1|👎)$"
 async def upvote(_, message):
     if not await is_karma_on(message.chat.id):
         return
+    if not message.reply_to_message.from_user:
+        return
+    if not message.from_user:
+        return
     if message.reply_to_message.from_user.id == message.from_user.id:
         return
     chat_id = message.chat.id
@@ -93,8 +97,13 @@ async def upvote(_, message):
 async def downvote(_, message):
     if not await is_karma_on(message.chat.id):
         return
+    if not message.reply_to_message.from_user:
+        return
+    if not message.from_user:
+        return
     if message.reply_to_message.from_user.id == message.from_user.id:
         return
+
     chat_id = message.chat.id
     user_id = message.reply_to_message.from_user.id
     user_mention = message.reply_to_message.from_user.mention
@@ -130,6 +139,9 @@ async def karma(_, message):
             karma_arranged = dict(
                 sorted(karma_dicc.items(), key=lambda item: item[1], reverse=True)
             )
+        if not karma_arranged:
+            await message.reply_text("No karma in DB for this chat.")
+            return
         for user_idd, karma_count in karma_arranged.items():
             if limit > 9:
                 break
