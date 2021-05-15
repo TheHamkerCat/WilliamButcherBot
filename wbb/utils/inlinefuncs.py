@@ -77,7 +77,7 @@ keywords_list = [
     "carbon",
     "info",
     "chat_info",
-    "tmdb"
+    "tmdb",
 ]
 
 
@@ -408,7 +408,7 @@ async def youtube_func(answers, text):
             )
         )
         return answers
-    results = results.result[0: 48]
+    results = results.result[0:48]
     for i in results:
         buttons = InlineKeyboard(row_width=1)
         video_url = f"https://youtube.com{i.url_suffix}"
@@ -942,24 +942,34 @@ async def tmdb_func(answers, query):
         )
         return answers
     results = response.result[0:48]
-    for result in results 
+    for result in results:
+        if not result.genre:
+            genre = None
+        else:
+            genre = " | ".join(result.genre)
         caption = f"""
 **{result.title}**
 **Type:** {result.type}
 **Rating:** {result.rating}
-**Genre:** {" | ".join(result.genre) if result.genre else None}
+**Genre:** {genre}
 **Release Date:** {result.releaseDate}
 **Description:** __{result.overview}__
 """
         buttons = InlineKeyboard(row_width=1)
         buttons.add(
-                InlineKeyboardButton("Search Again", switch_inline_query_current_chat="tmdb")
-                )
+            InlineKeyboardButton(
+                "Search Again", switch_inline_query_current_chat="tmdb"
+            )
+        )
         answers.append(
-                InlineQueryResultPhoto(
-                    photo_url=result.backdrop if result.backdrop else result.poster if result.poster else "https://cdn.hipwallpaper.com/i/82/99/EoKmFw.jpg",
-                    caption=caption,
-                    reply_markup=buttons
-                    )
-                )
+            InlineQueryResultPhoto(
+                photo_url=result.backdrop
+                if result.backdrop
+                else result.poster
+                if result.poster
+                else "https://hamker.me/0g9nbth.png",
+                caption=caption,
+                reply_markup=buttons,
+            )
+        )
     return answers
