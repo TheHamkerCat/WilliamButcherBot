@@ -77,6 +77,7 @@ keywords_list = [
     "carbon",
     "info",
     "chat_info",
+    "tmdb"
 ]
 
 
@@ -180,12 +181,8 @@ async def urban_func(answers, text):
             )
         )
         return answers
-    results = results.result
-    limit = 0
+    results = results.result[0:48]
     for i in results:
-        if limit > 48:
-            break
-        limit += 1
         msg = f"""
 **Query:** {text}
 
@@ -241,12 +238,8 @@ async def wall_func(answers, text):
             )
         )
         return answers
-    limit = 0
-    results = results.result
+    results = results.result[0:48]
     for i in results:
-        if limit > 48:
-            break
-        limit += 1
         answers.append(
             InlineQueryResultPhoto(
                 photo_url=i.url_image,
@@ -373,11 +366,8 @@ async def torrent_func(answers, text):
             )
         )
         return answers
-    limit = 0
-    results = results.result
+    results = results.result[0:48]
     for i in results:
-        if limit > 48:
-            break
         title = i.name
         size = i.size
         seeds = i.seeds
@@ -418,12 +408,8 @@ async def youtube_func(answers, text):
             )
         )
         return answers
-    limit = 0
-    results = results.result
+    results = results.result[0: 48]
     for i in results:
-        if limit > 48:
-            break
-        limit += 1
         buttons = InlineKeyboard(row_width=1)
         video_url = f"https://youtube.com{i.url_suffix}"
         buttons.add(InlineKeyboardButton("Watch", url=video_url))
@@ -941,4 +927,39 @@ async def chat_info_inline_func(answers, chat):
             ),
         )
     )
+    return answers
+
+
+async def tmdb_func(answers, query):
+    response = await arq.tmdb(query)
+    if not response.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=response.result,
+                input_message_content=InputTextMessageContent(response.result),
+            )
+        )
+        return answers
+    results = response.result[0:48]
+    for result in results 
+        caption = f"""
+**{result.title}**
+**Type:** {result.type}
+**Rating:** {result.rating}
+**Genre:** {" | ".join(result.genre) if result.genre else None}
+**Release Date:** {result.releaseDate}
+**Description:** __{result.overview}__
+"""
+        buttons = InlineKeyboard(row_width=1)
+        buttons.add(
+                InlineKeyboardButton("Search Again", switch_inline_query_current_chat="tmdb")
+                )
+        answers.append(
+                InlineQueryResultPhoto(
+                    photo_url=result.backdrop if result.backdrop else result.poster if result.poster else "https://cdn.hipwallpaper.com/i/82/99/EoKmFw.jpg",
+                    caption=caption,
+                    reply_markup=buttons
+                    )
+                )
     return answers
