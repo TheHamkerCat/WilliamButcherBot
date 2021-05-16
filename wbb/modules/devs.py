@@ -86,13 +86,13 @@ async def executor(client, message):
         )
         await message.reply_document(
             document=filename,
-            caption=cmd,
-            disable_notification=True,
+            caption=f"`{cmd[0:1020]}`",
+            quote=False,
             reply_to_message_id=reply_to_id,
             reply_markup=keyboard,
         )
-        os.remove(filename)
         await message.delete()
+        os.remove(filename)
     else:
         t2 = time()
         keyboard = InlineKeyboardMarkup(

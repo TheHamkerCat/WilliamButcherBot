@@ -48,7 +48,6 @@ __HELP__ = """
 /weather [City] - To Get Weather Info
 /tr [en] - Translate A Message
 /json [URL] - Get JSON Response From An API or Something.
-/ocr - Perform OCR On An Image.
 /arq - Statistics Of ARQ API.
 #RTFM - Check it lol
 """
