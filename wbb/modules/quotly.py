@@ -15,10 +15,12 @@ __HELP__ = """
 
 async def quotify(messages: list):
     response = await arq.quotly(messages)
+    if not response.ok:
+        return [False, response.result]
     sticker = response.result
     sticker = BytesIO(sticker)
     sticker.name = "sticker.webp"
-    return sticker
+    return [True, sticker]
 
 
 def getArg(message: Message) -> str:
@@ -79,7 +81,19 @@ async def quotly_func(_, message: Message):
     else:
         await m.edit("Incorrect argument, check quotly module in help section.")
         return
-    sticker = await quotify(messages)
+    try:
+        sticker = await quotify(messages)
+        if not sticker[0]:
+            await message.rely_text(sticker[1])
+            return
+        sticker = sticker[1]
+    except Exception as e:
+        await message.reply_text(
+            "Something wrong happened while quoting messages,"
+            + " This error usually happens when there's a "
+            + " message containing something other than text."
+        )
+        return
     await message.reply_sticker(sticker)
     await m.delete()
     sticker.close()
