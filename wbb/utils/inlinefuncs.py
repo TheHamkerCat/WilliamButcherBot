@@ -965,9 +965,7 @@ async def tmdb_func(answers, query):
         )
         answers.append(
             InlineQueryResultPhoto(
-                photo_url=result.backdrop
-                if result.backdrop
-                else result.poster,
+                photo_url=result.backdrop if result.backdrop else result.poster,
                 caption=caption,
                 title=result.title,
                 description=f"{genre} • {result.releaseDate} • {result.rating} • {description}",
