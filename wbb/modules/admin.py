@@ -48,14 +48,14 @@ __HELP__ = """/ban - Ban A User
 /report | @admins - Report A Message To Admins."""
 
 
-async def list_admins(chat_id):
+async def list_admins(chat_id: int):
     list_of_admins = []
     async for member in app.iter_chat_members(chat_id, filter="administrators"):
         list_of_admins.append(member.user.id)
     return list_of_admins
 
 
-async def member_permissions(chat_id, user_id):
+async def member_permissions(chat_id: int, user_id: int):
     perms = []
     member = await app.get_chat_member(chat_id, user_id)
     if member.can_post_messages:

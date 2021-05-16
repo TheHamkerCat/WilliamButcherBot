@@ -50,8 +50,8 @@ async def quotly_func(_, message: Message):
     elif len(message.command) == 2:
         arg = isArgInt(message)
         if arg[0]:
-            if arg[1] < 2 or arg[1] > 6:
-                await m.edit("Argument must be between 2-6.")
+            if arg[1] < 2 or arg[1] > 10:
+                await m.edit("Argument must be between 2-10.")
                 return
             count = arg[1]
             messages = await app.get_messages(
