@@ -40,6 +40,8 @@ DELIMITERS = ("/", ":", "|", "_")
     filters.regex(r"s([{}]).*?\1.*".format("".join(DELIMITERS))), group=regex_group
 )
 async def sed(_, message):
+    if not message.text:
+        return
     sed_result = separate_sed(message.text)
     if message.reply_to_message:
         if message.reply_to_message.text:

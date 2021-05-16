@@ -89,9 +89,8 @@ async def executor(client, message):
             out_file.write(str(evaluation.strip()))
         await message.reply_document(
             document=filename,
-            caption=f"`{cmd[0:1020]}`",
+            caption=f"**INPUT:**\n`{cmd[0:980]}`\n\n**OUTPUT:**\n`Attached Document`",
             quote=False,
-            reply_to_message_id=reply_to_id,
         )
         await message.delete()
         os.remove(filename)
