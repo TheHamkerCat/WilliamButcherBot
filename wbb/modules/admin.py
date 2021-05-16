@@ -41,6 +41,7 @@ __HELP__ = """/ban - Ban A User
 /purge - Purge Messages
 /del - Delete Replied Message
 /promote - Promote A Member
+/demote - Demote A Member
 /pin - Pin A Message
 /mute - Mute A User
 /unmute - Unmute A User
@@ -315,6 +316,44 @@ async def promote(_, message):
     except Exception as e:
         await message.reply_text(str(e))
 
+# Demote Member
+
+@app.on_message(filters.command("demote") & ~filters.edited)
+@capture_err
+async def demote(_, message):
+    try:
+        from_user_id = message.from_user.id
+        chat_id = message.chat.id
+        permissions = await member_permissions(chat_id, from_user_id)
+        if "can_promote_members" not in permissions and from_user_id not in SUDOERS:
+            await message.reply_text("You don't have enough permissions")
+            return
+        bot = await app.get_chat_member(chat_id, BOT_ID)
+        if len(message.command) == 2:
+            username = message.text.split(None, 1)[1]
+            user_id = (await app.get_users(username)).id
+        elif len(message.command) == 1 and message.reply_to_message:
+            user_id = message.reply_to_message.from_user.id
+        else:
+            await message.reply_text(
+                "Reply To A User's Message Or Give A Username To Demote."
+            )
+            return
+        await message.chat.promote_member(
+            user_id=user_id,
+            can_change_info=False,
+            can_invite_users=False,
+            can_delete_messages=False,
+            can_restrict_members=False,
+            can_pin_messages=False,
+            can_promote_members=False,
+            can_manage_chat=False,
+            can_manage_voice_chats=False,
+        )
+        await message.reply_text("Demoted successfully!")
+
+    except Exception as e:
+        await message.reply_text(str(e))
 
 # Pin Messages
 
