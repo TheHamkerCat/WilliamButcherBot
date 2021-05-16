@@ -943,6 +943,8 @@ async def tmdb_func(answers, query):
         return answers
     results = response.result[0:48]
     for result in results:
+        if not result.poster and not result.backdrop:
+            continue
         if not result.genre:
             genre = None
         else:
@@ -953,7 +955,7 @@ async def tmdb_func(answers, query):
 **Rating:** {result.rating}
 **Genre:** {genre}
 **Release Date:** {result.releaseDate}
-**Description:** __{result.overview}__
+**Description:** __{result.overview[0:900] if result.overview else "None"}__
 """
         buttons = InlineKeyboard(row_width=1)
         buttons.add(
@@ -965,9 +967,7 @@ async def tmdb_func(answers, query):
             InlineQueryResultPhoto(
                 photo_url=result.backdrop
                 if result.backdrop
-                else result.poster
-                if result.poster
-                else "https://hamker.me/0g9nbth.png",
+                else result.poster,
                 caption=caption,
                 reply_markup=buttons,
             )
