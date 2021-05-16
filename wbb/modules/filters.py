@@ -135,9 +135,6 @@ async def filters_re(_, message):
                 _filter = await get_filter(chat_id, word)
                 data_type = _filter["type"]
                 data = _filter["data"]
-                if text == word:
-                    await message.delete()
-                return
                 if data_type == "text":
                     if message.reply_to_message:
                         await message.reply_to_message.reply_text(
@@ -147,7 +144,10 @@ async def filters_re(_, message):
                 else:
                     if message.reply_to_message:
                         await message.reply_to_message.reply_sticker(data)
+                        return
                     await message.reply_sticker(data)
+                if text == word:
+                    await message.delete()
     except Exception as e:
         e = traceback.format_exc()
         print(e)

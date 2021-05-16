@@ -108,6 +108,7 @@ async def inline_query_handler(client, query):
                 await client.answer_inline_query(
                     query.id,
                     results=answers,
+                    is_gallery=True,
                     switch_pm_text="Wallpapers Search | wall [QUERY]",
                     switch_pm_parameter="inline",
                 )
