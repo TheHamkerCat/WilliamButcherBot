@@ -372,7 +372,7 @@ async def torrent_func(answers, text):
         size = i.size
         seeds = i.seeds
         leechs = i.leechs
-        upload_date = i.uploaded + " Ago"
+        upload_date = i.uploaded
         magnet = i.magnet
         caption = f"""
 **Title:** __{title}__
@@ -948,13 +948,14 @@ async def tmdb_func(answers, query):
             genre = None
         else:
             genre = " | ".join(result.genre)
+        description = result.overview[0:900] if result.overview else "None"
         caption = f"""
 **{result.title}**
 **Type:** {result.type}
 **Rating:** {result.rating}
 **Genre:** {genre}
 **Release Date:** {result.releaseDate}
-**Description:** __{result.overview[0:900] if result.overview else "None"}__
+**Description:** __{description}__
 """
         buttons = InlineKeyboard(row_width=1)
         buttons.add(
@@ -968,6 +969,8 @@ async def tmdb_func(answers, query):
                 if result.backdrop
                 else result.poster,
                 caption=caption,
+                title=result.title,
+                description=f"{genre} • {result.releaseDate} • {result.rating} • {description}",
                 reply_markup=buttons,
             )
         )
