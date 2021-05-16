@@ -392,7 +392,6 @@ async def torrent_func(answers, text):
                 ),
             )
         )
-        limit += 1
         pass
     return answers
 
