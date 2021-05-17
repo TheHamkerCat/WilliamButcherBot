@@ -328,7 +328,6 @@ async def demote(_, message):
         if "can_promote_members" not in permissions and from_user_id not in SUDOERS:
             await message.reply_text("You don't have enough permissions")
             return
-        bot = await app.get_chat_member(chat_id, BOT_ID)
         if len(message.command) == 2:
             username = message.text.split(None, 1)[1]
             user_id = (await app.get_users(username)).id
@@ -350,7 +349,7 @@ async def demote(_, message):
             can_manage_chat=False,
             can_manage_voice_chats=False,
         )
-        await message.reply_text("Demoted successfully!")
+        await message.reply_text("Demoted!")
 
     except Exception as e:
         await message.reply_text(str(e))
