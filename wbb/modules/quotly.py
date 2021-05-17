@@ -81,8 +81,7 @@ async def quotly_func(_, message: Message):
                 message.reply_to_message.message_id,
                 replies=1,
             )
-            reply_message = reply_message.reply_to_message
-            messages = [reply_message, message.reply_to_message]
+            messages = [reply_message]
     else:
         await m.edit(
             "Incorrect argument, check quotly module in help section."
