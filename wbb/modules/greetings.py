@@ -167,13 +167,18 @@ async def welcome(_, message: Message):
         answers_dicc.append(verification_data)
         # keyboard for later use with callback query
         button_message = await message.reply_photo(
-            photo=captcha_image, caption=text, reply_markup=keyboard, quote=True
+            photo=captcha_image,
+            caption=text,
+            reply_markup=keyboard,
+            quote=True,
         )
         os.remove(captcha_image)
         """ Save captcha answers etc in mongodb in case bot gets crashed or restarted. """
         await update_captcha_cache(answers_dicc)
         asyncio.create_task(
-            kick_restricted_after_delay(WELCOME_DELAY_KICK_SEC, button_message, member)
+            kick_restricted_after_delay(
+                WELCOME_DELAY_KICK_SEC, button_message, member
+            )
         )
         await asyncio.sleep(0.5)
 
@@ -191,7 +196,9 @@ async def send_welcome_message(callback_query, pending_user_id):
     if "{chat}" in text:
         text = text.replace("{chat}", callback_query.message.chat.title)
     if "{name}" in text:
-        text = text.replace("{name}", (await app.get_users(pending_user_id)).mention)
+        text = text.replace(
+            "{name}", (await app.get_users(pending_user_id)).mention
+        )
     buttons = InlineKeyboard(row_width=2)
     list_of_buttons = []
     for button_string in buttons_text_list:
@@ -201,7 +208,9 @@ async def send_welcome_message(callback_query, pending_user_id):
         button_string = button_string.split(",")
         button_text = button_string[0].strip()
         button_url = button_string[1].strip()
-        list_of_buttons.append(InlineKeyboardButton(text=button_text, url=button_url))
+        list_of_buttons.append(
+            InlineKeyboardButton(text=button_text, url=button_url)
+        )
     buttons.add(*list_of_buttons)
     await app.send_message(
         callback_query.message.chat.id,
@@ -244,7 +253,9 @@ async def callback_query_welcome_button(_, callback_query):
                         answers_dicc.remove(iii)
                         await button_message.chat.kick_member(pending_user_id)
                         await asyncio.sleep(1)
-                        await button_message.chat.unban_member(pending_user_id)
+                        await button_message.chat.unban_member(
+                            pending_user_id
+                        )
                         await button_message.delete()
                         await update_captcha_cache(answers_dicc)
                         return
@@ -279,7 +290,9 @@ async def callback_query_welcome_button(_, callback_query):
         return
 
 
-async def kick_restricted_after_delay(delay, button_message: Message, user: User):
+async def kick_restricted_after_delay(
+    delay, button_message: Message, user: User
+):
     """If the new member is still restricted after the delay, delete
     button message and join message and then kick him
     """
@@ -298,7 +311,9 @@ async def kick_restricted_after_delay(delay, button_message: Message, user: User
     await _ban_restricted_user_until_date(group_chat, user_id, duration=delay)
 
 
-async def _ban_restricted_user_until_date(group_chat, user_id: int, duration: int):
+async def _ban_restricted_user_until_date(
+    group_chat, user_id: int, duration: int
+):
     try:
         member = await group_chat.get_member(user_id)
         if member.status == "restricted":

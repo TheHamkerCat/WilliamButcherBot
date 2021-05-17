@@ -44,7 +44,9 @@ async def covid(_, message):
     if len(message.command) != 1:
         country = message.text.split(None, 1)[1].strip()
         country = country.replace(" ", "")
-        data = await fetch(f"https://corona.lmao.ninja/v2/countries/{country}")
+        data = await fetch(
+            f"https://corona.lmao.ninja/v2/countries/{country}"
+        )
         data = await json_prettify(data)
         await app.send_message(message.chat.id, text=data)
         return

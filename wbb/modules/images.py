@@ -44,7 +44,9 @@ async def delete_message_with_delay(delay, message):
 @app.on_message(filters.command("cat") & ~filters.edited)
 @capture_err
 async def cat(_, message):
-    with urllib.request.urlopen("https://api.thecatapi.com/v1/images/search") as url:
+    with urllib.request.urlopen(
+        "https://api.thecatapi.com/v1/images/search"
+    ) as url:
         data = json.loads(url.read().decode())
     cat_url = data[0]["url"]
     await message.reply_photo(cat_url)

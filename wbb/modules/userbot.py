@@ -57,9 +57,6 @@ async def executor(client, message):
     except IndexError:
         await message.delete()
         return
-    reply_to_id = message.message_id
-    if message.reply_to_message:
-        reply_to_id = message.reply_to_message.message_id
     old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = StringIO()
@@ -82,7 +79,9 @@ async def executor(client, message):
         evaluation = stdout
     else:
         evaluation = "Success"
-    final_output = f"**INPUT:**\n```{cmd}```\n\n**OUTPUT**:\n```{evaluation.strip()}```"
+    final_output = (
+        f"**INPUT:**\n```{cmd}```\n\n**OUTPUT**:\n```{evaluation.strip()}```"
+    )
     if len(final_output) > 4096:
         filename = "output.txt"
         with open(filename, "w+", encoding="utf8") as out_file:
@@ -123,7 +122,8 @@ async def shellrunner(client, message):
             except Exception as err:
                 print(err)
                 await edit_or_reply(
-                    message, text=f"**INPUT:**\n```{text}```\n\n**ERROR:**\n```{err}```"
+                    message,
+                    text=f"**INPUT:**\n```{text}```\n\n**ERROR:**\n```{err}```",
                 )
             output += f"**{code}**\n"
             output += process.stdout.read()[:-1].decode("utf-8")
@@ -167,9 +167,11 @@ async def shellrunner(client, message):
             os.remove("output.txt")
             return
         await edit_or_reply(
-            message, text=f"**INPUT:**\n```{text}```\n\n**OUTPUT:**\n```{output}```"
+            message,
+            text=f"**INPUT:**\n```{text}```\n\n**OUTPUT:**\n```{output}```",
         )
     else:
         await edit_or_reply(
-            message, text=f"**INPUT:**\n```{text}```\n\n**OUTPUT: **\n`No output`"
+            message,
+            text=f"**INPUT:**\n```{text}```\n\n**OUTPUT: **\n`No output`",
         )

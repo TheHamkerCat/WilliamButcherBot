@@ -39,11 +39,15 @@ async def inline_query_handler(client, query):
         answers = []
         if text.strip() == "":
             answerss = await inline_help_func(__HELP__)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=10)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=10
+            )
             return
         elif text.split()[0] == "alive":
             answerss = await alive_function(answers)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=10)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=10
+            )
         elif text.split()[0] == "tr":
             if len(text.split()) < 3:
                 await client.answer_inline_query(
@@ -101,7 +105,9 @@ async def inline_query_handler(client, query):
                 return
             tex = text.split(None, 1)[1].strip()
             answerss = await shortify(tex)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
 
         elif text.split()[0] == "wall":
             if len(text.split()) < 2:
@@ -196,7 +202,9 @@ async def inline_query_handler(client, query):
                 return
             tex = text.split(None, 1)[1].strip()
             answerss = await github_user_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
 
         elif text.split()[0] == "gh_repo":
             if len(text.split()) < 2:
@@ -209,7 +217,9 @@ async def inline_query_handler(client, query):
                 return
             tex = text.split(None, 1)[1].strip()
             answerss = await github_repo_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
 
         elif text.split()[0] == "search":
             if len(text.split()) < 2:
@@ -223,7 +233,9 @@ async def inline_query_handler(client, query):
             user_id = query.from_user.id
             tex = text.split(None, 1)[1].strip()
             answerss = await tg_search_func(answers, tex, user_id)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
 
         elif text.split()[0] == "music":
             if len(text.split()) < 2:
@@ -236,7 +248,9 @@ async def inline_query_handler(client, query):
                 return
             tex = text.split(None, 1)[1].strip()
             answerss = await music_inline_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
 
         elif text.split()[0] == "wiki":
             if len(text.split()) < 2:
@@ -249,11 +263,15 @@ async def inline_query_handler(client, query):
                 return
             tex = text.split(None, 1)[1].strip()
             answerss = await wiki_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
 
         elif text.split()[0] == "speedtest":
             answerss = await speedtest_init(query)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
             return
 
         elif text.split()[0] == "paste":
@@ -267,7 +285,9 @@ async def inline_query_handler(client, query):
                 return
             link = text.strip().split()[1]
             answerss = await pastebin_func(answers, link)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
             return
 
         elif text.split()[0] == "carbon":
@@ -281,19 +301,25 @@ async def inline_query_handler(client, query):
                 return
             link = text.split()[1]
             answerss = await carbon_inline_func(answers, link)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
             return
 
         elif text.split()[0] == "pmpermit":
             user_id = query.from_user.id
             victim = text.split()[1]
             answerss = await pmpermit_func(answers, user_id, victim)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
             return
 
         elif text.split()[0] == "ping":
             answerss = await ping_func(answers)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
             return
 
         elif text.split()[0] == "nsfw_scan":
@@ -307,7 +333,9 @@ async def inline_query_handler(client, query):
                 return
             tex = text.split(None, 1)[1].strip()
             answerss = await nsfw_scan_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
 
         elif text.split()[0] == "ytmusic":
             if len(text.split()) < 2:
@@ -321,7 +349,9 @@ async def inline_query_handler(client, query):
             tex = query.query.split(None, 1)[1].strip()
             user_id = query.from_user.id
             answerss = await yt_music_func(answers, tex, user_id)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
 
         elif text.split()[0] == "info":
             if len(text.split()) < 2:
@@ -334,7 +364,9 @@ async def inline_query_handler(client, query):
                 return
             tex = text.split()[1].strip()
             answerss = await user_info_inline_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
 
         elif text.split()[0] == "chat_info":
             if len(text.split()) < 2:
@@ -347,7 +379,9 @@ async def inline_query_handler(client, query):
                 return
             tex = text.split()[1].strip()
             answerss = await chat_info_inline_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
 
         elif text.split()[0] == "tmdb":
             if len(text.split()) < 2:
@@ -361,7 +395,9 @@ async def inline_query_handler(client, query):
                 return
             tex = text.split()[1].strip()
             answerss = await tmdb_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
     except Exception as e:
         e = traceback.format_exc()
         print(e, " InLine")

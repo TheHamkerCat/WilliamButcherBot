@@ -95,9 +95,16 @@ async def pipes_worker_userbot(_, message: Message):
                     app.listen(USERBOT_ID), message.copy(BOT_ID)
                 )
                 caption = f"Forwarded from `{pipe['from_chat_id']}`"
-                caption = f"{temp.caption}\n\n{caption}" if temp.caption else caption
+                caption = (
+                    f"{temp.caption}\n\n{caption}"
+                    if temp.caption
+                    else caption
+                )
                 await app.copy_message(
-                    pipe["to_chat_id"], USERBOT_ID, m.message_id, caption=caption
+                    pipe["to_chat_id"],
+                    USERBOT_ID,
+                    m.message_id,
+                    caption=caption,
                 )
                 await asyncio.sleep(10)
                 await temp.delete()

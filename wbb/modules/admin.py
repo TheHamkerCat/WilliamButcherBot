@@ -50,7 +50,9 @@ __HELP__ = """/ban - Ban A User
 
 async def list_admins(chat_id: int):
     list_of_admins = []
-    async for member in app.iter_chat_members(chat_id, filter="administrators"):
+    async for member in app.iter_chat_members(
+        chat_id, filter="administrators"
+    ):
         list_of_admins.append(member.user.id)
     return list_of_admins
 
@@ -139,7 +141,9 @@ async def purge(client, message):
                     message_ids.append(a_s_message_id)
                     if len(message_ids) == 100:
                         await client.delete_messages(
-                            chat_id=chat_id, message_ids=message_ids, revoke=True
+                            chat_id=chat_id,
+                            message_ids=message_ids,
+                            revoke=True,
                         )
                         message_ids = []
                 if len(message_ids) > 0:
@@ -148,7 +152,8 @@ async def purge(client, message):
                     )
             else:
                 await message.reply_text(
-                    "Reply To A Message To Delete It," " Don't Make Fun Of Yourself!"
+                    "Reply To A Message To Delete It,"
+                    " Don't Make Fun Of Yourself!"
                 )
         else:
             await message.reply_text("Your Don't Have Enough Permissions!")
@@ -168,7 +173,10 @@ async def kick(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" not in permissions and from_user_id not in SUDOERS:
+        if (
+            "can_restrict_members" not in permissions
+            and from_user_id not in SUDOERS
+        ):
             await message.reply_text("You don't have enough permissions.")
             return
         if len(message.command) == 2:
@@ -202,7 +210,10 @@ async def ban(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" not in permissions and from_user_id not in SUDOERS:
+        if (
+            "can_restrict_members" not in permissions
+            and from_user_id not in SUDOERS
+        ):
             await message.reply_text("You don't have enough permissions.")
             return
         if len(message.command) == 2:
@@ -233,7 +244,10 @@ async def unban(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" not in permissions and from_user_id not in SUDOERS:
+        if (
+            "can_restrict_members" not in permissions
+            and from_user_id not in SUDOERS
+        ):
             await message.reply_text("You don't have enough permissions.")
             return
         if len(message.command) == 2:
@@ -264,9 +278,13 @@ async def delete(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_delete_messages" not in permissions and from_user_id not in SUDOERS:
+        if (
+            "can_delete_messages" not in permissions
+            and from_user_id not in SUDOERS
+        ):
             await message.reply_text(
-                "You Don't Have Enough Permissions," + " Consider Deleting Yourself!"
+                "You Don't Have Enough Permissions,"
+                + " Consider Deleting Yourself!"
             )
             return
         await message.reply_to_message.delete()
@@ -285,7 +303,10 @@ async def promote(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_promote_members" not in permissions and from_user_id not in SUDOERS:
+        if (
+            "can_promote_members" not in permissions
+            and from_user_id not in SUDOERS
+        ):
             await message.reply_text("You don't have enough permissions")
             return
         bot = await app.get_chat_member(chat_id, BOT_ID)
@@ -348,7 +369,10 @@ async def mute(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" not in permissions and from_user_id not in SUDOERS:
+        if (
+            "can_restrict_members" not in permissions
+            and from_user_id not in SUDOERS
+        ):
             await message.reply_text("You don't have enough permissions.")
             return
         if len(message.command) == 2:
@@ -363,7 +387,9 @@ async def mute(_, message):
         if user_id in SUDOERS:
             await message.reply_text("You Wanna Mute The Elevated One?")
             return
-        await message.chat.restrict_member(user_id, permissions=ChatPermissions())
+        await message.chat.restrict_member(
+            user_id, permissions=ChatPermissions()
+        )
         await message.reply_text("Muted!")
     except Exception as e:
         await message.reply_text(str(e))
@@ -379,7 +405,10 @@ async def unmute(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_restrict_members" not in permissions and from_user_id not in SUDOERS:
+        if (
+            "can_restrict_members" not in permissions
+            and from_user_id not in SUDOERS
+        ):
             await message.reply_text("You don't have enough permissions.")
             return
         if len(message.command) == 2:
@@ -420,7 +449,9 @@ async def ban_deleted_accounts(_, message):
                         print(str(e))
                         pass
                     banned_users += 1
-                await message.reply_text(f"Banned {banned_users} Deleted Accounts")
+                await message.reply_text(
+                    f"Banned {banned_users} Deleted Accounts"
+                )
             else:
                 await message.reply_text("No Deleted Accounts In This Chat")
                 return
@@ -454,12 +485,16 @@ async def warn_user(_, message):
                 await message.reply_text("I wouldn't do that if i were you.")
             else:
                 if user_id in await list_members(chat_id):
-                    warns = await get_warn(chat_id, await int_to_alpha(user_id))
+                    warns = await get_warn(
+                        chat_id, await int_to_alpha(user_id)
+                    )
                     if warns:
                         warns = warns["warns"]
                     else:
                         warn = {"warns": 1}
-                        await add_warn(chat_id, await int_to_alpha(user_id), warn)
+                        await add_warn(
+                            chat_id, await int_to_alpha(user_id), warn
+                        )
                         await message.reply_text(
                             f"Warned {mention} !, 1/3 warnings now."
                         )
@@ -469,10 +504,14 @@ async def warn_user(_, message):
                         await message.reply_text(
                             f"Number of warns of {mention} exceeded, Banned!"
                         )
-                        await remove_warns(chat_id, await int_to_alpha(user_id))
+                        await remove_warns(
+                            chat_id, await int_to_alpha(user_id)
+                        )
                     else:
                         warn = {"warns": warns + 1}
-                        await add_warn(chat_id, await int_to_alpha(user_id), warn)
+                        await add_warn(
+                            chat_id, await int_to_alpha(user_id), warn
+                        )
                         await message.reply_text(
                             f"Warned {mention} !, {warns+1}/3 warnings now."
                         )
@@ -491,7 +530,9 @@ async def warn_user(_, message):
 @capture_err
 async def remove_warnings(_, message):
     if not message.reply_to_message:
-        await message.reply_text("Reply to a message to remove a user's warnings.")
+        await message.reply_text(
+            "Reply to a message to remove a user's warnings."
+        )
         return
     try:
         from_user_id = message.from_user.id
@@ -521,7 +562,9 @@ async def remove_warnings(_, message):
 @capture_err
 async def check_warns(_, message):
     if not message.reply_to_message:
-        await message.reply_text("Reply to a message to check a user's warnings.")
+        await message.reply_text(
+            "Reply to a message to check a user's warnings."
+        )
         return
     try:
         user_id = message.reply_to_message.from_user.id
@@ -535,7 +578,9 @@ async def check_warns(_, message):
             else:
                 await message.reply_text(f"{mention_user} have no warnings.")
                 return
-            await message.reply_text(f"{mention_user} have {warns}/3 warnings.")
+            await message.reply_text(
+                f"{mention_user} have {warns}/3 warnings."
+            )
             return
         warns = await get_warn(chat_id, await int_to_alpha(user_id))
         if warns:
@@ -543,7 +588,9 @@ async def check_warns(_, message):
         else:
             await message.reply_text(f"{mention_user} have no warnings.")
             return
-        await message.reply_text(f"{mention_from_user} have {warns}/3 warnings.")
+        await message.reply_text(
+            f"{mention_from_user} have {warns}/3 warnings."
+        )
     except Exception as e:
         await message.reply_text(str(e))
 
@@ -552,7 +599,8 @@ async def check_warns(_, message):
 
 
 @app.on_message(
-    filters.command(["report", "admins"], prefixes=["@", "/"]) & ~filters.edited
+    filters.command(["report", "admins"], prefixes=["@", "/"])
+    & ~filters.edited
 )
 @capture_err
 async def report_user(_, message):

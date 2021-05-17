@@ -50,9 +50,6 @@ async def executor(client, message):
         await message.delete()
         return
     t1 = time()
-    reply_to_id = message.message_id
-    if message.reply_to_message:
-        reply_to_id = message.reply_to_message.message_id
     old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = StringIO()
@@ -82,7 +79,13 @@ async def executor(client, message):
             out_file.write(str(evaluation.strip()))
         t2 = time()
         keyboard = InlineKeyboardMarkup(
-            [[InlineKeyboardButton(text="⏳", callback_data=f"runtime {t2-t1} Seconds")]]
+            [
+                [
+                    InlineKeyboardButton(
+                        text="⏳", callback_data=f"runtime {t2-t1} Seconds"
+                    )
+                ]
+            ]
         )
         await message.reply_document(
             document=filename,
@@ -98,7 +101,8 @@ async def executor(client, message):
             [
                 [
                     InlineKeyboardButton(
-                        text="⏳", callback_data=f"runtime {round(t2-t1, 3)} Seconds"
+                        text="⏳",
+                        callback_data=f"runtime {round(t2-t1, 3)} Seconds",
                     )
                 ]
             ]
@@ -158,7 +162,9 @@ async def shellrunner(client, message):
                 value=exc_obj,
                 tb=exc_tb,
             )
-            await edit_or_reply(message, text=f"**ERROR:**\n```{''.join(errors)}```")
+            await edit_or_reply(
+                message, text=f"**ERROR:**\n```{''.join(errors)}```"
+            )
             return
         output = process.stdout.read()[:-1].decode("utf-8")
     if str(output) == "\n":

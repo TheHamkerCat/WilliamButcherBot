@@ -186,7 +186,9 @@ def calculate_eta(current, total, start_time):
     end_time = time.time()
     elapsed_time = end_time - start_time
     seconds = (elapsed_time * (total / current)) - elapsed_time
-    thing = "".join(str(timedelta(seconds=seconds)).split(".")[:-1]).split(", ")
+    thing = "".join(str(timedelta(seconds=seconds)).split(".")[:-1]).split(
+        ", "
+    )
     thing[-1] = thing[-1].rjust(8, "0")
     return ", ".join(thing)
 
@@ -203,7 +205,9 @@ async def anime_search(_, message):
     search = message.text.split(None, 1)[1]
     variables = {"search": search}
     json = (
-        requests.post(url, json={"query": anime_query, "variables": variables})
+        requests.post(
+            url, json={"query": anime_query, "variables": variables}
+        )
         .json()["data"]
         .get("Media", None)
     )
@@ -243,7 +247,9 @@ async def anime_search(_, message):
         if image:
             try:
                 await message.reply_photo(
-                    image, caption=msg, reply_markup=InlineKeyboardMarkup(buttons)
+                    image,
+                    caption=msg,
+                    reply_markup=InlineKeyboardMarkup(buttons),
                 )
             except Exception:
                 msg += f" [✔️️]({image})"
@@ -261,15 +267,17 @@ async def manga_search(_, message):
     search = message.text.split(None, 1)[1]
     variables = {"search": search}
     json = (
-        requests.post(url, json={"query": manga_query, "variables": variables})
+        requests.post(
+            url, json={"query": manga_query, "variables": variables}
+        )
         .json()["data"]
         .get("Media", None)
     )
     ms_g = ""
     if json:
-        title, title_native = json["title"].get("romaji", False), json["title"].get(
-            "native", False
-        )
+        title, title_native = json["title"].get("romaji", False), json[
+            "title"
+        ].get("native", False)
         start_date, status, score = (
             json["startDate"].get("year", False),
             json.get("status", False),
@@ -311,14 +319,14 @@ async def character_search(_, message):
     search = message.text.split(None, 1)[1]
     variables = {"query": search}
     json = (
-        requests.post(url, json={"query": character_query, "variables": variables})
+        requests.post(
+            url, json={"query": character_query, "variables": variables}
+        )
         .json()["data"]
         .get("Character", None)
     )
     if json:
-        ms_g = (
-            f"**{json.get('name').get('full')}**(`{json.get('name').get('native')}`)\n"
-        )
+        ms_g = f"**{json.get('name').get('full')}**(`{json.get('name').get('native')}`)\n"
         description = f"{json['description']}"
         site_url = json.get("siteUrl")
         ms_g += shorten(description, site_url)

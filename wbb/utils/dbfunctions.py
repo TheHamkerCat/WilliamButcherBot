@@ -582,7 +582,11 @@ async def delete_blacklist_filter(chat_id: int, word: str) -> bool:
 
 async def activate_pipe(from_chat_id: int, to_chat_id: int, fetcher: str):
     pipes = await show_pipes()
-    pipe = {"from_chat_id": from_chat_id, "to_chat_id": to_chat_id, "fetcher": fetcher}
+    pipe = {
+        "from_chat_id": from_chat_id,
+        "to_chat_id": to_chat_id,
+        "fetcher": fetcher,
+    }
     pipes.append(pipe)
     return await pipesdb.update_one(
         {"pipe": "pipe"}, {"$set": {"pipes": pipes}}, upsert=True
@@ -594,7 +598,10 @@ async def deactivate_pipe(from_chat_id: int, to_chat_id: int):
     if not pipes:
         return
     for pipe in pipes:
-        if pipe["from_chat_id"] == from_chat_id and pipe["to_chat_id"] == to_chat_id:
+        if (
+            pipe["from_chat_id"] == from_chat_id
+            and pipe["to_chat_id"] == to_chat_id
+        ):
             pipes.remove(pipe)
     return await pipesdb.update_one(
         {"pipe": "pipe"}, {"$set": {"pipes": pipes}}, upsert=True
@@ -603,7 +610,10 @@ async def deactivate_pipe(from_chat_id: int, to_chat_id: int):
 
 async def is_pipe_active(from_chat_id: int, to_chat_id: int) -> bool:
     for pipe in await show_pipes():
-        if pipe["from_chat_id"] == from_chat_id and pipe["to_chat_id"] == to_chat_id:
+        if (
+            pipe["from_chat_id"] == from_chat_id
+            and pipe["to_chat_id"] == to_chat_id
+        ):
             return True
 
 
@@ -647,7 +657,9 @@ async def remove_sudo(user_id: int) -> bool:
 
 async def blacklisted_chats() -> list:
     chats = blacklist_chatdb.find({"chat_id": {"$lt": 0}})
-    return [chat["chat_id"] for chat in await chats.to_list(length=1000000000)]
+    return [
+        chat["chat_id"] for chat in await chats.to_list(length=1000000000)
+    ]
 
 
 async def blacklist_chat(chat_id: int) -> bool:

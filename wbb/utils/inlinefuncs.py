@@ -118,7 +118,9 @@ async def alive_function(answers):
     ubot_state = "Dead" if not await app2.get_me() else "Alive"
     buttons.add(
         InlineKeyboardButton("Stats", callback_data="stats_callback"),
-        InlineKeyboardButton("Go Inline!", switch_inline_query_current_chat=""),
+        InlineKeyboardButton(
+            "Go Inline!", switch_inline_query_current_chat=""
+        ),
     )
 
     msg = f"""
@@ -163,7 +165,8 @@ __**Translated from {i.src} to {lang}**__
                 input_message_content=InputTextMessageContent(msg),
             ),
             InlineQueryResultArticle(
-                title=i.text, input_message_content=InputTextMessageContent(i.text)
+                title=i.text,
+                input_message_content=InputTextMessageContent(i.text),
             ),
         ]
     )
@@ -339,7 +342,9 @@ async def shortify(url):
     payload = json.dumps(payload)
     async with aiohttp.ClientSession() as session:
         async with session.post(
-            "https://api-ssl.bitly.com/v4/shorten", headers=header, data=payload
+            "https://api-ssl.bitly.com/v4/shorten",
+            headers=header,
+            data=payload,
         ) as resp:
             data = await resp.json()
     msg = data["link"]
@@ -419,7 +424,9 @@ async def youtube_func(answers, text):
 **Duration:** {i.duration}
 **Uploaded:** {i.publish_time}
 **Description:** {i.long_desc}"""
-        description = f"{i.views} | {i.channel} | " + f"{i.duration} | {i.publish_time}"
+        description = (
+            f"{i.views} | {i.channel} | " + f"{i.duration} | {i.publish_time}"
+        )
         answers.append(
             InlineQueryResultArticle(
                 title=i.title,
@@ -470,7 +477,9 @@ async def github_user_func(answers, text):
     result = await fetch(URL)
     buttons = InlineKeyboard(row_width=1)
     buttons.add(
-        InlineKeyboardButton(text="Open On Github", url=f"https://github.com/{text}")
+        InlineKeyboardButton(
+            text="Open On Github", url=f"https://github.com/{text}"
+        )
     )
     caption = f"""
 **Info Of {result['name']}**
@@ -486,7 +495,9 @@ async def github_user_func(answers, text):
 **Following:** `{result['following']}`"""
     answers.append(
         InlineQueryResultPhoto(
-            photo_url=result["avatar_url"], caption=caption, reply_markup=buttons
+            photo_url=result["avatar_url"],
+            caption=caption,
+            reply_markup=buttons,
         )
     )
     return answers
@@ -507,7 +518,9 @@ async def github_repo_func(answers, text):
         commits += developer["contributions"]
     buttons = InlineKeyboard(row_width=1)
     buttons.add(
-        InlineKeyboardButton("Open On Github", url=f"https://github.com/{text}")
+        InlineKeyboardButton(
+            "Open On Github", url=f"https://github.com/{text}"
+        )
     )
     caption = f"""
 **Info Of {r['full_name']}**
@@ -571,7 +584,9 @@ async def tg_search_func(answers, text, user_id):
             ),
         )
         name = (
-            message.from_user.first_name if message.from_user.first_name else "NO NAME"
+            message.from_user.first_name
+            if message.from_user.first_name
+            else "NO NAME"
         )
         caption = f"""
 **Query:** {text}
@@ -625,7 +640,9 @@ async def music_inline_func(answers, query):
                 "duration": f_.audio.duration if f_.audio.duration else 0,
             }
         )
-    messages = list({v["duration"]: v for v in messages_ids_and_duration}.values())
+    messages = list(
+        {v["duration"]: v for v in messages_ids_and_duration}.values()
+    )
     messages_ids = []
     for ff_ in messages:
         messages_ids.append(ff_["message_id"])
@@ -682,7 +699,9 @@ async def speedtest_init(query):
         return answers
     msg = "**Click The Button Below To Perform A Speedtest**"
     button = InlineKeyboard(row_width=1)
-    button.add(InlineKeyboardButton(text="Test", callback_data="test_speedtest"))
+    button.add(
+        InlineKeyboardButton(text="Test", callback_data="test_speedtest")
+    )
     answers.append(
         InlineQueryResultArticle(
             title="Click Here",
@@ -732,7 +751,9 @@ async def pastebin_func(answers, link):
                 InlineQueryResultArticle(
                     title="DOCUMENT TOO BIG",
                     description="Maximum supported size is 1MB",
-                    input_message_content=InputTextMessageContent("DOCUMENT TOO BIG"),
+                    input_message_content=InputTextMessageContent(
+                        "DOCUMENT TOO BIG"
+                    ),
                 )
             )
             return answers
@@ -753,7 +774,9 @@ async def pastebin_func(answers, link):
     await app.send_photo(MESSAGE_DUMP_CHAT, preview)  # To Pre-cache the media
     buttons = InlineKeyboard(row_width=1)
     buttons.add(InlineKeyboardButton(text="Paste Link", url=link))
-    answers.append(InlineQueryResultPhoto(photo_url=preview, reply_markup=buttons))
+    answers.append(
+        InlineQueryResultPhoto(photo_url=preview, reply_markup=buttons)
+    )
     return answers
 
 
@@ -769,7 +792,9 @@ async def pmpermit_func(answers, user_id, victim):
         InlineKeyboardButton(
             text="For promotion", callback_data="pmpermit to_scam_you a"
         ),
-        InlineKeyboardButton(text="Approve me", callback_data="pmpermit approve_me a"),
+        InlineKeyboardButton(
+            text="Approve me", callback_data="pmpermit approve_me a"
+        ),
         InlineKeyboardButton(
             text="Approve", callback_data=f"pmpermit approve {victim}"
         ),
@@ -792,7 +817,8 @@ async def ping_func(answers):
     ping = f"{str(round((t2 - t1), 6) * 100)} ms"
     answers.append(
         InlineQueryResultArticle(
-            title=ping, input_message_content=InputTextMessageContent(f"__**{ping}**__")
+            title=ping,
+            input_message_content=InputTextMessageContent(f"__**{ping}**__"),
         )
     )
     return answers
@@ -846,7 +872,13 @@ async def yt_music_func(answers, url, user_id):
     if "http" not in url:
         url = (await arq.youtube(url)).result[0]
         url = f"https://youtube.com{url.url_suffix}"
-    title, performer, duration, audio, thumbnail = await download_youtube_audio(url)
+    (
+        title,
+        performer,
+        duration,
+        audio,
+        thumbnail,
+    ) = await download_youtube_audio(url)
     m = await app.send_audio(
         MESSAGE_DUMP_CHAT,
         audio,
@@ -880,7 +912,9 @@ async def carbon_inline_func(answers, link):
                 InlineQueryResultArticle(
                     title="DOCUMENT TOO BIG",
                     description="Maximum supported size is 1MB",
-                    input_message_content=InputTextMessageContent("DOCUMENT TOO BIG"),
+                    input_message_content=InputTextMessageContent(
+                        "DOCUMENT TOO BIG"
+                    ),
                 )
             )
             return answers
@@ -897,7 +931,9 @@ async def carbon_inline_func(answers, link):
     buttons.add(InlineKeyboardButton(text="Paste Link", url=link))
     answers.append(
         InlineQueryResultCachedDocument(
-            file_id=carbon.document.file_id, title="Carbon", reply_markup=buttons
+            file_id=carbon.document.file_id,
+            title="Carbon",
+            reply_markup=buttons,
         )
     )
     return answers
@@ -936,7 +972,9 @@ async def tmdb_func(answers, query):
             InlineQueryResultArticle(
                 title="Error",
                 description=response.result,
-                input_message_content=InputTextMessageContent(response.result),
+                input_message_content=InputTextMessageContent(
+                    response.result
+                ),
             )
         )
         return answers
@@ -965,7 +1003,9 @@ async def tmdb_func(answers, query):
         )
         answers.append(
             InlineQueryResultPhoto(
-                photo_url=result.backdrop if result.backdrop else result.poster,
+                photo_url=result.backdrop
+                if result.backdrop
+                else result.poster,
                 caption=caption,
                 title=result.title,
                 description=f"{genre} • {result.releaseDate} • {result.rating} • {description}",

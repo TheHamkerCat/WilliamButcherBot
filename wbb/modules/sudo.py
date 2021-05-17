@@ -48,7 +48,8 @@ can even delete your account.
 
 
 @app2.on_message(
-    filters.command("useradd", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
+    filters.command("useradd", prefixes=USERBOT_PREFIX)
+    & filters.user(SUDOERS)
 )
 @capture_err
 async def useradd(_, message: Message):
@@ -63,7 +64,9 @@ async def useradd(_, message: Message):
         await edit_or_reply(message, text="User is already in sudoers.")
         return
     if user_id == BOT_ID:
-        await edit_or_reply(message, text="You can't add assistant bot in sudoers.")
+        await edit_or_reply(
+            message, text="You can't add assistant bot in sudoers."
+        )
         return
     added = await add_sudo(user_id)
     if added:
@@ -77,13 +80,15 @@ async def useradd(_, message: Message):
 
 
 @app2.on_message(
-    filters.command("userdel", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
+    filters.command("userdel", prefixes=USERBOT_PREFIX)
+    & filters.user(SUDOERS)
 )
 @capture_err
 async def userdel(_, message: Message):
     if not message.reply_to_message:
         await edit_or_reply(
-            message, text="Reply to someone's message to remove him to sudoers."
+            message,
+            text="Reply to someone's message to remove him to sudoers.",
         )
         return
     user_id = message.reply_to_message.from_user.id
@@ -102,7 +107,8 @@ async def userdel(_, message: Message):
 
 
 @app2.on_message(
-    filters.command("sudoers", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
+    filters.command("sudoers", prefixes=USERBOT_PREFIX)
+    & filters.user(SUDOERS)
 )
 @capture_err
 async def sudoers_list(_, message: Message):

@@ -39,11 +39,15 @@ from wbb.utils.inlinefuncs import keywords_list
 """ CHAT WATCHER IS IN filters.py"""
 
 
-@app.on_message(filters.command("gstats") & filters.user(SUDOERS) & ~filters.edited)
+@app.on_message(
+    filters.command("gstats") & filters.user(SUDOERS) & ~filters.edited
+)
 @capture_err
 async def global_stats(_, message):
     m = await app.send_message(
-        message.chat.id, text="__**Analysing Stats**__", disable_web_page_preview=True
+        message.chat.id,
+        text="__**Analysing Stats**__",
+        disable_web_page_preview=True,
     )
 
     # For bot served chat and users count

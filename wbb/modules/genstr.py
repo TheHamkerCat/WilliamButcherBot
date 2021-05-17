@@ -69,7 +69,9 @@ async def genstr(_, message):
         )
 
     except TimeoutError:
-        await message.reply_text("Time limit reached of 5 min. Process Cancelled.")
+        await message.reply_text(
+            "Time limit reached of 5 min. Process Cancelled."
+        )
         return
     otp_code = otp.text
     try:
@@ -105,7 +107,8 @@ async def genstr(_, message):
         session_string = await temp_client.export_session_string()
         await temp_client.disconnect()
         await app.send_message(
-            chat.id, text=f"**HERE IS YOUR STRING SESSION:**\n```{session_string}```"
+            chat.id,
+            text=f"**HERE IS YOUR STRING SESSION:**\n```{session_string}```",
         )
     except Exception as e:
         await app.send_message(chat.id, f"**ERROR:** `{str(e)}`")

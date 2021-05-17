@@ -59,7 +59,9 @@ async def reverse_image_search(_, message):
 
     if reply.animation:
         if not reply.animation.thumbs:
-            await m.edit("Gif Has No Thumbnail, so it cannot be reverse searched")
+            await m.edit(
+                "Gif Has No Thumbnail, so it cannot be reverse searched"
+            )
             return
         file_id = reply.animation.thumbs[0].file_id
 
@@ -71,8 +73,13 @@ async def reverse_image_search(_, message):
     async with aiofiles.open(image, "rb") as f:
         if image:
             search_url = "http://www.google.com/searchbyimage/upload"
-            multipart = {"encoded_image": (image, await f.read()), "image_content": ""}
-            response = requests.post(search_url, files=multipart, allow_redirects=False)
+            multipart = {
+                "encoded_image": (image, await f.read()),
+                "image_content": "",
+            }
+            response = requests.post(
+                search_url, files=multipart, allow_redirects=False
+            )
             location = response.headers.get("Location")
             os.remove(image)
         else:

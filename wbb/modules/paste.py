@@ -58,10 +58,14 @@ async def paste_func(_, message):
 
         elif message.reply_to_message.document:
             if message.reply_to_message.document.file_size > 1048576:
-                await message.reply_text("You can only paste files smaller than 1MB.")
+                await message.reply_text(
+                    "You can only paste files smaller than 1MB."
+                )
                 return
             m = await message.reply_text("Pasting...")
-            doc_file = await message.reply_to_message.download(file_name="paste.txt")
+            doc_file = await message.reply_to_message.download(
+                file_name="paste.txt"
+            )
             i = open(doc_file, "r")
             link = await paste(i.read())
             preview = link + "/preview.png"

@@ -39,7 +39,9 @@ Reply to a message with /karma to check a user's karma
 Send /karma without replying to any message to chek karma list of top 10 users"""
 
 
-regex_upvote = r"^((?i)\+|\+\+|\+1|thx|tnx|ty|thank you|thanx|thanks|pro|cool|good|👍)$"
+regex_upvote = (
+    r"^((?i)\+|\+\+|\+1|thx|tnx|ty|thank you|thanx|thanks|pro|cool|good|👍)$"
+)
 regex_downvote = r"^(\-|\-\-|\-1|👎)$"
 
 
@@ -137,7 +139,9 @@ async def karma(_, message):
             user_karma = karma[i]["karma"]
             karma_dicc[str(user_id)] = user_karma
             karma_arranged = dict(
-                sorted(karma_dicc.items(), key=lambda item: item[1], reverse=True)
+                sorted(
+                    karma_dicc.items(), key=lambda item: item[1], reverse=True
+                )
             )
         if not karma_arranged:
             await message.reply_text("No karma in DB for this chat.")

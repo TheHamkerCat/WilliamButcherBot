@@ -101,10 +101,17 @@ async def set_chat_photo(_, message):
                 await message.reply_text("You Don't Have Enough Permissions.")
                 return
         if not message.reply_to_message:
-            await message.reply_text("Reply to a photo to set it as chat_photo")
+            await message.reply_text(
+                "Reply to a photo to set it as chat_photo"
+            )
             return
-        if not message.reply_to_message.photo and not message.reply_to_message.document:
-            await message.reply_text("Reply to a photo to set it as chat_photo")
+        if (
+            not message.reply_to_message.photo
+            and not message.reply_to_message.document
+        ):
+            await message.reply_text(
+                "Reply to a photo to set it as chat_photo"
+            )
             return
         photo = await message.reply_to_message.download()
         await message.chat.set_photo(photo)
