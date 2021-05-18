@@ -79,10 +79,10 @@ async def ytdlCallback(_, cq):
         size = data["size"]
         thumbnail = data["thumbnail"]
         caption = f"""
-    **Title:** {title}
-    **Size:** {size}
-    **Format:** {format}
-    **Duration:** {await timeFormat(duration)}
+**Title:** {title}
+**Size:** {size}
+**Format:** {format}
+**Duration:** {await timeFormat(duration)}
         """
         media, thumb = await gather(
             downloader.download(url), downloader.download(thumbnail)
