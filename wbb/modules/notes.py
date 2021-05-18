@@ -110,9 +110,7 @@ async def get_one_note(_, message):
                 await message.reply_sticker(_note["data"])
 
 
-@app.on_message(
-    filters.command("delete") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("delete") & ~filters.edited & ~filters.private)
 @capture_err
 async def del_note(_, message):
     if len(message.command) < 2:

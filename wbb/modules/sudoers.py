@@ -98,9 +98,7 @@ async def ban_globally(_, message):
                 "Should i gban myself? I'm not fool like you, HUMAN!"
             )
         elif user.id in SUDOERS:
-            await message.reply_text(
-                "You want to ban a sudo user? GET REKT!!"
-            )
+            await message.reply_text("You want to ban a sudo user? GET REKT!!")
         else:
             served_chats = await get_served_chats()
             m = await message.reply_text(
@@ -111,9 +109,7 @@ async def ban_globally(_, message):
             number_of_chats = 0
             for served_chat in served_chats:
                 try:
-                    await app.kick_chat_member(
-                        served_chat["chat_id"], user.id
-                    )
+                    await app.kick_chat_member(served_chat["chat_id"], user.id)
                     number_of_chats += 1
                     await asyncio.sleep(1)
                 except Exception:
@@ -180,9 +176,7 @@ __**New Global Ban**__
             number_of_chats = 0
             for served_chat in served_chats:
                 try:
-                    await app.kick_chat_member(
-                        served_chat["chat_id"], user_id
-                    )
+                    await app.kick_chat_member(served_chat["chat_id"], user_id)
                     number_of_chats += 1
                     await asyncio.sleep(1)
                 except Exception:

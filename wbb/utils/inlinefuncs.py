@@ -972,9 +972,7 @@ async def tmdb_func(answers, query):
             InlineQueryResultArticle(
                 title="Error",
                 description=response.result,
-                input_message_content=InputTextMessageContent(
-                    response.result
-                ),
+                input_message_content=InputTextMessageContent(response.result),
             )
         )
         return answers

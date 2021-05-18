@@ -28,9 +28,7 @@ from wbb.core.decorators.errors import capture_err
 from wbb.utils.fetch import fetch
 
 __MODULE__ = "Repo"
-__HELP__ = (
-    "/repo - To Get My Github Repository Link " "And Support Group Link"
-)
+__HELP__ = "/repo - To Get My Github Repository Link " "And Support Group Link"
 
 
 @app.on_message(filters.command("repo") & ~filters.edited)

@@ -337,7 +337,9 @@ async def promote(_, message):
     except Exception as e:
         await message.reply_text(str(e))
 
+
 # Demote Member
+
 
 @app.on_message(filters.command("demote") & ~filters.edited)
 @capture_err
@@ -346,7 +348,10 @@ async def demote(_, message):
         from_user_id = message.from_user.id
         chat_id = message.chat.id
         permissions = await member_permissions(chat_id, from_user_id)
-        if "can_promote_members" not in permissions and from_user_id not in SUDOERS:
+        if (
+            "can_promote_members" not in permissions
+            and from_user_id not in SUDOERS
+        ):
             await message.reply_text("You don't have enough permissions")
             return
         if len(message.command) == 2:
@@ -374,6 +379,7 @@ async def demote(_, message):
 
     except Exception as e:
         await message.reply_text(str(e))
+
 
 # Pin Messages
 

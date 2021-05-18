@@ -253,9 +253,7 @@ async def callback_query_welcome_button(_, callback_query):
                         answers_dicc.remove(iii)
                         await button_message.chat.kick_member(pending_user_id)
                         await asyncio.sleep(1)
-                        await button_message.chat.unban_member(
-                            pending_user_id
-                        )
+                        await button_message.chat.unban_member(pending_user_id)
                         await button_message.delete()
                         await update_captcha_cache(answers_dicc)
                         return

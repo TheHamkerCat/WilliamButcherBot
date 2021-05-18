@@ -44,9 +44,7 @@ __HELP__ = """/filters To Get All The Filters In The Chat.
 You can use markdown or html to save text too."""
 
 
-@app.on_message(
-    filters.command("filter") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("filter") & ~filters.edited & ~filters.private)
 @capture_err
 async def save_filters(_, message):
     chat_id = message.chat.id

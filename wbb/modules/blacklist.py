@@ -105,9 +105,7 @@ async def del_filter(_, message):
         await message.reply_text("**No such blacklist filter.**")
 
 
-@app.on_message(
-    filters.text & ~filters.private, group=blacklist_filters_group
-)
+@app.on_message(filters.text & ~filters.private, group=blacklist_filters_group)
 async def blacklist_filters_re(_, message):
     text = message.text.lower().strip()
     if not text:

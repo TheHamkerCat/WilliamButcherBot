@@ -83,7 +83,9 @@ async def getid(_, message):
         return
     text_unping = "<b>Chat ID:</b>"
     if message.chat.username:
-        text_unping = f'<a href="https://t.me/{message.chat.username}">{text_unping}</a>'
+        text_unping = (
+            f'<a href="https://t.me/{message.chat.username}">{text_unping}</a>'
+        )
     text_unping += f" <code>{message.chat.id}</code>\n"
     text = "<b>Message ID:</b>"
     if message.link:

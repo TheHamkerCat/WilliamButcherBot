@@ -96,9 +96,7 @@ async def pipes_worker_userbot(_, message: Message):
                 )
                 caption = f"Forwarded from `{pipe['from_chat_id']}`"
                 caption = (
-                    f"{temp.caption}\n\n{caption}"
-                    if temp.caption
-                    else caption
+                    f"{temp.caption}\n\n{caption}" if temp.caption else caption
                 )
                 await app.copy_message(
                     pipe["to_chat_id"],

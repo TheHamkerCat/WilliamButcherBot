@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import traceback
 from io import BytesIO
 
 from googletrans import Translator
@@ -38,18 +39,23 @@ __HELP__ = "/tts - Convert Text To Speech."
 @app.on_message(filters.command("tts"))
 @capture_err
 async def text_to_speech(_, message: Message):
-    if message.reply_to_message:
-        if message.reply_to_message.text:
-            m = await message.reply_text("Processing")
-            audio = BytesIO()
-            text = message.reply_to_message.text
-            i = Translator().translate(text, dest="en")
-            lang = i.src
-            tts = gTTS(text, lang=lang)
-            audio.name = lang + ".mp3"
-            tts.write_to_fp(audio)
-            await m.delete()
-            await message.reply_audio(audio)
-            audio.close()
-            return
-    await message.reply_text("Reply to some text ffs.")
+    try:
+        if message.reply_to_message:
+            if message.reply_to_message.text:
+                m = await message.reply_text("Processing")
+                audio = BytesIO()
+                text = message.reply_to_message.text
+                i = Translator().translate(text, dest="en")
+                lang = i.src
+                tts = gTTS(text, lang=lang)
+                audio.name = lang + ".mp3"
+                tts.write_to_fp(audio)
+                await m.delete()
+                await message.reply_audio(audio)
+                audio.close()
+                return
+        await message.reply_text("Reply to some text ffs.")
+    except Exception as e:
+        await message.reply_text(e)
+        e = traceback.format_exc()
+        print(e)

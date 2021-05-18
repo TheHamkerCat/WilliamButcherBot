@@ -205,9 +205,7 @@ async def anime_search(_, message):
     search = message.text.split(None, 1)[1]
     variables = {"search": search}
     json = (
-        requests.post(
-            url, json={"query": anime_query, "variables": variables}
-        )
+        requests.post(url, json={"query": anime_query, "variables": variables})
         .json()["data"]
         .get("Media", None)
     )
@@ -267,9 +265,7 @@ async def manga_search(_, message):
     search = message.text.split(None, 1)[1]
     variables = {"search": search}
     json = (
-        requests.post(
-            url, json={"query": manga_query, "variables": variables}
-        )
+        requests.post(url, json={"query": manga_query, "variables": variables})
         .json()["data"]
         .get("Media", None)
     )
