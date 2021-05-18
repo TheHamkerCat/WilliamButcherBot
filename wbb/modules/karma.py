@@ -150,10 +150,12 @@ async def karma(_, message):
             if limit > 9:
                 break
             try:
-                user_name = (await app.get_users(int(user_idd))).username
+                user = await app.get_users(int(user_idd))
             except Exception:
                 continue
-            msg += f"{user_name} : `{karma_count}`\n"
+            first_name = user.first_name
+            username = user.username
+            msg += f"{first_name} [{username if username else ''} `{user_idd}`]: `{karma_count}`\n"
             limit += 1
         await message.reply_text(msg)
     else:
