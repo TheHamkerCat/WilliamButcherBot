@@ -28,7 +28,6 @@ import aiohttp
 from cryptography.fernet import Fernet
 from googletrans import Translator
 from pyrogram import filters
-
 from wbb import FERNET_ENCRYPTION_KEY, app
 from wbb.core.decorators.errors import capture_err
 from wbb.utils import random_line
@@ -64,9 +63,7 @@ async def rtfm(_, message):
     if not message.reply_to_message:
         await message.reply_text("Reply To A Message lol")
         return
-    await message.reply_to_message.reply_text(
-        "Are You Lost? READ THE FUCKING DOCS!"
-    )
+    await message.reply_to_message.reply_text("Are You Lost? READ THE FUCKING DOCS!")
 
 
 @app.on_message(filters.command("runs") & ~filters.edited)
@@ -83,7 +80,9 @@ async def getid(_, message):
         return
     text_unping = "<b>Chat ID:</b>"
     if message.chat.username:
-        text_unping = f'<a href="https://t.me/{message.chat.username}">{text_unping}</a>'
+        text_unping = (
+            f'<a href="https://t.me/{message.chat.username}">{text_unping}</a>'
+        )
     text_unping += f" <code>{message.chat.id}</code>\n"
     text = "<b>Message ID:</b>"
     if message.link:
@@ -113,7 +112,9 @@ async def getid(_, message):
             text_unping += "\n"
             text = "<b>Forwarded User ID:</b>"
             if reply.forward_from.username:
-                text = f'<a href="https://t.me/{reply.forward_from.username}">{text}</a>'
+                text = (
+                    f'<a href="https://t.me/{reply.forward_from.username}">{text}</a>'
+                )
             text += f" <code>{reply.forward_from.id}</code>\n"
             text_unping += text
             text_ping += f'\n<b><a href="tg://user?id={reply.forward_from.id}">Forwarded User ID:</a></b> <code>{reply.forward_from.id}</code>\n'
@@ -133,18 +134,14 @@ async def getid(_, message):
 @capture_err
 async def random(_, message):
     if len(message.command) != 2:
-        await message.reply_text(
-            '"/random" Needs An Argurment.' " Ex: `/random 5`"
-        )
+        await message.reply_text('"/random" Needs An Argurment.' " Ex: `/random 5`")
         return
     length = message.text.split(None, 1)[1]
 
     try:
         if 1 < int(length) < 1000:
             alphabet = string.ascii_letters + string.digits
-            password = "".join(
-                secrets.choice(alphabet) for i in range(int(length))
-            )
+            password = "".join(secrets.choice(alphabet) for i in range(int(length)))
             await message.reply_text(f"`{password}`")
         else:
             await message.reply_text("Specify A Length Between 1-1000")
@@ -189,9 +186,7 @@ async def decrypt(_, message):
 
 
 async def fetch_text(url):
-    async with aiohttp.ClientSession(
-        headers={"user-agent": "curl"}
-    ) as session:
+    async with aiohttp.ClientSession(headers={"user-agent": "curl"}) as session:
         async with session.get(url) as resp:
             data = await resp.text()
     return data

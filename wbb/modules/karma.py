@@ -21,8 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from pyrogram import filters
+import asyncio
 
+from pyrogram import filters
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.admin import member_permissions
@@ -39,9 +40,7 @@ Reply to a message with /karma to check a user's karma
 Send /karma without replying to any message to chek karma list of top 10 users"""
 
 
-regex_upvote = (
-    r"^((?i)\+|\+\+|\+1|thx|tnx|ty|thank you|thanx|thanks|pro|cool|good|👍)$"
-)
+regex_upvote = r"^((?i)\+|\+\+|\+1|thx|tnx|ty|thank you|thanx|thanks|pro|cool|good|👍)$"
 regex_downvote = r"^(\-|\-\-|\-1|👎)$"
 
 
@@ -128,8 +127,8 @@ async def downvote(_, message):
 @capture_err
 async def karma(_, message):
     chat_id = message.chat.id
-
     if not message.reply_to_message:
+        m = await message.reply_text("Analyzing Karma...Will Take 20 Seconds")
         karma = await get_karmas(chat_id)
         msg = f"**Karma list of {message.chat.title}:- **\n"
         limit = 0
@@ -139,25 +138,28 @@ async def karma(_, message):
             user_karma = karma[i]["karma"]
             karma_dicc[str(user_id)] = user_karma
             karma_arranged = dict(
-                sorted(
-                    karma_dicc.items(), key=lambda item: item[1], reverse=True
-                )
+                sorted(karma_dicc.items(), key=lambda item: item[1], reverse=True)
             )
         if not karma_arranged:
-            await message.reply_text("No karma in DB for this chat.")
+            await m.edit("No karma in DB for this chat.")
             return
         for user_idd, karma_count in karma_arranged.items():
             if limit > 9:
                 break
             try:
                 user = await app.get_users(int(user_idd))
+                await asyncio.sleep(2)
             except Exception:
                 continue
             first_name = user.first_name
+            if not first_name:
+                continue
             username = user.username
-            msg += f"{first_name} [{username if username else ''} `{user_idd}`]: `{karma_count}`\n"
+            msg += (
+                f"**{karma_count}**  {(first_name[0:12] + '...') if len(first_name) > 12 else first_name}  `{('@' + username) if username else user_idd}`\n"
+            )
             limit += 1
-        await message.reply_text(msg)
+        await m.edit(msg)
     else:
         user_id = message.reply_to_message.from_user.id
         karma = await get_karma(chat_id, await int_to_alpha(user_id))

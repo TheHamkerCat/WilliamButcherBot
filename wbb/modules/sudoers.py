@@ -28,7 +28,6 @@ import time
 
 import psutil
 from pyrogram import filters
-
 from wbb import (BOT_ID, GBAN_LOG_GROUP_ID, SUDOERS, USERBOT_USERNAME, app,
                  bot_start_time)
 from wbb.core.decorators.errors import capture_err
@@ -81,9 +80,7 @@ async def get_stats(_, message):
 async def ban_globally(_, message):
     if not message.reply_to_message:
         if len(message.command) < 3:
-            await message.reply_text(
-                "**Usage:**\n/gban [USERNAME | USER_ID] [REASON]"
-            )
+            await message.reply_text("**Usage:**\n/gban [USERNAME | USER_ID] [REASON]")
             return
         user = message.text.split(None, 2)[1]
         reason = message.text.split(None, 2)[2]
@@ -98,9 +95,7 @@ async def ban_globally(_, message):
                 "Should i gban myself? I'm not fool like you, HUMAN!"
             )
         elif user.id in SUDOERS:
-            await message.reply_text(
-                "You want to ban a sudo user? GET REKT!!"
-            )
+            await message.reply_text("You want to ban a sudo user? GET REKT!!")
         else:
             served_chats = await get_served_chats()
             m = await message.reply_text(
@@ -111,9 +106,7 @@ async def ban_globally(_, message):
             number_of_chats = 0
             for served_chat in served_chats:
                 try:
-                    await app.kick_chat_member(
-                        served_chat["chat_id"], user.id
-                    )
+                    await app.kick_chat_member(served_chat["chat_id"], user.id)
                     number_of_chats += 1
                     await asyncio.sleep(1)
                 except Exception:
@@ -162,9 +155,7 @@ __**New Global Ban**__
     if user_id == from_user_id:
         await message.reply_text("You want to gban yourself? FOOL!")
     elif user_id == BOT_ID:
-        await message.reply_text(
-            "Should i gban myself? I'm not fool like you, HUMAN!"
-        )
+        await message.reply_text("Should i gban myself? I'm not fool like you, HUMAN!")
     elif user_id in SUDOERS:
         await message.reply_text("You want to ban a sudo user? GET REKT!!")
     else:
@@ -180,9 +171,7 @@ __**New Global Ban**__
             number_of_chats = 0
             for served_chat in served_chats:
                 try:
-                    await app.kick_chat_member(
-                        served_chat["chat_id"], user_id
-                    )
+                    await app.kick_chat_member(served_chat["chat_id"], user_id)
                     number_of_chats += 1
                     await asyncio.sleep(1)
                 except Exception:
@@ -243,9 +232,7 @@ async def unban_globally(_, message):
         if user.id == from_user.id:
             await message.reply_text("You want to ungban yourself? FOOL!")
         elif user.id == BOT_ID:
-            await message.reply_text(
-                "Should i ungban myself? But i'm not gbanned."
-            )
+            await message.reply_text("Should i ungban myself? But i'm not gbanned.")
         elif user.id in SUDOERS:
             await message.reply_text("Sudo users can't be gbanned/ungbanned.")
         else:
@@ -263,9 +250,7 @@ async def unban_globally(_, message):
     if user_id == from_user_id:
         await message.reply_text("You want to ungban yourself? FOOL!")
     elif user_id == BOT_ID:
-        await message.reply_text(
-            "Should i ungban myself? But i'm not gbanned."
-        )
+        await message.reply_text("Should i ungban myself? But i'm not gbanned.")
     elif user_id in SUDOERS:
         await message.reply_text("Sudo users can't be gbanned/ungbanned.")
     else:
@@ -280,9 +265,7 @@ async def unban_globally(_, message):
 # Broadcast
 
 
-@app.on_message(
-    filters.command("broadcast") & filters.user(SUDOERS) & ~filters.edited
-)
+@app.on_message(filters.command("broadcast") & filters.user(SUDOERS) & ~filters.edited)
 @capture_err
 async def broadcast_message(_, message):
     if len(message.command) < 2:

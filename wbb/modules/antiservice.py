@@ -2,7 +2,6 @@
 # Kang With Proper Credits
 
 from pyrogram import filters
-
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.admin import member_permissions
@@ -42,9 +41,7 @@ async def anti_service(_, message):
             "Disabled AntiService System. I won't Be Deleting Service Message from Now on."
         )
     else:
-        await message.reply_text(
-            "Unknown Suffix, Use /antiservice [enable|disable]"
-        )
+        await message.reply_text("Unknown Suffix, Use /antiservice [enable|disable]")
 
 
 @app.on_message(filters.service, group=11)

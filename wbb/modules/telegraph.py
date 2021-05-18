@@ -6,7 +6,6 @@ import os
 
 from pyrogram import filters
 from telegraph import upload_file
-
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 
@@ -31,9 +30,7 @@ async def tgphoto(client, message):
     msg = await message.reply_text("`Uploading to Telegraph...`")
     userid = str(message.chat.id)
     path = f"./DOWNLOADS/{userid}.jpg"
-    path = await client.download_media(
-        message=message.reply_to_message, file_name=path
-    )
+    path = await client.download_media(message=message.reply_to_message, file_name=path)
     try:
         tlink = upload_file(path)
     except Exception:

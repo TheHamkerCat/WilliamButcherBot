@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from pyrogram import filters
-
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.fetch import fetch
@@ -44,9 +43,7 @@ async def covid(_, message):
     if len(message.command) != 1:
         country = message.text.split(None, 1)[1].strip()
         country = country.replace(" ", "")
-        data = await fetch(
-            f"https://corona.lmao.ninja/v2/countries/{country}"
-        )
+        data = await fetch(f"https://corona.lmao.ninja/v2/countries/{country}")
         data = await json_prettify(data)
         await app.send_message(message.chat.id, text=data)
         return

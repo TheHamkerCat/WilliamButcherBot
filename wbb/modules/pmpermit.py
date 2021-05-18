@@ -23,7 +23,6 @@ SOFTWARE.
 """
 
 from pyrogram import filters
-
 from wbb import BOT_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.userbot import edit_or_reply
@@ -70,9 +69,7 @@ async def pmpermit_func(_, message):
 @capture_err
 async def pm_approve(_, message):
     if not message.reply_to_message:
-        await edit_or_reply(
-            message, text="Reply to a user's message to approve."
-        )
+        await edit_or_reply(message, text="Reply to a user's message to approve.")
         return
     user_id = message.reply_to_message.from_user.id
     if await is_pmpermit_approved(user_id):
@@ -89,9 +86,7 @@ async def pm_approve(_, message):
 )
 async def pm_disapprove(_, message):
     if not message.reply_to_message:
-        await edit_or_reply(
-            message, text="Reply to a user's message to approve."
-        )
+        await edit_or_reply(message, text="Reply to a user's message to approve.")
         return
     user_id = message.reply_to_message.from_user.id
     if not await is_pmpermit_approved(user_id):
@@ -115,9 +110,7 @@ async def pm_disapprove(_, message):
 @capture_err
 async def block_user_func(_, message):
     if not message.reply_to_message:
-        await edit_or_reply(
-            message, text="Reply to a user's message to block."
-        )
+        await edit_or_reply(message, text="Reply to a user's message to block.")
         return
     user_id = message.reply_to_message.from_user.id
     await app2.block_user(user_id)
@@ -131,9 +124,7 @@ async def block_user_func(_, message):
 )
 async def unblock_user_func(_, message):
     if not message.reply_to_message:
-        await edit_or_reply(
-            message, text="Reply to a user's message to unblock."
-        )
+        await edit_or_reply(message, text="Reply to a user's message to unblock.")
         return
     user_id = message.reply_to_message.from_user.id
     await app2.unblock_user(user_id)

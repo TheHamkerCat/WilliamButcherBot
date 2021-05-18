@@ -25,7 +25,6 @@ import random
 from datetime import datetime
 
 from pyrogram import filters
-
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.dbfunctions import get_couple, save_couple
@@ -85,9 +84,7 @@ async def couple(_, message):
 {c1_mention} + {c2_mention} = ❤️
 
 __New couple of the day may be chosen at 12AM {tomorrow}__"""
-            await app.send_message(
-                message.chat.id, text=couple_selection_message
-            )
+            await app.send_message(message.chat.id, text=couple_selection_message)
             couple = {"c1_id": c1_id, "c2_id": c2_id}
             await save_couple(chat_id, today, couple)
 
@@ -100,9 +97,7 @@ __New couple of the day may be chosen at 12AM {tomorrow}__"""
 [{c1_name}](tg://openmessage?user_id={c1_id}) + [{c2_name}](tg://openmessage?user_id={c2_id}) = ❤️
 
 __New couple of the day may be chosen at 12AM {tomorrow}__"""
-            await app.send_message(
-                message.chat.id, text=couple_selection_message
-            )
+            await app.send_message(message.chat.id, text=couple_selection_message)
     except Exception as e:
         print(e)
         await message.reply_text(e)

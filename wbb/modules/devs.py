@@ -16,7 +16,6 @@ from time import time
 
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-
 from wbb import SUDOERS, app
 
 __MODULE__ = "Devs"
@@ -79,13 +78,7 @@ async def executor(client, message):
             out_file.write(str(evaluation.strip()))
         t2 = time()
         keyboard = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text="⏳", callback_data=f"runtime {t2-t1} Seconds"
-                    )
-                ]
-            ]
+            [[InlineKeyboardButton(text="⏳", callback_data=f"runtime {t2-t1} Seconds")]]
         )
         await message.reply_document(
             document=filename,
@@ -162,9 +155,7 @@ async def shellrunner(client, message):
                 value=exc_obj,
                 tb=exc_tb,
             )
-            await edit_or_reply(
-                message, text=f"**ERROR:**\n```{''.join(errors)}```"
-            )
+            await edit_or_reply(message, text=f"**ERROR:**\n```{''.join(errors)}```")
             return
         output = process.stdout.read()[:-1].decode("utf-8")
     if str(output) == "\n":

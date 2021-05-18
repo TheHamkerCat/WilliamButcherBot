@@ -30,7 +30,6 @@ from pyrogram.errors.exceptions.bad_request_400 import (PeerIdInvalid,
                                                         StickerPngNopng,
                                                         UserIsBlocked)
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
 from wbb import BOT_USERNAME, app
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.files import (get_document_from_file_id,
@@ -73,10 +72,7 @@ async def kang(client, message):
     args = message.text.split()
     if len(args) > 1:
         sticker_emoji = str(args[1])
-    elif (
-        message.reply_to_message.sticker
-        and message.reply_to_message.sticker.emoji
-    ):
+    elif message.reply_to_message.sticker and message.reply_to_message.sticker.emoji:
         sticker_emoji = message.reply_to_message.sticker.emoji
     else:
         sticker_emoji = "🤔"
@@ -85,9 +81,7 @@ async def kang(client, message):
     doc = message.reply_to_message.photo or message.reply_to_message.document
     if message.reply_to_message.sticker:
         sticker = await create_sticker(
-            await get_document_from_file_id(
-                message.reply_to_message.sticker.file_id
-            ),
+            await get_document_from_file_id(message.reply_to_message.sticker.file_id),
             sticker_emoji,
         )
     elif doc:

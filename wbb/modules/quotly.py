@@ -2,7 +2,6 @@ from io import BytesIO
 
 from pyrogram import filters
 from pyrogram.types import Message
-
 from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
 
@@ -44,9 +43,7 @@ async def quotly_func(_, message: Message):
         await message.reply_text("Reply to a message to quote it.")
         return
     if not message.reply_to_message.text:
-        await message.reply_text(
-            "Replied message has no text, can't quote it."
-        )
+        await message.reply_text("Replied message has no text, can't quote it.")
         return
     m = await message.reply_text("Quoting Messages")
     if len(message.command) < 2:
@@ -83,9 +80,7 @@ async def quotly_func(_, message: Message):
             )
             messages = [reply_message]
     else:
-        await m.edit(
-            "Incorrect argument, check quotly module in help section."
-        )
+        await m.edit("Incorrect argument, check quotly module in help section.")
         return
     try:
         sticker = await quotify(messages)

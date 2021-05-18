@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from pyrogram import filters
-
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.admin import member_permissions
@@ -44,18 +43,10 @@ async def save_notee(_, message):
             "**Usage:**\nReply to a text or sticker with /save [NOTE_NAME] to save it."
         )
 
-    elif (
-        not message.reply_to_message.text
-        and not message.reply_to_message.sticker
-    ):
-        await message.reply_text(
-            "__**You can only save text or stickers in notes.**__"
-        )
+    elif not message.reply_to_message.text and not message.reply_to_message.sticker:
+        await message.reply_text("__**You can only save text or stickers in notes.**__")
 
-    elif (
-        len(await member_permissions(message.chat.id, message.from_user.id))
-        < 1
-    ):
+    elif len(await member_permissions(message.chat.id, message.from_user.id)) < 1:
         await message.reply_text("**You don't have enough permissions**")
     else:
         name = message.text.split(None, 1)[1].strip()
@@ -103,25 +94,18 @@ async def get_one_note(_, message):
             await message.reply_text("**No such note.**")
         else:
             if _note["type"] == "text":
-                await message.reply_text(
-                    _note["data"], disable_web_page_preview=True
-                )
+                await message.reply_text(_note["data"], disable_web_page_preview=True)
             else:
                 await message.reply_sticker(_note["data"])
 
 
-@app.on_message(
-    filters.command("delete") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("delete") & ~filters.edited & ~filters.private)
 @capture_err
 async def del_note(_, message):
     if len(message.command) < 2:
         await message.reply_text("**Usage**\n__/delete [NOTE_NAME]__")
 
-    elif (
-        len(await member_permissions(message.chat.id, message.from_user.id))
-        < 1
-    ):
+    elif len(await member_permissions(message.chat.id, message.from_user.id)) < 1:
         await message.reply_text("**You don't have enough permissions**")
 
     else:

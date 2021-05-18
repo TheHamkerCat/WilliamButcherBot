@@ -28,7 +28,6 @@ import re
 import uvloop
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
 from wbb import BOT_NAME, BOT_USERNAME, USERBOT_NAME, app
 from wbb.modules import ALL_MODULES
 from wbb.modules.sudoers import bot_sys_stats
@@ -43,15 +42,9 @@ async def start_bot():
     global COMMANDS_COUNT
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
-        if (
-            hasattr(imported_module, "__MODULE__")
-            and imported_module.__MODULE__
-        ):
+        if hasattr(imported_module, "__MODULE__") and imported_module.__MODULE__:
             imported_module.__MODULE__ = imported_module.__MODULE__
-            if (
-                hasattr(imported_module, "__HELP__")
-                and imported_module.__HELP__
-            ):
+            if hasattr(imported_module, "__HELP__") and imported_module.__HELP__:
                 HELPABLE[imported_module.__MODULE__.lower()] = imported_module
     bot_modules = ""
     j = 1
@@ -91,9 +84,7 @@ async def help_command(_, message):
                     InlineKeyboardButton(
                         text="System Stats 💻", callback_data="stats_callback"
                     ),
-                    InlineKeyboardButton(
-                        text="Support 👨", url="t.me/WBBSupport"
-                    ),
+                    InlineKeyboardButton(text="Support 👨", url="t.me/WBBSupport"),
                 ],
             ]
         )
@@ -102,9 +93,7 @@ async def help_command(_, message):
     keyboard = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton(
-                    text="Commands ❓", callback_data="bot_commands"
-                ),
+                InlineKeyboardButton(text="Commands ❓", callback_data="bot_commands"),
                 InlineKeyboardButton(
                     text="Repo 🛠",
                     url="https://github.com/thehamkercat/WilliamButcherBot",
@@ -185,9 +174,7 @@ General command are:
     if mod_match:
         module = mod_match.group(1)
         text = (
-            "{} **{}**:\n".format(
-                "Here is the help for", HELPABLE[module].__MODULE__
-            )
+            "{} **{}**:\n".format("Here is the help for", HELPABLE[module].__MODULE__)
             + HELPABLE[module].__HELP__
         )
 
@@ -222,9 +209,7 @@ General command are:
     elif back_match:
         await query.message.edit(
             text=top_text,
-            reply_markup=InlineKeyboardMarkup(
-                paginate_modules(0, HELPABLE, "help")
-            ),
+            reply_markup=InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help")),
             disable_web_page_preview=True,
         )
 

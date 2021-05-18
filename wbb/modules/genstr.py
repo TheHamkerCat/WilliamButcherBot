@@ -4,7 +4,6 @@ from asyncio.exceptions import TimeoutError
 from pyrogram import Client, filters
 from pyrogram.errors import (PhoneCodeExpired, PhoneCodeInvalid,
                              PhoneNumberInvalid, SessionPasswordNeeded)
-
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 
@@ -69,9 +68,7 @@ async def genstr(_, message):
         )
 
     except TimeoutError:
-        await message.reply_text(
-            "Time limit reached of 5 min. Process Cancelled."
-        )
+        await message.reply_text("Time limit reached of 5 min. Process Cancelled.")
         return
     otp_code = otp.text
     try:

@@ -2,7 +2,6 @@ import os
 
 from pyrogram import filters
 from pyrogram.types import Message
-
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.dbfunctions import is_gbanned_user, user_global_karma
@@ -16,6 +15,8 @@ __HELP__ = """
 
 async def get_user_info(user):
     user = await app.get_users(user)
+    if not user.first_name:
+        return ["Deleted account", None]
     user_id = user.id
     username = user.username
     first_name = user.first_name

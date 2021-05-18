@@ -32,7 +32,6 @@ import aiohttp
 import ffmpeg
 import youtube_dl
 from pyrogram import filters
-
 from wbb import SUDOERS, app, arq
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.pastebin import paste
@@ -63,9 +62,7 @@ async def download_youtube_audio(url: str, m=0):
         info_dict = ydl.extract_info(url, download=False)
         if int(float(info_dict["duration"])) > 600:
             if m != 0:
-                await m.edit(
-                    "This music cannot be downloaded as it's too long."
-                )
+                await m.edit("This music cannot be downloaded as it's too long.")
             is_downloading = False
             return
         ydl.process_info(info_dict)
@@ -79,18 +76,14 @@ async def download_youtube_audio(url: str, m=0):
             os.remove(audio_file)
             audio_file = audio_file_opus
         thumbnail_url = info_dict["thumbnail"]
-        thumbnail_file = (
-            basename + "." + get_file_extension_from_url(thumbnail_url)
-        )
+        thumbnail_file = basename + "." + get_file_extension_from_url(thumbnail_url)
         title = info_dict["title"]
         performer = info_dict["uploader"]
         duration = int(float(info_dict["duration"]))
     return [title, performer, duration, audio_file, thumbnail_file]
 
 
-@app.on_message(
-    filters.command("ytmusic") & ~filters.edited & filters.user(SUDOERS)
-)
+@app.on_message(filters.command("ytmusic") & ~filters.edited & filters.user(SUDOERS))
 @capture_err
 async def music(_, message):
     global is_downloading
@@ -104,9 +97,7 @@ async def music(_, message):
         )
         return
     is_downloading = True
-    m = await message.reply_text(
-        f"Downloading {url}", disable_web_page_preview=True
-    )
+    m = await message.reply_text(f"Downloading {url}", disable_web_page_preview=True)
     try:
         (
             title,

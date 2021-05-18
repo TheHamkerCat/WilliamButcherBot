@@ -15,7 +15,6 @@ from io import StringIO
 
 from pyrogram import filters
 from pyrogram.types import Message
-
 from wbb import SUDOERS, USERBOT_PREFIX, app, app2
 
 __MODULE__ = "Userbot"
@@ -79,9 +78,7 @@ async def executor(client, message):
         evaluation = stdout
     else:
         evaluation = "Success"
-    final_output = (
-        f"**INPUT:**\n```{cmd}```\n\n**OUTPUT**:\n```{evaluation.strip()}```"
-    )
+    final_output = f"**INPUT:**\n```{cmd}```\n\n**OUTPUT**:\n```{evaluation.strip()}```"
     if len(final_output) > 4096:
         filename = "output.txt"
         with open(filename, "w+", encoding="utf8") as out_file:

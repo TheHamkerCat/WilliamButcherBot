@@ -25,7 +25,6 @@ import re
 import traceback
 
 from pyrogram import filters
-
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.admin import member_permissions
@@ -44,9 +43,7 @@ __HELP__ = """/filters To Get All The Filters In The Chat.
 You can use markdown or html to save text too."""
 
 
-@app.on_message(
-    filters.command("filter") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("filter") & ~filters.edited & ~filters.private)
 @capture_err
 async def save_filters(_, message):
     chat_id = message.chat.id
@@ -56,10 +53,7 @@ async def save_filters(_, message):
             "**Usage:**\nReply to a text or sticker with /filter [FILTER_NAME] to save it."
         )
         return
-    if (
-        not message.reply_to_message.text
-        and not message.reply_to_message.sticker
-    ):
+    if not message.reply_to_message.text and not message.reply_to_message.sticker:
         await message.reply_text(
             "__**You can only save text or stickers in filters.**__"
         )
@@ -83,9 +77,7 @@ async def save_filters(_, message):
     await message.reply_text(f"__**Saved filter {name}.**__")
 
 
-@app.on_message(
-    filters.command("filters") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("filters") & ~filters.edited & ~filters.private)
 @capture_err
 async def get_filterss(_, message):
     _filters = await get_filters_names(message.chat.id)
@@ -147,9 +139,7 @@ async def filters_re(_, message):
                         await message.reply_to_message.reply_text(
                             data, disable_web_page_preview=True
                         )
-                    await message.reply_text(
-                        data, disable_web_page_preview=True
-                    )
+                    await message.reply_text(data, disable_web_page_preview=True)
                 else:
                     if message.reply_to_message:
                         await message.reply_to_message.reply_sticker(data)

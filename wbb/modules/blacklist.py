@@ -26,7 +26,6 @@ import traceback
 
 from pyrogram import filters
 from pyrogram.types import ChatPermissions
-
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.admin import list_admins, member_permissions
@@ -43,9 +42,7 @@ __HELP__ = """
 """
 
 
-@app.on_message(
-    filters.command("blacklist") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("blacklist") & ~filters.edited & ~filters.private)
 @capture_err
 async def save_filters(_, message):
     if len(message.command) < 2:
@@ -65,9 +62,7 @@ async def save_filters(_, message):
     await message.reply_text(f"__**Blacklisted {word}.**__")
 
 
-@app.on_message(
-    filters.command("blacklisted") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("blacklisted") & ~filters.edited & ~filters.private)
 @capture_err
 async def get_filterss(_, message):
     data = await get_blacklisted_words(message.chat.id)
@@ -80,9 +75,7 @@ async def get_filterss(_, message):
         await message.reply_text(msg)
 
 
-@app.on_message(
-    filters.command("whitelist") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("whitelist") & ~filters.edited & ~filters.private)
 @capture_err
 async def del_filter(_, message):
     if len(message.command) < 2:
@@ -105,9 +98,7 @@ async def del_filter(_, message):
         await message.reply_text("**No such blacklist filter.**")
 
 
-@app.on_message(
-    filters.text & ~filters.private, group=blacklist_filters_group
-)
+@app.on_message(filters.text & ~filters.private, group=blacklist_filters_group)
 async def blacklist_filters_re(_, message):
     text = message.text.lower().strip()
     if not text:
@@ -126,9 +117,7 @@ async def blacklist_filters_re(_, message):
                 if user.id in await list_admins(chat_id):
                     return
                 try:
-                    await message.chat.restrict_member(
-                        user.id, ChatPermissions()
-                    )
+                    await message.chat.restrict_member(user.id, ChatPermissions())
                 except Exception:
                     return
                 await app.send_message(

@@ -25,7 +25,6 @@ import asyncio
 
 from pyrogram import filters
 from pyrogram.types import Message
-
 from wbb import BOT_ID, SUDOERS, USERBOT_ID, app, app2
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.dbfunctions import (activate_pipe, deactivate_pipe,
@@ -95,11 +94,7 @@ async def pipes_worker_userbot(_, message: Message):
                     app.listen(USERBOT_ID), message.copy(BOT_ID)
                 )
                 caption = f"Forwarded from `{pipe['from_chat_id']}`"
-                caption = (
-                    f"{temp.caption}\n\n{caption}"
-                    if temp.caption
-                    else caption
-                )
+                caption = f"{temp.caption}\n\n{caption}" if temp.caption else caption
                 await app.copy_message(
                     pipe["to_chat_id"],
                     USERBOT_ID,

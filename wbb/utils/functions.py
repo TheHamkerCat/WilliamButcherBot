@@ -32,7 +32,6 @@ import aiohttp
 import speedtest
 from carbonnow import Carbon
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
-
 from wbb.utils import aiodownloader
 from wbb.utils.fetch import fetch
 

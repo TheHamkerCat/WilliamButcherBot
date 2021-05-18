@@ -6,7 +6,6 @@ import aiohttp
 import requests
 from bs4 import BeautifulSoup
 from pyrogram import filters
-
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
 
@@ -59,9 +58,7 @@ async def reverse_image_search(_, message):
 
     if reply.animation:
         if not reply.animation.thumbs:
-            await m.edit(
-                "Gif Has No Thumbnail, so it cannot be reverse searched"
-            )
+            await m.edit("Gif Has No Thumbnail, so it cannot be reverse searched")
             return
         file_id = reply.animation.thumbs[0].file_id
 
@@ -77,9 +74,7 @@ async def reverse_image_search(_, message):
                 "encoded_image": (image, await f.read()),
                 "image_content": "",
             }
-            response = requests.post(
-                search_url, files=multipart, allow_redirects=False
-            )
+            response = requests.post(search_url, files=multipart, allow_redirects=False)
             location = response.headers.get("Location")
             os.remove(image)
         else:

@@ -30,9 +30,7 @@ class DownloadJob:
 
         self.file_name = file_url.split("/")[~0]
         self.file_path = (
-            os.path.join(save_path, self.file_name)
-            if save_path
-            else self.file_name
+            os.path.join(save_path, self.file_name) if save_path else self.file_name
         )
 
         self.completed = False
@@ -77,9 +75,7 @@ class DownloadJob:
                 async with aiofiles.open(self.file_path, "wb") as file:
 
                     # Downloading the file using the aiohttp.StreamReader
-                    async for data in resp.content.iter_chunked(
-                        self._chunk_size
-                    ):
+                    async for data in resp.content.iter_chunked(self._chunk_size):
                         await file.write(data)
                         self._downloaded(self._chunk_size)
 
@@ -123,13 +119,9 @@ class Handler:
         :param save_path: save path for the download
         :return:
         """
-        return DownloadJob(
-            self._session, file_url, save_path, self._chunk_size
-        )
+        return DownloadJob(self._session, file_url, save_path, self._chunk_size)
 
-    async def download(
-        self, url: str, save_path: Optional[str] = None
-    ) -> DownloadJob:
+    async def download(self, url: str, save_path: Optional[str] = None) -> DownloadJob:
         """
         Downloads a bulk of files from the given list of urls to the given path.
 

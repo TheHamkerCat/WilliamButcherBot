@@ -23,7 +23,6 @@ SOFTWARE.
 """
 
 from pyrogram import filters
-
 from wbb import BOT_ID, SUDOERS, USERBOT_PREFIX, app2
 
 

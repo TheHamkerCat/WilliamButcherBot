@@ -24,7 +24,6 @@ SOFTWARE.
 from pyrogram import filters
 from pyrogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                             InputMediaPhoto, InputMediaVideo, Message)
-
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 
@@ -50,9 +49,7 @@ async def rice(_, message: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(
-                        "Approve (Forward)", callback_data="forward"
-                    ),
+                    InlineKeyboardButton("Approve (Forward)", callback_data="forward"),
                     InlineKeyboardButton("Ignore", callback_data="ignore"),
                 ]
             ]
@@ -81,15 +78,11 @@ async def callback_query_forward_rice(_, callback_query):
         arg_media = []
         for m in media_group:
             if m.photo and m.caption:
-                arg_media.append(
-                    InputMediaPhoto(m.photo.file_id, caption=arg_caption)
-                )
+                arg_media.append(InputMediaPhoto(m.photo.file_id, caption=arg_caption))
             elif m.photo:
                 arg_media.append(InputMediaPhoto(m.photo.file_id))
             elif m.video and m.caption:
-                arg_media.append(
-                    InputMediaVideo(m.video.file_id, caption=arg_caption)
-                )
+                arg_media.append(InputMediaVideo(m.video.file_id, caption=arg_caption))
             elif m.video:
                 arg_media.append(InputMediaVideo(m.video.file_id))
         m_cp = await app.send_media_group(RICE_CHANNEL, arg_media)

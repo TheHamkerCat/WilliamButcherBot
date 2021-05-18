@@ -24,7 +24,6 @@ SOFTWARE.
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import ChatNotModified
 from pyrogram.types import ChatPermissions
-
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.admin import current_chat_permissions, member_permissions
@@ -72,13 +71,9 @@ async def tg_lock(message, permissions: list, perm: str, lock: bool):
     (permissions.remove(perm) if lock else permissions.append(perm))
     permissions = {perm: True for perm in list(set(permissions))}
     try:
-        await app.set_chat_permissions(
-            message.chat.id, ChatPermissions(**permissions)
-        )
+        await app.set_chat_permissions(message.chat.id, ChatPermissions(**permissions))
     except ChatNotModified:
-        await message.reply_text(
-            "To unlock this, you have to unlock 'messages' first."
-        )
+        await message.reply_text("To unlock this, you have to unlock 'messages' first.")
         return
     await message.reply_text(("Locked." if lock else "Unlocked."))
 
@@ -100,10 +95,7 @@ async def locks_func(_, message):
             return
 
         permissions = await member_permissions(chat_id, user_id)
-        if (
-            "can_restrict_members" not in permissions
-            and user_id not in SUDOERS
-        ):
+        if "can_restrict_members" not in permissions and user_id not in SUDOERS:
             await message.reply_text("You Don't Have Enough Permissions.")
             return
 

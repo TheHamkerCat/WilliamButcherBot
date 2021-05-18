@@ -27,7 +27,6 @@ from googletrans import Translator
 from gtts import gTTS
 from pyrogram import filters
 from pyrogram.types import Message
-
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 
