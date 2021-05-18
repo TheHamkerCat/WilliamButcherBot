@@ -26,10 +26,9 @@ import string
 
 import aiohttp
 from cryptography.fernet import Fernet
-from googletrans import Translator
 from pyrogram import filters
 
-from wbb import FERNET_ENCRYPTION_KEY, app
+from wbb import FERNET_ENCRYPTION_KEY, app, arq
 from wbb.core.decorators.errors import capture_err
 from wbb.utils import random_line
 from wbb.utils.fetch import fetch
@@ -259,19 +258,13 @@ async def tr(_, message):
         return
     if message.reply_to_message.text:
         text = message.reply_to_message.text
-        try:
-            i = Translator().translate(text, dest=lang)
-        except ValueError:
-            await message.reply_text("[ERROR]: LANGUAGE NOT FOUND")
-            return
-        await message.reply_text(i.text)
     elif message.reply_to_message.caption:
         text = message.reply_to_message.caption
-        i = Translator().translate(text, dest=lang)
-        await message.reply_text(i.text)
-
-
-fetch_limit = 0
+    result = await arq.translate(text, lang)
+    if not result.ok:
+        await message.reply_text(result.result)
+        return
+    await message.reply_text(result.result.translatedText)
 
 
 @app.on_message(filters.command("json") & ~filters.edited)
@@ -280,9 +273,6 @@ async def json_fetch(_, message):
     global fetch_limit
     if len(message.command) != 2:
         await message.reply_text("/json [URL]")
-        return
-    elif fetch_limit > 500:
-        await message.reply_text("Today's Quota Exceeded!, lol")
         return
     url = message.text.split(None, 1)[1]
     try:

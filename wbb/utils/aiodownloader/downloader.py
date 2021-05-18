@@ -28,7 +28,7 @@ class DownloadJob:
         self._session = session
         self._chunk_size = chunk_size
 
-        self.file_name = file_url.split("/")[~0]
+        self.file_name = file_url.split("/")[~0][0:230]
         self.file_path = (
             os.path.join(save_path, self.file_name)
             if save_path
@@ -143,5 +143,6 @@ class Handler:
 
         await task
         file_name = url.split("/")[-1]
+        file_name = file_name[0:230] if len(file_name) > 230 else file_name
         path = os.getcwd() + "/" + file_name if not save_path else save_path
         return path

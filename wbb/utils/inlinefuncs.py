@@ -31,7 +31,6 @@ from time import ctime, time
 
 import aiofiles
 import aiohttp
-from googletrans import Translator
 from motor import version as mongover
 from pykeyboard import InlineKeyboard
 from pyrogram import __version__ as pyrover
@@ -148,25 +147,37 @@ async def alive_function(answers):
 
 
 async def translate_func(answers, lang, tex):
-    i = Translator().translate(tex, dest=lang)
+    result = await arq.translate(tex, lang)
+    if not result.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=result.result,
+                input_message_content=InputTextMessageContent(result.result),
+            )
+        )
+        return answers
+    result = result.result
     msg = f"""
-__**Translated from {i.src} to {lang}**__
+__**Translated from {result.src} to {result.dest}**__
 
 **INPUT:**
 {tex}
 
 **OUTPUT:**
-{i.text}"""
+{result.translatedText}"""
     answers.extend(
         [
             InlineQueryResultArticle(
-                title=f"Translated from {i.src} to {lang}.",
-                description=i.text,
+                title=f"Translated from {result.src} to {result.dest}.",
+                description=result.translatedText,
                 input_message_content=InputTextMessageContent(msg),
             ),
             InlineQueryResultArticle(
-                title=i.text,
-                input_message_content=InputTextMessageContent(i.text),
+                title=result.translatedText,
+                input_message_content=InputTextMessageContent(
+                    result.translatedText
+                ),
             ),
         ]
     )
@@ -425,7 +436,7 @@ async def youtube_func(answers, text):
 **Uploaded:** {i.publish_time}
 **Description:** {i.long_desc}"""
         description = (
-            f"{i.views} | {i.channel} | " + f"{i.duration} | {i.publish_time}"
+            f"{i.views} | {i.channel} | {i.duration} | {i.publish_time}"
         )
         answers.append(
             InlineQueryResultArticle(
