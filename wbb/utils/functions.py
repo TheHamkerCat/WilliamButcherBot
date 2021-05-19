@@ -34,6 +34,7 @@ from carbonnow import Carbon
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 from wbb.utils import aiodownloader
+from wget import download
 from wbb.utils.fetch import fetch
 
 """
@@ -41,6 +42,14 @@ Just import 'downloader' anywhere and do downloader.download() to
 download file from a given url
 """
 downloader = aiodownloader.Handler()
+
+# Another downloader, but with wget
+
+
+async def download_url(url: str):
+    loop = get_running_loop()
+    file = await loop.run_in_executor(None, download, url)
+    return file
 
 
 def generate_captcha():
