@@ -50,6 +50,7 @@ async def ytdl_func(_, message):
             "duration": duration,
             "format": format,
             "thumbnail": thumbnail,
+            "cc": message.from_user.mention if message.from_user else "Anon",
         }
         keyboard.append(
             InlineKeyboardButton(
@@ -60,7 +61,6 @@ async def ytdl_func(_, message):
     caption = f"""
 **Title:** {title}
 **Duration:** {await timeFormat(duration)}
-**Size:** {size}
 """
     await message.reply_photo(thumbnail, caption=caption, reply_markup=buttons)
     await m.delete()
@@ -78,11 +78,13 @@ async def ytdlCallback(_, cq):
         format = data["format"]
         size = data["size"]
         thumbnail = data["thumbnail"]
+        cc = data['cc']
         caption = f"""
 **Title:** {title}
 **Size:** {size}
 **Format:** {format}
 **Duration:** {await timeFormat(duration)}
+**CC:** {cc}
         """
         media, thumb = await gather(
             downloader.download(url), downloader.download(thumbnail)
