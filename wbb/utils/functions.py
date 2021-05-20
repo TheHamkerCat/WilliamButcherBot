@@ -23,7 +23,7 @@ SOFTWARE.
 """
 import codecs
 import pickle
-from asyncio import gather
+from asyncio import gather, get_running_loop
 from math import atan2, cos, radians, sin, sqrt
 from random import randint
 
