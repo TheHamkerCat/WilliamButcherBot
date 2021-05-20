@@ -21,13 +21,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import aiohttp
 import asyncio
 import os
 
+from pykeyboard import InlineKeyboard
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import WebpageCurlFailed
+from pyrogram.types import InlineKeyboardButton
 
-from wbb import aiohttpsession, app
+from wbb import aiohttpsession as session, app
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.functions import get_http_status_code
 from wbb.utils.pastebin import paste
@@ -46,8 +49,8 @@ async def isPreviewUp(preview: str) -> bool:
             return False
         if status == 404 or (status == 200 and size == 0):
             await asyncio.sleep(0.4)
-        elif status == 200 and size > 0:
-            return True
+        else:
+            return True if status == 200 else False
     return False
 
 
@@ -55,37 +58,31 @@ async def isPreviewUp(preview: str) -> bool:
 @capture_err
 async def paste_func(_, message):
     if message.reply_to_message:
+        m = await message.reply_text("Pasting...")
         if message.reply_to_message.text:
-            m = await message.reply_text("Pasting...")
             content = str(message.reply_to_message.text)
-            link = await paste(content)
-            preview = link + "/preview.png"
-            if await isPreviewUp(preview):
-                await message.reply_photo(
-                    photo=preview, caption=link, quote=false
-                )
-                return
-            await m.edit(link)
 
         elif message.reply_to_message.document:
-            if message.reply_to_message.document.file_size > 1048576:
-                await message.reply_text(
-                    "You can only paste files smaller than 1MB."
-                )
+            document = message.reply_to_message.document
+            if document.file_size > 1048576:
+                await m.edit("You can only paste files smaller than 1MB.")
                 return
-            m = await message.reply_text("Pasting...")
-            doc_file = await message.reply_to_message.download(
-                file_name="paste.txt"
-            )
-            i = open(doc_file, "r")
-            link = await paste(i.read())
-            preview = link + "/preview.png"
-            if await isPreviewUp(preview):
-                await message.reply_photo(
-                    photo=preview, caption=link, quote=false
-                )
+            if "text" not in document.mime_type:
+                await m.edit("Only text files can be pasted.")
                 return
-            await m.edit(link)
-            os.remove(doc_file)
+            doc = await message.reply_to_message.download()
+            async with aiofiles.open(doc, mode="r") as f:
+                content = await f.read()
+            os.remove(doc)
+        link = await paste(content)
+        preview = link + "/preview.png"
+        button = InlineKeyboard(row_width=1)
+        button.add(InlineKeyboardButton(text="Paste Link", url=link))
+
+        if await isPreviewUp(preview):
+            await message.reply_photo(photo=preview, quote=False, reply_markup=button)
+            await m.delete()
+            return
+        await m.edit(link)
     else:
         await message.reply_text("Reply To A Message With /paste")

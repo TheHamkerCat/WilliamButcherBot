@@ -398,6 +398,21 @@ async def inline_query_handler(client, query):
             await client.answer_inline_query(
                 query.id, results=answerss, cache_time=2
             )
+
+        elif text.split()[0] == "pypi":
+            if len(text.split()) < 2:
+                await client.answer_inline_query(
+                    query.id,
+                    results=answers,
+                    switch_pm_text="Pypi Search | pypi [Package Name]",
+                    switch_pm_parameter="inline",
+                )
+                return
+            tex = text.split()[1].strip()
+            answerss = await pypiSearchFunc(answers, tex)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
     except Exception as e:
         e = traceback.format_exc()
         print(e, " InLine")
