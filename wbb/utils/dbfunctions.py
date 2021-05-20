@@ -247,7 +247,9 @@ async def get_karmas_count() -> dict:
     karmas_count = 0
     for chat in await chats.to_list(length=1000000):
         for i in chat["karma"]:
-            karmas_count += chat["karma"][i]["karma"]
+            karma_ = chat["karma"][i]["karma"]
+            if karma_ > 0:
+                karmas_count += karma_
         chats_count += 1
     return {"chats_count": chats_count, "karmas_count": karmas_count}
 

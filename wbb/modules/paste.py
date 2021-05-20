@@ -25,8 +25,9 @@ import asyncio
 import os
 
 from pyrogram import filters
+from pyrogram.errors.exceptions.bad_request_400 import WebpageCurlFailed
 
-from wbb import app
+from wbb import aiohttpsession, app
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.functions import get_http_status_code
 from wbb.utils.pastebin import paste
@@ -35,26 +36,36 @@ __MODULE__ = "Paste"
 __HELP__ = "/paste - To Paste Replied Text Or Document To Nekobin"
 
 
+async def isPreviewUp(preview: str) -> bool:
+    for _ in range(7):
+        try:
+            async with session.head(preview, timeout=2) as resp:
+                status = resp.status
+                size = resp.content_length
+        except asyncio.exceptions.TimeoutError:
+            return False
+        if status == 404 or (status == 200 and size == 0):
+            await asyncio.sleep(0.4)
+        elif status == 200 and size > 0:
+            return True
+    return False
+
+
 @app.on_message(filters.command("paste") & ~filters.edited)
 @capture_err
 async def paste_func(_, message):
     if message.reply_to_message:
-        app.set_parse_mode("markdown")
         if message.reply_to_message.text:
             m = await message.reply_text("Pasting...")
             content = str(message.reply_to_message.text)
             link = await paste(content)
             preview = link + "/preview.png"
-            status_code = await get_http_status_code(preview)
-            i = 0
-            while status_code != 200:
-                if i == 5:
-                    break
-                status_code = await get_http_status_code(preview)
-                await asyncio.sleep(0.2)
-                i += 1
-            await m.delete()
-            await app.send_photo(message.chat.id, photo=preview, caption=link)
+            if await isPreviewUp(preview):
+                await message.reply_photo(
+                    photo=preview, caption=link, quote=false
+                )
+                return
+            await m.edit(link)
 
         elif message.reply_to_message.document:
             if message.reply_to_message.document.file_size > 1048576:
@@ -69,16 +80,12 @@ async def paste_func(_, message):
             i = open(doc_file, "r")
             link = await paste(i.read())
             preview = link + "/preview.png"
-            status_code = await get_http_status_code(preview)
-            i = 0
-            while status_code != 200:
-                if i == 5:
-                    break
-                status_code = await get_http_status_code(preview)
-                await asyncio.sleep(0.2)
-                i += 1
-            await m.delete()
-            await app.send_photo(message.chat.id, photo=preview, caption=link)
+            if await isPreviewUp(preview):
+                await message.reply_photo(
+                    photo=preview, caption=link, quote=false
+                )
+                return
+            await m.edit(link)
             os.remove(doc_file)
     else:
         await message.reply_text("Reply To A Message With /paste")

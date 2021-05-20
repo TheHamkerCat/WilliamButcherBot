@@ -26,6 +26,7 @@ import asyncio
 import time
 from os import path
 
+from aiohttp import ClientSession
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from pyrogram import Client
 from pyromod import listen
@@ -52,7 +53,7 @@ MOD_NOLOAD = []
 bot_start_time = time.time()
 
 # MongoDB client
-print("[INFO]: LOADING MONGODB")
+print("[INFO]: INITIALIZING DATABASE")
 mongo_client = MongoClient(MONGO_DB_URI)
 db = mongo_client.wbb
 
@@ -76,24 +77,28 @@ loop = asyncio.get_event_loop()
 loop.run_until_complete(load_sudoers())
 
 if not HEROKU:
-    print("[INFO]: LOADING USERBOT CLIENT")
+    print("[INFO]: INITIALIZING USERBOT CLIENT")
     app2 = Client(
         "userbot", phone_number=PHONE_NUMBER, api_id=API_ID, api_hash=API_HASH
     )
 else:
-    print("[INFO]: LOADING USERBOT CLIENT")
+    print("[INFO]: INITIALIZING USERBOT CLIENT")
     app2 = Client(SESSION_STRING, api_id=API_ID, api_hash=API_HASH)
 
 # Bot client
-print("[INFO]: LOADING BOT CLIENT")
+print("[INFO]: INITIALIZING BOT CLIENT")
 app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
 # ARQ client
-print("[INFO]: LOADING ARQ")
+print("[INFO]: INITIALIZING ARQ")
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY)
 # Telegraph client
-print("[INFO]: LOADING TELEGRAPH")
+print("[INFO]: INITIALIZING TELEGRAPH")
 telegraph = Telegraph()
 telegraph.create_account(short_name="wbb")
+# Aiohttp Client
+print("[INFO]: INITIALZING AIOHTTP SESSION")
+aiohttpsession = ClientSession()
+
 
 BOT_ID = 0
 BOT_NAME = ""
@@ -135,6 +140,7 @@ print("[INFO]: STARTING BOT CLIENT")
 app.start()
 print("[INFO]: STARTING USERBOT CLIENT")
 app2.start()
+print("[INFO]: LOADING UB/BOT PROFILE INFO")
 get_info(app, app2)
 
 if USERBOT_ID not in SUDOERS:

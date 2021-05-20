@@ -131,7 +131,7 @@ async def downvote(_, message):
 async def karma(_, message):
     chat_id = message.chat.id
     if not message.reply_to_message:
-        m = await message.reply_text("Analyzing Karma...Will Take 20 Seconds")
+        m = await message.reply_text("Analyzing Karma...Will Take 10 Seconds")
         karma = await get_karmas(chat_id)
         msg = f"**Karma list of {message.chat.title}:- **\n"
         limit = 0
@@ -153,7 +153,7 @@ async def karma(_, message):
                 break
             try:
                 user = await app.get_users(int(user_idd))
-                await asyncio.sleep(2)
+                await asyncio.sleep(0.8)
             except Exception:
                 continue
             first_name = user.first_name

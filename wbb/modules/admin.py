@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import asyncio
+import traceback
 
 from pyrogram import filters
 from pyrogram.types import ChatPermissions
@@ -160,8 +161,9 @@ async def purge(client, message):
             await message.reply_text("Your Don't Have Enough Permissions!")
         await message.delete()
     except Exception as e:
+        await message.reply_text(str(e))
+        e = traceback.format_exc()
         print(e)
-        await message.reply_text(e)
 
 
 # Kick members
@@ -197,8 +199,9 @@ async def kick(_, message):
             await message.reply_to_message.chat.unban_member(user_id)
             await message.reply_text("Kicked!")
     except Exception as e:
+        await message.reply_text(str(e))
+        e = traceback.format_exc()
         print(e)
-        await message.reply_text(e)
 
 
 # Ban members
@@ -233,6 +236,8 @@ async def ban(_, message):
             await message.reply_text("Banned!")
     except Exception as e:
         await message.reply_text(str(e))
+        e = traceback.format_exc()
+        print(e)
 
 
 # Unban members
@@ -264,6 +269,8 @@ async def unban(_, message):
         await message.reply_text("Unbanned!")
     except Exception as e:
         await message.reply_text(str(e))
+        e = traceback.format_exc()
+        print(e)
 
 
 # Delete messages
@@ -292,6 +299,8 @@ async def delete(_, message):
         await message.delete()
     except Exception as e:
         await message.reply_text(str(e))
+        e = traceback.format_exc()
+        print(e)
 
 
 # Promote Members
@@ -336,6 +345,8 @@ async def promote(_, message):
 
     except Exception as e:
         await message.reply_text(str(e))
+        e = traceback.format_exc()
+        print(e)
 
 
 # Demote Member
@@ -379,6 +390,8 @@ async def demote(_, message):
 
     except Exception as e:
         await message.reply_text(str(e))
+        e = traceback.format_exc()
+        print(e)
 
 
 # Pin Messages
@@ -401,6 +414,8 @@ async def pin(_, message):
             return
     except Exception as e:
         await message.reply_text(str(e))
+        e = traceback.format_exc()
+        print(e)
 
 
 # Mute members
@@ -437,6 +452,8 @@ async def mute(_, message):
         await message.reply_text("Muted!")
     except Exception as e:
         await message.reply_text(str(e))
+        e = traceback.format_exc()
+        print(e)
 
 
 # Unmute members
@@ -468,6 +485,8 @@ async def unmute(_, message):
         await message.reply_text("Unmuted!")
     except Exception as e:
         await message.reply_text(str(e))
+        e = traceback.format_exc()
+        print(e)
 
 
 # Ban deleted accounts
@@ -503,7 +522,8 @@ async def ban_deleted_accounts(_, message):
             await message.reply_text("You Don't Have Enough Permissions")
     except Exception as e:
         await message.reply_text(str(e))
-        print(str(e))
+        e = traceback.format_exc()
+        print(e)
 
 
 @app.on_message(filters.command("warn") & ~filters.edited)
@@ -565,6 +585,8 @@ async def warn_user(_, message):
             await message.reply_text("You don't have enough permissions.")
     except Exception as e:
         await message.reply_text(str(e))
+        e = traceback.format_exc()
+        print(e)
 
 
 # Rmwarns
@@ -597,6 +619,8 @@ async def remove_warnings(_, message):
             await message.reply_text("You don't have enough permissions")
     except Exception as e:
         await message.reply_text(str(e))
+        e = traceback.format_exc()
+        print(e)
 
 
 # Warns
@@ -637,6 +661,8 @@ async def check_warns(_, message):
         )
     except Exception as e:
         await message.reply_text(str(e))
+        e = traceback.format_exc()
+        print(e)
 
 
 # Report
