@@ -731,7 +731,8 @@ async def test_speedtest_cq(_, cq):
         return
     inline_message_id = cq.inline_message_id
     await app.edit_inline_text(inline_message_id, "**Testing**")
-    download, upload, info = await test_speedtest()
+    loop = asyncio.get_running_loop()
+    download, upload, info = await loop.run_in_executor(None, test_speedtest)
     msg = f"""
 **Download:** `{download}`
 **Upload:** `{upload}`
@@ -855,27 +856,29 @@ async def nsfw_scan_func(answers, url: str):
     return answers
 
 
-async def yt_music_func(answers, url, user_id):
-    if user_id not in SUDOERS:
-        msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
+async def yt_music_func(answers, url):
+    if "http" not in url:
+        url = (await arq.youtube(url)).result[0]
+        url = f"https://youtube.com{url.url_suffix}"
+    loop = asyncio.get_running_loop()
+    music = await loop.run_in_executor(None, download_youtube_audio, url)
+    if not music:
+        msg = "**ERROR**\n__MUSIC TOO LONG__"
         answers.append(
             InlineQueryResultArticle(
                 title="ERROR",
-                description="THIS FEATURE IS ONLY FOR SUDO USERS",
+                description="MUSIC TOO LONG",
                 input_message_content=InputTextMessageContent(msg),
             )
         )
         return answers
-    if "http" not in url:
-        url = (await arq.youtube(url)).result[0]
-        url = f"https://youtube.com{url.url_suffix}"
     (
         title,
         performer,
         duration,
         audio,
         thumbnail,
-    ) = await download_youtube_audio(url)
+    ) = music
     m = await app.send_audio(
         MESSAGE_DUMP_CHAT,
         audio,

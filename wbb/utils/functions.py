@@ -97,7 +97,7 @@ def generate_captcha():
     return [file, correct_answer, wrong_answers]
 
 
-async def test_speedtest():
+def test_speedtest():
     def speed_convert(size):
         power = 2 ** 10
         zero = 0

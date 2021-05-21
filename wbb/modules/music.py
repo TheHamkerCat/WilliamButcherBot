@@ -24,6 +24,8 @@ SOFTWARE.
 from __future__ import unicode_literals
 
 import os
+from asyncio import get_running_loop
+from functools import partial
 from random import randint
 from urllib.parse import urlparse
 
@@ -33,7 +35,7 @@ import ffmpeg
 import youtube_dl
 from pyrogram import filters
 
-from wbb import SUDOERS, app, arq
+from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.pastebin import paste
 
@@ -52,22 +54,19 @@ def get_file_extension_from_url(url):
     return basename.split(".")[-1]
 
 
-async def download_youtube_audio(url: str, m=0):
+def download_youtube_audio(url: str, m=0):
     global is_downloading
     with youtube_dl.YoutubeDL(
         {
             "format": "bestaudio",
             "writethumbnail": True,
+            "quiet": True,
         }
     ) as ydl:
         info_dict = ydl.extract_info(url, download=False)
         if int(float(info_dict["duration"])) > 600:
-            if m != 0:
-                await m.edit(
-                    "This music cannot be downloaded as it's too long."
-                )
             is_downloading = False
-            return
+            return []
         ydl.process_info(info_dict)
         audio_file = ydl.prepare_filename(info_dict)
         basename = audio_file.rsplit(".", 1)[-2]
@@ -88,9 +87,7 @@ async def download_youtube_audio(url: str, m=0):
     return [title, performer, duration, audio_file, thumbnail_file]
 
 
-@app.on_message(
-    filters.command("ytmusic") & ~filters.edited & filters.user(SUDOERS)
-)
+@app.on_message(filters.command("ytmusic"))
 @capture_err
 async def music(_, message):
     global is_downloading
@@ -108,13 +105,17 @@ async def music(_, message):
         f"Downloading {url}", disable_web_page_preview=True
     )
     try:
+        loop = get_running_loop()
+        music = await loop.run_in_executor(None, partial(download_youtube_audio, url, message))
+        if not music:
+            await m.edit("Too Long, Can't Download.")
         (
             title,
             performer,
             duration,
             audio_file,
             thumbnail_file,
-        ) = await download_youtube_audio(url, message)
+        ) = music 
     except Exception as e:
         is_downloading = False
         await m.edit(str(e))
