@@ -74,6 +74,10 @@
         "ARQ_API_KEY": {
             "description": "Get this from @ARQRobot.",
             "required": true
+        },
+        "LOG_MENTIONS": {
+            "description": "Fill 1 to turn this one, or 0 to turn it off.",
+            "required": true
         }
     }
 }

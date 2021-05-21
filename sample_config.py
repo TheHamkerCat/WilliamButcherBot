@@ -19,6 +19,7 @@ if HEROKU:
     MONGO_DB_URI = environ.get("MONGO_DB_URI", None)
     ARQ_API_URL = environ.get("ARQ_API_URL", None)
     ARQ_API_KEY = environ.get("ARQ_API_KEY", None)
+    LOG_MENTIONS = True if int(environ.get("LOG_MENTIONS", None)) == 1 else False
 else:
     BOT_TOKEN = "467677575:YZfaakjwd545dfg-N6JStihhuw5gQeZHntc"
     API_ID = 123456
@@ -38,5 +39,5 @@ else:
     WELCOME_DELAY_KICK_SEC = 300
     MONGO_DB_URI = "mongodb+srv://username:password@cluster0.ksiis.mongodb.net/YourDataBaseName?retryWrites=true&w=majority"
     ARQ_API_KEY = "Get this from @ARQRobot"
-    # NOTE Don't make changes below this line
     ARQ_API_URL = "http://thearq.tech"
+    LOG_MENTIONS = True
