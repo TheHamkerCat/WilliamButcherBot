@@ -154,6 +154,7 @@ async def filters_re(_, message):
                         await message.reply_to_message.reply_sticker(data)
                         return
                     await message.reply_sticker(data)
+                return
     except Exception as e:
         e = traceback.format_exc()
         print(e)
