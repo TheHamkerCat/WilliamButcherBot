@@ -145,6 +145,7 @@ async def filters_re(_, message):
                         await message.reply_to_message.reply_text(
                             data, disable_web_page_preview=True
                         )
+                        return
                     await message.reply_text(
                         data, disable_web_page_preview=True
                     )
@@ -153,8 +154,6 @@ async def filters_re(_, message):
                         await message.reply_to_message.reply_sticker(data)
                         return
                     await message.reply_sticker(data)
-                if text == word:
-                    await message.delete()
     except Exception as e:
         e = traceback.format_exc()
         print(e)
