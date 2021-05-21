@@ -1,4 +1,5 @@
 from io import BytesIO
+from traceback import format_exc
 
 from pyrogram import filters
 from pyrogram.types import Message
@@ -97,11 +98,13 @@ async def quotly_func(_, message: Message):
         await message.reply_sticker(sticker)
         await m.delete()
         sticker.close()
-    except Exception:
+    except Exception as e:
         await message.reply_text(
             "Something wrong happened while quoting messages,"
             + " This error usually happens when there's a "
             + " message containing something other than text."
         )
         await m.delete()
+        e = format_exc()
+        print(e)
         return
