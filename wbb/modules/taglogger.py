@@ -30,8 +30,6 @@ async def statusUpdaterFunc(_, update):
 
 async def sendLog(message: Message):
     msg = f"""
-「 ✨ TAG LOGGER 」
-
 **User:** {message.from_user.mention} [`{message.from_user.id if message.from_user else None}`]
 **Text:** {message.text if message.text else None}
 **Chat:** {message.chat.title} [`{message.chat.id}`]
