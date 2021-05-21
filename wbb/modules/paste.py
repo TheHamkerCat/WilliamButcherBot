@@ -21,17 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import aiohttp
-import aiofiles
 import asyncio
 import os
 
+import aiofiles
+import aiohttp
 from pykeyboard import InlineKeyboard
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import WebpageCurlFailed
 from pyrogram.types import InlineKeyboardButton
 
-from wbb import aiohttpsession as session, app
+from wbb import aiohttpsession as session
+from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.functions import get_http_status_code
 from wbb.utils.pastebin import paste
@@ -81,7 +82,9 @@ async def paste_func(_, message):
         button.add(InlineKeyboardButton(text="Paste Link", url=link))
 
         if await isPreviewUp(preview):
-            await message.reply_photo(photo=preview, quote=False, reply_markup=button)
+            await message.reply_photo(
+                photo=preview, quote=False, reply_markup=button
+            )
             await m.delete()
             return
         await m.edit(link)

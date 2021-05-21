@@ -31,3 +31,4 @@ antiflood_group = 7
 nsfw_detect_group = 8
 blacklist_filters_group = 9
 pipes_group = 10
+taglog_group = 11

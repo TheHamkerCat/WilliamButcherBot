@@ -106,7 +106,9 @@ async def music(_, message):
     )
     try:
         loop = get_running_loop()
-        music = await loop.run_in_executor(None, partial(download_youtube_audio, url, message))
+        music = await loop.run_in_executor(
+            None, partial(download_youtube_audio, url, message)
+        )
         if not music:
             await m.edit("Too Long, Can't Download.")
         (
@@ -115,7 +117,7 @@ async def music(_, message):
             duration,
             audio_file,
             thumbnail_file,
-        ) = music 
+        ) = music
     except Exception as e:
         is_downloading = False
         await m.edit(str(e))

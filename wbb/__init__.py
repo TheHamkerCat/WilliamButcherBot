@@ -119,18 +119,20 @@ def get_info(app, app2):
     getme2 = app2.get_me()
     BOT_ID = getme.id
     USERBOT_ID = getme2.id
-    if getme.last_name:
-        BOT_NAME = getme.first_name + " " + getme.last_name
-    else:
-        BOT_NAME = getme.first_name
+    BOT_NAME = (
+        f"{getme.first_name} {getme.last_name}"
+        if getme.last_name
+        else getme.first_name
+    )
     BOT_USERNAME = getme.username
     BOT_MENTION = getme.mention
     BOT_DC_ID = getme.dc_id
 
-    if getme2.last_name:
-        USERBOT_NAME = getme2.first_name + " " + getme2.last_name
-    else:
-        USERBOT_NAME = getme2.first_name
+    USERBOT_NAME = (
+        f"{getme2.first_name} {getme2.last_name}"
+        if getme2.last_name
+        else getme2.first_name
+    )
     USERBOT_USERNAME = getme2.username
     USERBOT_MENTION = getme2.mention
     USERBOT_DC_ID = getme2.dc_id
