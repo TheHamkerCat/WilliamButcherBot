@@ -145,6 +145,8 @@ async def filters_re(_, message):
                         await message.reply_to_message.reply_text(
                             data, disable_web_page_preview=True
                         )
+                        if text[0] == "~":
+                            await message.delete()
                         return
                     await message.reply_text(
                         data, disable_web_page_preview=True
@@ -152,11 +154,11 @@ async def filters_re(_, message):
                 else:
                     if message.reply_to_message:
                         await message.reply_to_message.reply_sticker(data)
+                        if text[0] == "~":
+                            await message.delete()
                         return
                     await message.reply_sticker(data)
-                if text[0] == "~" and message.reply_to_message:
-                    await message.delete()
-                return
+
     except Exception as e:
         e = traceback.format_exc()
         print(e)
