@@ -41,7 +41,10 @@ async def sendLog(message: Message):
 
 
 @app2.on_message(
-    ~filters.me & ~filters.chat([LOG_GROUP_ID, BOT_ID]) & ~filters.private,
+    ~filters.me
+    & ~filters.chat([LOG_GROUP_ID, BOT_ID])
+    & ~filters.private
+    & ~filters.edited,
     group=taglog_group,
 )
 @capture_err
