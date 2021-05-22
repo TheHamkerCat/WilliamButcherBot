@@ -164,12 +164,12 @@ async def jssong(_, message):
         return
     is_downloading = True
     text = message.text.split(None, 1)[1]
-    query = text.replace(" ", "%20")
     m = await message.reply_text("Searching...")
     try:
-        songs = await arq.saavn(query)
+        songs = await arq.saavn(text)
         if not songs.ok:
-            await message.reply_text(songs.result)
+            await m.edit(songs.result)
+            is_downloading = False
             return
         sname = songs.result[0].song
         slink = songs.result[0].media_url
@@ -208,12 +208,12 @@ async def deezsong(_, message):
         return
     is_downloading = True
     text = message.text.split(None, 1)[1]
-    query = text.replace(" ", "%20")
     m = await message.reply_text("Searching...")
     try:
-        songs = await arq.deezer(query, 1)
+        songs = await arq.deezer(text, 1)
         if not songs.ok:
-            await message.reply_text(songs.result)
+            await m.edit(songs.result)
+            is_downloading = False
             return
         title = songs.result[0].title
         url = songs.result[0].url
