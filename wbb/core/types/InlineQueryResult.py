@@ -78,7 +78,7 @@ class InlineQueryResultAudio(InlineQueryResult):
 
         self.audio_url = audio_url
         self.thumb_url = thumb_url
-        self.voice = True if self.mime_type == "audio/ogg" else False
+        self.voice = True if mime_type == "audio/ogg" else False
         self.title = title
         self.caption = caption
         self.description = description
