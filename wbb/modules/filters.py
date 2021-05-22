@@ -154,6 +154,8 @@ async def filters_re(_, message):
                         await message.reply_to_message.reply_sticker(data)
                         return
                     await message.reply_sticker(data)
+                if text[0] == "~" and message.reply_to_message:
+                    await message.delete()
                 return
     except Exception as e:
         e = traceback.format_exc()
