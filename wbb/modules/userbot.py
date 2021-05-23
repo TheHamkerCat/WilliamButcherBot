@@ -5,18 +5,21 @@
             https://github.com/pokurt/Nana-Remix/blob/master/nana/plugins/devs.py
 """
 
+import aiofiles
 import os
 import re
 import subprocess
 import sys
 import traceback
+from html import escape
 from inspect import getfullargspec
 from io import StringIO
+from time import time
 
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import SUDOERS, USERBOT_PREFIX, app, app2
+from wbb import SUDOERS, USERBOT_PREFIX, app, app2, arq
 
 __MODULE__ = "Userbot"
 __HELP__ = """
@@ -51,7 +54,7 @@ async def edit_or_reply(msg: Message, **kwargs):
     & ~filters.via_bot
     & filters.command("l", prefixes=USERBOT_PREFIX)
 )
-async def executor(client, message):
+async def executor(client, message: Message):
     try:
         cmd = message.text.split(" ", maxsplit=1)[1]
     except IndexError:
@@ -80,7 +83,7 @@ async def executor(client, message):
     else:
         evaluation = "Success"
     final_output = (
-        f"**INPUT:**\n```{cmd}```\n\n**OUTPUT**:\n```{evaluation.strip()}```"
+        f"**INPUT:**\n```{escape(cmd)}```\n\n**OUTPUT**:\n```{escape(evaluation.strip())}```"
     )
     if len(final_output) > 4096:
         filename = "output.txt"
@@ -88,7 +91,7 @@ async def executor(client, message):
             out_file.write(str(evaluation.strip()))
         await message.reply_document(
             document=filename,
-            caption=f"**INPUT:**\n`{cmd[0:980]}`\n\n**OUTPUT:**\n`Attached Document`",
+            caption=f"**INPUT:**\n`{escape(cmd[0:980])}`\n\n**OUTPUT:**\n`Attached Document`",
             quote=False,
         )
         await message.delete()
@@ -103,7 +106,7 @@ async def executor(client, message):
     & ~filters.via_bot
     & filters.command("sh", prefixes=USERBOT_PREFIX),
 )
-async def shellrunner(client, message):
+async def shellrunner(client, message: Message):
     if len(message.command) < 2:
         await edit_or_reply(message, text="**Usage:**\n/sh git pull")
         return
@@ -123,7 +126,7 @@ async def shellrunner(client, message):
                 print(err)
                 await edit_or_reply(
                     message,
-                    text=f"**INPUT:**\n```{text}```\n\n**ERROR:**\n```{err}```",
+                    text=f"**INPUT:**\n```{escape(text)}```\n\n**ERROR:**\n```{escape(err)}```",
                 )
             output += f"**{code}**\n"
             output += process.stdout.read()[:-1].decode("utf-8")
@@ -148,7 +151,7 @@ async def shellrunner(client, message):
             )
             await edit_or_reply(
                 message,
-                text=f"**INPUT:**\n```{text}```\n\n**ERROR:**\n```{''.join(errors)}```",
+                text=f"**INPUT:**\n```{escape(text)}```\n\n**ERROR:**\n```{''.join(errors)}```",
             )
             return
         output = process.stdout.read()[:-1].decode("utf-8")
@@ -168,10 +171,64 @@ async def shellrunner(client, message):
             return
         await edit_or_reply(
             message,
-            text=f"**INPUT:**\n```{text}```\n\n**OUTPUT:**\n```{output}```",
+            text=f"**INPUT:**\n```{escape(text)}```\n\n**OUTPUT:**\n```{escape(output)}```",
         )
     else:
         await edit_or_reply(
             message,
-            text=f"**INPUT:**\n```{text}```\n\n**OUTPUT: **\n`No output`",
+            text=f"**INPUT:**\n```{escape(text)}```\n\n**OUTPUT: **\n`No output`",
         )
+
+
+""" C Eval """
+
+@app2.on_message(filters.command("c", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS))
+async def cEval(_, message: Message):
+    code = message.text.strip()[3:]
+    file = "exec.c"
+    cmdCompile = ['gcc', '-g', 'exec.c', '-o', 'exec']
+    cmdRun = ['./exec']
+    async with aiofiles.open(file, mode="w+") as f:
+        await f.write(code)
+    t1 = time()
+    pCompile = subprocess.run(cmdCompile, capture_output=True)
+    os.remove(file)
+    err = pCompile.stderr.decode()
+    if err:
+        text = f"""
+**INPUT:**
+```{escape(code)}```
+
+**COMPILE-TIME ERROR:**
+```{escape(err)}```
+"""
+        if len(text) > 4090:
+            file = "output.txt"
+            async with aiofiles.open(file, mode="w+") as f2:
+                await f2.write(text)
+            await message.reply_document(file)
+            return
+        await edit_or_reply(message, text=text)
+        return
+    pRun = subprocess.run(cmdRun, capture_output=True)
+    t2 = time()
+    os.remove("exec")
+    err = pRun.stderr.decode()
+    out = pRun.stdout.decode()
+    err = f"**ERROR:**\n```{escape(err)}```" if err else None
+    out = f"**OUTPUT:**\n```{escape(out)}```" if out else None
+    text = f"""
+**INPUT:**
+```{escape(code)}```
+
+{err if err else out}
+
+`Compiled and executed in {round(t2-t1, 5)} seconds`
+"""
+    if len(text) > 4090:
+        file = "output.txt"
+        async with aiofiles.open(file, mode="w+") as f2:
+            await f2.write(text)
+        await message.reply_document(file)
+        return
+    await edit_or_reply(message, text=text)

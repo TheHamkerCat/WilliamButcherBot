@@ -42,17 +42,19 @@ async def arq_stats(_, message):
     platform = data.platform
     python_version = data.python
     users = data.users
+    bot = data.bot
     statistics = f"""
 **Uptime:** `{uptime}`
 **Requests:** `{requests}`
 **CPU:** `{cpu}`
 **Memory:**
     **Total Used:** `{server_mem}`
-    **Used By API:** `{api_mem}`
+    **API:** `{api_mem}`
 **Disk:** `{disk}`
 **Platform:** `{platform}`
 **Python:** `{python_version}`
 **Users:** `{users}`
+**Bot:** {bot}
 **Address:** {ARQ_API_URL}
 """
     await message.reply_text(statistics)
