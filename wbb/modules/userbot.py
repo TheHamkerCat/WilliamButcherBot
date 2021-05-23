@@ -182,6 +182,14 @@ async def shellrunner(client, message: Message):
 
 """ C Eval """
 
+async def sendFile(message: Message, text: str):
+    file = "output.txt"
+    async with aiofiles.open(file, mode="w+") as f:
+        await f.write(text)
+    await message.reply_document(file)
+    os.remove(file)
+
+
 @app2.on_message(filters.command("c", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS))
 async def cEval(_, message: Message):
     code = message.text.strip()[3:]
@@ -203,10 +211,7 @@ async def cEval(_, message: Message):
 ```{escape(err)}```
 """
         if len(text) > 4090:
-            file = "output.txt"
-            async with aiofiles.open(file, mode="w+") as f2:
-                await f2.write(text)
-            await message.reply_document(file)
+            await sendFile(message, text)
             return
         await edit_or_reply(message, text=text)
         return
@@ -215,7 +220,7 @@ async def cEval(_, message: Message):
     os.remove("exec")
     err = pRun.stderr.decode()
     out = pRun.stdout.decode()
-    err = f"**ERROR:**\n```{escape(err)}```" if err else None
+    err = f"**RUNTIME ERROR:**\n```{escape(err)}```" if err else None
     out = f"**OUTPUT:**\n```{escape(out)}```" if out else None
     text = f"""
 **INPUT:**
@@ -226,9 +231,6 @@ async def cEval(_, message: Message):
 `Compiled and executed in {round(t2-t1, 5)} seconds`
 """
     if len(text) > 4090:
-        file = "output.txt"
-        async with aiofiles.open(file, mode="w+") as f2:
-            await f2.write(text)
-        await message.reply_document(file)
+        await sendFile(message, text)
         return
     await edit_or_reply(message, text=text)
