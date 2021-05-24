@@ -541,7 +541,7 @@ async def get_captcha_cache():
 async def get_blacklist_filters_count() -> dict:
     chats = blacklist_filtersdb.find({"chat_id": {"$lt": 0}})
     if not chats:
-        return {}
+        return {"chats_count": 0, "filters_count": 0}
     chats_count = 0
     filters_count = 0
     for chat in await chats.to_list(length=1000000000):

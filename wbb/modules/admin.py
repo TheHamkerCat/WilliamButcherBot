@@ -194,9 +194,9 @@ async def kick(_, message):
         if user_id in SUDOERS:
             await message.reply_text("You Wanna Kick The Elevated One?")
         else:
-            await message.reply_to_message.chat.kick_member(user_id)
+            await message.chat.kick_member(user_id)
             await asyncio.sleep(1)
-            await message.reply_to_message.chat.unban_member(user_id)
+            await message.chat.unban_member(user_id)
             await message.reply_text("Kicked!")
     except Exception as e:
         await message.reply_text(str(e))
