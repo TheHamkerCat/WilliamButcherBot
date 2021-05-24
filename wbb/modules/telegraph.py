@@ -54,7 +54,7 @@ async def tgvideo(client, message):
     if not message.reply_to_message.video:
         await message.reply_text("Works only for Videos")
         return
-    if message.video.file_size < 5242880:
+    if message.reply_to_message.video.file_size < 5242880:
         msg = await message.reply_text("Uploading to Telegraph...")
         userid = str(message.chat.id)
         vid_path = f"./DOWNLOADS/{userid}.mp4"
