@@ -23,12 +23,14 @@ SOFTWARE.
 """
 import imghdr
 import os
+import format_exc
 
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import (PeerIdInvalid,
                                                         StickerPngDimensions,
                                                         StickerPngNopng,
-                                                        UserIsBlocked)
+                                                        UserIsBlocked,
+                                                        ShortnameOccupyFailed)
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from wbb import BOT_USERNAME, app
@@ -83,35 +85,45 @@ async def kang(client, message):
 
     # Get the corresponding fileid, resize the file if necessary
     doc = message.reply_to_message.photo or message.reply_to_message.document
-    if message.reply_to_message.sticker:
-        sticker = await create_sticker(
-            await get_document_from_file_id(
-                message.reply_to_message.sticker.file_id
-            ),
-            sticker_emoji,
-        )
-    elif doc:
-        temp_file_path = await app.download_media(doc)
-        image_type = imghdr.what(temp_file_path)
-        if image_type not in SUPPORTED_TYPES:
-            await msg.edit("Format not supported! ({})".format(image_type))
-            return
-        try:
-            temp_file_path = await resize_file_to_sticker_size(temp_file_path)
-        except OSError as e:
-            await msg.edit_text("Something wrong happened.")
-            raise Exception(
-                f"Something went wrong while resizing the sticker (at {temp_file_path}); {e}"
+    try:
+        if message.reply_to_message.sticker:
+            sticker = await create_sticker(
+                await get_document_from_file_id(
+                    message.reply_to_message.sticker.file_id
+                ),
+                sticker_emoji,
             )
-            return False
-        sticker = await create_sticker(
-            await upload_document(client, temp_file_path, message.chat.id),
-            sticker_emoji,
-        )
-        if os.path.isfile(temp_file_path):
-            os.remove(temp_file_path)
-    else:
-        await msg.edit("Nope, can't kang that.")
+        elif doc:
+            temp_file_path = await app.download_media(doc)
+            image_type = imghdr.what(temp_file_path)
+            if image_type not in SUPPORTED_TYPES:
+                await msg.edit("Format not supported! ({})".format(image_type))
+                return
+            try:
+                temp_file_path = await resize_file_to_sticker_size(temp_file_path)
+            except OSError as e:
+                await msg.edit_text("Something wrong happened.")
+                raise Exception(
+                    f"Something went wrong while resizing the sticker (at {temp_file_path}); {e}"
+                )
+                return False
+            sticker = await create_sticker(
+                await upload_document(client, temp_file_path, message.chat.id),
+                sticker_emoji,
+            )
+            if os.path.isfile(temp_file_path):
+                os.remove(temp_file_path)
+        else:
+            await msg.edit("Nope, can't kang that.")
+            return
+    except ShortnameOccupyFailed:
+        await message.reply_text("Change Your Name Or Username")
+        return
+
+    except Exception as e:
+        await message.reply_text(str(e))
+        e = format_exc()
+        print(e)
         return
 
     # Find an available pack & add the sticker to the pack; create a new pack if needed
