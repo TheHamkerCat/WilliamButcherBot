@@ -5,7 +5,6 @@
             https://github.com/pokurt/Nana-Remix/blob/master/nana/plugins/devs.py
 """
 
-import aiofiles
 import os
 import re
 import subprocess
@@ -16,6 +15,7 @@ from inspect import getfullargspec
 from io import StringIO
 from time import time
 
+import aiofiles
 from pyrogram import filters
 from pyrogram.types import Message
 
@@ -29,7 +29,7 @@ __HELP__ = """
 .approve | .disapprove - Approve Or Disapprove A User To PM You.
 .block | .unblock - Block Or Unblock A User.
 """
-
+arq = arq
 
 # Eval and Sh module from nana-remix
 
@@ -82,9 +82,7 @@ async def executor(client, message: Message):
         evaluation = stdout
     else:
         evaluation = "Success"
-    final_output = (
-        f"**INPUT:**\n```{escape(cmd)}```\n\n**OUTPUT**:\n```{escape(evaluation.strip())}```"
-    )
+    final_output = f"**INPUT:**\n```{escape(cmd)}```\n\n**OUTPUT**:\n```{escape(evaluation.strip())}```"
     if len(final_output) > 4096:
         filename = "output.txt"
         with open(filename, "w+", encoding="utf8") as out_file:
@@ -182,6 +180,7 @@ async def shellrunner(client, message: Message):
 
 """ C Eval """
 
+
 async def sendFile(message: Message, text: str):
     file = "output.txt"
     async with aiofiles.open(file, mode="w+") as f:
@@ -190,12 +189,14 @@ async def sendFile(message: Message, text: str):
     os.remove(file)
 
 
-@app2.on_message(filters.command("c", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS))
+@app2.on_message(
+    filters.command("c", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
+)
 async def cEval(_, message: Message):
     code = message.text.strip()[3:]
     file = "exec.c"
-    cmdCompile = ['gcc', '-g', 'exec.c', '-o', 'exec']
-    cmdRun = ['./exec']
+    cmdCompile = ["gcc", "-g", "exec.c", "-o", "exec"]
+    cmdRun = ["./exec"]
     async with aiofiles.open(file, mode="w+") as f:
         await f.write(code)
     t1 = time()

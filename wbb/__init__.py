@@ -29,7 +29,6 @@ from os import path
 from aiohttp import ClientSession
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from pyrogram import Client
-from pyromod import listen
 from Python_ARQ import ARQ
 from telegraph import Telegraph
 
@@ -40,7 +39,6 @@ if is_config:
 else:
     from sample_config import *
 
-listen = listen
 USERBOT_PREFIX = USERBOT_PREFIX
 GBAN_LOG_GROUP_ID = GBAN_LOG_GROUP_ID
 SUDOERS = SUDO_USERS_ID

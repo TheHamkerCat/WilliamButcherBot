@@ -22,14 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import re
-import traceback
 
 from pyrogram import filters
 from pyrogram.types import ChatPermissions
 
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
-from wbb.modules.admin import list_admins, member_permissions
+from wbb.core.decorators.permissions import adminsOnly
+from wbb.modules.admin import list_admins
 from wbb.utils.dbfunctions import (delete_blacklist_filter,
                                    get_blacklisted_words,
                                    save_blacklist_filter)
@@ -46,21 +46,16 @@ __HELP__ = """
 @app.on_message(
     filters.command("blacklist") & ~filters.edited & ~filters.private
 )
-@capture_err
+@adminsOnly("can_restrict_members")
 async def save_filters(_, message):
     if len(message.command) < 2:
         await message.reply_text("Usage:\n/blacklist [WORD|SENTENCE]")
-        return
-    chat_id = message.chat.id
-    user_id = message.from_user.id
-    permissions = await member_permissions(chat_id, user_id)
-    if "can_restrict_members" not in permissions and user_id not in SUDOERS:
-        await message.reply_text("**You don't have enough permissions**")
         return
     word = message.text.split(None, 1)[1].strip()
     if not word:
         await message.reply_text("**Usage**\n__/blacklist [WORD|SENTENCE]__")
         return
+    chat_id = message.chat.id
     await save_blacklist_filter(chat_id, word)
     await message.reply_text(f"__**Blacklisted {word}.**__")
 
@@ -83,29 +78,25 @@ async def get_filterss(_, message):
 @app.on_message(
     filters.command("whitelist") & ~filters.edited & ~filters.private
 )
-@capture_err
+@adminsOnly("can_restrict_members")
 async def del_filter(_, message):
     if len(message.command) < 2:
         await message.reply_text("Usage:\n/whitelist [WORD|SENTENCE]")
-        return
-    chat_id = message.chat.id
-    user_id = message.from_user.id
-    permissions = await member_permissions(chat_id, user_id)
-    if "can_restrict_members" not in permissions and user_id not in SUDOERS:
-        await message.reply_text("**You don't have enough permissions**")
         return
     word = message.text.split(None, 1)[1].strip()
     if not word:
         await message.reply_text("Usage:\n/whitelist [WORD|SENTENCE]")
         return
+    chat_id = message.chat.id
     deleted = await delete_blacklist_filter(chat_id, word)
     if deleted:
-        await message.reply_text(f"**Whitelist {word}.**")
-    else:
-        await message.reply_text("**No such blacklist filter.**")
+        await message.reply_text(f"**Whitelisted {word}.**")
+        return
+    await message.reply_text("**No such blacklist filter.**")
 
 
 @app.on_message(filters.text & ~filters.private, group=blacklist_filters_group)
+@capture_err
 async def blacklist_filters_re(_, message):
     text = message.text.lower().strip()
     if not text:
@@ -116,26 +107,19 @@ async def blacklist_filters_re(_, message):
         return
     if user.id in SUDOERS:
         return
-    try:
-        list_of_filters = await get_blacklisted_words(chat_id)
-        for word in list_of_filters:
-            pattern = r"( |^|[^\w])" + re.escape(word) + r"( |$|[^\w])"
-            if re.search(pattern, text, flags=re.IGNORECASE):
-                if user.id in await list_admins(chat_id):
-                    return
-                try:
-                    await message.chat.restrict_member(
-                        user.id, ChatPermissions()
-                    )
-                except Exception:
-                    return
-                await app.send_message(
-                    chat_id,
-                    f"Muted {user.mention} [`{user.id}`] due to a blacklist "
-                    + f"match on {word}.",
-                )
+    list_of_filters = await get_blacklisted_words(chat_id)
+    for word in list_of_filters:
+        pattern = r"( |^|[^\w])" + re.escape(word) + r"( |$|[^\w])"
+        if re.search(pattern, text, flags=re.IGNORECASE):
+            if user.id in await list_admins(chat_id):
                 return
-    except Exception as e:
-        e = traceback.format_exc()
-        print(e)
-        pass
+            try:
+                await message.chat.restrict_member(user.id, ChatPermissions())
+            except Exception:
+                return
+            await app.send_message(
+                chat_id,
+                f"Muted {user.mention} [`{user.id}`] due to a blacklist "
+                + f"match on {word}.",
+            )
+            return

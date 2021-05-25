@@ -20,6 +20,7 @@ VIDEO_DATA = {}
 
 
 @app.on_message(filters.command("ytdl"))
+@capture_err
 async def ytdl_func(_, message):
     if len(message.command) != 2:
         await message.reply_text("**Usage:**/ytdl [VIDEO_LINK]")

@@ -25,16 +25,13 @@ import asyncio
 import os
 
 import aiofiles
-import aiohttp
 from pykeyboard import InlineKeyboard
 from pyrogram import filters
-from pyrogram.errors.exceptions.bad_request_400 import WebpageCurlFailed
 from pyrogram.types import InlineKeyboardButton
 
 from wbb import aiohttpsession as session
 from wbb import app
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.functions import get_http_status_code
 from wbb.utils.pastebin import paste
 
 __MODULE__ = "Paste"

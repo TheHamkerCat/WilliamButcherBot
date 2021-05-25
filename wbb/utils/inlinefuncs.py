@@ -40,8 +40,10 @@ from pyrogram.types import (InlineKeyboardButton, InlineQueryResultArticle,
 from search_engine_parser import GoogleSearch
 
 from wbb import (BOT_USERNAME, MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_ID,
-                 USERBOT_NAME, USERBOT_USERNAME, app, app2, arq, aiohttpsession)
-from wbb.core.types import InlineQueryResultCachedDocument, InlineQueryResultAudio
+                 USERBOT_NAME, USERBOT_USERNAME, aiohttpsession, app, app2,
+                 arq)
+from wbb.core.types import (InlineQueryResultAudio,
+                            InlineQueryResultCachedDocument)
 from wbb.modules.info import get_chat_info, get_user_info
 from wbb.modules.music import download_youtube_audio
 from wbb.modules.paste import isPreviewUp
@@ -352,11 +354,11 @@ async def shortify(url):
     payload = {"long_url": f"{url}"}
     payload = json.dumps(payload)
     async with aiohttpsession.post(
-            "https://api-ssl.bitly.com/v4/shorten",
-            headers=header,
-            data=payload,
-        ) as resp:
-            data = await resp.json()
+        "https://api-ssl.bitly.com/v4/shorten",
+        headers=header,
+        data=payload,
+    ) as resp:
+        data = await resp.json()
     msg = data["link"]
     a = []
     b = InlineQueryResultArticle(
@@ -1078,13 +1080,14 @@ async def randomAudioFunc(answers: list, query: str) -> list:
     url = f"https://www.zedge.net/api-zedge-web/browse/search?query={query}&contentType=ringtones"
     async with aiohttpsession.get(url) as resp:
         data = await resp.json()
-    items = data['items']
+    items = data["items"]
     answers = [
-            InlineQueryResultAudio(
-                audio_url=audio['audioUrl'],
-                thumb_url="https://tweety.drk1.workers.dev/0:/image_2021-05-22_20-56-47.png",
-                title=audio['title'],
-                mime_type="audio/mp3"
-                ) for audio in items
-            ]
+        InlineQueryResultAudio(
+            audio_url=audio["audioUrl"],
+            thumb_url="https://tweety.drk1.workers.dev/0:/image_2021-05-22_20-56-47.png",
+            title=audio["title"],
+            mime_type="audio/mp3",
+        )
+        for audio in items
+    ]
     return answers

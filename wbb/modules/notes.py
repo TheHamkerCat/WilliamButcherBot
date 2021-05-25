@@ -25,7 +25,7 @@ from pyrogram import filters
 
 from wbb import app
 from wbb.core.decorators.errors import capture_err
-from wbb.modules.admin import member_permissions
+from wbb.core.decorators.permissions import adminsOnly
 from wbb.utils.dbfunctions import (delete_note, get_note, get_note_names,
                                    save_note)
 
@@ -37,7 +37,7 @@ __HELP__ = """/notes To Get All The Notes In The Chat.
 
 
 @app.on_message(filters.command("save") & ~filters.edited & ~filters.private)
-@capture_err
+@adminsOnly("can_change_info")
 async def save_notee(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
         await message.reply_text(
@@ -51,12 +51,6 @@ async def save_notee(_, message):
         await message.reply_text(
             "__**You can only save text or stickers in notes.**__"
         )
-
-    elif (
-        len(await member_permissions(message.chat.id, message.from_user.id))
-        < 1
-    ):
-        await message.reply_text("**You don't have enough permissions**")
     else:
         name = message.text.split(None, 1)[1].strip()
         if not name:
@@ -111,25 +105,18 @@ async def get_one_note(_, message):
 
 
 @app.on_message(filters.command("delete") & ~filters.edited & ~filters.private)
-@capture_err
+@adminsOnly("can_change_info")
 async def del_note(_, message):
     if len(message.command) < 2:
         await message.reply_text("**Usage**\n__/delete [NOTE_NAME]__")
-
-    elif (
-        len(await member_permissions(message.chat.id, message.from_user.id))
-        < 1
-    ):
-        await message.reply_text("**You don't have enough permissions**")
-
+        return
+    name = message.text.split(None, 1)[1].strip()
+    if not name:
+        await message.reply_text("**Usage**\n__/delete [NOTE_NAME]__")
+        return
+    chat_id = message.chat.id
+    deleted = await delete_note(chat_id, name)
+    if deleted:
+        await message.reply_text(f"**Deleted note {name} successfully.**")
     else:
-        name = message.text.split(None, 1)[1].strip()
-        if not name:
-            await message.reply_text("**Usage**\n__/delete [NOTE_NAME]__")
-            return
-        chat_id = message.chat.id
-        deleted = await delete_note(chat_id, name)
-        if deleted:
-            await message.reply_text(f"**Deleted note {name} successfully.**")
-        else:
-            await message.reply_text("**No such note.**")
+        await message.reply_text("**No such note.**")

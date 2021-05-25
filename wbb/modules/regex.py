@@ -133,7 +133,7 @@ def separate_sed(sed_string):
                 and counter + 1 < len(sed_string)
                 and sed_string[counter + 1] == delim
             ):
-                sed_string = sed_string[:counter] + sed_string[counter + 1 :]
+                sed_string = sed_string[:counter] + sed_string[counter + 1:]
 
             elif sed_string[counter] == delim:
                 replace_with = sed_string[start:counter]

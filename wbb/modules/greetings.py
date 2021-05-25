@@ -36,7 +36,7 @@ from pyrogram.types import (ChatPermissions, InlineKeyboardButton,
 
 from wbb import SUDOERS, WELCOME_DELAY_KICK_SEC, app
 from wbb.core.decorators.errors import capture_err
-from wbb.modules.admin import member_permissions
+from wbb.core.decorators.permissions import adminsOnly
 from wbb.utils.dbfunctions import (captcha_off, captcha_on, del_welcome,
                                    get_captcha_cache, get_welcome,
                                    is_captcha_on, is_gbanned_user, set_welcome,
@@ -46,7 +46,7 @@ from wbb.utils.functions import generate_captcha
 
 __MODULE__ = "Greetings"
 __HELP__ = """
-/captcha [ON|OFF] - Enable/Disable captcha.
+/captcha [ENABLE|DISABLE] - Enable/Disable captcha.
 
 /set_welcome - Reply this to a message containing correct
 format for a welcome message, check end of this message.
@@ -322,24 +322,19 @@ async def _ban_restricted_user_until_date(
 
 
 @app.on_message(filters.command("captcha") & ~filters.private)
-@capture_err
+@adminsOnly("can_restrict_members")
 async def captcha_state(_, message):
-    usage = "**Usage:**\n/captcha [ON|OFF]"
+    usage = "**Usage:**\n/captcha [ENABLE|DISABLE]"
     if len(message.command) != 2:
         await message.reply_text(usage)
         return
-    user_id = message.from_user.id
     chat_id = message.chat.id
-    permissions = await member_permissions(chat_id, user_id)
-    if "can_restrict_members" not in permissions:
-        await message.reply_text("You don't have enough permissions.")
-        return
     state = message.text.split(None, 1)[1].strip()
     state = state.lower()
-    if state == "on":
+    if state == "enable":
         await captcha_on(chat_id)
         await message.reply_text("Enabled Captcha For New Users.")
-    elif state == "off":
+    elif state == "disable":
         await captcha_off(chat_id)
         await message.reply_text("Disabled Captcha For New Users.")
     else:
@@ -350,7 +345,7 @@ async def captcha_state(_, message):
 
 
 @app.on_message(filters.command("set_welcome") & ~filters.private)
-@capture_err
+@adminsOnly("can_change_info")
 async def set_welcome_func(_, message):
     usage = "You need to reply to a text, check the Greetings module in /help"
     if not message.reply_to_message:
@@ -359,38 +354,23 @@ async def set_welcome_func(_, message):
     if not message.reply_to_message.text:
         await message.reply_text(usage)
         return
-    user_id = message.from_user.id
     chat_id = message.chat.id
-    permissions = await member_permissions(chat_id, user_id)
-    if "can_change_info" not in permissions:
-        await message.reply_text("You don't have enough permissions.")
-        return
     raw_text = str(message.reply_to_message.text.markdown)
     await set_welcome(chat_id, raw_text)
     await message.reply_text("Welcome message has been successfully set.")
 
 
 @app.on_message(filters.command("del_welcome") & ~filters.private)
-@capture_err
+@adminsOnly("can_change_info")
 async def del_welcome_func(_, message):
-    user_id = message.from_user.id
     chat_id = message.chat.id
-    permissions = await member_permissions(chat_id, user_id)
-    if "can_change_info" not in permissions:
-        await message.reply_text("You don't have enough permissions.")
-        return
     await del_welcome(chat_id)
     await message.reply_text("Welcome message has been deleted.")
 
 
 @app.on_message(filters.command("get_welcome") & ~filters.private)
-@capture_err
+@adminsOnly("can_change_info")
 async def get_welcome_func(_, message):
-    user_id = message.from_user.id
     chat_id = message.chat.id
-    permissions = await member_permissions(chat_id, user_id)
-    if "can_change_info" not in permissions:
-        await message.reply_text("You don't have enough permissions.")
-        return
     welcome_message = await get_welcome(chat_id)
     await message.reply_text(welcome_message)

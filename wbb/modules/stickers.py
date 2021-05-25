@@ -27,10 +27,10 @@ from traceback import format_exc
 
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import (PeerIdInvalid,
+                                                        ShortnameOccupyFailed,
                                                         StickerPngDimensions,
                                                         StickerPngNopng,
-                                                        UserIsBlocked,
-                                                        ShortnameOccupyFailed)
+                                                        UserIsBlocked)
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from wbb import BOT_USERNAME, app
@@ -100,7 +100,9 @@ async def kang(client, message):
                 await msg.edit("Format not supported! ({})".format(image_type))
                 return
             try:
-                temp_file_path = await resize_file_to_sticker_size(temp_file_path)
+                temp_file_path = await resize_file_to_sticker_size(
+                    temp_file_path
+                )
             except OSError as e:
                 await msg.edit_text("Something wrong happened.")
                 raise Exception(
