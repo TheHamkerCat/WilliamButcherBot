@@ -23,7 +23,7 @@ SOFTWARE.
 """
 import imghdr
 import os
-import format_exc
+from traceback import format_exc
 
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import (PeerIdInvalid,

@@ -1,4 +1,8 @@
 *.m4a
+*.apk
+*.c
+exec
+*.out
 __pycache__
 *.opus
 nsfw.py
