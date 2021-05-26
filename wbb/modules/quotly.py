@@ -4,13 +4,16 @@ from traceback import format_exc
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import app, arq
+from wbb import app, app2, arq, USERBOT_PREFIX
 from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "Quotly"
 __HELP__ = """
 /q - To quote a message.
 /q [INTEGER] - To quote more than 1 messages.
+/q r - to quote a message with it's reply
+
+Use .q to quote using userbot
 """
 
 
@@ -37,18 +40,16 @@ def isArgInt(message: Message) -> bool:
     except ValueError:
         return [False, 0]
 
-
-@app.on_message(filters.command("q"))
+@app2.on_message(filters.command("q", prefixes=USERBOT_PREFIX))
+@app.on_message(filters.command("q") & ~filters.private)
 @capture_err
-async def quotly_func(_, message: Message):
+async def quotly_func(client, message: Message):
     if not message.reply_to_message:
-        await message.reply_text("Reply to a message to quote it.")
-        return
+        return await message.reply_text("Reply to a message to quote it.")
     if not message.reply_to_message.text:
-        await message.reply_text(
+        return await message.reply_text(
             "Replied message has no text, can't quote it."
         )
-        return
     m = await message.reply_text("Quoting Messages")
     if len(message.command) < 2:
         messages = [message.reply_to_message]
@@ -59,7 +60,7 @@ async def quotly_func(_, message: Message):
             if arg[1] < 2 or arg[1] > 10:
                 return await m.edit("Argument must be between 2-10.")
             count = arg[1]
-            messages = await app.get_messages(
+            messages = await client.get_messages(
                 message.chat.id,
                 [
                     i
@@ -75,7 +76,7 @@ async def quotly_func(_, message: Message):
                 return await m.edit(
                     "Incorrect Argument, Pass **'r'** or **'INT'**, **EX:** __/q 2__"
                 )
-            reply_message = await app.get_messages(
+            reply_message = await client.get_messages(
                 message.chat.id,
                 message.reply_to_message.message_id,
                 replies=1,
