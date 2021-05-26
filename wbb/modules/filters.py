@@ -136,4 +136,5 @@ async def filters_re(_, message):
                     await message.reply_to_message.reply_sticker(data)
                     if text[0] == "~":
                         return await message.delete()
+                    return
                 await message.reply_sticker(data)
