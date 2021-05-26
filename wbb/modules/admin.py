@@ -299,7 +299,7 @@ async def demote(_, message: Message):
 async def pin(_, message: Message):
     if not message.reply_to_message:
         return await message.reply_text("Reply To A Message To Pin.")
-     await message.reply_to_message.pin(disable_notification=True)
+    await message.reply_to_message.pin(disable_notification=True)
 
 # Mute members
 
