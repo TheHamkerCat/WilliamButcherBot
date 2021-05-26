@@ -87,9 +87,6 @@ else:
 # Bot client
 print("[INFO]: INITIALIZING BOT CLIENT")
 app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
-# ARQ client
-print("[INFO]: INITIALIZING ARQ")
-arq = ARQ(ARQ_API_URL, ARQ_API_KEY)
 # Telegraph client
 print("[INFO]: INITIALIZING TELEGRAPH")
 telegraph = Telegraph()
@@ -97,7 +94,9 @@ telegraph.create_account(short_name="wbb")
 # Aiohttp Client
 print("[INFO]: INITIALZING AIOHTTP SESSION")
 aiohttpsession = ClientSession()
-
+# ARQ Client
+print("[INFO]: INITIALIZING ARQ CLIENT")
+arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
 
 BOT_ID = 0
 BOT_NAME = ""
