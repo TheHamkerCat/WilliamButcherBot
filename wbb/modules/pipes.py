@@ -71,6 +71,7 @@ async def load_pipes():
             pipes_list_bot.append(pipe)
             continue
         pipes_list_userbot.append(pipe)
+    print("[INFO]: LOADED PIPES")
 
 
 loop = asyncio.get_running_loop()

@@ -56,7 +56,7 @@ async def global_stats(_, message):
     for chat in chats:
         served_chats.append(int(chat["chat_id"]))
     await m.edit(
-        f"__**Generating Statistics Report, Should Take {len(served_chats)*6}+ Seconds.**__",
+        f"__**Generating Statistics Report, Should Take {len(served_chats)*2}+ Seconds.**__",
         disable_web_page_preview=True,
     )
     for served_chat in served_chats:

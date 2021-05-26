@@ -43,6 +43,7 @@ HELPABLE = {}
 async def start_bot():
     restart_data = await clean_restart_stage()
     if restart_data:
+        print("[INFO]: SENDING RESTART STATUS")
         try:
             await app.edit_message_text(
                 restart_data["chat_id"],
@@ -51,7 +52,6 @@ async def start_bot():
             )
         except Exception:
             pass
-
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
         if (
@@ -81,6 +81,7 @@ async def start_bot():
     print(f"[INFO]: BOT STARTED AS {BOT_NAME}!")
     print(f"[INFO]: USERBOT STARTED AS {USERBOT_NAME}!")
     await idle()
+    print("[INFO]: STOPPING BOT AND CLOSING AIOHTTP SESSION")
     await aiohttpsession.close()
 
 

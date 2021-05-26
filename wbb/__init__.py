@@ -22,6 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+print("[INFO]: INITIALIZING")
 import asyncio
 import time
 from os import path
@@ -33,7 +34,6 @@ from pyromod import listen
 from Python_ARQ import ARQ
 from telegraph import Telegraph
 
-print("[INFO]: INITIALIZING")
 is_config = path.exists("config.py")
 if is_config:
     from config import *
@@ -70,6 +70,8 @@ async def load_sudoers():
                 {"sudo": "sudo"}, {"$set": {"sudoers": sudoers}}, upsert=True
             )
     SUDOERS = (SUDOERS + sudoers) if sudoers else SUDOERS
+    print("[INFO]: LOADED SUDOERS")
+
 
 
 loop = asyncio.get_event_loop()
@@ -142,6 +144,6 @@ print("[INFO]: STARTING USERBOT CLIENT")
 app2.start()
 print("[INFO]: LOADING UB/BOT PROFILE INFO")
 get_info(app, app2)
-
+print("[INFO]: LOADED UB/BOT PROFILE INFO")
 if USERBOT_ID not in SUDOERS:
     SUDOERS.append(USERBOT_ID)
