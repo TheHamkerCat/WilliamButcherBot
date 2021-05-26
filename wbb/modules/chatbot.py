@@ -112,7 +112,9 @@ async def chatbot_talk(_, message):
 async def chatbot_status_ubot(_, message):
     global active_chats_ubot
     if len(message.text.split()) != 2:
-        return await edit_or_reply(message, text="**Usage**\n.chatbot [ON|OFF]")
+        return await edit_or_reply(
+            message, text="**Usage**\n.chatbot [ON|OFF]"
+        )
     status = message.text.split(None, 1)[1]
     chat_id = message.chat.id
     if status == "ON" or status == "on" or status == "On":

@@ -74,7 +74,9 @@ async def pm_approve(_, message):
         )
     user_id = message.reply_to_message.from_user.id
     if await is_pmpermit_approved(user_id):
-        return await edit_or_reply(message, text="User is already approved to pm")
+        return await edit_or_reply(
+            message, text="User is already approved to pm"
+        )
     await approve_pmpermit(user_id)
     await edit_or_reply(message, text="User is approved to pm")
 

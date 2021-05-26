@@ -45,13 +45,13 @@ async def start_bot():
     if restart_data:
         try:
             await app.edit_message_text(
-                restart_data['chat_id'],
-                restart_data['message_id'],
-                "**Restarted Successfully**"
-                )
+                restart_data["chat_id"],
+                restart_data["message_id"],
+                "**Restarted Successfully**",
+            )
         except Exception:
             pass
-            
+
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
         if (

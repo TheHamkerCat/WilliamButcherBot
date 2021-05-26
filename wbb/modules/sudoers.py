@@ -302,6 +302,8 @@ async def update_restart(_, message):
     await message.reply_text(
         f'```{subprocess.check_output(["git", "pull"]).decode("UTF-8")}```'
     )
-    m = await message.reply_text("**Updated with default branch, restarting now**")
+    m = await message.reply_text(
+        "**Updated with default branch, restarting now**"
+    )
     await start_restart_stage(m.chat.id, m.message_id)
     os.execvp("python3", ["python3", "-m", "wbb"])

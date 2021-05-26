@@ -64,7 +64,9 @@ async def paste_func(_, message):
         elif message.reply_to_message.document:
             document = message.reply_to_message.document
             if document.file_size > 1048576:
-                return await m.edit("You can only paste files smaller than 1MB.")
+                return await m.edit(
+                    "You can only paste files smaller than 1MB."
+                )
             if "text" not in document.mime_type:
                 return await m.edit("Only text files can be pasted.")
             doc = await message.reply_to_message.download()

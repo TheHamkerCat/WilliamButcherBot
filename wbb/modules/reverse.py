@@ -20,7 +20,9 @@ async def reverse_image_search(_, message):
     if message.from_user.id not in SUDOERS:
         return await message.reply_text("THIS FEATURE IS ONLY FOR SUDO USERS.")
     if not message.reply_to_message:
-        return await message.reply_text("Reply to a message to reverse search it.")
+        return await message.reply_text(
+            "Reply to a message to reverse search it."
+        )
     reply = message.reply_to_message
     if (
         not reply.document

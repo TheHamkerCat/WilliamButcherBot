@@ -20,7 +20,9 @@ Plugin to delete service messages in a chat!
 @adminsOnly("can_change_info")
 async def anti_service(_, message):
     if len(message.command) != 2:
-        return await message.reply_text("Usage: /antiservice [enable | disable]")
+        return await message.reply_text(
+            "Usage: /antiservice [enable | disable]"
+        )
     status = message.text.split(None, 1)[1].strip()
     status = status.lower()
     chat_id = message.chat.id

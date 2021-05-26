@@ -301,6 +301,7 @@ async def pin(_, message: Message):
         return await message.reply_text("Reply To A Message To Pin.")
     await message.reply_to_message.pin(disable_notification=True)
 
+
 # Mute members
 
 
@@ -470,8 +471,12 @@ async def check_warns(_, message: Message):
         if warns:
             warns = warns["warns"]
         else:
-            return await message.reply_text(f"{mention_user} have no warnings.")
-        return await message.reply_text(f"{mention_user} have {warns}/3 warnings.")
+            return await message.reply_text(
+                f"{mention_user} have no warnings."
+            )
+        return await message.reply_text(
+            f"{mention_user} have {warns}/3 warnings."
+        )
     warns = await get_warn(chat_id, await int_to_alpha(user_id))
     if warns:
         warns = warns["warns"]

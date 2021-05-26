@@ -85,7 +85,7 @@ def paginate_modules(page_n, module_dict, prefix, chat=None):
 
     # can only have a certain amount of buttons side by side
     if len(pairs) > 7:
-        pairs = pairs[modulo_page * 7: 7 * (modulo_page + 1)] + [
+        pairs = pairs[modulo_page * 7 : 7 * (modulo_page + 1)] + [
             (
                 EqInlineKeyboardButton(
                     "<",

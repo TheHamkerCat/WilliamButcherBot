@@ -69,12 +69,16 @@ async def set_user_title(_, message):
 @adminsOnly("can_change_info")
 async def set_chat_photo(_, message):
     if not message.reply_to_message:
-        return await message.reply_text("Reply to a photo to set it as chat_photo")
+        return await message.reply_text(
+            "Reply to a photo to set it as chat_photo"
+        )
     if (
         not message.reply_to_message.photo
         and not message.reply_to_message.document
     ):
-        return await message.reply_text("Reply to a photo to set it as chat_photo")
+        return await message.reply_text(
+            "Reply to a photo to set it as chat_photo"
+        )
     photo = await message.reply_to_message.download()
     await message.chat.set_photo(photo)
     await message.reply_text("Successfully Changed Group Photo")

@@ -94,7 +94,9 @@ async def kang(client, message):
             temp_file_path = await app.download_media(doc)
             image_type = imghdr.what(temp_file_path)
             if image_type not in SUPPORTED_TYPES:
-                return await msg.edit("Format not supported! ({})".format(image_type))
+                return await msg.edit(
+                    "Format not supported! ({})".format(image_type)
+                )
             try:
                 temp_file_path = await resize_file_to_sticker_size(
                     temp_file_path
