@@ -182,8 +182,12 @@ async def karma(_, message):
 async def captcha_state(_, message):
     usage = "**Usage:**\n/karma_toggle [ON|OFF]"
     if len(message.command) != 2:
-        await message.reply_text(usage)
+      if not await is_karma_on(message.chat.id):
+        await message.reply_text("Currently off")
         return
+      if await is_karma_on(message.chat.id):
+        await message.reply_text("Currently on")
+      return
     user_id = message.from_user.id
     chat_id = message.chat.id
     permissions = await member_permissions(chat_id, user_id)
