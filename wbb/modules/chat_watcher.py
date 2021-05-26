@@ -21,15 +21,26 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-chat_filters_group = 1
-chatbot_group = 2
-karma_positive_group = 3
-karma_negative_group = 4
-regex_group = 5
-welcome_captcha_group = 6
-antiflood_group = 7
-nsfw_detect_group = 8
-blacklist_filters_group = 9
-pipes_group = 10
-taglog_group = 11
-chat_watcher_group = 12
+from pyrogram import filters
+
+from wbb import app
+from wbb.utils.filter_groups import chat_watcher_group
+from wbb.utils.dbfunctions import (blacklisted_chats, is_served_chat,
+        add_served_chat, is_served_user,
+        add_served_user)
+
+
+@app.on_message(group=chat_watcher_group)
+async def chat_watcher_func(_, message):
+    chat_id = message.chat.id
+    blacklisted_chats_list = await blacklisted_chats()
+    if chat_id in blacklisted_chats_list:
+        return await app.leave_chat(chat_id)
+    is_served = await is_served_chat(chat_id)
+    if not is_served:
+        await add_served_chat(chat_id)
+    if message.from_user:
+        user_id = message.from_user.id
+        is_served = await is_served_user(user_id)
+        if not is_served:
+            await add_served_user(user_id)

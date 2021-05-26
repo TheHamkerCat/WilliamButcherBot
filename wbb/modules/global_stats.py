@@ -32,7 +32,7 @@ from wbb.utils.dbfunctions import (get_blacklist_filters_count,
                                    get_filters_count, get_gbans_count,
                                    get_karmas_count, get_notes_count,
                                    get_served_chats, get_warns_count,
-                                   remove_served_chat)
+                                   remove_served_chat, get_served_users)
 from wbb.utils.fetch import fetch
 from wbb.utils.inlinefuncs import keywords_list
 
@@ -52,7 +52,6 @@ async def global_stats(_, message):
 
     # For bot served chat and users count
     served_chats = []
-    total_users = 0
     chats = await get_served_chats()
     for chat in chats:
         served_chats.append(int(chat["chat_id"]))
@@ -68,15 +67,7 @@ async def global_stats(_, message):
             await remove_served_chat(served_chat)
             served_chats.remove(served_chat)
             pass
-    for i in served_chats:
-        try:
-            mc = (await app.get_chat(i)).members_count
-            total_users += int(mc)
-        except Exception:
-            await remove_served_chat(served_chat)
-            pass
-        await asyncio.sleep(2)
-
+    served_users = await get_served_users()
     # Gbans count
     gbans = await get_gbans_count()
     _notes = await get_notes_count()
@@ -124,7 +115,7 @@ async def global_stats(_, message):
 **{notes_count}** Notes, Across **{notes_chats_count}** chats.
 **{warns_count}** Warns, Across **{warns_chats_count}** chats.
 **{karmas_count}** Karma, Across **{karmas_chats_count}** chats.
-**{total_users}** Users, Across **{len(served_chats)}** chats.
+**{len(served_users)}** Users, Across **{len(served_chats)}** chats.
 **{developers}** Developers And **{commits}** Commits On **[Github]({rurl})**.
 """
     await m.edit(msg, disable_web_page_preview=True)

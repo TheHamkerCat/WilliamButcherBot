@@ -28,9 +28,8 @@ from pyrogram import filters
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
-from wbb.utils.dbfunctions import (add_served_chat, blacklisted_chats,
-                                   delete_filter, get_filter,
-                                   get_filters_names, is_served_chat,
+from wbb.utils.dbfunctions import (delete_filter, get_filter,
+                                   get_filters_names,
                                    save_filter)
 from wbb.utils.filter_groups import chat_filters_group
 
@@ -138,12 +137,3 @@ async def filters_re(_, message):
                     if text[0] == "~":
                         return await message.delete()
                 await message.reply_sticker(data)
-
-    """ CHAT WATCHER """
-    blacklisted_chats_list = await blacklisted_chats()
-    if chat_id in blacklisted_chats_list:
-        return await app.leave_chat(chat_id)
-    served_chat = await is_served_chat(chat_id)
-    if served_chat:
-        return
-    await add_served_chat(chat_id)
