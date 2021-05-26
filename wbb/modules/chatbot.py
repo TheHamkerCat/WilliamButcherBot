@@ -46,8 +46,7 @@ active_chats_ubot = []
 async def chatbot_status(_, message):
     global active_chats_bot
     if len(message.command) != 2:
-        await message.reply_text("**Usage**\n/chatbot [ON|OFF]")
-        return
+        return await message.reply_text("**Usage**\n/chatbot [ON|OFF]")
     status = message.text.split(None, 1)[1]
     chat_id = message.chat.id
 
@@ -58,18 +57,14 @@ async def chatbot_status(_, message):
                 "Chatbot Enabled Reply To Any Message "
                 + "Of Mine To Get A Reply"
             )
-            await message.reply_text(text)
-            return
+            return await message.reply_text(text)
         await message.reply_text("ChatBot Is Already Enabled.")
-        return
 
     elif status == "OFF" or status == "off" or status == "Off":
         if chat_id in active_chats_bot:
             active_chats_bot.remove(chat_id)
-            await message.reply_text("Chatbot Disabled!")
-            return
+            return await message.reply_text("Chatbot Disabled!")
         await message.reply_text("ChatBot Is Already Disabled.")
-        return
 
     else:
         await message.reply_text("**Usage**\n/chatbot [ON|OFF]")
@@ -117,8 +112,7 @@ async def chatbot_talk(_, message):
 async def chatbot_status_ubot(_, message):
     global active_chats_ubot
     if len(message.text.split()) != 2:
-        await edit_or_reply(message, text="**Usage**\n.chatbot [ON|OFF]")
-        return
+        return await edit_or_reply(message, text="**Usage**\n.chatbot [ON|OFF]")
     status = message.text.split(None, 1)[1]
     chat_id = message.chat.id
     if status == "ON" or status == "on" or status == "On":
@@ -128,10 +122,8 @@ async def chatbot_status_ubot(_, message):
                 "Chatbot Enabled Reply To Any Message "
                 + "Of Mine To Get A Reply"
             )
-            await edit_or_reply(message, text=text)
-            return
+            return await edit_or_reply(message, text=text)
         await edit_or_reply(message, text="ChatBot Is Already Enabled.")
-        return
 
     elif status == "OFF" or status == "off" or status == "Off":
         if chat_id in active_chats_ubot:
@@ -139,7 +131,6 @@ async def chatbot_status_ubot(_, message):
             await edit_or_reply(message, text="Chatbot Disabled!")
             return
         await edit_or_reply(message, text="ChatBot Is Already Disabled.")
-        return
 
     else:
         await edit_or_reply(message, text="**Usage**\n/chatbot [ON|OFF]")

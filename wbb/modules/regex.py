@@ -57,16 +57,14 @@ async def sed(_, message):
             return
 
         if not repl:
-            await message.reply_text(
+            return await message.reply_text(
                 "You're trying to replace... " "nothing with something?"
             )
-            return
 
         try:
 
             if infinite_checker(repl):
-                await message.reply_text("Nice try -_-")
-                return
+                return await message.reply_text("Nice try -_-")
 
             if "i" in flags and "g" in flags:
                 text = re.sub(repl, repl_with, to_fix, flags=re.I).strip()

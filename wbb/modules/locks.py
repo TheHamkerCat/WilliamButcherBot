@@ -64,12 +64,10 @@ data = {
 async def tg_lock(message, permissions: list, perm: str, lock: bool):
     if lock:
         if perm not in permissions:
-            await message.reply_text("Already locked.")
-            return
+            return await message.reply_text("Already locked.")
     else:
         if perm in permissions:
-            await message.reply_text("Already Unlocked.")
-            return
+            return await message.reply_text("Already Unlocked.")
     (permissions.remove(perm) if lock else permissions.append(perm))
     permissions = {perm: True for perm in list(set(permissions))}
     try:
@@ -77,10 +75,9 @@ async def tg_lock(message, permissions: list, perm: str, lock: bool):
             message.chat.id, ChatPermissions(**permissions)
         )
     except ChatNotModified:
-        await message.reply_text(
+        return await message.reply_text(
             "To unlock this, you have to unlock 'messages' first."
         )
-        return
     await message.reply_text(("Locked." if lock else "Unlocked."))
 
 
@@ -88,23 +85,20 @@ async def tg_lock(message, permissions: list, perm: str, lock: bool):
 @adminsOnly("can_restrict_members")
 async def locks_func(_, message):
     if len(message.command) != 2:
-        await message.reply_text(incorrect_parameters)
-        return
+        return await message.reply_text(incorrect_parameters)
     chat_id = message.chat.id
     parameter = message.text.strip().split(None, 1)[1].lower()
     state = message.command[0].lower()
     if parameter not in data and parameter != "all":
-        await message.reply_text(incorrect_parameters)
-        return
+        return await message.reply_text(incorrect_parameters)
     permissions = await current_chat_permissions(chat_id)
     if parameter in data:
-        await tg_lock(
+        return await tg_lock(
             message,
             permissions,
             data[parameter],
             True if state == "lock" else False,
         )
-        return
     elif parameter == "all" and state == "lock":
         await app.set_chat_permissions(chat_id, ChatPermissions())
         await message.reply_text("Locked Everything.")
@@ -115,8 +109,7 @@ async def locks_func(_, message):
 async def locktypes(_, message):
     permissions = await current_chat_permissions(message.chat.id)
     if not permissions:
-        await message.reply_text("No Permissions.")
-        return
+        return await message.reply_text("No Permissions.")
     perms = ""
     for i in permissions:
         perms += f"__**{i}**__\n"

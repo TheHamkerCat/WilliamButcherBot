@@ -61,8 +61,7 @@ async def commit(_, message):
 async def rtfm(_, message):
     await message.delete()
     if not message.reply_to_message:
-        await message.reply_text("Reply To A Message lol")
-        return
+        return await message.reply_text("Reply To A Message lol")
     await message.reply_to_message.reply_text(
         "Are You Lost? READ THE FUCKING DOCS!"
     )
@@ -78,8 +77,7 @@ async def getid(_, message):
     if len(message.command) == 2:
         id = (await app.get_users(message.text.split(None, 1)[1])).id
         text = f"**ID:** `{id}`"
-        await message.reply_text(text, parse_mode="html")
-        return
+        return await message.reply_text(text, parse_mode="html")
     text_unping = "<b>Chat ID:</b>"
     if message.chat.username:
         text_unping = (
@@ -134,10 +132,9 @@ async def getid(_, message):
 @capture_err
 async def random(_, message):
     if len(message.command) != 2:
-        await message.reply_text(
+        return await message.reply_text(
             '"/random" Needs An Argurment.' " Ex: `/random 5`"
         )
-        return
     length = message.text.split(None, 1)[1]
 
     try:
@@ -162,8 +159,7 @@ async def random(_, message):
 @capture_err
 async def encrypt(_, message):
     if not message.reply_to_message:
-        await message.reply_text("Reply To A Message To Encrypt It.")
-        return
+        return await message.reply_text("Reply To A Message To Encrypt It.")
     text = message.reply_to_message.text
     text_in_bytes = bytes(text, "utf-8")
     cipher_suite = Fernet(FERNET_ENCRYPTION_KEY)
@@ -179,8 +175,7 @@ async def encrypt(_, message):
 @capture_err
 async def decrypt(_, message):
     if not message.reply_to_message:
-        await message.reply_text("Reply To A Message To Decrypt It.")
-        return
+        return await message.reply_text("Reply To A Message To Decrypt It.")
     text = message.reply_to_message.text
     text_in_bytes = bytes(text, "utf-8")
     cipher_suite = Fernet(FERNET_ENCRYPTION_KEY)
@@ -205,8 +200,7 @@ async def fetch_text(url):
 @capture_err
 async def cheat(_, message):
     if len(message.command) < 3:
-        await message.reply_text("/cheat [language] [query]")
-        return
+        return await message.reply_text("/cheat [language] [query]")
     text = message.text.split(None, 1)[1]
     m = await message.reply_text("Searching")
     try:
@@ -215,8 +209,7 @@ async def cheat(_, message):
         query = ftext[1]
         data = await fetch_text(f"http://cht.sh/{language}/{query}?QT")
         if not data:
-            await m.edit("Found Literally Nothing!")
-            return
+            return await m.edit("Found Literally Nothing!")
         await m.edit(f"`{data}`")
     except Exception as e:
         await m.edit(str(e))
@@ -230,8 +223,7 @@ async def cheat(_, message):
 @capture_err
 async def weather(_, message):
     if len(message.command) != 2:
-        await message.reply_text("/weather [city]")
-        return
+        return await message.reply_text("/weather [city]")
     city = message.text.split(None, 1)[1]
     m = await message.reply_text("Fetching Data")
     data = await fetch_text(f"https://wttr.in/{city}?mnTC0")
@@ -245,25 +237,22 @@ async def weather(_, message):
 @capture_err
 async def tr(_, message):
     if len(message.command) != 2:
-        await message.reply_text("/tr [LANGUAGE_CODE]")
-        return
+        return await message.reply_text("/tr [LANGUAGE_CODE]")
     lang = message.text.split(None, 1)[1]
     if not message.reply_to_message or not lang:
-        await message.reply_text(
+        return await message.reply_text(
             "Reply to a message with /tr [language code]"
             + "\nGet supported language list from here -"
             + " https://py-googletrans.readthedocs.io/en"
             + "/latest/#googletrans-languages"
         )
-        return
     if message.reply_to_message.text:
         text = message.reply_to_message.text
     elif message.reply_to_message.caption:
         text = message.reply_to_message.caption
     result = await arq.translate(text, lang)
     if not result.ok:
-        await message.reply_text(result.result)
-        return
+        return await message.reply_text(result.result)
     await message.reply_text(result.result.translatedText)
 
 
@@ -272,8 +261,7 @@ async def tr(_, message):
 async def json_fetch(_, message):
     global fetch_limit
     if len(message.command) != 2:
-        await message.reply_text("/json [URL]")
-        return
+        return await message.reply_text("/json [URL]")
     url = message.text.split(None, 1)[1]
     try:
         data = await fetch(url)
@@ -297,8 +285,7 @@ async def bunn(_, message):
         await message.reply_to_message.reply_sticker(
             "CAACAgUAAx0CWIlO9AABARyRYBhyjKXFATVhu7AGQwip3TzSFiMAAuMBAAJ7usBUIu2xBtXTmuweBA"
         )
-        await app.send_message(message.chat.id, text="Eat Bun")
-        return
+        return await app.send_message(message.chat.id, text="Eat Bun")
     if not message.reply_to_message:
         await message.reply_sticker(
             "CAACAgUAAx0CWIlO9AABARyRYBhyjKXFATVhu7AGQwip3TzSFiMAAuMBAAJ7usBUIu2xBtXTmuweBA"

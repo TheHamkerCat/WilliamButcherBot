@@ -23,14 +23,12 @@ VIDEO_DATA = {}
 @capture_err
 async def ytdl_func(_, message):
     if len(message.command) != 2:
-        await message.reply_text("**Usage:**/ytdl [VIDEO_LINK]")
-        return
+        return await message.reply_text("**Usage:**/ytdl [VIDEO_LINK]")
     m = await message.reply_text("Processing")
     url = message.text.split(None, 1)[1]
     results = await arq.ytdl(url)
     if not results.ok:
-        await message.reply_text(results.result)
-        return
+        return await m.edit(results.result)
     result = results.result
     title = result.title
     thumbnail = result.thumbnail

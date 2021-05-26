@@ -82,7 +82,7 @@ loop = asyncio.get_running_loop()
 async def get_initial_captcha_cache():
     global answers_dicc
     answers_dicc = await get_captcha_cache()
-    return
+    return answers_dicc
 
 
 loop.create_task(get_initial_captcha_cache())

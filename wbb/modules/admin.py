@@ -136,9 +136,10 @@ async def purgeFunc(client, message: Message):
     if message.chat.type not in ("supergroup", "channel"):
         return
     if not message.reply_to_message:
-        await message.reply_text(
-            "Reply To A Message To Delete From," " Don't Make Fun Of Yourself!"
+        return await message.reply_text(
+            "Reply To A Message To Delete From, Don't Make Fun Of Yourself!"
         )
+    await message.delete()
     for a_s_message_id in range(
         message.reply_to_message.message_id, message.message_id
     ):
@@ -167,10 +168,9 @@ async def kickFunc(_, message: Message):
     elif len(message.command) == 1 and message.reply_to_message:
         user_id = message.reply_to_message.from_user.id
     else:
-        await message.reply_text(
+        return await message.reply_text(
             "Provide a username or reply to a user's message to kick."
         )
-        return
     if user_id in SUDOERS:
         await message.reply_text("You Wanna Kick The Elevated One?")
     else:
@@ -191,10 +191,9 @@ async def banFunc(_, message: Message):
     elif len(message.command) == 1 and message.reply_to_message:
         user_id = message.reply_to_message.from_user.id
     else:
-        await message.reply_text(
+        return await message.reply_text(
             "Provide a username or reply to a user's message to ban."
         )
-        return
     if user_id in SUDOERS:
         await message.reply_text("You Wanna Ban The Elevated One?")
     else:
@@ -213,10 +212,9 @@ async def unbanFunc(_, message: Message):
     elif len(message.command) == 1 and message.reply_to_message:
         user = message.reply_to_message.from_user.id
     else:
-        await message.reply_text(
+        return await message.reply_text(
             "Provide a username or reply to a user's message to unban."
         )
-        return
     await message.chat.unban_member(user)
     await message.reply_text("Unbanned!")
 
@@ -228,8 +226,7 @@ async def unbanFunc(_, message: Message):
 @adminsOnly("can_delete_messages")
 async def deleteFunc(_, message: Message):
     if not message.reply_to_message:
-        await message.reply_text("Reply To A Message To Delete It")
-        return
+        return await message.reply_text("Reply To A Message To Delete It")
     await message.reply_to_message.delete()
     await message.delete()
 
@@ -248,10 +245,9 @@ async def promoteFunc(_, message: Message):
     elif len(message.command) == 1 and message.reply_to_message:
         user_id = message.reply_to_message.from_user.id
     else:
-        await message.reply_text(
+        return await message.reply_text(
             "Reply To A User's Message Or Give A Username To Promote."
         )
-        return
     await message.chat.promote_member(
         user_id=user_id,
         can_change_info=bot.can_change_info,
@@ -278,10 +274,9 @@ async def demote(_, message: Message):
     elif len(message.command) == 1 and message.reply_to_message:
         user_id = message.reply_to_message.from_user.id
     else:
-        await message.reply_text(
+        return await message.reply_text(
             "Reply To A User's Message Or Give A Username To Demote."
         )
-        return
     await message.chat.promote_member(
         user_id=user_id,
         can_change_info=False,
@@ -303,10 +298,8 @@ async def demote(_, message: Message):
 @adminsOnly("can_pin_messages")
 async def pin(_, message: Message):
     if not message.reply_to_message:
-        await message.reply_text("Reply To A Message To Pin.")
-        return
-    await message.reply_to_message.pin(disable_notification=True)
-
+        return await message.reply_text("Reply To A Message To Pin.")
+     await message.reply_to_message.pin(disable_notification=True)
 
 # Mute members
 
@@ -319,13 +312,11 @@ async def mute(_, message: Message):
     elif len(message.command) == 1 and message.reply_to_message:
         user_id = message.reply_to_message.from_user.id
     else:
-        await message.reply_text(
+        return await message.reply_text(
             "Provide a username or reply to a user's message to mute."
         )
-        return
     if user_id in SUDOERS:
-        await message.reply_text("You Wanna Mute The Elevated One?")
-        return
+        return await message.reply_text("You Wanna Mute The Elevated One?")
     await message.chat.restrict_member(user_id, permissions=ChatPermissions())
     await message.reply_text("Muted!")
 
@@ -341,10 +332,9 @@ async def unmute(_, message: Message):
     elif len(message.command) == 1 and message.reply_to_message:
         user = message.reply_to_message.from_user.id
     else:
-        await message.reply_text(
+        return await message.reply_text(
             "Provide a username or reply to a user's message to Unmute"
         )
-        return
     await message.chat.unban_member(user)
     await message.reply_text("Unmuted!")
 
@@ -377,8 +367,7 @@ async def ban_deleted_accounts(_, message: Message):
 @adminsOnly("can_restrict_members")
 async def warn_user(_, message: Message):
     if not message.reply_to_message:
-        await message.reply_text("Reply to a message to warn a user.")
-        return
+        return await message.reply_text("Reply to a message to warn a user.")
     chat_id = message.chat.id
     user_id = message.reply_to_message.from_user.id
     mention = message.reply_to_message.from_user.mention
@@ -396,10 +385,9 @@ async def warn_user(_, message: Message):
             else:
                 warn = {"warns": 1}
                 await add_warn(chat_id, await int_to_alpha(user_id), warn)
-                await message.reply_text(
+                return await message.reply_text(
                     f"Warned {mention} !, 1/3 warnings now."
                 )
-                return
             if warns >= 2:
                 await message.chat.kick_member(user_id)
                 await message.reply_text(
@@ -423,10 +411,9 @@ async def warn_user(_, message: Message):
 @adminsOnly("can_restrict_members")
 async def remove_warning(_, message: Message):
     if not message.reply_to_message:
-        await message.reply_text(
+        return await message.reply_text(
             "Reply to a message to remove a user's warning."
         )
-        return
     user_id = message.reply_to_message.from_user.id
     mention = message.reply_to_message.from_user.mention
     chat_id = message.chat.id
@@ -448,10 +435,9 @@ async def remove_warning(_, message: Message):
 @adminsOnly("can_restrict_members")
 async def remove_warnings(_, message: Message):
     if not message.reply_to_message:
-        await message.reply_text(
+        return await message.reply_text(
             "Reply to a message to remove a user's warnings."
         )
-        return
     user_id = message.reply_to_message.from_user.id
     mention = message.reply_to_message.from_user.mention
     chat_id = message.chat.id
@@ -472,10 +458,9 @@ async def remove_warnings(_, message: Message):
 @capture_err
 async def check_warns(_, message: Message):
     if not message.reply_to_message:
-        await message.reply_text(
+        return await message.reply_text(
             "Reply to a message to check a user's warnings."
         )
-        return
     user_id = message.reply_to_message.from_user.id
     mention_user = message.reply_to_message.from_user.mention
     mention_from_user = message.from_user.mention
@@ -485,16 +470,13 @@ async def check_warns(_, message: Message):
         if warns:
             warns = warns["warns"]
         else:
-            await message.reply_text(f"{mention_user} have no warnings.")
-            return
-        await message.reply_text(f"{mention_user} have {warns}/3 warnings.")
-        return
+            return await message.reply_text(f"{mention_user} have no warnings.")
+        return await message.reply_text(f"{mention_user} have {warns}/3 warnings.")
     warns = await get_warn(chat_id, await int_to_alpha(user_id))
     if warns:
         warns = warns["warns"]
     else:
-        await message.reply_text(f"{mention_user} have no warnings.")
-        return
+        return await message.reply_text(f"{mention_user} have no warnings.")
     await message.reply_text(f"{mention_from_user} have {warns}/3 warnings.")
 
 
@@ -508,8 +490,7 @@ async def check_warns(_, message: Message):
 @capture_err
 async def report_user(_, message):
     if not message.reply_to_message:
-        await message.reply_text("Reply to a message to report user.")
-        return
+        return await message.reply_text("Reply to a message to report user.")
     list_of_admins = await list_admins(message.chat.id)
     user_mention = message.reply_to_message.from_user.mention
     text = f"Reported {user_mention} to admins."

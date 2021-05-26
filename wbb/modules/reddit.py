@@ -34,13 +34,11 @@ __HELP__ = "/reddit [query] - results something from reddit"
 @capture_err
 async def reddit(_, message):
     if len(message.command) != 2:
-        await message.reply_text("/reddit needs an argument")
-        return
+        return await message.reply_text("/reddit needs an argument")
     subreddit = message.text.split(None, 1)[1]
     reddit = await arq.reddit(subreddit)
     if not reddit.ok:
-        await message.reply_text(reddit.result)
-        return
+        return await message.reply_text(reddit.result)
     reddit = reddit.result
     nsfw = reddit.nsfw
     sreddit = reddit.subreddit
@@ -48,8 +46,7 @@ async def reddit(_, message):
     image = reddit.url
     link = reddit.postLink
     if nsfw:
-        await message.reply_text("NSFW RESULTS COULD NOT BE SHOWN.")
-        return
+        return await message.reply_text("NSFW RESULTS COULD NOT BE SHOWN.")
     caption = f"""**Title:** `{title}`
 **Subreddit:** {sreddit}
 **PostLink:** {link}

@@ -54,8 +54,7 @@ async def save_notee(_, message):
     else:
         name = message.text.split(None, 1)[1].strip()
         if not name:
-            await message.reply_text("**Usage**\n__/save [NOTE_NAME]__")
-            return
+            return await message.reply_text("**Usage**\n__/save [NOTE_NAME]__")
         _type = "text" if message.reply_to_message.text else "sticker"
         note = {
             "type": _type,
@@ -90,8 +89,7 @@ async def get_one_note(_, message):
     else:
         name = message.text.split(None, 1)[1].strip()
         if not name:
-            await message.reply_text("**Usage**\n__/get [NOTE_NAME]__")
-            return
+            return await message.reply_text("**Usage**\n__/get [NOTE_NAME]__")
         _note = await get_note(message.chat.id, name)
         if not _note:
             await message.reply_text("**No such note.**")
@@ -108,12 +106,10 @@ async def get_one_note(_, message):
 @adminsOnly("can_change_info")
 async def del_note(_, message):
     if len(message.command) < 2:
-        await message.reply_text("**Usage**\n__/delete [NOTE_NAME]__")
-        return
+        return await message.reply_text("**Usage**\n__/delete [NOTE_NAME]__")
     name = message.text.split(None, 1)[1].strip()
     if not name:
-        await message.reply_text("**Usage**\n__/delete [NOTE_NAME]__")
-        return
+        return await message.reply_text("**Usage**\n__/delete [NOTE_NAME]__")
     chat_id = message.chat.id
     deleted = await delete_note(chat_id, name)
     if deleted:

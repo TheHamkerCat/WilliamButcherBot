@@ -83,8 +83,7 @@ async def info_func(_, message: Message):
         m = await message.reply_text("Processing")
         info_caption, photo_id = await get_user_info(user)
         if not photo_id:
-            await m.edit(info_caption, disable_web_page_preview=True)
-            return
+            return await m.edit(info_caption, disable_web_page_preview=True)
         photo = await app.download_media(photo_id)
         await message.reply_photo(photo, caption=info_caption, quote=False)
         await m.delete()
@@ -99,8 +98,7 @@ async def info_func(_, message: Message):
 async def chat_info_func(_, message: Message):
     try:
         if len(message.command) > 2:
-            await message.reply_text("**Usage:**/chat_info [USERNAME|ID]")
-            return
+            return await message.reply_text("**Usage:**/chat_info [USERNAME|ID]")
         elif len(message.command) == 1:
             chat = message.chat.id
         elif len(message.command) == 2:
@@ -108,8 +106,7 @@ async def chat_info_func(_, message: Message):
         m = await message.reply_text("Processing")
         info_caption, photo_id = await get_chat_info(chat)
         if not photo_id:
-            await m.edit(info_caption, disable_web_page_preview=True)
-            return
+            return await m.edit(info_caption, disable_web_page_preview=True)
         photo = await app.download_media(photo_id)
         await message.reply_photo(photo, caption=info_caption, quote=False)
         await m.delete()

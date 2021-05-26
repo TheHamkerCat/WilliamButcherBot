@@ -118,6 +118,5 @@ async def callback_query_ignore_rice(_, callback_query):
     elif disprover_status in ("creator", "administrator"):
         await m_op.reply_text(f"{u_disprover.mention} ignored this rice")
     else:
-        await callback_query.answer("Only admin or OP could ignore it")
-        return
+        return await callback_query.answer("Only admin or OP could ignore it")
     await callback_query.message.delete()

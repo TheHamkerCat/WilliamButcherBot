@@ -53,28 +53,24 @@ can even delete your account.
 @capture_err
 async def useradd(_, message: Message):
     if not message.reply_to_message:
-        await edit_or_reply(
+        return await edit_or_reply(
             message, text="Reply to someone's message to add him to sudoers."
         )
-        return
     user_id = message.reply_to_message.from_user.id
     sudoers = await get_sudoers()
     if user_id in sudoers:
-        await edit_or_reply(message, text="User is already in sudoers.")
-        return
+        return await edit_or_reply(message, text="User is already in sudoers.")
     if user_id == BOT_ID:
-        await edit_or_reply(
+        return await edit_or_reply(
             message, text="You can't add assistant bot in sudoers."
         )
-        return
     added = await add_sudo(user_id)
     if added:
         await edit_or_reply(
             message,
             text="Successfully added user in sudoers, Bot will be restarted now.",
         )
-        os.execvp("python3", ["python3", "-m", "wbb"])
-        return
+        return os.execvp("python3", ["python3", "-m", "wbb"])
     await edit_or_reply(message, text="Something wrong happened, check logs.")
 
 
@@ -84,23 +80,20 @@ async def useradd(_, message: Message):
 @capture_err
 async def userdel(_, message: Message):
     if not message.reply_to_message:
-        await edit_or_reply(
+        return await edit_or_reply(
             message,
             text="Reply to someone's message to remove him to sudoers.",
         )
-        return
     user_id = message.reply_to_message.from_user.id
     if user_id not in await get_sudoers():
-        await edit_or_reply(message, text="User is not in sudoers.")
-        return
+        return await edit_or_reply(message, text="User is not in sudoers.")
     removed = await remove_sudo(user_id)
     if removed:
         await edit_or_reply(
             message,
             text="Successfully removed user from sudoers, Bot will be restarted now.",
         )
-        os.execvp("python3", ["python3", "-m", "wbb"])
-        return
+        return os.execvp("python3", ["python3", "-m", "wbb"])
     await edit_or_reply(message, text="Something wrong happened, check logs.")
 
 

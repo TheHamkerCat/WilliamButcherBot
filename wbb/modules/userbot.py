@@ -58,8 +58,7 @@ async def executor(client, message: Message):
     try:
         cmd = message.text.split(" ", maxsplit=1)[1]
     except IndexError:
-        await message.delete()
-        return
+        return await message.delete()
     old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = StringIO()
@@ -106,8 +105,7 @@ async def executor(client, message: Message):
 )
 async def shellrunner(client, message: Message):
     if len(message.command) < 2:
-        await edit_or_reply(message, text="**Usage:**\n/sh git pull")
-        return
+        return await edit_or_reply(message, text="**Usage:**\n/sh git pull")
     text = message.text.split(None, 1)[1]
     if "\n" in text:
         code = text.split("\n")
@@ -147,11 +145,10 @@ async def shellrunner(client, message: Message):
                 value=exc_obj,
                 tb=exc_tb,
             )
-            await edit_or_reply(
+            return await edit_or_reply(
                 message,
                 text=f"**INPUT:**\n```{escape(text)}```\n\n**ERROR:**\n```{''.join(errors)}```",
             )
-            return
         output = process.stdout.read()[:-1].decode("utf-8")
     if str(output) == "\n":
         output = None
@@ -165,8 +162,7 @@ async def shellrunner(client, message: Message):
                 reply_to_message_id=message.message_id,
                 caption="`Output`",
             )
-            os.remove("output.txt")
-            return
+            return os.remove("output.txt")
         await edit_or_reply(
             message,
             text=f"**INPUT:**\n```{escape(text)}```\n\n**OUTPUT:**\n```{escape(output)}```",
@@ -212,10 +208,8 @@ async def cEval(_, message: Message):
 ```{escape(err)}```
 """
         if len(text) > 4090:
-            await sendFile(message, text)
-            return
-        await edit_or_reply(message, text=text)
-        return
+            return await sendFile(message, text)
+        return await edit_or_reply(message, text=text)
     pRun = subprocess.run(cmdRun, capture_output=True)
     t2 = time()
     os.remove("exec")
@@ -232,6 +226,5 @@ async def cEval(_, message: Message):
 `Compiled and executed in {round(t2-t1, 5)} seconds`
 """
     if len(text) > 4090:
-        await sendFile(message, text)
-        return
+        return await sendFile(message, text)
     await edit_or_reply(message, text=text)

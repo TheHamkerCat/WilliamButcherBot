@@ -47,22 +47,19 @@ You can use markdown or html to save text too."""
 @adminsOnly("can_change_info")
 async def save_filters(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
-        await message.reply_text(
+        return await message.reply_text(
             "**Usage:**\nReply to a text or sticker with /filter [FILTER_NAME] to save it."
         )
-        return
     if (
         not message.reply_to_message.text
         and not message.reply_to_message.sticker
     ):
-        await message.reply_text(
+        return await message.reply_text(
             "__**You can only save text or stickers in filters.**__"
         )
-        return
     name = message.text.split(None, 1)[1].strip()
     if not name:
-        await message.reply_text("**Usage**\n__/filter [FILTER_NAME]__")
-        return
+        return await message.reply_text("**Usage**\n__/filter [FILTER_NAME]__")
     chat_id = message.chat.id
     _type = "text" if message.reply_to_message.text else "sticker"
     _filter = {
@@ -94,12 +91,10 @@ async def get_filterss(_, message):
 @adminsOnly("can_change_info")
 async def del_filter(_, message):
     if len(message.command) < 2:
-        await message.reply_text("**Usage**\n__/stop [FILTER_NAME]__")
-        return
+        return await message.reply_text("**Usage**\n__/stop [FILTER_NAME]__")
     name = message.text.split(None, 1)[1].strip()
     if not name:
-        await message.reply_text("**Usage**\n__/stop [FILTER_NAME]__")
-        return
+        return await message.reply_text("**Usage**\n__/stop [FILTER_NAME]__")
     chat_id = message.chat.id
     deleted = await delete_filter(chat_id, name)
     if deleted:
@@ -135,22 +130,19 @@ async def filters_re(_, message):
                         data, disable_web_page_preview=True
                     )
                     if text[0] == "~":
-                        await message.delete()
-                    return
+                        return await message.delete()
                 await message.reply_text(data, disable_web_page_preview=True)
             else:
                 if message.reply_to_message:
                     await message.reply_to_message.reply_sticker(data)
                     if text[0] == "~":
-                        await message.delete()
-                    return
+                        return await message.delete()
                 await message.reply_sticker(data)
 
     """ CHAT WATCHER """
     blacklisted_chats_list = await blacklisted_chats()
     if chat_id in blacklisted_chats_list:
-        await app.leave_chat(chat_id)
-        return
+        return await app.leave_chat(chat_id)
     served_chat = await is_served_chat(chat_id)
     if served_chat:
         return

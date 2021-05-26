@@ -30,8 +30,7 @@ from wbb import ARQ_API_URL, app, arq
 async def arq_stats(_, message):
     data = await arq.stats()
     if not data.ok:
-        await message.reply_text(data.result)
-        return
+        return await message.reply_text(data.result)
     data = data.result
     uptime = data.uptime
     requests = data.requests

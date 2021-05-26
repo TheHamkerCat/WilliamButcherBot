@@ -18,11 +18,9 @@ __HELP__ = "/reverse  - Reverse search an image. [SUDOERS ONLY]"
 @capture_err
 async def reverse_image_search(_, message):
     if message.from_user.id not in SUDOERS:
-        await message.reply_text("THIS FEATURE IS ONLY FOR SUDO USERS.")
-        return
+        return await message.reply_text("THIS FEATURE IS ONLY FOR SUDO USERS.")
     if not message.reply_to_message:
-        await message.reply_text("Reply to a message to reverse search it.")
-        return
+        return await message.reply_text("Reply to a message to reverse search it.")
     reply = message.reply_to_message
     if (
         not reply.document
@@ -31,25 +29,21 @@ async def reverse_image_search(_, message):
         and not reply.animation
         and not reply.video
     ):
-        await message.reply_text(
+        return await message.reply_text(
             "Reply to an image/document/sticker/animation to reverse search it."
         )
-        return
     m = await message.reply_text("Searching")
     if reply.document:
         if int(reply.document.file_size) > 3145728:
-            await m.edit("File too large")
-            return
+            return await m.edit("File too large")
         mime_type = reply.document.mime_type
         if mime_type != "image/png" and mime_type != "image/jpeg":
-            await m.edit("Document Mimetype Invalid")
-            return
+            return await m.edit("Document Mimetype Invalid")
         file_id = reply.document.file_id
     if reply.sticker:
         if reply.sticker.is_animated:
             if not reply.sticker.thumbs:
-                await m.edit("Sticker Has No Thumb")
-                return
+                return await m.edit("Sticker Has No Thumb")
             file_id = reply.sticker.thumbs[0].file_id
         else:
             file_id = reply.sticker.file_id
@@ -59,10 +53,9 @@ async def reverse_image_search(_, message):
 
     if reply.animation:
         if not reply.animation.thumbs:
-            await m.edit(
+            return await m.edit(
                 "Gif Has No Thumbnail, so it cannot be reverse searched"
             )
-            return
         file_id = reply.animation.thumbs[0].file_id
 
     if reply.video:
@@ -83,8 +76,7 @@ async def reverse_image_search(_, message):
             location = response.headers.get("Location")
             os.remove(image)
         else:
-            await m.edit("Something wrong happened.")
-            return
+            return await m.edit("Something wrong happened.")
     headers = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:58.0) Gecko/20100101 Firefox/58.0"
     }

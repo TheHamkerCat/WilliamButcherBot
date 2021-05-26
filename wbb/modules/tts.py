@@ -30,14 +30,12 @@ from pyrogram import filters
 from pyrogram.types import Message
 
 from wbb import app
-from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "TTS"
 __HELP__ = "/tts - Convert Text To Speech."
 
 
 @app.on_message(filters.command("tts"))
-@capture_err
 async def text_to_speech(_, message: Message):
     try:
         if message.reply_to_message:
@@ -52,8 +50,7 @@ async def text_to_speech(_, message: Message):
                 tts.write_to_fp(audio)
                 await m.delete()
                 await message.reply_audio(audio)
-                audio.close()
-                return
+                return audio.close()
         await message.reply_text("Reply to some text ffs.")
     except Exception as e:
         await message.reply_text(e)

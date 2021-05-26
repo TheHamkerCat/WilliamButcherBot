@@ -54,11 +54,9 @@ SUPPORTED_TYPES = ["jpeg", "png", "webp"]
 @capture_err
 async def sticker_id(_, message):
     if not message.reply_to_message:
-        await message.reply_text("Reply to a sticker.")
-        return
+        return await message.reply_text("Reply to a sticker.")
     if not message.reply_to_message.sticker:
-        await message.reply_text("Reply to a sticker.")
-        return
+        return await message.reply_text("Reply to a sticker.")
     file_id = message.reply_to_message.sticker.file_id
     await message.reply_text(f"`{file_id}`")
 
@@ -67,8 +65,7 @@ async def sticker_id(_, message):
 @capture_err
 async def kang(client, message):
     if not message.reply_to_message:
-        await message.reply_text("Reply to a sticker/image to kang it.")
-        return
+        return await message.reply_text("Reply to a sticker/image to kang it.")
     msg = await message.reply_text("Kanging Sticker..")
 
     # Find the proper emoji
@@ -97,8 +94,7 @@ async def kang(client, message):
             temp_file_path = await app.download_media(doc)
             image_type = imghdr.what(temp_file_path)
             if image_type not in SUPPORTED_TYPES:
-                await msg.edit("Format not supported! ({})".format(image_type))
-                return
+                return await msg.edit("Format not supported! ({})".format(image_type))
             try:
                 temp_file_path = await resize_file_to_sticker_size(
                     temp_file_path
@@ -116,8 +112,7 @@ async def kang(client, message):
             if os.path.isfile(temp_file_path):
                 os.remove(temp_file_path)
         else:
-            await msg.edit("Nope, can't kang that.")
-            return
+            return await msg.edit("Nope, can't kang that.")
     except ShortnameOccupyFailed:
         await message.reply_text("Change Your Name Or Username")
         return
@@ -125,8 +120,7 @@ async def kang(client, message):
     except Exception as e:
         await message.reply_text(str(e))
         e = format_exc()
-        print(e)
-        return
+        return print(e)
 
     # Find an available pack & add the sticker to the pack; create a new pack if needed
     # Would be a good idea to cache the number instead of searching it every single time...

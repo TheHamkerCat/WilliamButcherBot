@@ -57,8 +57,7 @@ async def quotly_func(_, message: Message):
         arg = isArgInt(message)
         if arg[0]:
             if arg[1] < 2 or arg[1] > 10:
-                await m.edit("Argument must be between 2-10.")
-                return
+                return await m.edit("Argument must be between 2-10.")
             count = arg[1]
             messages = await app.get_messages(
                 message.chat.id,
@@ -73,10 +72,9 @@ async def quotly_func(_, message: Message):
             )
         else:
             if getArg(message) != "r":
-                await m.edit(
+                return await m.edit(
                     "Incorrect Argument, Pass **'r'** or **'INT'**, **EX:** __/q 2__"
                 )
-                return
             reply_message = await app.get_messages(
                 message.chat.id,
                 message.reply_to_message.message_id,
@@ -92,8 +90,7 @@ async def quotly_func(_, message: Message):
         sticker = await quotify(messages)
         if not sticker[0]:
             await message.rely_text(sticker[1])
-            await m.delete()
-            return
+            return await m.delete()
         sticker = sticker[1]
         await message.reply_sticker(sticker)
         await m.delete()
@@ -107,4 +104,3 @@ async def quotly_func(_, message: Message):
         await m.delete()
         e = format_exc()
         print(e)
-        return

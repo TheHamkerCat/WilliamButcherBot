@@ -23,11 +23,9 @@ Usage:
 @capture_err
 async def tgphoto(client, message):
     if not message.reply_to_message:
-        await message.reply_text("Reply to a photo.")
-        return
+        return await message.reply_text("Reply to a photo.")
     if not message.reply_to_message.photo:
-        await message.reply_text("Works only for Photos")
-        return
+        return await message.reply_text("Works only for Photos")
     msg = await message.reply_text("`Uploading to Telegraph...`")
     userid = str(message.chat.id)
     path = f"./DOWNLOADS/{userid}.jpg"
@@ -49,11 +47,9 @@ async def tgphoto(client, message):
 @capture_err
 async def tgvideo(client, message):
     if not message.reply_to_message:
-        await message.reply_text("Reply to a Video.")
-        return
+        return await message.reply_text("Reply to a Video.")
     if not message.reply_to_message.video:
-        await message.reply_text("Works only for Videos")
-        return
+        return await message.reply_text("Works only for Videos")
     if message.reply_to_message.video.file_size < 5242880:
         msg = await message.reply_text("Uploading to Telegraph...")
         userid = str(message.chat.id)

@@ -57,8 +57,7 @@ async def tagLoggerFunc(_, message: Message):
         reply_message = message.reply_to_message
         if reply_message.from_user:
             if reply_message.from_user.id == USERBOT_ID:
-                await sendLog(message)
-                return
+                return await sendLog(message)
 
     if message.text:
         text = message.text
@@ -72,4 +71,3 @@ async def tagLoggerFunc(_, message: Message):
         or USERBOT_NAME in text
     ):
         await sendLog(message)
-        return

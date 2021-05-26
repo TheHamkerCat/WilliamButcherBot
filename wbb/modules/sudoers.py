@@ -34,7 +34,8 @@ from wbb import (BOT_ID, GBAN_LOG_GROUP_ID, SUDOERS, USERBOT_USERNAME, app,
 from wbb.core.decorators.errors import capture_err
 from wbb.utils import formatter
 from wbb.utils.dbfunctions import (add_gban_user, get_served_chats,
-                                   is_gbanned_user, remove_gban_user)
+                                   is_gbanned_user, remove_gban_user,
+                                   start_restart_stage)
 
 __MODULE__ = "Sudoers"
 __HELP__ = """
@@ -81,10 +82,9 @@ async def get_stats(_, message):
 async def ban_globally(_, message):
     if not message.reply_to_message:
         if len(message.command) < 3:
-            await message.reply_text(
+            return await message.reply_text(
                 "**Usage:**\n/gban [USERNAME | USER_ID] [REASON]"
             )
-            return
         user = message.text.split(None, 2)[1]
         reason = message.text.split(None, 2)[2]
         if "@" in user:
@@ -214,7 +214,6 @@ __**New Global Ban**__
                 await message.reply_text(
                     "User Gbanned, But This Gban Wasn't Logged, Add Bot In GBAN_LOG_GROUP"
                 )
-                return
 
 
 # Ungban
@@ -225,10 +224,9 @@ __**New Global Ban**__
 async def unban_globally(_, message):
     if not message.reply_to_message:
         if len(message.command) != 2:
-            await message.reply_text(
+            return await message.reply_text(
                 "Reply to a user's message or give username/user_id."
             )
-            return
         user = message.text.split(None, 1)[1]
         if "@" in user:
             user = user.replace("@", "")
@@ -280,8 +278,7 @@ async def unban_globally(_, message):
 @capture_err
 async def broadcast_message(_, message):
     if len(message.command) < 2:
-        await message.reply_text("**Usage**:\n/broadcast [MESSAGE]")
-        return
+        return await message.reply_text("**Usage**:\n/broadcast [MESSAGE]")
     text = message.text.split(None, 1)[1]
     sent = 0
     chats = []
@@ -305,4 +302,6 @@ async def update_restart(_, message):
     await message.reply_text(
         f'```{subprocess.check_output(["git", "pull"]).decode("UTF-8")}```'
     )
+    m = await message.reply_text("**Updated with default branch, restarting now**")
+    await start_restart_stage(m.chat.id, m.message_id)
     os.execvp("python3", ["python3", "-m", "wbb"])

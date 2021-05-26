@@ -64,11 +64,9 @@ async def paste_func(_, message):
         elif message.reply_to_message.document:
             document = message.reply_to_message.document
             if document.file_size > 1048576:
-                await m.edit("You can only paste files smaller than 1MB.")
-                return
+                return await m.edit("You can only paste files smaller than 1MB.")
             if "text" not in document.mime_type:
-                await m.edit("Only text files can be pasted.")
-                return
+                return await m.edit("Only text files can be pasted.")
             doc = await message.reply_to_message.download()
             async with aiofiles.open(doc, mode="r") as f:
                 content = await f.read()
@@ -82,8 +80,7 @@ async def paste_func(_, message):
             await message.reply_photo(
                 photo=preview, quote=False, reply_markup=button
             )
-            await m.delete()
-            return
+            return await m.delete()
         await m.edit(link)
     else:
         await message.reply_text("Reply To A Message With /paste")

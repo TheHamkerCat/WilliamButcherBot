@@ -43,6 +43,7 @@ blacklist_filtersdb = db.blacklistFilters
 pipesdb = db.pipes
 sudoersdb = db.sudoers
 blacklist_chatdb = db.blacklistChat
+restart_stagedb = db.restart_stage
 
 """ Notes functions """
 
@@ -674,3 +675,29 @@ async def whitelist_chat(chat_id: int) -> bool:
         await blacklist_chatdb.delete_one({"chat_id": chat_id})
         return True
     return False
+
+
+""" Restart stage """
+
+async def start_restart_stage(chat_id: int, message_id: int):
+    await restart_stagedb.update_one(
+        {
+            "something": "something"
+        },
+        {
+            "$set": {
+                "chat_id": chat_id,
+                "message_id": message_id,
+                }
+            },
+        upsert=True
+    ) 
+
+async def clean_restart_stage() -> dict:
+    data = await restart_stagedb.find_one({"something": "something"})
+    if not data:
+        return {}
+    await restart_stagedb.delete_one({"something": "something"})
+    return {"chat_id": data['chat_id'], "message_id": data['message_id']}
+
+    

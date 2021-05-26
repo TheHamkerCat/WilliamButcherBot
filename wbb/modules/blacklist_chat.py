@@ -23,16 +23,13 @@ in which you don't want it to be in.
 @capture_err
 async def blacklist_chat_func(_, message: Message):
     if len(message.command) != 2:
-        await message.reply_text("**Usage:**\n/blacklist_chat [CHAT_ID]")
-        return
+        return await message.reply_text("**Usage:**\n/blacklist_chat [CHAT_ID]")
     chat_id = int(message.text.strip().split()[1])
     if chat_id in await blacklisted_chats():
-        await message.reply_text("Chat is already blacklisted.")
-        return
+        return await message.reply_text("Chat is already blacklisted.")
     blacklisted = await blacklist_chat(chat_id)
     if blacklisted:
-        await message.reply_text("Chat has been successfully blacklisted")
-        return
+        return await message.reply_text("Chat has been successfully blacklisted")
     await message.reply_text("Something wrong happened, check logs.")
 
 
@@ -40,16 +37,13 @@ async def blacklist_chat_func(_, message: Message):
 @capture_err
 async def whitelist_chat_func(_, message: Message):
     if len(message.command) != 2:
-        await message.reply_text("**Usage:**\n/whitelist_chat [CHAT_ID]")
-        return
+        return await message.reply_text("**Usage:**\n/whitelist_chat [CHAT_ID]")
     chat_id = int(message.text.strip().split()[1])
     if chat_id not in await blacklisted_chats():
-        await message.reply_text("Chat is already whitelisted.")
-        return
+        return await message.reply_text("Chat is already whitelisted.")
     whitelisted = await whitelist_chat(chat_id)
     if whitelisted:
-        await message.reply_text("Chat has been successfully whitelisted")
-        return
+        return await message.reply_text("Chat has been successfully whitelisted")
     await message.reply_text("Something wrong happened, check logs.")
 
 

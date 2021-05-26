@@ -33,6 +33,7 @@ from wbb import BOT_NAME, BOT_USERNAME, USERBOT_NAME, aiohttpsession, app
 from wbb.modules import ALL_MODULES
 from wbb.modules.sudoers import bot_sys_stats
 from wbb.utils import paginate_modules
+from wbb.utils.dbfunctions import clean_restart_stage
 
 loop = asyncio.get_event_loop()
 
@@ -40,7 +41,13 @@ HELPABLE = {}
 
 
 async def start_bot():
-    global COMMANDS_COUNT
+    restart_data = await clean_restart_stage()
+    if restart_data:
+        await app.edit_message_text(
+                restart_data['chat_id'],
+                restart_data['message_id'],
+                "**Restarted Successfully**"
+                )
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
         if (

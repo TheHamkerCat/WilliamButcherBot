@@ -49,12 +49,10 @@ __HELP__ = """
 @adminsOnly("can_restrict_members")
 async def save_filters(_, message):
     if len(message.command) < 2:
-        await message.reply_text("Usage:\n/blacklist [WORD|SENTENCE]")
-        return
+        return await message.reply_text("Usage:\n/blacklist [WORD|SENTENCE]")
     word = message.text.split(None, 1)[1].strip()
     if not word:
-        await message.reply_text("**Usage**\n__/blacklist [WORD|SENTENCE]__")
-        return
+        return await message.reply_text("**Usage**\n__/blacklist [WORD|SENTENCE]__")
     chat_id = message.chat.id
     await save_blacklist_filter(chat_id, word)
     await message.reply_text(f"__**Blacklisted {word}.**__")
@@ -81,17 +79,14 @@ async def get_filterss(_, message):
 @adminsOnly("can_restrict_members")
 async def del_filter(_, message):
     if len(message.command) < 2:
-        await message.reply_text("Usage:\n/whitelist [WORD|SENTENCE]")
-        return
+        return await message.reply_text("Usage:\n/whitelist [WORD|SENTENCE]")
     word = message.text.split(None, 1)[1].strip()
     if not word:
-        await message.reply_text("Usage:\n/whitelist [WORD|SENTENCE]")
-        return
+        return await message.reply_text("Usage:\n/whitelist [WORD|SENTENCE]")
     chat_id = message.chat.id
     deleted = await delete_blacklist_filter(chat_id, word)
     if deleted:
-        await message.reply_text(f"**Whitelisted {word}.**")
-        return
+        return await message.reply_text(f"**Whitelisted {word}.**")
     await message.reply_text("**No such blacklist filter.**")
 
 

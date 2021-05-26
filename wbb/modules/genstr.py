@@ -55,8 +55,7 @@ async def genstr(_, message):
         code = await temp_client.send_code(phone)
         await asyncio.sleep(2)
     except PhoneNumberInvalid:
-        await message.reply_text("Phone Number is Invalid")
-        return
+        return await message.reply_text("Phone Number is Invalid")
 
     try:
         otp = await app.ask(
@@ -69,21 +68,18 @@ async def genstr(_, message):
         )
 
     except TimeoutError:
-        await message.reply_text(
+        return await message.reply_text(
             "Time limit reached of 5 min. Process Cancelled."
         )
-        return
     otp_code = otp.text
     try:
         await temp_client.sign_in(
             phone, code.phone_code_hash, phone_code=" ".join(str(otp_code))
         )
     except PhoneCodeInvalid:
-        await message.reply_text("Invalid OTP.")
-        return
+        return await message.reply_text("Invalid OTP.")
     except PhoneCodeExpired:
-        await message.reply_text("OTP is Expired.")
-        return
+        return await message.reply_text("OTP is Expired.")
     except SessionPasswordNeeded:
         try:
             two_step_code = await app.ask(
@@ -92,17 +88,14 @@ async def genstr(_, message):
                 timeout=300,
             )
         except TimeoutError:
-            await message.reply_text("Time limit reached of 5 min.")
-            return
+            return await message.reply_text("Time limit reached of 5 min.")
         new_code = two_step_code.text
         try:
             await temp_client.check_password(new_code)
         except Exception as e:
-            await message.reply_text(f"**ERROR:** `{str(e)}`")
-            return
+            return await message.reply_text(f"**ERROR:** `{str(e)}`")
     except Exception as e:
-        await app.send_message(chat.id, f"**ERROR:** `{str(e)}`")
-        return
+        return await app.send_message(chat.id, f"**ERROR:** `{str(e)}`")
     try:
         session_string = await temp_client.export_session_string()
         await temp_client.disconnect()
@@ -112,4 +105,3 @@ async def genstr(_, message):
         )
     except Exception as e:
         await app.send_message(chat.id, f"**ERROR:** `{str(e)}`")
-        return

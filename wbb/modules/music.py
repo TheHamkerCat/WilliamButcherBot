@@ -92,14 +92,12 @@ def download_youtube_audio(url: str, m=0):
 async def music(_, message):
     global is_downloading
     if len(message.command) != 2:
-        await message.reply_text("/ytmusic needs a link as argument")
-        return
+        return await message.reply_text("/ytmusic needs a link as argument")
     url = message.text.split(None, 1)[1]
     if is_downloading:
-        await message.reply_text(
+        return await message.reply_text(
             "Another download is in progress, try again after sometime."
         )
-        return
     is_downloading = True
     m = await message.reply_text(
         f"Downloading {url}", disable_web_page_preview=True
@@ -120,8 +118,7 @@ async def music(_, message):
         ) = music
     except Exception as e:
         is_downloading = False
-        await m.edit(str(e))
-        return
+        return await m.edit(str(e))
     await message.reply_audio(
         audio_file,
         duration=duration,
@@ -155,13 +152,11 @@ async def download_song(url):
 async def jssong(_, message):
     global is_downloading
     if len(message.command) < 2:
-        await message.reply_text("/saavn requires an argument.")
-        return
+        return await message.reply_text("/saavn requires an argument.")
     if is_downloading:
-        await message.reply_text(
+        return await message.reply_text(
             "Another download is in progress, try again after sometime."
         )
-        return
     is_downloading = True
     text = message.text.split(None, 1)[1]
     m = await message.reply_text("Searching...")
@@ -186,8 +181,7 @@ async def jssong(_, message):
         await m.delete()
     except Exception as e:
         is_downloading = False
-        await m.edit(str(e))
-        return
+        return await m.edit(str(e))
     is_downloading = False
 
 
@@ -199,13 +193,11 @@ async def jssong(_, message):
 async def deezsong(_, message):
     global is_downloading
     if len(message.command) < 2:
-        await message.reply_text("/deezer requires an argument.")
-        return
+        return await message.reply_text("/deezer requires an argument.")
     if is_downloading:
-        await message.reply_text(
+        return await message.reply_text(
             "Another download is in progress, try again after sometime."
         )
-        return
     is_downloading = True
     text = message.text.split(None, 1)[1]
     m = await message.reply_text("Searching...")
@@ -230,8 +222,7 @@ async def deezsong(_, message):
         await m.delete()
     except Exception as e:
         is_downloading = False
-        await m.edit(str(e))
-        return
+        return await m.edit(str(e))
     is_downloading = False
 
 
@@ -241,14 +232,12 @@ async def deezsong(_, message):
 @app.on_message(filters.command("lyrics"))
 async def lyrics_func(_, message):
     if len(message.command) < 2:
-        await message.reply_text("**Usage:**\n/lyrics [QUERY]")
-        return
+        return await message.reply_text("**Usage:**\n/lyrics [QUERY]")
     m = await message.reply_text("**Searching**")
     query = message.text.strip().split(None, 1)[1]
     song = await arq.lyrics(query)
     lyrics = song.result
     if len(lyrics) < 4095:
-        await m.edit(f"__{lyrics}__")
-        return
+        return await m.edit(f"__{lyrics}__")
     lyrics = await paste(lyrics)
     await m.edit(f"**LYRICS_TOO_LONG:** [URL]({lyrics})")
