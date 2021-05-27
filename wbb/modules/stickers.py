@@ -66,6 +66,8 @@ async def sticker_id(_, message):
 async def kang(client, message):
     if not message.reply_to_message:
         return await message.reply_text("Reply to a sticker/image to kang it.")
+    if not message.from_user:
+        return await message.reply_sticker("You are anon admin, kang stickers in my pm")
     msg = await message.reply_text("Kanging Sticker..")
 
     # Find the proper emoji

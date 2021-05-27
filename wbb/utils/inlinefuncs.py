@@ -730,8 +730,7 @@ async def speedtest_init(query):
 @app.on_callback_query(filters.regex("test_speedtest"))
 async def test_speedtest_cq(_, cq):
     if cq.from_user.id not in SUDOERS:
-        await cq.answer("This Isn't For You!")
-        return
+        return await cq.answer("This Isn't For You!")
     inline_message_id = cq.inline_message_id
     await app.edit_inline_text(inline_message_id, "**Testing**")
     loop = asyncio.get_running_loop()
