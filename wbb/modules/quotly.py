@@ -116,7 +116,7 @@ async def quotly_func(client, message: Message):
     try:
         sticker = await quotify(messages)
         if not sticker[0]:
-            await message.rely_text(sticker[1])
+            await message.reply_text(sticker[1])
             return await m.delete()
         sticker = sticker[1]
         await message.reply_sticker(sticker)
