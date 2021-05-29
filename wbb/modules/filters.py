@@ -130,7 +130,7 @@ async def filters_re(_, message):
                     )
                     if text[0] == "~":
                         return await message.delete()
-                return
+                    return
                 await message.reply_text(data, disable_web_page_preview=True)
             else:
                 if message.reply_to_message:
