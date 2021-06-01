@@ -38,6 +38,7 @@ from pyrogram import filters
 from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.pastebin import paste
+from wbb.utils.fetch import fetch
 
 __MODULE__ = "Music"
 __HELP__ = """/ytmusic [link] To Download Music From Various Websites Including Youtube. [SUDOERS]
@@ -212,9 +213,9 @@ async def deezsong(_, message):
         url = songs.result[0].url
         artist = songs.result[0].artist
         await m.edit("Downloading")
-        proxy = "http://52.187.67.188:5000/mirror?url="
+        proxy = "http://52.187.67.188:5000"
         try:
-            song = await download_song(f"{proxy}{url}.mp3")
+            song = await download_song(f"{proxy}/mirror?url={url}.mp3")
         except Exception:
             song = await download_song(url)
         if not song:
@@ -231,6 +232,10 @@ async def deezsong(_, message):
         is_downloading = False
         return await m.edit(str(e))
     is_downloading = False
+    try:
+        await fetch(f"{proxy}/remove")
+    except Exception:
+        pass
 
 
 # Lyrics
