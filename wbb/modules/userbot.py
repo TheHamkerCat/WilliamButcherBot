@@ -189,7 +189,8 @@ async def sendFile(message: Message, text: str):
     filters.command(["c", "cpp"], prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
 )
 async def c_cpp_eval(_, message: Message):
-    code = message.text.strip()[3:]
+    code = message.text.strip()
+    code = code[3:] if message.command[0] == "c" else code[5:]
     file = "exec.c"
     compiler = "g++"
     out = "exec"
