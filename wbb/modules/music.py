@@ -215,7 +215,6 @@ async def deezsong(_, message):
         proxy = "http://52.187.67.188:5000/mirror?url="
         try:
             song = await download_song(f"{proxy}{url}.mp3")
-            print("downloaded from proxy")
         except Exception:
             song = await download_song(url)
         if not song:
