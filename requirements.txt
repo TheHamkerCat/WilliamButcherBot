@@ -18,7 +18,6 @@ requests
 search_engine_parser
 speedtest-cli
 TgCrypto
-telegraph
 uvloop
 youtube_dl
 bs4

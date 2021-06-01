@@ -174,7 +174,7 @@ async def shellrunner(client, message: Message):
         )
 
 
-""" C Eval """
+""" C and CPP Eval """
 
 
 async def sendFile(message: Message, text: str):
@@ -186,13 +186,15 @@ async def sendFile(message: Message, text: str):
 
 
 @app2.on_message(
-    filters.command("c", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
+    filters.command(["c", "cpp"], prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
 )
-async def cEval(_, message: Message):
+async def c_cpp_eval(_, message: Message):
     code = message.text.strip()[3:]
     file = "exec.c"
-    cmdCompile = ["gcc", "-g", "exec.c", "-o", "exec"]
-    cmdRun = ["./exec"]
+    compiler = "g++"
+    out = "exec"
+    cmdCompile = [compiler, "-g", file, "-o", out]
+    cmdRun = [f"./{out}"]
     async with aiofiles.open(file, mode="w+") as f:
         await f.write(code)
     t1 = time()
@@ -212,7 +214,7 @@ async def cEval(_, message: Message):
         return await edit_or_reply(message, text=text)
     pRun = subprocess.run(cmdRun, capture_output=True)
     t2 = time()
-    os.remove("exec")
+    os.remove(out)
     err = pRun.stderr.decode()
     out = pRun.stdout.decode()
     err = f"**RUNTIME ERROR:**\n```{escape(err)}```" if err else None

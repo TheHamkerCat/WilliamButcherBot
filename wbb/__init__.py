@@ -32,7 +32,6 @@ from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from pyrogram import Client
 from pyromod import listen
 from Python_ARQ import ARQ
-from telegraph import Telegraph
 
 is_config = path.exists("config.py")
 if is_config:
@@ -89,10 +88,6 @@ else:
 # Bot client
 print("[INFO]: INITIALIZING BOT CLIENT")
 app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
-# Telegraph client
-print("[INFO]: INITIALIZING TELEGRAPH")
-telegraph = Telegraph()
-telegraph.create_account(short_name="wbb")
 # Aiohttp Client
 print("[INFO]: INITIALZING AIOHTTP SESSION")
 aiohttpsession = ClientSession()
