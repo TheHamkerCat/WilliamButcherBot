@@ -137,10 +137,11 @@ async def download_song(url):
     song_name = f"{randint(6969, 6999)}.mp3"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
-            if resp.status == 200:
-                f = await aiofiles.open(song_name, mode="wb")
-                await f.write(await resp.read())
-                await f.close()
+            if resp.status != 200:
+                return
+            f = await aiofiles.open(song_name, mode="wb")
+            await f.write(await resp.read())
+            await f.close()
     return song_name
 
 
@@ -202,7 +203,7 @@ async def deezsong(_, message):
     text = message.text.split(None, 1)[1]
     m = await message.reply_text("Searching...")
     try:
-        songs = await arq.deezer(text, 1)
+        songs = await arq.deezer(text, 1, 9)
         if not songs.ok:
             await m.edit(songs.result)
             is_downloading = False
@@ -211,7 +212,14 @@ async def deezsong(_, message):
         url = songs.result[0].url
         artist = songs.result[0].artist
         await m.edit("Downloading")
-        song = await download_song(url)
+        proxy = "http://52.187.67.188:5000/mirror?url="
+        try:
+            song = await download_song(f"{proxy}{url}.mp3")
+            print("downloaded from proxy")
+        except Exception:
+            song = await download_song(url)
+        if not song:
+            song = await download_song(url)
         await m.edit("Uploading")
         await message.reply_audio(
             audio=song,
