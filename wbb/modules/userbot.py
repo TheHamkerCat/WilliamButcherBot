@@ -186,11 +186,11 @@ async def sendFile(message: Message, text: str):
 
 
 @app2.on_message(
-    filters.command(["c", "cpp"], prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
+    filters.command(["c", "cpp"], prefixes=USERBOT_PREFIX)
+    & filters.user(SUDOERS)
 )
 async def c_cpp_eval(_, message: Message):
-    code = message.text.strip()
-    code = code[3:] if message.command[0] == "c" else code[5:]
+    code = message.text.split(None, 1)[1]
     file = "exec.c"
     compiler = "g++"
     out = "exec"
@@ -198,36 +198,21 @@ async def c_cpp_eval(_, message: Message):
     cmdRun = [f"./{out}"]
     async with aiofiles.open(file, mode="w+") as f:
         await f.write(code)
-    t1 = time()
     pCompile = subprocess.run(cmdCompile, capture_output=True)
     os.remove(file)
     err = pCompile.stderr.decode()
     if err:
-        text = f"""
-**INPUT:**
-```{escape(code)}```
-
-**COMPILE-TIME ERROR:**
-```{escape(err)}```
-"""
+        text = f"**INPUT:**\n```{escape(code)}```\n\n**COMPILE-TIME ERROR:**```{escape(err)}```"
         if len(text) > 4090:
             return await sendFile(message, text)
         return await edit_or_reply(message, text=text)
     pRun = subprocess.run(cmdRun, capture_output=True)
-    t2 = time()
     os.remove(out)
     err = pRun.stderr.decode()
     out = pRun.stdout.decode()
     err = f"**RUNTIME ERROR:**\n```{escape(err)}```" if err else None
     out = f"**OUTPUT:**\n```{escape(out)}```" if out else None
-    text = f"""
-**INPUT:**
-```{escape(code)}```
-
-{err if err else out}
-
-`Compiled and executed in {round(t2-t1, 5)} seconds`
-"""
+    text = f"**INPUT:**\n```{escape(code)}```\n\n{err if err else out}"
     if len(text) > 4090:
         return await sendFile(message, text)
     await edit_or_reply(message, text=text)

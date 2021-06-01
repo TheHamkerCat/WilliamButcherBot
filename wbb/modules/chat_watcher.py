@@ -24,10 +24,10 @@ SOFTWARE.
 from pyrogram import filters
 
 from wbb import app
+from wbb.utils.dbfunctions import (add_served_chat, add_served_user,
+                                   blacklisted_chats, is_served_chat,
+                                   is_served_user)
 from wbb.utils.filter_groups import chat_watcher_group
-from wbb.utils.dbfunctions import (blacklisted_chats, is_served_chat,
-        add_served_chat, is_served_user,
-        add_served_user)
 
 
 @app.on_message(group=chat_watcher_group)

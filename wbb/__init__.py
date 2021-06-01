@@ -72,7 +72,6 @@ async def load_sudoers():
     print("[INFO]: LOADED SUDOERS")
 
 
-
 loop = asyncio.get_event_loop()
 loop.run_until_complete(load_sudoers())
 

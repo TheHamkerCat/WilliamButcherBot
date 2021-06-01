@@ -37,8 +37,8 @@ from pyrogram import filters
 
 from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.pastebin import paste
 from wbb.utils.fetch import fetch
+from wbb.utils.pastebin import paste
 
 __MODULE__ = "Music"
 __HELP__ = """/ytmusic [link] To Download Music From Various Websites Including Youtube. [SUDOERS]
