@@ -22,13 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import asyncio
+import re
 
 from pyrogram import filters
 
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
-from wbb.modules.admin import member_permissions
 from wbb.utils.dbfunctions import (alpha_to_int, get_karma, get_karmas,
                                    int_to_alpha, is_karma_on, karma_off,
                                    karma_on, update_karma)
@@ -43,9 +43,9 @@ Send /karma without replying to any message to chek karma list of top 10 users""
 
 
 regex_upvote = (
-    r"^((?i)\+|\+\+|\+1|thx|tnx|ty|thank you|thanx|thanks|pro|cool|good|👍)$"
+    r"^(+|++|+1|thx|tnx|ty|thank you|thanx|thanks|pro|cool|good|👍|++ .+)$"
 )
-regex_downvote = r"^(\-|\-\-|\-1|👎)$"
+regex_downvote = r"^(-|--|-1|👎|-- .+)$"
 
 
 @app.on_message(
@@ -53,7 +53,7 @@ regex_downvote = r"^(\-|\-\-|\-1|👎)$"
     & filters.group
     & filters.incoming
     & filters.reply
-    & filters.regex(regex_upvote)
+    & filters.regex(regex_upvote, re.IGNORECASE)
     & ~filters.via_bot
     & ~filters.bot
     & ~filters.edited,
@@ -92,7 +92,7 @@ async def upvote(_, message):
     & filters.group
     & filters.incoming
     & filters.reply
-    & filters.regex(regex_downvote)
+    & filters.regex(regex_downvote, re.IGNORECASE)
     & ~filters.via_bot
     & ~filters.bot
     & ~filters.edited,
@@ -129,7 +129,7 @@ async def downvote(_, message):
 
 @app.on_message(filters.command("karma") & filters.group)
 @capture_err
-async def karma(_, message):
+async def command_karma(_, message):
     chat_id = message.chat.id
     if not message.reply_to_message:
         m = await message.reply_text("Analyzing Karma...Will Take 10 Seconds")
