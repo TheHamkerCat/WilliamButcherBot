@@ -20,6 +20,7 @@ from pyrogram import filters
 from pyrogram.types import Message
 
 from wbb import SUDOERS, USERBOT_PREFIX, app, app2, arq
+from wbb.core.decorators.misc import exec_time
 
 __MODULE__ = "Userbot"
 __HELP__ = """
@@ -29,7 +30,6 @@ __HELP__ = """
 .approve | .disapprove - Approve Or Disapprove A User To PM You.
 .block | .unblock - Block Or Unblock A User.
 """
-arq = arq
 
 # Eval and Sh module from nana-remix
 
@@ -59,6 +59,10 @@ async def executor(client, message: Message):
         cmd = message.text.split(" ", maxsplit=1)[1]
     except IndexError:
         return await message.delete()
+    m = message
+    p = print
+    if message.reply_to_message:
+        r = message.reply_to_message
     old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = StringIO()
