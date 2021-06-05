@@ -33,6 +33,10 @@ __HELP__ = """
 
 # Eval and Sh module from nana-remix
 
+m = None
+p = print
+r = None
+
 
 async def aexec(code, client, message):
     exec(
@@ -55,6 +59,7 @@ async def edit_or_reply(msg: Message, **kwargs):
     & filters.command("l", prefixes=USERBOT_PREFIX)
 )
 async def executor(client, message: Message):
+    global m, p, r
     try:
         cmd = message.text.split(" ", maxsplit=1)[1]
     except IndexError:
