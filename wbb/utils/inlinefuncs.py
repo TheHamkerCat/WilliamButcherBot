@@ -884,12 +884,19 @@ async def image_func(answers, query):
         )
         return answers
     results = results.result[0:48]
+    buttons = InlineKeyboard(row_width=2)
+    buttons.add(
+            InlineKeyboardButton(
+                text="Search again", switch_inline_query_current_chat="image"
+            ),
+        )
     for i in results:
         answers.append(
             InlineQueryResultPhoto(
                 title=i.title,
                 photo_url=i.url,
                 thumb_url=i.url,
+                reply_markup=buttons,
             )
         )
     return answers
