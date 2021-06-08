@@ -116,31 +116,7 @@ async def inline_query_handler(client, query):
                 )
             tex = text.split(None, 1)[1].strip()
             answerss = await wall_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss)
-
-        elif text.split()[0] == "saavn":
-            if len(text.split()) < 2:
-                return await client.answer_inline_query(
-                    query.id,
-                    results=answers,
-                    switch_pm_text="JioSaavn Search | saavn [QUERY]",
-                    switch_pm_parameter="inline",
-                )
-            tex = text.split(None, 1)[1].strip()
-            answerss = await saavn_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss)
-
-        elif text.split()[0] == "deezer":
-            if len(text.split()) < 2:
-                return await client.answer_inline_query(
-                    query.id,
-                    results=answers,
-                    switch_pm_text="Deezer Search | deezer [QUERY]",
-                    switch_pm_parameter="inline",
-                )
-            tex = text.split(None, 1)[1].strip()
-            answerss = await deezer_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss)
+            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
 
         elif text.split()[0] == "torrent":
             if len(text.split()) < 2:
@@ -258,34 +234,6 @@ async def inline_query_handler(client, query):
                 query.id, results=answerss, cache_time=2
             )
 
-        elif text.split()[0] == "paste":
-            if len(text.split()) < 2:
-                return await client.answer_inline_query(
-                    query.id,
-                    results=answers,
-                    switch_pm_text="Pastebin | paste [TG_MESSAGE_LINK]",
-                    switch_pm_parameter="inline",
-                )
-            link = text.strip().split()[1]
-            answerss = await pastebin_func(answers, link)
-            await client.answer_inline_query(
-                query.id, results=answerss, cache_time=2
-            )
-
-        elif text.split()[0] == "carbon":
-            if len(text.split()) < 2:
-                return await client.answer_inline_query(
-                    query.id,
-                    results=answers,
-                    switch_pm_text="Carbon | carbon [TG_MESSAGE_LINK]",
-                    switch_pm_parameter="inline",
-                )
-            link = text.split()[1]
-            answerss = await carbon_inline_func(answers, link)
-            await client.answer_inline_query(
-                query.id, results=answerss, cache_time=2
-            )
-
         elif text.split()[0] == "pmpermit":
             user_id = query.from_user.id
             victim = text.split()[1]
@@ -296,20 +244,6 @@ async def inline_query_handler(client, query):
 
         elif text.split()[0] == "ping":
             answerss = await ping_func(answers)
-            await client.answer_inline_query(
-                query.id, results=answerss, cache_time=2
-            )
-
-        elif text.split()[0] == "nsfw_scan":
-            if len(text.split()) < 2:
-                return await client.answer_inline_query(
-                    query.id,
-                    results=answers,
-                    switch_pm_text="NSFW Scan | nsfw_scan [url]",
-                    switch_pm_parameter="inline",
-                )
-            tex = text.split(None, 1)[1].strip()
-            answerss = await nsfw_scan_func(answers, tex)
             await client.answer_inline_query(
                 query.id, results=answerss, cache_time=2
             )
@@ -385,19 +319,19 @@ async def inline_query_handler(client, query):
                 query.id, results=answerss, cache_time=2
             )
 
-        elif text.split()[0] == "audio":
+        elif text.split()[0] == "image":
             if len(text.split()) < 2:
                 return await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text="Random Audio Search | audio [Query]",
+                    is_gallery=True,
+                    switch_pm_text="Image Search | image [QUERY]",
                     switch_pm_parameter="inline",
                 )
-            tex = text.split()[1].strip()
-            answerss = await randomAudioFunc(answers, tex)
-            await client.answer_inline_query(
-                query.id, results=answerss, cache_time=2
-            )
+            tex = text.split(None, 1)[1].strip()
+            answerss = await image_func(answers, tex)
+            await client.answer_inline_query(query.id, results=answerss, cache_time=3600)
+
     except Exception as e:
         e = traceback.format_exc()
         print(e, " InLine")

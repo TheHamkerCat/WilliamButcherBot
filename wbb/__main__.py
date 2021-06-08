@@ -29,7 +29,7 @@ import uvloop
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from wbb import BOT_NAME, BOT_USERNAME, USERBOT_NAME, aiohttpsession, app, app2
+from wbb import BOT_NAME, BOT_USERNAME, USERBOT_NAME, aiohttpsession, app
 from wbb.modules import ALL_MODULES
 from wbb.modules.sudoers import bot_sys_stats
 from wbb.utils import paginate_modules

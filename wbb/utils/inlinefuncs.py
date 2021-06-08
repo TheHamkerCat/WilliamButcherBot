@@ -29,7 +29,6 @@ from random import randint
 from sys import version as pyver
 from time import ctime, time
 
-import aiofiles
 from motor import version as mongover
 from pykeyboard import InlineKeyboard
 from pyrogram import __version__ as pyrover
@@ -42,14 +41,11 @@ from search_engine_parser import GoogleSearch
 from wbb import (BOT_USERNAME, MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_ID,
                  USERBOT_NAME, USERBOT_USERNAME, aiohttpsession, app, app2,
                  arq)
-from wbb.core.types import (InlineQueryResultAudio,
-                            InlineQueryResultCachedDocument)
+from wbb.core.types import InlineQueryResultCachedDocument
 from wbb.modules.info import get_chat_info, get_user_info
 from wbb.modules.music import download_youtube_audio
-from wbb.modules.paste import isPreviewUp
 from wbb.utils.fetch import fetch
-from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
-from wbb.utils.functions import make_carbon, test_speedtest
+from wbb.utils.functions import test_speedtest
 from wbb.utils.pastebin import paste
 
 keywords_list = [
@@ -66,19 +62,15 @@ keywords_list = [
     "wiki",
     "speedtest",
     "music",
-    "saavn",
-    "deezer",
     "gh_repo",
     "gh_user",
     "search",
-    "paste",
-    "nsfw_scan",
     "ytmusic",
-    "carbon",
     "info",
     "chat_info",
     "tmdb",
     "pypi",
+    "image",
 ]
 
 
@@ -266,84 +258,7 @@ async def wall_func(answers, text):
     return answers
 
 
-async def saavn_func(answers, text):
-    buttons_list = []
-    results = await arq.saavn(text)
-    if not results.ok:
-        answers.append(
-            InlineQueryResultArticle(
-                title="Error",
-                description=results.result,
-                input_message_content=InputTextMessageContent(results.result),
-            )
-        )
-        return answers
-    results = results.result
-    for count, i in enumerate(results):
-        buttons = InlineKeyboard(row_width=1)
-        buttons.add(InlineKeyboardButton("Download | Play", url=i.media_url))
-        buttons_list.append(buttons)
-        duration = await time_convert(i.duration)
-        caption = f"""
-**Title:** {i.song}
-**Album:** {i.album}
-**Duration:** {duration}
-**Release:** {i.year}
-**Singers:** {i.singers}"""
-        description = f"{i.album} | {duration} " + f"| {i.singers} ({i.year})"
-        answers.append(
-            InlineQueryResultArticle(
-                title=i.song,
-                input_message_content=InputTextMessageContent(
-                    caption, disable_web_page_preview=True
-                ),
-                description=description,
-                thumb_url=i.image,
-                reply_markup=buttons_list[count],
-            )
-        )
-    return answers
-
-
-async def deezer_func(answers, text):
-    buttons_list = []
-    results = await arq.deezer(text, 5)
-    if not results.ok:
-        answers.append(
-            InlineQueryResultArticle(
-                title="Error",
-                description=results.result,
-                input_message_content=InputTextMessageContent(results.result),
-            )
-        )
-        return answers
-    results = results.result
-    for count, i in enumerate(results):
-        buttons = InlineKeyboard(row_width=1)
-        buttons.add(InlineKeyboardButton("Download | Play", url=i.url))
-        buttons_list.append(buttons)
-        duration = await time_convert(i.duration)
-        caption = f"""
-**Title:** {i.title}
-**Artist:** {i.artist}
-**Duration:** {duration}
-**Source:** [Deezer]({i.source})"""
-        description = f"{i.artist} | {duration}"
-        answers.append(
-            InlineQueryResultArticle(
-                title=i.title,
-                thumb_url=i.thumbnail,
-                description=description,
-                input_message_content=InputTextMessageContent(
-                    caption, disable_web_page_preview=True
-                ),
-                reply_markup=buttons_list[count],
-            )
-        )
-    return answers
-
-
-# Used my api key here, don't fuck with it
+# Used my api key here, don't fuck it
 async def shortify(url):
     if "." not in url:
         return
@@ -746,46 +661,6 @@ async def test_speedtest_cq(_, cq):
     await app.edit_inline_text(inline_message_id, msg)
 
 
-async def pastebin_func(answers, link):
-    link = link.split("/")
-    if link[3] == "c":
-        chat, message_id = int("-100" + link[4]), int(link[5])
-    else:
-        chat, message_id = link[3], link[4]
-    m = await app.get_messages(chat, message_ids=int(message_id))
-    if not m.text and not m.document:
-        m = await app2.get_messages(chat, message_ids=int(message_id))
-    if m.text:
-        content = m.text
-    else:
-        if m.document.file_size > 1048576:
-            answers.append(
-                InlineQueryResultArticle(
-                    title="DOCUMENT TOO BIG",
-                    description="Maximum supported size is 1MB",
-                    input_message_content=InputTextMessageContent(
-                        "DOCUMENT TOO BIG"
-                    ),
-                )
-            )
-            return answers
-        doc = await m.download()
-        async with aiofiles.open(doc, mode="r") as f:
-            content = await f.read()
-        os.remove(doc)
-    link = await paste(content)
-    preview = link + "/preview.png"
-    if not await isPreviewUp(preview):
-        return []
-    await app.send_photo(MESSAGE_DUMP_CHAT, preview)  # To Pre-cache the media
-    buttons = InlineKeyboard(row_width=1)
-    buttons.add(InlineKeyboardButton(text="Paste Link", url=link))
-    answers.append(
-        InlineQueryResultPhoto(photo_url=preview, reply_markup=buttons)
-    )
-    return answers
-
-
 async def pmpermit_func(answers, user_id, victim):
     if user_id != USERBOT_ID:
         return
@@ -830,40 +705,6 @@ async def ping_func(answers):
     return answers
 
 
-async def nsfw_scan_func(answers, url: str):
-    t1 = time()
-    data = await arq.nsfw_scan(url)
-    if not data.ok:
-        answers.append(
-            InlineQueryResultArticle(
-                title="Error",
-                description=data.result,
-                input_message_content=InputTextMessageContent(data.result),
-            )
-        )
-        return answers
-    t2 = time()
-    tt = round(t2 - t1, 4)
-    data = data.result
-    content = f"""
-**Scanned [Image]({url}) In {tt} Seconds.**
-
-**Drawings:** `{data.drawings} %`
-**Neutral:** `{data.neutral} %`
-**Hentai:** `{data.hentai} %`
-**Porn:** `{data.porn} %`
-**Sexy:** `{data.sexy} %`
-    """
-    answers.append(
-        InlineQueryResultArticle(
-            title="Scanned",
-            description=f"Took {tt} Seconds.",
-            input_message_content=InputTextMessageContent(content),
-        )
-    )
-    return answers
-
-
 async def yt_music_func(answers, url):
     if "http" not in url:
         url = (await arq.youtube(url)).result[0]
@@ -899,50 +740,6 @@ async def yt_music_func(answers, url):
     os.remove(thumbnail)
     answers.append(
         InlineQueryResultCachedDocument(title=title, file_id=m.audio.file_id)
-    )
-    return answers
-
-
-async def carbon_inline_func(answers, link):
-    link = link.split("/")
-    if link[3] == "c":
-        chat, message_id = int("-100" + link[4]), int(link[5])
-    else:
-        chat, message_id = link[3], link[4]
-    m = await app.get_messages(chat, message_ids=int(message_id))
-    if not m.text and not m.document:
-        m = await app2.get_messages(chat, message_ids=int(message_id))
-    if m.text:
-        content = m.text
-    else:
-        if m.document.file_size > 1048576:
-            answers.append(
-                InlineQueryResultArticle(
-                    title="DOCUMENT TOO BIG",
-                    description="Maximum supported size is 1MB",
-                    input_message_content=InputTextMessageContent(
-                        "DOCUMENT TOO BIG"
-                    ),
-                )
-            )
-            return answers
-        doc = await m.download()
-        async with aiofiles.open(doc, mode="r") as f:
-            content = await f.read()
-        os.remove(doc)
-    image = await make_carbon(content)
-    link = await paste(content)
-    # To Pre-cache the media
-    carbon = await app.send_document(MESSAGE_DUMP_CHAT, image)
-    os.remove(image)
-    buttons = InlineKeyboard(row_width=1)
-    buttons.add(InlineKeyboardButton(text="Paste Link", url=link))
-    answers.append(
-        InlineQueryResultCachedDocument(
-            file_id=carbon.document.file_id,
-            title="Carbon",
-            reply_markup=buttons,
-        )
     )
     return answers
 
@@ -1075,18 +872,24 @@ async def pypiSearchFunc(answers: list, query: str) -> list:
     return answers
 
 
-async def randomAudioFunc(answers: list, query: str) -> list:
-    url = f"https://www.zedge.net/api-zedge-web/browse/search?query={query}&contentType=ringtones"
-    async with aiohttpsession.get(url) as resp:
-        data = await resp.json()
-    items = data["items"]
-    answers = [
-        InlineQueryResultAudio(
-            audio_url=audio["audioUrl"],
-            thumb_url="https://tweety.drk1.workers.dev/0:/image_2021-05-22_20-56-47.png",
-            title=audio["title"],
-            mime_type="audio/mp3",
+async def image_func(answers, query):
+    results = await arq.image(query)
+    if not results.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=results.result,
+                input_message_content=InputTextMessageContent(results.result),
+            )
         )
-        for audio in items
-    ]
+        return answers
+    results = results.result[0:48]
+    for i in results:
+        answers.append(
+            InlineQueryResultPhoto(
+                title=i.title,
+                photo_url=i.url,
+                thumb_url=i.url,
+            )
+        )
     return answers

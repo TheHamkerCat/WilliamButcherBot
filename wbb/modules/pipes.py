@@ -91,14 +91,6 @@ async def pipes_worker_bot(_, message: Message):
 async def pipes_worker_userbot(_, message: Message):
     for pipe in pipes_list_userbot:
         if pipe["from_chat_id"] == message.chat.id:
-            await message.forward(pipe["to_chat_id"])
-
-
-@app2.on_message(~filters.me, group=pipes_group)
-@capture_err
-async def pipes_worker_userbot(_, message: Message):
-    for pipe in pipes_list_userbot:
-        if pipe["from_chat_id"] == message.chat.id:
             if not message.text:
                 m, temp = await asyncio.gather(
                     app.listen(USERBOT_ID), message.copy(BOT_ID)

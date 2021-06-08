@@ -13,7 +13,6 @@ import traceback
 from html import escape
 from inspect import getfullargspec
 from io import StringIO
-from time import time
 
 import aiofiles
 from pyrogram import filters
@@ -36,6 +35,8 @@ __HELP__ = """
 m = None
 p = print
 r = None
+exec_time = exec_time
+arq = arq
 
 
 async def aexec(code, client, message):
