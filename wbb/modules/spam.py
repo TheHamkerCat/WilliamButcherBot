@@ -90,7 +90,9 @@ async def spam_protection_func(_, message: Message):
                     InlineKeyboardButton(
                         text="Yes it's spam",
                         callback_data="s_p_spam"
-                    ),
+                    )
+                ],
+                [
                     InlineKeyboardButton(
                         text="No, it's not spam",
                         callback_data="s_p_ham",
@@ -130,7 +132,7 @@ async def spam_p_callback(_, cq: CallbackQuery):
             return
         text = cq.message.text.markdown
         text = text.replace("Alerted", f"Deleted Message With {from_user.mention}'s Approval.")
-        await cq.message.edit(text)
+        return await cq.message.edit(text)
     
     await cq.message.delete()
     if cq.message.reply_to_message:
