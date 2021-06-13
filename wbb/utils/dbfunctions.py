@@ -45,6 +45,7 @@ pipesdb = db.pipes
 sudoersdb = db.sudoers
 blacklist_chatdb = db.blacklistChat
 restart_stagedb = db.restart_stage
+trustdb = db.trust
 
 """ Notes functions """
 
@@ -727,3 +728,23 @@ async def clean_restart_stage() -> dict:
         return {}
     await restart_stagedb.delete_one({"something": "something"})
     return {"chat_id": data["chat_id"], "message_id": data["message_id"]}
+
+
+""" TRUST DB """
+
+async def get_trust_db(user_id: int) -> list:
+    user = await trustdb.find_one({"user_id": user_id})
+    if not user:
+        return []
+    return user['data']
+    
+
+async def update_trust_db(user_id: int, new_data: float):
+    user = await trustdb.find_one({"user_id": user_id})
+    data = user['data'] if user else []
+    if len(data) >= 2000:
+        data.remove(data[0])
+    data.append(new_data)
+    await trustdb.update_one(
+        {"user_id": user_id}, {"$set": {"data": data}}, upsert=True
+    )

@@ -33,3 +33,4 @@ blacklist_filters_group = 9
 pipes_group = 10
 taglog_group = 11
 chat_watcher_group = 12
+trust_group = 13

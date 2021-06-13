@@ -35,9 +35,12 @@ flood = {}
 
 @app2.on_message(
     filters.private
+    & filters.incoming
+    & ~filters.service
     & ~filters.edited
     & ~filters.me
     & ~filters.bot
+    & ~filters.via_bot
     & ~filters.user(SUDOERS)
 )
 @capture_err
@@ -53,7 +56,7 @@ async def pmpermit_func(_, message):
     else:
         flood[str(user_id)] = 1
     if flood[str(user_id)] > 5:
-        await message.reply_text("SPAM DETECTED, USER BLOCKED.")
+        await message.reply_text("SPAM DETECTED, BLOCKED USER AUTOMATICALLY!")
         return await app2.block_user(user_id)
     results = await app2.get_inline_bot_results(BOT_ID, f"pmpermit {user_id}")
     await app2.send_inline_bot_result(
@@ -117,8 +120,9 @@ async def block_user_func(_, message):
             message, text="Reply to a user's message to block."
         )
     user_id = message.reply_to_message.from_user.id
-    await app2.block_user(user_id)
+    # Blocking user after editing the message so that other person can get the update.
     await edit_or_reply(message, text="Successfully blocked the user")
+    await app2.block_user(user_id)
 
 
 @app2.on_message(

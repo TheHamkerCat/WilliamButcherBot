@@ -1,6 +1,6 @@
 ffmpeg-python
 gTTS
-carbonnow
+git+git://github.com/OpenRestfulAPI/carbon-now-sh-API-Wrapper@master
 aiohttp
 aiofiles
 cryptography
