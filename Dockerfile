@@ -5,7 +5,7 @@ RUN chmod 777 /wbb
 
 RUN apt-get update -y
 
-RUN apt-get install -y software-properties-common ffmpeg bash wget curl neofetch git
+RUN apt-get install -y software-properties-common ffmpeg sudo bash wget curl neofetch git
 
 # Updating Libraries
 RUN pip3 install -U pip
