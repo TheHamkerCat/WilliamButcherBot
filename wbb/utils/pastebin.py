@@ -22,15 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import socket
+from asyncio import get_running_loop
+from functools import partial
 
-
-async def _netcat(host, port, content):
+def _netcat(host, port, content):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
     s.sendall(content.encode())
     s.shutdown(socket.SHUT_WR)
     while True:
-        data = s.recv(4096).decode('utf-8').strip('\n\x00')
+        data = s.recv(4096).decode("utf-8").strip("\n\x00")
         if not data:
             break
         return data
@@ -38,5 +39,6 @@ async def _netcat(host, port, content):
 
 
 async def paste(content):
-    link = await _netcat('ezup.dev', 9999, content)
+    loop = get_running_loop()
+    link = await loop.run_in_executor(None, partial(_netcat, "ezup.dev", 9999, content))
     return link

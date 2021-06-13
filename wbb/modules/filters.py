@@ -21,50 +21,58 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import app
-from wbb.modules.admin import member_permissions
-from wbb.utils.dbfunctions import (
-    save_filter, get_filters_names, get_filter,
-    delete_filter, is_served_chat, add_served_chat
-)
-from pyrogram import filters
-from wbb.core.decorators.errors import capture_err
-from wbb.utils.filter_groups import chat_filters_group
 import re
 
+from pyrogram import filters
+
+from wbb import app
+from wbb.core.decorators.errors import capture_err
+from wbb.core.decorators.permissions import adminsOnly
+from wbb.utils.dbfunctions import (delete_filter, get_filter,
+                                   get_filters_names, save_filter)
+from wbb.utils.filter_groups import chat_filters_group
 
 __MODULE__ = "Filters"
 __HELP__ = """/filters To Get All The Filters In The Chat.
 /filter [FILTER_NAME] To Save A Filter (Can be a sticker or text).
-/stop [FILTER_NAME] To Stop A Filter."""
+/stop [FILTER_NAME] To Stop A Filter.
+
+
+You can use markdown or html to save text too."""
 
 
 @app.on_message(filters.command("filter") & ~filters.edited & ~filters.private)
-@capture_err
+@adminsOnly("can_change_info")
 async def save_filters(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
-        await message.reply_text("Usage:\nReply to a text or sticker with /filter [FILTER_NAME] to save it.")
+        return await message.reply_text(
+            "**Usage:**\nReply to a text or sticker with /filter [FILTER_NAME] to save it."
+        )
+    if (
+        not message.reply_to_message.text
+        and not message.reply_to_message.sticker
+    ):
+        return await message.reply_text(
+            "__**You can only save text or stickers in filters.**__"
+        )
+    name = message.text.split(None, 1)[1].strip()
+    if not name:
+        return await message.reply_text("**Usage**\n__/filter [FILTER_NAME]__")
+    chat_id = message.chat.id
+    _type = "text" if message.reply_to_message.text else "sticker"
+    _filter = {
+        "type": _type,
+        "data": message.reply_to_message.text.markdown
+        if _type == "text"
+        else message.reply_to_message.sticker.file_id,
+    }
+    await save_filter(chat_id, name, _filter)
+    await message.reply_text(f"__**Saved filter {name}.**__")
 
-    elif not message.reply_to_message.text and not message.reply_to_message.sticker:
-        await message.reply_text("__**You can only save text or stickers in filters.**__")
 
-    elif len(await member_permissions(message.chat.id, message.from_user.id)) < 1:
-        await message.reply_text("**You don't have enough permissions**")
-    else:
-        name = message.text.split(None, 1)[1].strip()
-        if not name:
-            await message.reply_text("**Usage**\n__/filter [FILTER_NAME]__")
-            return
-        _type = "text" if message.reply_to_message.text else "sticker"
-        _filter = {
-            "type": _type,
-            "data": message.reply_to_message.text.markdown if _type == "text" else message.reply_to_message.sticker.file_id
-        }
-        await save_filter(message.chat.id, name, _filter)
-        await message.reply_text(f"__**Saved filter {name}.**__")
-
-
-@app.on_message(filters.command("filters") & ~filters.edited & ~filters.private)
+@app.on_message(
+    filters.command("filters") & ~filters.edited & ~filters.private
+)
 @capture_err
 async def get_filterss(_, message):
     _filters = await get_filters_names(message.chat.id)
@@ -78,53 +86,55 @@ async def get_filterss(_, message):
 
 
 @app.on_message(filters.command("stop") & ~filters.edited & ~filters.private)
-@capture_err
+@adminsOnly("can_change_info")
 async def del_filter(_, message):
     if len(message.command) < 2:
-        await message.reply_text("**Usage**\n__/stop [FILTER_NAME]__")
-
-    elif len(await member_permissions(message.chat.id, message.from_user.id)) < 1:
-        await message.reply_text("**You don't have enough permissions**")
-
+        return await message.reply_text("**Usage**\n__/stop [FILTER_NAME]__")
+    name = message.text.split(None, 1)[1].strip()
+    if not name:
+        return await message.reply_text("**Usage**\n__/stop [FILTER_NAME]__")
+    chat_id = message.chat.id
+    deleted = await delete_filter(chat_id, name)
+    if deleted:
+        await message.reply_text(f"**Deleted filter {name}.**")
     else:
-        name = message.text.split(None, 1)[1].strip()
-        if not name:
-            await message.reply_text("**Usage**\n__/stop [FILTER_NAME]__")
-            return
-        chat_id = message.chat.id
-        deleted = await delete_filter(chat_id, name)
-        if deleted:
-            await message.reply_text(f"**Deleted filter {name}.**")
-        else:
-            await message.reply_text("**No such filter.**")
+        await message.reply_text("**No such filter.**")
 
 
-@app.on_message(filters.text & ~filters.edited &
-                ~filters.private & ~filters.via_bot &
-                ~filters.forwarded, group=chat_filters_group)
+@app.on_message(
+    filters.text
+    & ~filters.edited
+    & ~filters.private
+    & ~filters.via_bot
+    & ~filters.forwarded,
+    group=chat_filters_group,
+)
+@capture_err
 async def filters_re(_, message):
     text = message.text.lower().strip()
     if not text:
         return
     chat_id = message.chat.id
-    try:
-        list_of_filters = await get_filters_names(chat_id)
-        for word in list_of_filters:
-            pattern = r"( |^|[^\w])" + re.escape(word) + r"( |$|[^\w])"
-            if re.search(pattern, text, flags=re.IGNORECASE):
-                _filter = await get_filter(chat_id, word)
-                data_type = _filter['type']
-                data = _filter['data']
-                if data_type == "text":
-                    await message.reply_text(data, disable_web_page_preview=True)
-                else:
-                    await message.reply_sticker(data)
-    except Exception:
-        pass
-
-    """ CHAT WATCHER """
-    served_chat = await is_served_chat(chat_id)
-    if served_chat:
-        return
-    await add_served_chat(chat_id)
-    return
+    list_of_filters = await get_filters_names(chat_id)
+    for word in list_of_filters:
+        pattern = r"( |^|[^\w])" + re.escape(word) + r"( |$|[^\w])"
+        if re.search(pattern, text, flags=re.IGNORECASE):
+            _filter = await get_filter(chat_id, word)
+            data_type = _filter["type"]
+            data = _filter["data"]
+            if data_type == "text":
+                if message.reply_to_message:
+                    await message.reply_to_message.reply_text(
+                        data, disable_web_page_preview=True
+                    )
+                    if text[0] == "~":
+                        return await message.delete()
+                    return
+                await message.reply_text(data, disable_web_page_preview=True)
+            else:
+                if message.reply_to_message:
+                    await message.reply_to_message.reply_sticker(data)
+                    if text[0] == "~":
+                        return await message.delete()
+                    return
+                return await message.reply_sticker(data)

@@ -22,15 +22,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from wbb import app, app2, BOT_ID, USERBOT_ID, SUDOERS, USERBOT_PREFIX
 from pyrogram import filters
-from wbb.utils.dbfunctions import is_pmpermit_approved, approve_pmpermit, disapprove_pmpermit
-import asyncio
+
+from wbb import BOT_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2
+from wbb.core.decorators.errors import capture_err
+from wbb.modules.userbot import edit_or_reply
+from wbb.utils.dbfunctions import (approve_pmpermit, disapprove_pmpermit,
+                                   is_pmpermit_approved)
 
 flood = {}
 
 
-@app2.on_message(filters.private & ~filters.edited & ~filters.me & ~filters.bot & ~filters.user(SUDOERS))
+@app2.on_message(
+    filters.private
+    & filters.incoming
+    & ~filters.service
+    & ~filters.edited
+    & ~filters.me
+    & ~filters.bot
+    & ~filters.via_bot
+    & ~filters.user(SUDOERS)
+)
+@capture_err
 async def pmpermit_func(_, message):
     user_id = message.from_user.id
     if await is_pmpermit_approved(user_id):
@@ -43,41 +56,47 @@ async def pmpermit_func(_, message):
     else:
         flood[str(user_id)] = 1
     if flood[str(user_id)] > 5:
-        await app2.block_user(user_id)
-        await message.reply_text("SPAM DETECTED, USER BLOCKED.")
-        return
+        await message.reply_text("SPAM DETECTED, BLOCKED USER AUTOMATICALLY!")
+        return await app2.block_user(user_id)
     results = await app2.get_inline_bot_results(BOT_ID, f"pmpermit {user_id}")
     await app2.send_inline_bot_result(
-            user_id,
-            results.query_id,
-            results.results[0].id,
-            hide_via=True
-            )
+        user_id, results.query_id, results.results[0].id, hide_via=True
+    )
 
 
-@app2.on_message(filters.command("approve", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS) & ~filters.via_bot)
+@app2.on_message(
+    filters.command("approve", prefixes=USERBOT_PREFIX)
+    & filters.user(SUDOERS)
+    & ~filters.via_bot
+)
+@capture_err
 async def pm_approve(_, message):
     if not message.reply_to_message:
-        await message.edit("Reply to a user's message to approve.")
-        return
+        return await edit_or_reply(
+            message, text="Reply to a user's message to approve."
+        )
     user_id = message.reply_to_message.from_user.id
     if await is_pmpermit_approved(user_id):
-        await message.edit("User is already approved to pm")
-        return
+        return await edit_or_reply(
+            message, text="User is already approved to pm"
+        )
     await approve_pmpermit(user_id)
-    m = await message.edit("User is approved to pm")
-    await asyncio.sleep(2)
-    await m.delete()
+    await edit_or_reply(message, text="User is approved to pm")
 
 
-@app2.on_message(filters.command("disapprove", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS) & ~filters.via_bot)
+@app2.on_message(
+    filters.command("disapprove", prefixes=USERBOT_PREFIX)
+    & filters.user(SUDOERS)
+    & ~filters.via_bot
+)
 async def pm_disapprove(_, message):
     if not message.reply_to_message:
-        await message.edit("Reply to a user's message to approve.")
-        return
+        return await edit_or_reply(
+            message, text="Reply to a user's message to approve."
+        )
     user_id = message.reply_to_message.from_user.id
     if not await is_pmpermit_approved(user_id):
-        await message.edit("User is already disapproved to pm")
+        await edit_or_reply(message, text="User is already disapproved to pm")
         async for m in app2.iter_history(user_id, limit=6):
             if m.reply_markup:
                 try:
@@ -86,27 +105,39 @@ async def pm_disapprove(_, message):
                     pass
         return
     await disapprove_pmpermit(user_id)
-    await message.edit("User is disapproved to pm")
+    await edit_or_reply(message, text="User is disapproved to pm")
 
 
-@app2.on_message(filters.command("block", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS) & ~filters.via_bot)
+@app2.on_message(
+    filters.command("block", prefixes=USERBOT_PREFIX)
+    & filters.user(SUDOERS)
+    & ~filters.via_bot
+)
+@capture_err
 async def block_user_func(_, message):
     if not message.reply_to_message:
-        await message.edit("Reply to a user's message to approve.")
-        return
+        return await edit_or_reply(
+            message, text="Reply to a user's message to block."
+        )
     user_id = message.reply_to_message.from_user.id
+    # Blocking user after editing the message so that other person can get the update.
+    await edit_or_reply(message, text="Successfully blocked the user")
     await app2.block_user(user_id)
-    await message.edit("Successfully blocked the user")
 
 
-@app2.on_message(filters.command("unblock", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS) & ~filters.via_bot)
+@app2.on_message(
+    filters.command("unblock", prefixes=USERBOT_PREFIX)
+    & filters.user(SUDOERS)
+    & ~filters.via_bot
+)
 async def unblock_user_func(_, message):
     if not message.reply_to_message:
-        await message.edit("Reply to a user's message to approve.")
-        return
+        return await edit_or_reply(
+            message, text="Reply to a user's message to unblock."
+        )
     user_id = message.reply_to_message.from_user.id
     await app2.unblock_user(user_id)
-    await message.edit("Successfully Unblocked the user")
+    await edit_or_reply(message, text="Successfully Unblocked the user")
 
 
 """ CALLBACK QUERY HANDLER """
@@ -120,14 +151,14 @@ async def pmpermit_cq(_, cq):
     data, victim = cq.data.split(None, 2)[1], cq.data.split(None, 2)[2]
     if data == "approve":
         if user_id != USERBOT_ID:
-            await cq.answer("This Button Is Not For You")
-            return
+            return await cq.answer("This Button Is Not For You")
         await approve_pmpermit(int(victim))
-        await app.edit_inline_text(cq.inline_message_id, "User Has Been Approved To PM.")
+        await app.edit_inline_text(
+            cq.inline_message_id, "User Has Been Approved To PM."
+        )
         return
     if user_id == USERBOT_ID:
-        await cq.answer("It's For The Other Person.")
-        return
+        return await cq.answer("It's For The Other Person.")
 
     if data == "to_scam_you":
         async for m in app2.iter_history(user_id, limit=6):
@@ -142,7 +173,9 @@ async def pmpermit_cq(_, cq):
         else:
             flood2[str(user_id)] = 1
         if flood2[str(user_id)] > 5:
-            await app2.block_user(user_id)
-            await message.reply_text("SPAM DETECTED, USER BLOCKED.")
-            return
-        await app2.send_message(user_id, "I'm busy right now, will approve you shortly, DO NOT SPAM.")
+            await app2.send_message(user_id, "SPAM DETECTED, USER BLOCKED.")
+            return await app2.block_user(user_id)
+        await app2.send_message(
+            user_id,
+            "I'm busy right now, will approve you shortly, DO NOT SPAM.",
+        )

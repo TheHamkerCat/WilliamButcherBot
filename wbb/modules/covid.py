@@ -21,12 +21,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import app
-from wbb.core.decorators.errors import capture_err
-from wbb.utils.json_prettify import json_prettify
-from wbb.utils.fetch import fetch
 from pyrogram import filters
 
+from wbb import app
+from wbb.core.decorators.errors import capture_err
+from wbb.utils.fetch import fetch
+from wbb.utils.json_prettify import json_prettify
 
 __MODULE__ = "Covid"
 __HELP__ = """/covid - To Get Global Stats of Covid.
@@ -39,12 +39,10 @@ async def covid(_, message):
     if len(message.command) == 1:
         data = await fetch("https://corona.lmao.ninja/v2/all")
         data = await json_prettify(data)
-        await app.send_message(message.chat.id, text=data)
-        return
+        return await app.send_message(message.chat.id, text=data)
     if len(message.command) != 1:
         country = message.text.split(None, 1)[1].strip()
         country = country.replace(" ", "")
         data = await fetch(f"https://corona.lmao.ninja/v2/countries/{country}")
         data = await json_prettify(data)
         await app.send_message(message.chat.id, text=data)
-        return

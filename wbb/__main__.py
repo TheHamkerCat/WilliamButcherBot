@@ -22,15 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import asyncio
-import re
 import importlib
+import re
+
 import uvloop
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from wbb import app, BOT_NAME, BOT_USERNAME, USERBOT_NAME
-from wbb.utils import paginate_modules
-from wbb.modules.sudoers import bot_sys_stats
+
+from wbb import BOT_NAME, BOT_USERNAME, USERBOT_NAME, aiohttpsession, app
 from wbb.modules import ALL_MODULES
+from wbb.modules.sudoers import bot_sys_stats
+from wbb.utils import paginate_modules
+from wbb.utils.dbfunctions import clean_restart_stage
 
 loop = asyncio.get_event_loop()
 
@@ -38,7 +41,17 @@ HELPABLE = {}
 
 
 async def start_bot():
-    global COMMANDS_COUNT
+    restart_data = await clean_restart_stage()
+    if restart_data:
+        print("[INFO]: SENDING RESTART STATUS")
+        try:
+            await app.edit_message_text(
+                restart_data["chat_id"],
+                restart_data["message_id"],
+                "**Restarted Successfully**",
+            )
+        except Exception:
+            pass
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
         if (
@@ -50,9 +63,7 @@ async def start_bot():
                 hasattr(imported_module, "__HELP__")
                 and imported_module.__HELP__
             ):
-                HELPABLE[
-                    imported_module.__MODULE__.lower()
-                ] = imported_module
+                HELPABLE[imported_module.__MODULE__.lower()] = imported_module
     bot_modules = ""
     j = 1
     for i in ALL_MODULES:
@@ -63,24 +74,20 @@ async def start_bot():
             bot_modules += "|{:<15}".format(i)
         j += 1
     print("+===============================================================+")
-    print("|                         WBB - Modules                         |")
+    print("|                              WBB                              |")
     print("+===============+===============+===============+===============+")
     print(bot_modules)
     print("+===============+===============+===============+===============+")
-    print(f"BOT Started Successfully as {BOT_NAME}!")
-    print(f"USERBOT Started Successfully as {USERBOT_NAME}!")
+    print(f"[INFO]: BOT STARTED AS {BOT_NAME}!")
+    print(f"[INFO]: USERBOT STARTED AS {USERBOT_NAME}!")
     await idle()
+    print("[INFO]: STOPPING BOT AND CLOSING AIOHTTP SESSION")
+    await aiohttpsession.close()
 
 
 @app.on_message(filters.command(["help", "start"]))
 async def help_command(_, message):
     if message.chat.type != "private":
-        if len(message.command) >= 2 and message.command[1] == "help":
-            text, keyboard = await help_parser(message)
-            await message.reply(
-                text, reply_markup=keyboard, disable_web_page_preview=True
-            )
-            return
         keyboard = InlineKeyboardMarkup(
             [
                 [
@@ -91,18 +98,16 @@ async def help_command(_, message):
                     InlineKeyboardButton(
                         text="Repo 🛠",
                         url="https://github.com/thehamkercat/WilliamButcherBot",
-                    )
+                    ),
                 ],
                 [
                     InlineKeyboardButton(
-                        text="System Stats 💻",
-                        callback_data="stats_callback"
+                        text="System Stats 💻", callback_data="stats_callback"
                     ),
                     InlineKeyboardButton(
-                        text="Support 👨",
-                        url="t.me/WBBSupport"
-                    )
-                ]
+                        text="Support 👨", url="t.me/WBBSupport"
+                    ),
+                ],
             ]
         )
         await message.reply("Pm Me For More Details.", reply_markup=keyboard)
@@ -111,33 +116,31 @@ async def help_command(_, message):
         [
             [
                 InlineKeyboardButton(
-                    text="Commands ❓",
-                    callback_data="bot_commands"
+                    text="Commands ❓", callback_data="bot_commands"
                 ),
                 InlineKeyboardButton(
                     text="Repo 🛠",
-                    url="https://github.com/thehamkercat/WilliamButcherBot"
-                )
+                    url="https://github.com/thehamkercat/WilliamButcherBot",
+                ),
             ],
             [
                 InlineKeyboardButton(
-                    text="System Stats 🖥",
-                    callback_data="stats_callback"
+                    text="System Stats 🖥", callback_data="stats_callback"
                 ),
-                InlineKeyboardButton(
-                    text="Support 👨",
-                    url="t.me/WBBSupport"
-                )
+                InlineKeyboardButton(text="Support 👨", url="t.me/WBBSupport"),
             ],
             [
                 InlineKeyboardButton(
                     text="Add Me To Your Group 🎉",
-                    url=f"http://t.me/{BOT_USERNAME}?startgroup=new"
+                    url=f"http://t.me/{BOT_USERNAME}?startgroup=new",
                 )
-            ]
+            ],
         ]
     )
-    await message.reply(f"Hey there! My name is {BOT_NAME}. I can manage your group with lots of useful features, feel free to add me to your group.", reply_markup=keyboard)
+    await message.reply(
+        f"Hey there! My name is {BOT_NAME}. I can manage your group with lots of useful features, feel free to add me to your group.",
+        reply_markup=keyboard,
+    )
 
 
 async def help_parser(name, keyboard=None):
@@ -163,9 +166,7 @@ General command are:
 async def commands_callbacc(_, CallbackQuery):
     text, keyboard = await help_parser(CallbackQuery.from_user.mention)
     await app.send_message(
-        CallbackQuery.message.chat.id,
-        text=text,
-        reply_markup=keyboard
+        CallbackQuery.message.chat.id, text=text, reply_markup=keyboard
     )
 
     await CallbackQuery.message.delete()
@@ -184,7 +185,16 @@ async def help_button(client, query):
     next_match = re.match(r"help_next\((.+?)\)", query.data)
     back_match = re.match(r"help_back", query.data)
     create_match = re.match(r"help_create", query.data)
+    top_text = f"""
+Hello {query.from_user.first_name}! My name is {BOT_NAME}!
+I'm a group management bot with some usefule features.
+You can choose an option below, by clicking a button.
+Also you can ask anything in Support Group.
 
+General command are:
+ - /start: Start the bot
+ - /help: Give this message
+ """
     if mod_match:
         module = mod_match.group(1)
         text = (
@@ -205,10 +215,7 @@ async def help_button(client, query):
     elif prev_match:
         curr_page = int(prev_match.group(1))
         await query.message.edit(
-            text="Hi {first_name}. I am {bot_name}".format(
-                first_name=query.from_user.first_name,
-                bot_name=BOT_NAME,
-            ),
+            text=top_text,
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(curr_page - 1, HELPABLE, "help")
             ),
@@ -218,10 +225,7 @@ async def help_button(client, query):
     elif next_match:
         next_page = int(next_match.group(1))
         await query.message.edit(
-            text="Hi {first_name}. I am {bot_name}".format(
-                first_name=query.from_user.first_name,
-                bot_name=BOT_NAME,
-            ),
+            text=top_text,
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(next_page + 1, HELPABLE, "help")
             ),
@@ -230,10 +234,7 @@ async def help_button(client, query):
 
     elif back_match:
         await query.message.edit(
-            text="Hi {first_name}. I am {bot_name}".format(
-                first_name=query.from_user.first_name,
-                bot_name=BOT_NAME,
-            ),
+            text=top_text,
             reply_markup=InlineKeyboardMarkup(
                 paginate_modules(0, HELPABLE, "help")
             ),

@@ -21,59 +21,85 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import aiohttp
-import aiofiles
-import json
-import sys
-import os
 import asyncio
-from pyrogram.types import (
-    InlineQueryResultArticle,
-    InputTextMessageContent,
-    InlineKeyboardButton,
-    InlineQueryResultPhoto,
-)
-from pyrogram.raw.functions import Ping
-from googletrans import Translator
-from search_engine_parser import GoogleSearch
-from pykeyboard import InlineKeyboard
-from sys import version as pyver
-from motor import version as mongover
-from pyrogram import __version__ as pyrover, filters
-from time import time, ctime
+import json
+import os
+import sys
 from random import randint
-from wbb.utils.fetch import fetch
-from wbb.modules.userbot import eval_executer_func
-from wbb.utils.functions import test_speedtest, get_http_status_code
-from wbb.utils.formatter import convert_seconds_to_minutes as time_convert
-from wbb.utils.pastebin import paste
+from sys import version as pyver
+from time import ctime, time
+
+from motor import version as mongover
+from pykeyboard import InlineKeyboard
+from pyrogram import __version__ as pyrover
+from pyrogram import filters
+from pyrogram.raw.functions import Ping
+from pyrogram.types import (InlineKeyboardButton, InlineQueryResultArticle,
+                            InlineQueryResultPhoto, InputTextMessageContent)
+from search_engine_parser import GoogleSearch
+
+from wbb import (BOT_USERNAME, MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_ID,
+                 USERBOT_NAME, USERBOT_USERNAME, aiohttpsession, app, app2,
+                 arq)
 from wbb.core.types import InlineQueryResultCachedDocument
-from wbb import (
-    arq, app, app2, USERBOT_USERNAME,
-    BOT_USERNAME, USERBOT_ID,
-    SUDOERS, USERBOT_NAME
-)
+from wbb.modules.info import get_chat_info, get_user_info
+from wbb.modules.music import download_youtube_audio
+from wbb.utils.fetch import fetch
+from wbb.utils.functions import test_speedtest
+from wbb.utils.pastebin import paste
+
+keywords_list = [
+    "alive",
+    "ping",
+    "tr",
+    "ud",
+    "google",
+    "bitly",
+    "wall",
+    "yt",
+    "torrent",
+    "lyrics",
+    "wiki",
+    "speedtest",
+    "music",
+    "gh_repo",
+    "gh_user",
+    "search",
+    "ytmusic",
+    "info",
+    "chat_info",
+    "tmdb",
+    "pypi",
+    "image",
+]
 
 
 async def inline_help_func(__HELP__):
-    buttons = InlineKeyboard(row_width=3)
-    keywords_list = [
-        "alive", "ping", "tr", "ud", "google", "bitly",
-        "wall", "yt", "torrent", "lyrics", "wiki",
-        "speedtest", "eval", "music", "saavn", "deezer",
-        "gh_repo", "gh_user", "search", "pastebin"
-    ]
-    buttons.add(*[(InlineKeyboardButton(
-        text=i, switch_inline_query_current_chat=i)) for i in keywords_list])
+    buttons = InlineKeyboard(row_width=4)
+    buttons.add(
+        *[
+            (InlineKeyboardButton(text=i, switch_inline_query_current_chat=i))
+            for i in keywords_list
+        ]
+    )
     answerss = [
         InlineQueryResultArticle(
             title="Inline Commands",
             description="Help Related To Inline Usage.",
             input_message_content=InputTextMessageContent(
-                "Click A Button To Get Started."),
+                "Click A Button To Get Started."
+            ),
             thumb_url="https://hamker.me/cy00x5x.png",
-            reply_markup=buttons
-        )
+            reply_markup=buttons,
+        ),
+        InlineQueryResultArticle(
+            title="Github Repo",
+            description="Get Github Respository Of Bot.",
+            input_message_content=InputTextMessageContent(
+                "https://github.com/thehamkercat/WilliamButcherBot"
+            ),
+            thumb_url="https://hamker.me/gjc9fo3.png",
+        ),
     ]
     answerss = await alive_function(answerss)
     return answerss
@@ -81,17 +107,13 @@ async def inline_help_func(__HELP__):
 
 async def alive_function(answers):
     buttons = InlineKeyboard(row_width=2)
-    bot_state = 'Dead' if not await app.get_me() else 'Alive'
-    ubot_state = 'Dead' if not await app2.get_me() else 'Alive'
+    bot_state = "Dead" if not await app.get_me() else "Alive"
+    ubot_state = "Dead" if not await app2.get_me() else "Alive"
     buttons.add(
+        InlineKeyboardButton("Stats", callback_data="stats_callback"),
         InlineKeyboardButton(
-            'Stats',
-            callback_data='stats_callback'
+            "Go Inline!", switch_inline_query_current_chat=""
         ),
-        InlineKeyboardButton(
-            "Go Inline!",
-            switch_inline_query_current_chat=""
-        )
     )
 
     msg = f"""
@@ -106,12 +128,11 @@ async def alive_function(answers):
 """
     answers.append(
         InlineQueryResultArticle(
-            title='Alive',
+            title="Alive",
             description="Check Bot's Stats",
             thumb_url="https://static2.aniimg.com/upload/20170515/414/c/d/7/cd7EEF.jpg",
             input_message_content=InputTextMessageContent(
-                msg,
-                disable_web_page_preview=True
+                msg, disable_web_page_preview=True
             ),
             reply_markup=buttons,
         )
@@ -120,48 +141,70 @@ async def alive_function(answers):
 
 
 async def translate_func(answers, lang, tex):
-    i = Translator().translate(tex, dest=lang)
+    result = await arq.translate(tex, lang)
+    if not result.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=result.result,
+                input_message_content=InputTextMessageContent(result.result),
+            )
+        )
+        return answers
+    result = result.result
     msg = f"""
-__**Translated to {lang}**__
+__**Translated from {result.src} to {result.dest}**__
 
 **INPUT:**
 {tex}
 
 **OUTPUT:**
-{i.text}"""
-    answers.append(
-        InlineQueryResultArticle(
-            title=f'Translated to {lang}',
-            description=i.text,
-            input_message_content=InputTextMessageContent(msg)
-        )
+{result.translatedText}"""
+    answers.extend(
+        [
+            InlineQueryResultArticle(
+                title=f"Translated from {result.src} to {result.dest}.",
+                description=result.translatedText,
+                input_message_content=InputTextMessageContent(msg),
+            ),
+            InlineQueryResultArticle(
+                title=result.translatedText,
+                input_message_content=InputTextMessageContent(
+                    result.translatedText
+                ),
+            ),
+        ]
     )
     return answers
 
 
 async def urban_func(answers, text):
     results = await arq.urbandict(text)
-    limit = 0
+    if not results.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=results.result,
+                input_message_content=InputTextMessageContent(results.result),
+            )
+        )
+        return answers
+    results = results.result[0:48]
     for i in results:
-        if limit > 48:
-            break
-        limit += 1
-        try:
-            msg = f"""
+        msg = f"""
 **Query:** {text}
 
-**Definition:** __{results[i].definition}__
+**Definition:** __{i.definition}__
 
-**Example:** __{results[i].example}__"""
+**Example:** __{i.example}__"""
 
-            answers.append(
-                InlineQueryResultArticle(
-                    title=results[i].word,
-                    description=results[i].definition,
-                    input_message_content=InputTextMessageContent(msg)
-                ))
-        except KeyError:
-            pass
+        answers.append(
+            InlineQueryResultArticle(
+                title=i.word,
+                description=i.definition,
+                input_message_content=InputTextMessageContent(msg),
+            )
+        )
     return answers
 
 
@@ -180,13 +223,13 @@ async def google_search_func(answers, text):
 
             answers.append(
                 InlineQueryResultArticle(
-                    title=i['titles'],
-                    description=i['descriptions'],
+                    title=i["titles"],
+                    description=i["descriptions"],
                     input_message_content=InputTextMessageContent(
-                        msg,
-                        disable_web_page_preview=True
-                    )
-                ))
+                        msg, disable_web_page_preview=True
+                    ),
+                )
+            )
         except KeyError:
             pass
     return answers
@@ -194,119 +237,51 @@ async def google_search_func(answers, text):
 
 async def wall_func(answers, text):
     results = await arq.wall(text)
-    limit = 0
-    for i in results:
-        if limit > 48:
-            break
-        limit += 1
-        try:
-            answers.append(
-                InlineQueryResultPhoto(
-                    photo_url=results[i].url_image,
-                    thumb_url=results[i].url_thumb,
-                    caption=f"[Source]({results[i].url_image})"
-                ))
-        except KeyError:
-            pass
-    return answers
-
-
-async def saavn_func(answers, text):
-    buttons_list = []
-    results = await arq.saavn(text)
-    for i in results:
-        buttons = InlineKeyboard(row_width=1)
-        buttons.add(
-            InlineKeyboardButton(
-                'Download | Play',
-                url=results[i].media_url
+    if not results.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=results.result,
+                input_message_content=InputTextMessageContent(results.result),
             )
         )
-        buttons_list.append(buttons)
-        duration = await time_convert(results[i].duration)
-        caption = f"""
-**Title:** {results[i].song}
-**Album:** {results[i].album}
-**Duration:** {duration}
-**Release:** {results[i].year}
-**Singers:** {results[i].singers}"""
-        description = f"{results[i].album} | {duration} " \
-            + f"| {results[i].singers} ({results[i].year})"
-        try:
-            answers.append(
-                InlineQueryResultArticle(
-                    title=results[i].song,
-                    input_message_content=InputTextMessageContent(
-                        caption,
-                        disable_web_page_preview=True
-                    ),
-                    description=description,
-                    thumb_url=results[i].image,
-                    reply_markup=buttons_list[i]
-                ))
-        except (KeyError, ValueError):
-            pass
-    return answers
-
-
-async def deezer_func(answers, text):
-    buttons_list = []
-    results = await arq.deezer(text, 5)
+        return answers
+    results = results.result[0:48]
     for i in results:
-        buttons = InlineKeyboard(row_width=1)
-        buttons.add(
-            InlineKeyboardButton(
-                'Download | Play',
-                url=results[i].url
+        answers.append(
+            InlineQueryResultPhoto(
+                photo_url=i.url_image,
+                thumb_url=i.url_thumb,
+                caption=f"[Source]({i.url_image})",
             )
         )
-        buttons_list.append(buttons)
-        duration = await time_convert(results[i].duration)
-        caption = f"""
-**Title:** {results[i].title}
-**Artist:** {results[i].artist}
-**Duration:** {duration}
-**Source:** [Deezer]({results[i].source})"""
-        description = f"{results[i].artist} | {duration}"
-        try:
-            answers.append(
-                InlineQueryResultArticle(
-                    title=results[i].title,
-                    thumb_url=results[i].thumbnail,
-                    description=description,
-                    input_message_content=InputTextMessageContent(
-                        caption,
-                        disable_web_page_preview=True
-                    ),
-                    reply_markup=buttons_list[i]
-                ))
-        except (KeyError, ValueError):
-            pass
     return answers
 
 
-# Used my api key here, don't fuck with it
+# Used my api key here, don't fuck it
 async def shortify(url):
     if "." not in url:
         return
     header = {
         "Authorization": "Bearer ad39983fa42d0b19e4534f33671629a4940298dc",
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
     }
-    payload = {
-        "long_url": f"{url}"
-    }
+    payload = {"long_url": f"{url}"}
     payload = json.dumps(payload)
-    async with aiohttp.ClientSession() as session:
-        async with session.post("https://api-ssl.bitly.com/v4/shorten", headers=header, data=payload) as resp:
-            data = await resp.json()
-    msg = f"**Original Url:** {url}\n**Shortened Url:** {data['link']}"
+    async with aiohttpsession.post(
+        "https://api-ssl.bitly.com/v4/shorten",
+        headers=header,
+        data=payload,
+    ) as resp:
+        data = await resp.json()
+    msg = data["link"]
     a = []
     b = InlineQueryResultArticle(
         title="Link Shortened!",
-        description=data['link'],
+        description=data["link"],
         input_message_content=InputTextMessageContent(
-            msg, disable_web_page_preview=True)
+            msg, disable_web_page_preview=True
+        ),
     )
     a.append(b)
     return a
@@ -314,16 +289,23 @@ async def shortify(url):
 
 async def torrent_func(answers, text):
     results = await arq.torrent(text)
-    limit = 0
+    if not results.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=results.result,
+                input_message_content=InputTextMessageContent(results.result),
+            )
+        )
+        return answers
+    results = results.result[0:48]
     for i in results:
-        if limit > 48:
-            break
-        title = results[i].name
-        size = results[i].size
-        seeds = results[i].seeds
-        leechs = results[i].leechs
-        upload_date = results[i].uploaded + " Ago"
-        magnet = results[i].magnet
+        title = i.name
+        size = i.size
+        seeds = i.seeds
+        leechs = i.leechs
+        upload_date = i.uploaded
+        magnet = i.magnet
         caption = f"""
 **Title:** __{title}__
 **Size:** __{size}__
@@ -333,67 +315,71 @@ async def torrent_func(answers, text):
 **Magnet:** `{magnet}`"""
 
         description = f"{size} | {upload_date} | Seeds: {seeds}"
-        try:
-            answers.append(
-                InlineQueryResultArticle(
-                    title=title,
-                    description=description,
-                    input_message_content=InputTextMessageContent(
-                        caption,
-                        disable_web_page_preview=True
-                    )
-                )
+        answers.append(
+            InlineQueryResultArticle(
+                title=title,
+                description=description,
+                input_message_content=InputTextMessageContent(
+                    caption, disable_web_page_preview=True
+                ),
             )
-            limit += 1
-        except (KeyError, ValueError):
-            pass
+        )
+        pass
     return answers
 
 
 async def youtube_func(answers, text):
     results = await arq.youtube(text)
-    limit = 0
-    for i in results:
-        if limit > 48:
-            break
-        limit += 1
-        buttons = InlineKeyboard(row_width=1)
-        video_url = f"https://youtube.com{results[i].url_suffix}"
-        buttons.add(
-            InlineKeyboardButton(
-                'Watch',
-                url=video_url
+    if not results.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=results.result,
+                input_message_content=InputTextMessageContent(results.result),
             )
         )
+        return answers
+    results = results.result[0:48]
+    for i in results:
+        buttons = InlineKeyboard(row_width=1)
+        video_url = f"https://youtube.com{i.url_suffix}"
+        buttons.add(InlineKeyboardButton("Watch", url=video_url))
         caption = f"""
-**Title:** {results[i].title}
-**Views:** {results[i].views}
-**Channel:** {results[i].channel}
-**Duration:** {results[i].duration}
-**Uploaded:** {results[i].publish_time}
-**Description:** {results[i].long_desc}"""
-        description = f"{results[i].views} | {results[i].channel} | " \
-            + f"{results[i].duration} | {results[i].publish_time}"
-        try:
-            answers.append(
-                InlineQueryResultArticle(
-                    title=results[i].title,
-                    thumb_url=results[i].thumbnails[0],
-                    description=description,
-                    input_message_content=InputTextMessageContent(
-                        caption,
-                        disable_web_page_preview=True
-                    ),
-                    reply_markup=buttons
-                ))
-        except (KeyError, ValueError):
-            pass
+**Title:** {i.title}
+**Views:** {i.views}
+**Channel:** {i.channel}
+**Duration:** {i.duration}
+**Uploaded:** {i.publish_time}
+**Description:** {i.long_desc}"""
+        description = (
+            f"{i.views} | {i.channel} | {i.duration} | {i.publish_time}"
+        )
+        answers.append(
+            InlineQueryResultArticle(
+                title=i.title,
+                thumb_url=i.thumbnails[0],
+                description=description,
+                input_message_content=InputTextMessageContent(
+                    caption, disable_web_page_preview=True
+                ),
+                reply_markup=buttons,
+            )
+        )
     return answers
 
 
 async def lyrics_func(answers, text):
     song = await arq.lyrics(text)
-    lyrics = song.lyrics
+    if not song.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=song.result,
+                input_message_content=InputTextMessageContent(song.result),
+            )
+        )
+        return answers
+    lyrics = song.result
     song = lyrics.splitlines()
     song_name = song[0]
     artist = song[1]
@@ -407,51 +393,9 @@ async def lyrics_func(answers, text):
         InlineQueryResultArticle(
             title=song_name,
             description=artist,
-            input_message_content=InputTextMessageContent(msg)
-        ))
-    return answers
-
-
-async def eval_func(answers, text, user_id):
-    if user_id not in SUDOERS:
-        msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
-        answers.append(
-            InlineQueryResultArticle(
-                title="ERROR",
-                description="THIS FEATURE IS ONLY FOR SUDO USERS",
-                input_message_content=InputTextMessageContent(msg)
-            ))
-        return answers
-    if str(text)[-1] != ":":
-        msg = "**ERROR**\n__Put A ':' After The Code To Execute It__"
-        answers.append(
-            InlineQueryResultArticle(
-                title="ERROR",
-                description="Put A ':' After The Code To Execute It",
-                input_message_content=InputTextMessageContent(msg)
-            ))
-
-        return answers
-    text = text[0:-1]
-    result = await eval_executer_func(text)
-    res = result[0]
-    output = result[1]
-    time_taken = result[2]
-    msg = f"{res}"
-    button = InlineKeyboard(row_width=1)
-    button.add(
-        InlineKeyboardButton(
-            text=f"{time_taken} Seconds",
-            callback_data="ok_lol"
+            input_message_content=InputTextMessageContent(msg),
         )
     )
-    answers.append(
-        InlineQueryResultArticle(
-            title=f"Took {time_taken} Seconds.",
-            description=output,
-            reply_markup=button,
-            input_message_content=InputTextMessageContent(msg)
-        ))
     return answers
 
 
@@ -459,10 +403,11 @@ async def github_user_func(answers, text):
     URL = f"https://api.github.com/users/{text}"
     result = await fetch(URL)
     buttons = InlineKeyboard(row_width=1)
-    buttons.add(InlineKeyboardButton(
-        text="Open On Github",
-        url=f"https://github.com/{text}"
-    ))
+    buttons.add(
+        InlineKeyboardButton(
+            text="Open On Github", url=f"https://github.com/{text}"
+        )
+    )
     caption = f"""
 **Info Of {result['name']}**
 **Username:** `{text}`
@@ -477,10 +422,11 @@ async def github_user_func(answers, text):
 **Following:** `{result['following']}`"""
     answers.append(
         InlineQueryResultPhoto(
-            photo_url=result['avatar_url'],
+            photo_url=result["avatar_url"],
             caption=caption,
-            reply_markup=buttons
-        ))
+            reply_markup=buttons,
+        )
+    )
     return answers
 
 
@@ -496,12 +442,11 @@ async def github_repo_func(answers, text):
     r1 = results[1]
     commits = 0
     for developer in r1:
-        commits += developer['contributions']
+        commits += developer["contributions"]
     buttons = InlineKeyboard(row_width=1)
     buttons.add(
         InlineKeyboardButton(
-            'Open On Github',
-            url=f"https://github.com/{text}"
+            "Open On Github", url=f"https://github.com/{text}"
         )
     )
     caption = f"""
@@ -524,10 +469,10 @@ async def github_repo_func(answers, text):
             description=text,
             reply_markup=buttons,
             input_message_content=InputTextMessageContent(
-                caption,
-                disable_web_page_preview=True
-            )
-        ))
+                caption, disable_web_page_preview=True
+            ),
+        )
+    )
     return answers
 
 
@@ -538,8 +483,9 @@ async def tg_search_func(answers, text, user_id):
             InlineQueryResultArticle(
                 title="ERROR",
                 description="THIS FEATURE IS ONLY FOR SUDO USERS",
-                input_message_content=InputTextMessageContent(msg)
-            ))
+                input_message_content=InputTextMessageContent(msg),
+            )
+        )
         return answers
     if str(text)[-1] != ":":
         msg = "**ERROR**\n__Put A ':' After The Text To Search__"
@@ -547,8 +493,9 @@ async def tg_search_func(answers, text, user_id):
             InlineQueryResultArticle(
                 title="ERROR",
                 description="Put A ':' After The Text To Search",
-                input_message_content=InputTextMessageContent(msg)
-            ))
+                input_message_content=InputTextMessageContent(msg),
+            )
+        )
 
         return answers
     text = text[0:-1]
@@ -557,14 +504,17 @@ async def tg_search_func(answers, text, user_id):
         buttons.add(
             InlineKeyboardButton(
                 text="Origin",
-                url=message.link if message.link else "https://t.me/telegram"
+                url=message.link if message.link else "https://t.me/telegram",
             ),
             InlineKeyboardButton(
-                text="Search again",
-                switch_inline_query_current_chat="search"
-            )
+                text="Search again", switch_inline_query_current_chat="search"
+            ),
         )
-        name = message.from_user.first_name if message.from_user.first_name else "NO NAME"
+        name = (
+            message.from_user.first_name
+            if message.from_user.first_name
+            else "NO NAME"
+        )
         caption = f"""
 **Query:** {text}
 **Name:** {str(name)} [`{message.from_user.id}`]
@@ -579,9 +529,8 @@ async def tg_search_func(answers, text, user_id):
             description=message.text if message.text else "[NO_TEXT]",
             reply_markup=buttons,
             input_message_content=InputTextMessageContent(
-                caption,
-                disable_web_page_preview=True
-            )
+                caption, disable_web_page_preview=True
+            ),
         )
         answers.append(result)
     return answers
@@ -591,7 +540,12 @@ async def music_inline_func(answers, query):
     chat_id = -1001445180719
     group_invite = "https://t.me/joinchat/vSDE2DuGK4Y4Nzll"
     try:
-        messages = [m async for m in app2.search_messages(chat_id, query, filter="audio", limit=199)]
+        messages = [
+            m
+            async for m in app2.search_messages(
+                chat_id, query, filter="audio", limit=199
+            )
+        ]
     except Exception as e:
         print(e)
         msg = f"You Need To Join Here With Your Bot And Userbot To Get Cached Music.\n{group_invite}"
@@ -600,29 +554,30 @@ async def music_inline_func(answers, query):
                 title="ERROR",
                 description="Click Here To Know More.",
                 input_message_content=InputTextMessageContent(
-                    msg,
-                    disable_web_page_preview=True
-                )
+                    msg, disable_web_page_preview=True
+                ),
             )
         )
         return answers
     messages_ids_and_duration = []
     for f_ in messages:
         messages_ids_and_duration.append(
-            {"message_id": f_.message_id,
-                "duration": f_.audio.duration if f_.audio.duration else 0}
+            {
+                "message_id": f_.message_id,
+                "duration": f_.audio.duration if f_.audio.duration else 0,
+            }
         )
     messages = list(
-        {v["duration"]: v for v in messages_ids_and_duration}.values())
+        {v["duration"]: v for v in messages_ids_and_duration}.values()
+    )
     messages_ids = []
     for ff_ in messages:
-        messages_ids.append(ff_['message_id'])
+        messages_ids.append(ff_["message_id"])
     messages = await app.get_messages(chat_id, messages_ids[0:48])
     for message_ in messages:
         answers.append(
             InlineQueryResultCachedDocument(
-                file_id=message_.audio.file_id,
-                title=message_.audio.title
+                file_id=message_.audio.file_id, title=message_.audio.title
             )
         )
     return answers
@@ -630,17 +585,27 @@ async def music_inline_func(answers, query):
 
 async def wiki_func(answers, text):
     data = await arq.wiki(text)
+    if not data.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=data.result,
+                input_message_content=InputTextMessageContent(data.result),
+            )
+        )
+        return answers
+    data = data.result
     msg = f"""
 **QUERY:**
-{data['title']}
+{data.title}
 
 **ANSWER:**
-__{data['answer']}__"""
+__{data.answer}__"""
     answers.append(
         InlineQueryResultArticle(
-            title=data['title'],
-            description=data['answer'],
-            input_message_content=InputTextMessageContent(msg)
+            title=data.title,
+            description=data.answer,
+            input_message_content=InputTextMessageContent(msg),
         )
     )
     return answers
@@ -655,21 +620,24 @@ async def speedtest_init(query):
             InlineQueryResultArticle(
                 title="ERROR",
                 description="THIS FEATURE IS ONLY FOR SUDO USERS",
-                input_message_content=InputTextMessageContent(msg)
-            ))
+                input_message_content=InputTextMessageContent(msg),
+            )
+        )
         return answers
     msg = "**Click The Button Below To Perform A Speedtest**"
     button = InlineKeyboard(row_width=1)
-    button.add(InlineKeyboardButton(
-        text="Test", callback_data="test_speedtest"))
+    button.add(
+        InlineKeyboardButton(text="Test", callback_data="test_speedtest")
+    )
     answers.append(
         InlineQueryResultArticle(
             title="Click Here",
             input_message_content=InputTextMessageContent(msg),
-            reply_markup=button
+            reply_markup=button,
         )
     )
     return answers
+
 
 """ callback query for the function above """
 
@@ -677,14 +645,11 @@ async def speedtest_init(query):
 @app.on_callback_query(filters.regex("test_speedtest"))
 async def test_speedtest_cq(_, cq):
     if cq.from_user.id not in SUDOERS:
-        await cq.answer("This Isn't For You!")
-        return
+        return await cq.answer("This Isn't For You!")
     inline_message_id = cq.inline_message_id
-    await app.edit_inline_text(
-        inline_message_id,
-        "**Testing**"
-    )
-    download, upload, info = await test_speedtest()
+    await app.edit_inline_text(inline_message_id, "**Testing**")
+    loop = asyncio.get_running_loop()
+    download, upload, info = await loop.run_in_executor(None, test_speedtest)
     msg = f"""
 **Download:** `{download}`
 **Upload:** `{upload}`
@@ -693,59 +658,7 @@ async def test_speedtest_cq(_, cq):
 **Latitude:** `{info['lat']}`
 **Longitude:** `{info['lon']}`
 """
-    await app.edit_inline_text(
-        inline_message_id,
-        msg
-    )
-
-
-async def pastebin_func(answers, link):
-    link = link.split("/")
-    if link[3] == "c":
-        chat, message_id = int("-100" + link[4]), int(link[5])
-    else:
-        chat, message_id = link[3], link[4]
-    m = await app.get_messages(chat, message_ids=int(message_id))
-    if not m.text and not m.document:
-        m = await app2.get_messages(chat, message_ids=int(message_id))
-    if m.text:
-        content = m.text
-    else:
-        if m.document.file_size > 1048576:
-            answers.append(
-                InlineQueryResultArticle(
-                    title="DOCUMENT TOO BIG",
-                    description="Maximum supported size is 1MB",
-                    input_message_content=InputTextMessageContent(
-                        "DOCUMENT TOO BIG")
-
-                )
-            )
-            return answers
-        doc = await m.download()
-        async with aiofiles.open(doc, mode="r") as f:
-            content = await f.read()
-        os.remove(doc)
-    link = await paste(content)
-    preview = link + "/preview.png"
-    status_code = await get_http_status_code(preview)
-    i = 0
-    while status_code != 200:
-        if i == 5:
-            break
-        status_code = await get_http_status_code(preview)
-        await asyncio.sleep(0.2)
-        i += 1
-    await app.send_photo(USERBOT_ID, preview)  # To Pre-cache the media
-    buttons = InlineKeyboard(row_width=1)
-    buttons.add(InlineKeyboardButton(text="Paste Link", url=link))
-    answers.append(
-        InlineQueryResultPhoto(
-            photo_url=preview,
-            reply_markup=buttons
-        )
-    )
-    return answers
+    await app.edit_inline_text(inline_message_id, msg)
 
 
 async def pmpermit_func(answers, user_id, victim):
@@ -755,27 +668,23 @@ async def pmpermit_func(answers, user_id, victim):
     buttons = InlineKeyboard(row_width=2)
     buttons.add(
         InlineKeyboardButton(
-            text="To Scam You",
-            callback_data="pmpermit to_scam_you a"
+            text="To Scam You", callback_data="pmpermit to_scam_you a"
         ),
         InlineKeyboardButton(
-            text="For promotion",
-            callback_data="pmpermit to_scam_you a"
+            text="For promotion", callback_data="pmpermit to_scam_you a"
         ),
         InlineKeyboardButton(
-            text="Approve me",
-            callback_data="pmpermit approve_me a"
+            text="Approve me", callback_data="pmpermit approve_me a"
         ),
         InlineKeyboardButton(
-            text="Approve",
-            callback_data=f"pmpermit approve {victim}"
-        )
+            text="Approve", callback_data=f"pmpermit approve {victim}"
+        ),
     )
     answers.append(
         InlineQueryResultArticle(
             title="do_not_click_here",
             reply_markup=buttons,
-            input_message_content=InputTextMessageContent(caption)
+            input_message_content=InputTextMessageContent(caption),
         )
     )
     return answers
@@ -786,12 +695,208 @@ async def ping_func(answers):
     ping = Ping(ping_id=randint(696969, 6969696))
     await app.send(ping)
     t2 = time()
-    ping = f"{str(round((t2 - t1), 2))} Seconds"
+    ping = f"{str(round((t2 - t1), 6) * 100)} ms"
     answers.append(
         InlineQueryResultArticle(
             title=ping,
-            input_message_content=InputTextMessageContent(
-                f"__**{ping}**__")
+            input_message_content=InputTextMessageContent(f"__**{ping}**__"),
         )
     )
+    return answers
+
+
+async def yt_music_func(answers, url):
+    if "http" not in url:
+        url = (await arq.youtube(url)).result[0]
+        url = f"https://youtube.com{url.url_suffix}"
+    loop = asyncio.get_running_loop()
+    music = await loop.run_in_executor(None, download_youtube_audio, url)
+    if not music:
+        msg = "**ERROR**\n__MUSIC TOO LONG__"
+        answers.append(
+            InlineQueryResultArticle(
+                title="ERROR",
+                description="MUSIC TOO LONG",
+                input_message_content=InputTextMessageContent(msg),
+            )
+        )
+        return answers
+    (
+        title,
+        performer,
+        duration,
+        audio,
+        thumbnail,
+    ) = music
+    m = await app.send_audio(
+        MESSAGE_DUMP_CHAT,
+        audio,
+        title=title,
+        duration=duration,
+        performer=performer,
+        thumb=thumbnail,
+    )
+    os.remove(audio)
+    os.remove(thumbnail)
+    answers.append(
+        InlineQueryResultCachedDocument(title=title, file_id=m.audio.file_id)
+    )
+    return answers
+
+
+async def user_info_inline_func(answers, user):
+    caption, photo_id = await get_user_info(user)
+    answers.append(
+        InlineQueryResultArticle(
+            title="Found User.",
+            input_message_content=InputTextMessageContent(
+                caption, disable_web_page_preview=True
+            ),
+        )
+    )
+    return answers
+
+
+async def chat_info_inline_func(answers, chat):
+    caption, photo_id = await get_chat_info(chat)
+    answers.append(
+        InlineQueryResultArticle(
+            title="Found Chat.",
+            input_message_content=InputTextMessageContent(
+                caption, disable_web_page_preview=True
+            ),
+        )
+    )
+    return answers
+
+
+async def tmdb_func(answers, query):
+    response = await arq.tmdb(query)
+    if not response.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=response.result,
+                input_message_content=InputTextMessageContent(response.result),
+            )
+        )
+        return answers
+    results = response.result[0:48]
+    for result in results:
+        if not result.poster and not result.backdrop:
+            continue
+        if not result.genre:
+            genre = None
+        else:
+            genre = " | ".join(result.genre)
+        description = result.overview[0:900] if result.overview else "None"
+        caption = f"""
+**{result.title}**
+**Type:** {result.type}
+**Rating:** {result.rating}
+**Genre:** {genre}
+**Release Date:** {result.releaseDate}
+**Description:** __{description}__
+"""
+        buttons = InlineKeyboard(row_width=1)
+        buttons.add(
+            InlineKeyboardButton(
+                "Search Again", switch_inline_query_current_chat="tmdb"
+            )
+        )
+        answers.append(
+            InlineQueryResultPhoto(
+                photo_url=result.backdrop
+                if result.backdrop
+                else result.poster,
+                caption=caption,
+                title=result.title,
+                description=f"{genre} • {result.releaseDate} • {result.rating} • {description}",
+                reply_markup=buttons,
+            )
+        )
+    return answers
+
+
+async def pypiSearchFunc(answers: list, query: str) -> list:
+    result = await arq.pypi(query)
+    if not result.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="No Such Package",
+                description=result.result,
+                input_message_content=InputTextMessageContent(result.result),
+            )
+        )
+        return answers
+    result = result.result
+    pURLS = [
+        f"**{key}**: {value}" for key, value in result.projectURLS.items()
+    ]
+    pURLS = ("\n" + "\n".join(pURLS)) if pURLS else None
+    caption = f"""
+**Name:** {result.name}
+**Version:** {result.version}
+**License:** {result.license}
+**Description:** {result.description}
+**Size:** {result.size}
+**Last Update:** {result.uploadTime}
+**Author:** {result.author}
+**Author's Email:** {result.authorEmail}
+**Requirements:** {(f'`{" | ".join(result.requirements)}`') if result.requirements else None}
+**Minimum Python Version:** {result.minPyVersion}
+**Homepage:** {result.homepage}
+**Bug Tracker:** {result.bugTrackURL}
+**Docs Url:** {result.docsURL}
+**Pypi Url:** {result.pypiURL}
+**Releases:** {result.releaseURL}
+**Project Urls:** ->{pURLS}
+"""
+    button = InlineKeyboard(row_width=2)
+    button.add(
+        InlineKeyboardButton(text="Open Page", url=result.pypiURL),
+        InlineKeyboardButton(
+            text="Search Again", switch_inline_query_current_chat="pypi"
+        ),
+    )
+    answers.append(
+        InlineQueryResultArticle(
+            title=f"{result.name}  |  {result.version}",
+            description=result.description,
+            input_message_content=InputTextMessageContent(
+                caption, disable_web_page_preview=True
+            ),
+            reply_markup=button,
+        )
+    )
+    return answers
+
+
+async def image_func(answers, query):
+    results = await arq.image(query)
+    if not results.ok:
+        answers.append(
+            InlineQueryResultArticle(
+                title="Error",
+                description=results.result,
+                input_message_content=InputTextMessageContent(results.result),
+            )
+        )
+        return answers
+    results = results.result[0:48]
+    buttons = InlineKeyboard(row_width=2)
+    buttons.add(
+            InlineKeyboardButton(
+                text="Search again", switch_inline_query_current_chat="image"
+            ),
+        )
+    for i in results:
+        answers.append(
+            InlineQueryResultPhoto(
+                title=i.title,
+                photo_url=i.url,
+                thumb_url=i.url,
+                reply_markup=buttons,
+            )
+        )
     return answers

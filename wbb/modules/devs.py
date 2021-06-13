@@ -5,17 +5,19 @@
             https://github.com/pokurt/Nana-Remix/blob/master/nana/plugins/devs.py
 """
 
-import sys
-import traceback
-from io import StringIO
 import os
 import re
 import subprocess
+import sys
+import traceback
 from inspect import getfullargspec
-from wbb import app, SUDOERS
-from pyrogram import filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from io import StringIO
 from time import time
+
+from pyrogram import filters
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+
+from wbb import SUDOERS, app
 
 __MODULE__ = "Devs"
 __HELP__ = "/eval - Execute Python Code\n/sh - Execute Shell Code"
@@ -35,17 +37,18 @@ async def edit_or_reply(msg: Message, **kwargs):
     await func(**{k: v for k, v in kwargs.items() if k in spec})
 
 
-@app.on_message(filters.user(SUDOERS) & ~filters.forwarded & ~filters.via_bot & filters.command("eval"))
+@app.on_message(
+    filters.user(SUDOERS)
+    & ~filters.forwarded
+    & ~filters.via_bot
+    & filters.command("eval")
+)
 async def executor(client, message):
     try:
         cmd = message.text.split(" ", maxsplit=1)[1]
     except IndexError:
-        await message.delete()
-        return
+        return await message.delete()
     t1 = time()
-    reply_to_id = message.message_id
-    if message.reply_to_message:
-        reply_to_id = message.reply_to_message.message_id
     old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = StringIO()
@@ -68,38 +71,40 @@ async def executor(client, message):
         evaluation = stdout
     else:
         evaluation = "Success"
-    final_output = (f"**OUTPUT**:\n```{evaluation.strip()}```")
+    final_output = f"**OUTPUT**:\n```{evaluation.strip()}```"
     if len(final_output) > 4096:
         filename = "output.txt"
         with open(filename, "w+", encoding="utf8") as out_file:
             out_file.write(str(evaluation.strip()))
         t2 = time()
         keyboard = InlineKeyboardMarkup(
-            [[
-                InlineKeyboardButton(
-                    text="⏳",
-                    callback_data=f"runtime {t2-t1} Seconds"
-                )
-            ]]
+            [
+                [
+                    InlineKeyboardButton(
+                        text="⏳", callback_data=f"runtime {t2-t1} Seconds"
+                    )
+                ]
+            ]
         )
         await message.reply_document(
             document=filename,
-            caption=cmd,
-            disable_notification=True,
-            reply_to_message_id=reply_to_id,
-            reply_markup=keyboard
+            caption=f"**INPUT:**\n`{cmd[0:980]}`\n\n**OUTPUT:**\n`Attached Document`",
+            quote=False,
+            reply_markup=keyboard,
         )
-        os.remove(filename)
         await message.delete()
+        os.remove(filename)
     else:
         t2 = time()
         keyboard = InlineKeyboardMarkup(
-            [[
-                InlineKeyboardButton(
-                    text="⏳",
-                    callback_data=f"runtime {round(t2-t1, 3)} Seconds"
-                )
-            ]]
+            [
+                [
+                    InlineKeyboardButton(
+                        text="⏳",
+                        callback_data=f"runtime {round(t2-t1, 3)} Seconds",
+                    )
+                ]
+            ]
         )
         await edit_or_reply(message, text=final_output, reply_markup=keyboard)
 
@@ -114,68 +119,64 @@ async def runtime_func_cq(_, cq):
     filters.user(SUDOERS)
     & ~filters.forwarded
     & ~filters.via_bot
-    & filters.command('sh'),
+    & filters.command("sh"),
 )
 async def shellrunner(client, message):
     if len(message.command) < 2:
-        await edit_or_reply(message, text='**Usage:**\n/sh git pull')
-        return
+        return await edit_or_reply(message, text="**Usage:**\n/sh git pull")
     text = message.text.split(None, 1)[1]
-    if '\n' in text:
-        code = text.split('\n')
-        output = ''
+    if "\n" in text:
+        code = text.split("\n")
+        output = ""
         for x in code:
             shell = re.split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x)
             try:
                 process = subprocess.Popen(
-                    shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                    shell,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
                 )
             except Exception as err:
                 print(err)
-                await edit_or_reply(
-                    message,
-                    text=f"**ERROR:**\n```{err}```")
-            output += f'**{code}**\n'
-            output += process.stdout.read()[:-1].decode('utf-8')
-            output += '\n'
+                await edit_or_reply(message, text=f"**ERROR:**\n```{err}```")
+            output += f"**{code}**\n"
+            output += process.stdout.read()[:-1].decode("utf-8")
+            output += "\n"
     else:
         shell = re.split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", text)
         for a in range(len(shell)):
-            shell[a] = shell[a].replace('"', '')
+            shell[a] = shell[a].replace('"', "")
         try:
             process = subprocess.Popen(
-                shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                shell,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
             )
         except Exception as err:
             print(err)
             exc_type, exc_obj, exc_tb = sys.exc_info()
             errors = traceback.format_exception(
-                etype=exc_type, value=exc_obj, tb=exc_tb,
+                etype=exc_type,
+                value=exc_obj,
+                tb=exc_tb,
             )
-            await edit_or_reply(
-                message,
-                text=f"**ERROR:**\n```{''.join(errors)}```")
-            return
-        output = process.stdout.read()[:-1].decode('utf-8')
-    if str(output) == '\n':
+            return await edit_or_reply(
+                message, text=f"**ERROR:**\n```{''.join(errors)}```"
+            )
+        output = process.stdout.read()[:-1].decode("utf-8")
+    if str(output) == "\n":
         output = None
     if output:
         if len(output) > 4096:
-            with open('output.txt', 'w+') as file:
+            with open("output.txt", "w+") as file:
                 file.write(output)
             await app.send_document(
                 message.chat.id,
-                'output.txt',
+                "output.txt",
                 reply_to_message_id=message.message_id,
-                caption='`Output`',
+                caption="`Output`",
             )
-            os.remove('output.txt')
-            return
-        await edit_or_reply(
-            message,
-            text=f"**OUTPUT:**\n```{output}```"
-        )
+            return os.remove("output.txt")
+        await edit_or_reply(message, text=f"**OUTPUT:**\n```{output}```")
     else:
-        await edit_or_reply(
-            message,
-            text='**OUTPUT: **\n`No output`')
+        await edit_or_reply(message, text="**OUTPUT: **\n`No output`")

@@ -1,3 +1,11 @@
+*.m4a
+spam.py
+*.apk
+*.c
+exec
+*.out
+__pycache__
+*.opus
 unknown_errors.txt
 *.jpg
 token.py

@@ -24,30 +24,31 @@ SOFTWARE.
 
 import asyncio
 import os
-from wbb import app, WELCOME_DELAY_KICK_SEC, SUDOERS
-from wbb.modules.admin import member_permissions
+from datetime import datetime
+from random import shuffle
+
+from pykeyboard import InlineKeyboard
+from pyrogram import filters
+from pyrogram.errors.exceptions.bad_request_400 import (ChatAdminRequired,
+                                                        UserNotParticipant)
+from pyrogram.types import (ChatPermissions, InlineKeyboardButton,
+                            InlineKeyboardMarkup, Message, User)
+
+from wbb import SUDOERS, WELCOME_DELAY_KICK_SEC, app
 from wbb.core.decorators.errors import capture_err
+from wbb.core.decorators.permissions import adminsOnly
+from wbb.utils.dbfunctions import (captcha_off, captcha_on, del_welcome,
+                                   get_captcha_cache, get_welcome,
+                                   is_captcha_on, is_gbanned_user, set_welcome,
+                                   update_captcha_cache)
 from wbb.utils.filter_groups import welcome_captcha_group
 from wbb.utils.functions import generate_captcha
-from wbb.utils.dbfunctions import (
-    is_gbanned_user, is_captcha_on, captcha_on, captcha_off,
-    set_welcome, del_welcome, get_welcome
-)
-from pykeyboard import InlineKeyboard
-from pyrogram.types import (
-    Message, InlineKeyboardMarkup,
-    InlineKeyboardButton, ChatPermissions, User
-)
-from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant, ChatAdminRequired
-from pyrogram import filters
-from random import shuffle
-from datetime import datetime
 
 __MODULE__ = "Greetings"
 __HELP__ = """
-/captcha [ON|OFF] - Enable/Disable captcha.
+/captcha [ENABLE|DISABLE] - Enable/Disable captcha.
 
-/set_welcome - Reply this to a message containing correct 
+/set_welcome - Reply this to a message containing correct
 format for a welcome message, check end of this message.
 
 /del_welcome - Delete the welcome message.
@@ -68,19 +69,31 @@ button2=[Github, https://github.com]
 
 **NOTES ->**
 
-for /rules, you can do /filter rules to a message 
+for /rules, you can do /filter rules to a message
 containing rules of your groups whenever a user
 sends /rules, he'll get the message
 """
 
 
 answers_dicc = []
+loop = asyncio.get_running_loop()
+
+
+async def get_initial_captcha_cache():
+    global answers_dicc
+    answers_dicc = await get_captcha_cache()
+    return answers_dicc
+
+
+loop.create_task(get_initial_captcha_cache())
 
 
 @app.on_message(filters.new_chat_members, group=welcome_captcha_group)
 @capture_err
 async def welcome(_, message: Message):
     global answers_dicc
+    """ Get cached answers from mongodb in case of bot's been restarted or crashed. """
+    answers_dicc = await get_captcha_cache()
     """Mute new member and send message with button"""
     if not await is_captcha_on(message.chat.id):
         return
@@ -88,17 +101,21 @@ async def welcome(_, message: Message):
         try:
             if member.id in SUDOERS:
                 continue  # ignore sudos
-            """if await is_gbanned_user(member.id):
+            if await is_gbanned_user(member.id):
                 await message.chat.kick_member(member.id)
-                await message.reply_text(f"{member.mention} was globally banned, and got removed,"
-                                         + " if you think this is a false gban, you can appeal"
-                                         + " for this ban in support chat.")
-               continue"""
+                await message.reply_text(
+                    f"{member.mention} was globally banned, and got removed,"
+                    + " if you think this is a false gban, you can appeal"
+                    + " for this ban in support chat."
+                )
+                continue
             if member.is_bot:
                 continue  # ignore bots
             await message.chat.restrict_member(member.id, ChatPermissions())
-            text = (f"{(member.mention())} Are you human?\n"
-                    f"Solve this captcha in {WELCOME_DELAY_KICK_SEC} seconds and 4 attempts or you'll be kicked.")
+            text = (
+                f"{(member.mention())} Are you human?\n"
+                f"Solve this captcha in {WELCOME_DELAY_KICK_SEC} seconds and 4 attempts or you'll be kicked."
+            )
         except ChatAdminRequired:
             return
         # Generate a captcha image, answers and some wrong answers
@@ -108,7 +125,7 @@ async def welcome(_, message: Message):
         wrong_answers = captcha[2]  # This consists of 8 wrong answers
         correct_button = InlineKeyboardButton(
             f"{captcha_answer}",
-            callback_data=f"pressed_button {captcha_answer} {member.id}"
+            callback_data=f"pressed_button {captcha_answer} {member.id}",
         )
         temp_keyboard_1 = [correct_button]  # Button row 1
         temp_keyboard_2 = []  # Botton row 2
@@ -117,21 +134,21 @@ async def welcome(_, message: Message):
             temp_keyboard_1.append(
                 InlineKeyboardButton(
                     f"{wrong_answers[i]}",
-                    callback_data=f"pressed_button {wrong_answers[i]} {member.id}"
+                    callback_data=f"pressed_button {wrong_answers[i]} {member.id}",
                 )
             )
         for i in range(2, 5):
             temp_keyboard_2.append(
                 InlineKeyboardButton(
                     f"{wrong_answers[i]}",
-                    callback_data=f"pressed_button {wrong_answers[i]} {member.id}"
+                    callback_data=f"pressed_button {wrong_answers[i]} {member.id}",
                 )
             )
         for i in range(5, 8):
             temp_keyboard_3.append(
                 InlineKeyboardButton(
                     f"{wrong_answers[i]}",
-                    callback_data=f"pressed_button {wrong_answers[i]} {member.id}"
+                    callback_data=f"pressed_button {wrong_answers[i]} {member.id}",
                 )
             )
 
@@ -139,10 +156,11 @@ async def welcome(_, message: Message):
         keyboard = [temp_keyboard_1, temp_keyboard_2, temp_keyboard_3]
         shuffle(keyboard)
         verification_data = {
+            "chat_id": message.chat.id,
             "user_id": member.id,
             "answer": captcha_answer,
             "keyboard": keyboard,
-            "attempts": 0
+            "attempts": 0,
         }
         keyboard = InlineKeyboardMarkup(keyboard)
         # Append user info, correct answer and
@@ -152,47 +170,54 @@ async def welcome(_, message: Message):
             photo=captcha_image,
             caption=text,
             reply_markup=keyboard,
-            quote=True
+            quote=True,
         )
         os.remove(captcha_image)
-        asyncio.create_task(kick_restricted_after_delay(
-            WELCOME_DELAY_KICK_SEC, button_message, member))
+        """ Save captcha answers etc in mongodb in case bot gets crashed or restarted. """
+        await update_captcha_cache(answers_dicc)
+        asyncio.create_task(
+            kick_restricted_after_delay(
+                WELCOME_DELAY_KICK_SEC, button_message, member
+            )
+        )
         await asyncio.sleep(0.5)
 
 
 async def send_welcome_message(callback_query, pending_user_id):
+    try:
         raw_text = await get_welcome(callback_query.message.chat.id)
-        raw_text = raw_text.strip().replace("`", "")
-        if not raw_text:
-            return
-        text = raw_text.split("~")[0].strip()
-        buttons_text_list = raw_text.split("~")[1].strip().splitlines()
-        if "{chat}" in text:
-            text = text.replace("{chat}", callback_query.message.chat.title)
-        if "{name}" in text:
-            text = text.replace("{name}", (await app.get_users(pending_user_id)).mention)
-        buttons = InlineKeyboard(row_width=2)
-        list_of_buttons = []
-        for button_string in buttons_text_list:
-            button_string = button_string.strip().split("=")[1].strip()
-            button_string = button_string.replace("[", "").strip()
-            button_string = button_string.replace("]", "").strip()
-            button_string = button_string.split(",")
-            button_text = button_string[0].strip()
-            button_url = button_string[1].strip()
-            list_of_buttons.append(
-                    InlineKeyboardButton(
-                        text=button_text,
-                        url=button_url
-                        )
-                    )
-        buttons.add(*list_of_buttons)
-        await app.send_message(
-                callback_query.message.chat.id,
-                text=text,
-                reply_markup=buttons,
-                disable_web_page_preview=True
-                )
+    except TypeError:
+        return
+    raw_text = raw_text.strip().replace("`", "")
+    if not raw_text:
+        return
+    text = raw_text.split("~")[0].strip()
+    buttons_text_list = raw_text.split("~")[1].strip().splitlines()
+    if "{chat}" in text:
+        text = text.replace("{chat}", callback_query.message.chat.title)
+    if "{name}" in text:
+        text = text.replace(
+            "{name}", (await app.get_users(pending_user_id)).mention
+        )
+    buttons = InlineKeyboard(row_width=2)
+    list_of_buttons = []
+    for button_string in buttons_text_list:
+        button_string = button_string.strip().split("=")[1].strip()
+        button_string = button_string.replace("[", "").strip()
+        button_string = button_string.replace("]", "").strip()
+        button_string = button_string.split(",")
+        button_text = button_string[0].strip()
+        button_url = button_string[1].strip()
+        list_of_buttons.append(
+            InlineKeyboardButton(text=button_text, url=button_url)
+        )
+    buttons.add(*list_of_buttons)
+    await app.send_message(
+        callback_query.message.chat.id,
+        text=text,
+        reply_markup=buttons,
+        disable_web_page_preview=True,
+    )
 
 
 @app.on_callback_query(filters.regex("pressed_button"))
@@ -203,31 +228,37 @@ async def callback_query_welcome_button(_, callback_query):
     """
     global answers_dicc
     data = callback_query.data
-    pending_user = await app.get_users(int(data.split(None, 2)[2]))
     pressed_user_id = callback_query.from_user.id
-    pending_user_id = pending_user.id
+    pending_user_id = int(data.split(None, 2)[2])
     button_message = callback_query.message
     answer = data.split(None, 2)[1]
     if len(answers_dicc) != 0:
         for i in answers_dicc:
-            if i['user_id'] == pending_user_id:
-                correct_answer = i['answer']
-                keyboard = i['keyboard']
+            if (
+                i["user_id"] == pending_user_id
+                and i["chat_id"] == button_message.chat.id
+            ):
+                correct_answer = i["answer"]
+                keyboard = i["keyboard"]
     if pending_user_id == pressed_user_id:
         if answer != correct_answer:
             await callback_query.answer("Yeah, It's Wrong.")
             for iii in answers_dicc:
-                if iii['user_id'] == pending_user_id:
-                    attempts = iii['attempts']
+                if (
+                    iii["user_id"] == pending_user_id
+                    and iii["chat_id"] == button_message.chat.id
+                ):
+                    attempts = iii["attempts"]
                     if attempts >= 3:
                         answers_dicc.remove(iii)
                         await button_message.chat.kick_member(pending_user_id)
                         await asyncio.sleep(1)
                         await button_message.chat.unban_member(pending_user_id)
                         await button_message.delete()
+                        await update_captcha_cache(answers_dicc)
                         return
                     else:
-                        iii['attempts'] += 1
+                        iii["attempts"] += 1
                         break
             shuffle(keyboard[0])
             shuffle(keyboard[1])
@@ -235,8 +266,7 @@ async def callback_query_welcome_button(_, callback_query):
             shuffle(keyboard)
             keyboard = InlineKeyboardMarkup(keyboard)
             await button_message.edit(
-                text=button_message.caption.markdown,
-                reply_markup=keyboard
+                text=button_message.caption.markdown, reply_markup=keyboard
             )
             return
         await callback_query.answer("Captcha passed successfully!")
@@ -244,9 +274,12 @@ async def callback_query_welcome_button(_, callback_query):
         await button_message.delete()
         if len(answers_dicc) != 0:
             for ii in answers_dicc:
-                if ii['user_id'] == pending_user_id:
+                if (
+                    ii["user_id"] == pending_user_id
+                    and ii["chat_id"] == button_message.chat.id
+                ):
                     answers_dicc.remove(ii)
-
+                    await update_captcha_cache(answers_dicc)
         """ send welcome message """
         await send_welcome_message(callback_query, pending_user_id)
         return
@@ -255,7 +288,9 @@ async def callback_query_welcome_button(_, callback_query):
         return
 
 
-async def kick_restricted_after_delay(delay, button_message: Message, user: User):
+async def kick_restricted_after_delay(
+    delay, button_message: Message, user: User
+):
     """If the new member is still restricted after the delay, delete
     button message and join message and then kick him
     """
@@ -268,14 +303,15 @@ async def kick_restricted_after_delay(delay, button_message: Message, user: User
     await button_message.delete()
     if len(answers_dicc) != 0:
         for i in answers_dicc:
-            if i['user_id'] == user_id:
+            if i["user_id"] == user_id:
                 answers_dicc.remove(i)
+                await update_captcha_cache(answers_dicc)
     await _ban_restricted_user_until_date(group_chat, user_id, duration=delay)
 
 
-async def _ban_restricted_user_until_date(group_chat,
-                                          user_id: int,
-                                          duration: int):
+async def _ban_restricted_user_until_date(
+    group_chat, user_id: int, duration: int
+):
     try:
         member = await group_chat.get_member(user_id)
         if member.status == "restricted":
@@ -286,24 +322,19 @@ async def _ban_restricted_user_until_date(group_chat,
 
 
 @app.on_message(filters.command("captcha") & ~filters.private)
-@capture_err
+@adminsOnly("can_restrict_members")
 async def captcha_state(_, message):
-    usage = "**Usage:**\n/captcha [ON|OFF]"
+    usage = "**Usage:**\n/captcha [ENABLE|DISABLE]"
     if len(message.command) != 2:
         await message.reply_text(usage)
         return
-    user_id = message.from_user.id
     chat_id = message.chat.id
-    permissions = await member_permissions(chat_id, user_id)
-    if "can_restrict_members" not in permissions:
-        await message.reply_text("You don't have enough permissions.")
-        return
     state = message.text.split(None, 1)[1].strip()
     state = state.lower()
-    if state == "on":
+    if state == "enable":
         await captcha_on(chat_id)
         await message.reply_text("Enabled Captcha For New Users.")
-    elif state == "off":
+    elif state == "disable":
         await captcha_off(chat_id)
         await message.reply_text("Disabled Captcha For New Users.")
     else:
@@ -314,46 +345,32 @@ async def captcha_state(_, message):
 
 
 @app.on_message(filters.command("set_welcome") & ~filters.private)
-@capture_err
+@adminsOnly("can_change_info")
 async def set_welcome_func(_, message):
+    usage = "You need to reply to a text, check the Greetings module in /help"
     if not message.reply_to_message:
-        await message.reply_text("You need to reply to a text, check the Welcome module in /help")
+        await message.reply_text(usage)
         return
     if not message.reply_to_message.text:
-        await message.reply_text("You need to reply to a text, check the Welcome module in /help")
+        await message.reply_text(usage)
         return
-    user_id = message.from_user.id
     chat_id = message.chat.id
-    permissions = await member_permissions(chat_id, user_id)
-    if "can_change_info" not in permissions:
-        await message.reply_text("You don't have enough permissions.")
-        return
     raw_text = str(message.reply_to_message.text.markdown)
     await set_welcome(chat_id, raw_text)
-    await message.reply_text("Welcome message has been set, Send /show_welcome to see what's been set.")
+    await message.reply_text("Welcome message has been successfully set.")
 
 
 @app.on_message(filters.command("del_welcome") & ~filters.private)
-@capture_err
+@adminsOnly("can_change_info")
 async def del_welcome_func(_, message):
-    user_id = message.from_user.id
     chat_id = message.chat.id
-    permissions = await member_permissions(chat_id, user_id)
-    if "can_change_info" not in permissions:
-        await message.reply_text("You don't have enough permissions.")
-        return
     await del_welcome(chat_id)
     await message.reply_text("Welcome message has been deleted.")
 
 
 @app.on_message(filters.command("get_welcome") & ~filters.private)
-@capture_err
+@adminsOnly("can_change_info")
 async def get_welcome_func(_, message):
-    user_id = message.from_user.id
     chat_id = message.chat.id
-    permissions = await member_permissions(chat_id, user_id)
-    if "can_change_info" not in permissions:
-        await message.reply_text("You don't have enough permissions.")
-        return
     welcome_message = await get_welcome(chat_id)
     await message.reply_text(welcome_message)

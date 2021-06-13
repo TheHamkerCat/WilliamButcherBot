@@ -1,10 +1,12 @@
 aiohttp
 aiofiles
+ffmpeg-python
+gTTS
+git+git://github.com/OpenRestfulAPI/carbon-now-sh-API-Wrapper
 cryptography
 dnspython
 future
 googletrans==4.0.0-rc1
-hurry.filesize
 motor
 pillow
 psutil
@@ -18,3 +20,5 @@ speedtest-cli
 TgCrypto
 uvloop
 youtube_dl
+bs4
+wget
