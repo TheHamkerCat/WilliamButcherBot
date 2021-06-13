@@ -11,15 +11,7 @@
     "telegram-bot",
     "pyrogram"
     ],
-    "stack": "heroku-20",
-    "buildpacks": [
-      {
-        "url": "heroku/python"
-      },
-      {
-        "url": "heroku-community/apt"
-      }
-    ],
+    "stack": "container",
     "env": {
         "BOT_TOKEN": {
             "description": "Obtain a Telegram bot token by contacting @BotFather",

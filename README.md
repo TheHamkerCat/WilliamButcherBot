@@ -64,6 +64,24 @@ $ python3 str_gen.py
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/thehamkercat/WilliamButcherBot/)
 
 
+## Docker
+
+```sh
+$ git clone https://github.com/TheHamkerCat/WilliamButcherBot && cd WilliamButcherBot
+
+$ cp sample_config.env config.env
+```
+Edit **config.env** with your own values
+
+# Build & Run
+
+```sh
+$ sudo docker build . -t wbb
+
+$ sudo docker run wbb
+```
+To stop use `CTRL+C`
+
 ## Note
 
 1. Support Chat: https://t.me/wbbsupport
