@@ -23,7 +23,7 @@ if HEROKU:
         True if int(environ.get("LOG_MENTIONS", None)) == 1 else False
     )
     SPAM_CHECK_EXCEPTION_GROUPS = list(
-        int(y) for y in environ.get("SPAM_CHECK_EXCEPTION_GROUPS", []).split()
+        int(y) for y in environ.get("SPAM_CHECK_EXCEPTION_GROUPS", "").split()
     )
 else:
     BOT_TOKEN = "467677575:YZfaakjwd545dfg-N6JStihhuw5gQeZHntc"
