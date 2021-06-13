@@ -56,4 +56,4 @@ async def arq_stats(_, message):
 **Bot:** {bot}
 **Address:** {ARQ_API_URL}
 """
-    await message.reply_text(statistics)
+    await message.reply_text(statistics, disable_web_page_preview=True)

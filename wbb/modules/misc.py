@@ -179,7 +179,10 @@ async def decrypt(_, message):
     text = message.reply_to_message.text
     text_in_bytes = bytes(text, "utf-8")
     cipher_suite = Fernet(FERNET_ENCRYPTION_KEY)
-    decoded_text = cipher_suite.decrypt(text_in_bytes)
+    try:
+        decoded_text = cipher_suite.decrypt(text_in_bytes)
+    except Exception:
+        return await message.reply_text("Incorrect token")
     bytes_in_text = decoded_text.decode("utf-8")
     await message.reply_text(bytes_in_text)
 

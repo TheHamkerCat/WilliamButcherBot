@@ -745,7 +745,18 @@ async def yt_music_func(answers, url):
 
 
 async def user_info_inline_func(answers, user):
-    caption, photo_id = await get_user_info(user)
+    try:
+        caption, _ = await get_user_info(user)
+    except Exception:
+        answers.append(
+                InlineQueryResultArticle(
+                    title="USER NOT FOUND",
+                    input_message_content=InputTextMessageContent(
+                        "USER NOT FOUND"
+                        )
+                    )
+                )
+        return answers
     answers.append(
         InlineQueryResultArticle(
             title="Found User.",
