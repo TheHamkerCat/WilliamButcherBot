@@ -1,17 +1,23 @@
-FROM ubuntu:latest
+FROM python:3.9.5-buster
 
-WORKDIR /usr/src/app
-RUN chmod 777 /usr/src/app
-RUN apt-get -qq update
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -qq install python3 python3-pip software-properties-common
+WORKDIR /wbb
+RUN chmod 777 /wbb
 
-#Updating Libraries
+RUN apt-get update -y
+
+RUN apt-get install -y software-properties-common ffmpeg bash wget curl neofetch git
+
+# Updating Libraries
 RUN pip3 install -U pip
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -U -r requirements.txt
 
-#Copying All Source
+# Copying All Source
 COPY . .
 
+# If u want to use /update feature , uncomment the following and edit it.
+#RUN git config --global user.email "your_email"
+#RUN git config --global user.name "git_username"        
+ 
 #Starting Bot
 CMD ["python3", "-m", "wbb"]
