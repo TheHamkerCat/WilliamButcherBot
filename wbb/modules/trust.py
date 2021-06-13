@@ -24,24 +24,26 @@ SOFTWARE.
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import app, app2, arq, MESSAGE_DUMP_CHAT, USERBOT_BOT_CHAT_DIFFERENCE, BOT_ID
-from wbb.utils.dbfunctions import update_trust_db, get_trust_db
+from wbb import (BOT_ID, MESSAGE_DUMP_CHAT, USERBOT_BOT_CHAT_DIFFERENCE, app,
+                 app2, arq)
+from wbb.utils.dbfunctions import get_trust_db, update_trust_db
 from wbb.utils.filter_groups import trust_group
 
+
 @app2.on_message(
-        (filters.text | filters.caption)
-        & ~filters.chat([MESSAGE_DUMP_CHAT, BOT_ID])
-        & filters.chat(USERBOT_BOT_CHAT_DIFFERENCE)
-        & ~filters.me,
-        group=trust_group
-    )
+    (filters.text | filters.caption)
+    & ~filters.chat([MESSAGE_DUMP_CHAT, BOT_ID])
+    & filters.chat(USERBOT_BOT_CHAT_DIFFERENCE)
+    & ~filters.me,
+    group=trust_group,
+)
 @app.on_message(
-        (filters.text | filters.caption)
-        & ~filters.chat(MESSAGE_DUMP_CHAT)
-        & ~filters.me
-        & ~filters.private,
-        group=trust_group
-    )
+    (filters.text | filters.caption)
+    & ~filters.chat(MESSAGE_DUMP_CHAT)
+    & ~filters.me
+    & ~filters.private,
+    group=trust_group,
+)
 async def trust_watcher_func(_, message: Message):
     if message.command:
         return

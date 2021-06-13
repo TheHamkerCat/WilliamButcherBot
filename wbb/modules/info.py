@@ -52,9 +52,23 @@ async def get_user_info(user):
     is_sudo = user_id in SUDOERS
     karma = await user_global_karma(user_id)
     spam_probab, n_messages = await get_spam_probability(user_id)
-    isSpammer = True if spam_probab > 70 else False if spam_probab != 0 else "Uncertain"
-    isPotentialSpammer = True if spam_probab > 40 else False if spam_probab != 0 else "Uncertain"
-    spam_probab = str(round(spam_probab)) + " %" if spam_probab != 0 else "Uncertain"
+    isSpammer = (
+        True
+        if spam_probab > 70
+        else False
+        if spam_probab != 0
+        else "Uncertain"
+    )
+    isPotentialSpammer = (
+        True
+        if spam_probab > 40
+        else False
+        if spam_probab != 0
+        else "Uncertain"
+    )
+    spam_probab = (
+        str(round(spam_probab)) + " %" if spam_probab != 0 else "Uncertain"
+    )
     caption = f"""
 **ID:** `{user_id}`
 **DC:** {dc_id}

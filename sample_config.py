@@ -23,8 +23,8 @@ if HEROKU:
         True if int(environ.get("LOG_MENTIONS", None)) == 1 else False
     )
     SPAM_CHECK_EXCEPTION_GROUPS = list(
-            int(y) for y in environ.get("SPAM_CHECK_EXCEPTION_GROUPS", []).split()
-            )
+        int(y) for y in environ.get("SPAM_CHECK_EXCEPTION_GROUPS", []).split()
+    )
 else:
     BOT_TOKEN = "467677575:YZfaakjwd545dfg-N6JStihhuw5gQeZHntc"
     API_ID = 123456
@@ -46,4 +46,6 @@ else:
     ARQ_API_KEY = "Get this from @ARQRobot"
     ARQ_API_URL = "http://thearq.tech"
     LOG_MENTIONS = True
-    SPAM_CHECK_EXCEPTION_GROUPS = [] #Leave it empty if you don't know about it
+    SPAM_CHECK_EXCEPTION_GROUPS = (
+        []
+    )  # Leave it empty if you don't know about it

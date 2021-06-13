@@ -732,16 +732,17 @@ async def clean_restart_stage() -> dict:
 
 """ TRUST DB """
 
+
 async def get_trust_db(user_id: int) -> list:
     user = await trustdb.find_one({"user_id": user_id})
     if not user:
         return []
-    return user['data']
-    
+    return user["data"]
+
 
 async def update_trust_db(user_id: int, new_data: float):
     user = await trustdb.find_one({"user_id": user_id})
-    data = user['data'] if user else []
+    data = user["data"] if user else []
     if len(data) >= 2000:
         data.remove(data[0])
     data.append(new_data)

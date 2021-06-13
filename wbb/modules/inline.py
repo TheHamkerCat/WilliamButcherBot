@@ -116,7 +116,9 @@ async def inline_query_handler(client, query):
                 )
             tex = text.split(None, 1)[1].strip()
             answerss = await wall_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=2
+            )
 
         elif text.split()[0] == "torrent":
             if len(text.split()) < 2:
@@ -330,7 +332,9 @@ async def inline_query_handler(client, query):
                 )
             tex = text.split(None, 1)[1].strip()
             answerss = await image_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=3600)
+            await client.answer_inline_query(
+                query.id, results=answerss, cache_time=3600
+            )
 
     except Exception as e:
         e = traceback.format_exc()
