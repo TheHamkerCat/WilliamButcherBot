@@ -7,7 +7,7 @@ if HEROKU:
     API_ID = int(environ.get("API_ID", 6))
     API_HASH = environ.get("API_HASH", "eb06d4abfb49dc3eeb1aeb98ae0f581e")
     SESSION_STRING = environ.get("SESSION_STRING", None)
-    USERBOT_PREFIX = environ.get("USERBOT_PREFIX", None)
+    USERBOT_PREFIX = environ.get("USERBOT_PREFIX", ".")
     SUDO_USERS_ID = list(
         int(x) for x in environ.get("SUDO_USERS_ID", "").split()
     )
@@ -22,6 +22,9 @@ if HEROKU:
     LOG_MENTIONS = (
         True if int(environ.get("LOG_MENTIONS", None)) == 1 else False
     )
+    SPAM_CHECK_EXCEPTION_GROUPS = list(
+            int(y) for y in environ.get("SPAM_CHECK_EXCEPTION_GROUPS", []).split()
+            )
 else:
     BOT_TOKEN = "467677575:YZfaakjwd545dfg-N6JStihhuw5gQeZHntc"
     API_ID = 123456
@@ -43,3 +46,4 @@ else:
     ARQ_API_KEY = "Get this from @ARQRobot"
     ARQ_API_URL = "http://thearq.tech"
     LOG_MENTIONS = True
+    SPAM_CHECK_EXCEPTION_GROUPS = [] #Leave it empty if you don't know about it

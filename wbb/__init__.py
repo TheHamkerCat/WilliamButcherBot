@@ -134,6 +134,7 @@ def get_info(app, app2):
     all_ub_chats = [i.chat.id for i in app2.iter_dialogs() if i.chat.type in ['group', 'supergroup', 'channel']]
     ub_b_common_chats = [i.id for i in app2.get_common_chats(BOT_ID)]
     USERBOT_BOT_CHAT_DIFFERENCE = list(set(all_ub_chats).difference(ub_b_common_chats))
+    USERBOT_BOT_CHAT_DIFFERENCE = [x for x in USERBOT_BOT_CHAT_DIFFERENCE if x not in SPAM_CHECK_EXCEPTION_GROUPS]
 
 
 print("[INFO]: STARTING BOT CLIENT")

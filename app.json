@@ -78,6 +78,14 @@
         "LOG_MENTIONS": {
             "description": "Fill 1 to turn this one, or 0 to turn it off.",
             "required": true
+        },
+        "USERBOT_PREFIX": {
+            "description": "Userbot command prefix, Leave it empty if you don't know what that is.",
+            "required": false
+        },
+        "SPAM_CHECK_EXCEPTION_GROUPS": {
+            "description": "Groups where spam scans shouldn't happen, leave it empty if you don't know what that is",
+            "required": false
         }
     }
 }
