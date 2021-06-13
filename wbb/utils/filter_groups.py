@@ -34,3 +34,5 @@ pipes_group = 10
 taglog_group = 11
 chat_watcher_group = 12
 trust_group = 13
+flood_group = 14
+spam_protection_group = 15

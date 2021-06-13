@@ -24,8 +24,10 @@ SOFTWARE.
 import asyncio
 
 from pyrogram import filters
-from pyrogram.types import ChatPermissions, Message
-
+from pyrogram.types import (
+        ChatPermissions, Message, CallbackQuery,
+        InlineKeyboardMarkup, InlineKeyboardButton
+        )
 from wbb import BOT_ID, SUDOERS, app
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.dbfunctions import (add_warn, get_warn, int_to_alpha,
@@ -309,17 +311,25 @@ async def pin(_, message: Message):
 @adminsOnly("can_restrict_members")
 async def mute(_, message: Message):
     if len(message.command) == 2:
-        user_id = (await app.get_users(message.text.split(None, 1)[1])).id
+        user = (await app.get_users(message.text.split(None, 1)[1]))
     elif len(message.command) == 1 and message.reply_to_message:
-        user_id = message.reply_to_message.from_user.id
+        user = message.reply_to_message.from_user
     else:
         return await message.reply_text(
             "Provide a username or reply to a user's message to mute."
         )
-    if user_id in SUDOERS:
+    if user.id in SUDOERS:
         return await message.reply_text("You Wanna Mute The Elevated One?")
-    await message.chat.restrict_member(user_id, permissions=ChatPermissions())
-    await message.reply_text("Muted!")
+    await message.chat.restrict_member(user.id, permissions=ChatPermissions())
+    keyboard = InlineKeyboardMarkup(
+                [[
+                    InlineKeyboardButton(
+                        text="🚨   Unmute   🚨",
+                        callback_data=f"unmute_{user.id}"
+                    )
+                ]]
+            )
+    await message.reply_text(f"Enough freedom of speech, Muted {user.mention} !", reply_markup=keyboard)
 
 
 # Unmute members
@@ -361,7 +371,7 @@ async def ban_deleted_accounts(_, message: Message):
             banned_users += 1
         await message.reply_text(f"Banned {banned_users} Deleted Accounts")
     else:
-        await message.reply_text("No Deleted Accounts In This Chat")
+        await message.reply_text("There are no deleted accounts in this chat")
 
 
 @app.on_message(filters.command("warn") & ~filters.edited)
@@ -381,13 +391,22 @@ async def warn_user(_, message: Message):
     else:
         if user_id in await list_members(chat_id):
             warns = await get_warn(chat_id, await int_to_alpha(user_id))
+            keyboard = InlineKeyboardMarkup(
+                        [[
+                            InlineKeyboardButton(
+                                text="🚨  Remove Warn  🚨",
+                                callback_data=f"unwarn_{user_id}",
+                            )
+                        ]]
+                    )
             if warns:
                 warns = warns["warns"]
             else:
                 warn = {"warns": 1}
                 await add_warn(chat_id, await int_to_alpha(user_id), warn)
                 return await message.reply_text(
-                    f"Warned {mention} !, 1/3 warnings now."
+                    f"Warned {mention} | 1/3 warnings now.",
+                    reply_markup=keyboard,
                 )
             if warns >= 2:
                 await message.chat.kick_member(user_id)
@@ -397,36 +416,40 @@ async def warn_user(_, message: Message):
                 await remove_warns(chat_id, await int_to_alpha(user_id))
             else:
                 warn = {"warns": warns + 1}
-                await add_warn(chat_id, await int_to_alpha(user_id), warn)
+
                 await message.reply_text(
-                    f"Warned {mention} !, {warns+1}/3 warnings now."
+                    f"Warned {mention} | {warns+1}/3 warnings now.",
+                    reply_markup=keyboard,
                 )
+                return await add_warn(chat_id, await int_to_alpha(user_id), warn)
         else:
             await message.reply_text("This user isn't here.")
 
 
-# Rmwarn
-
-
-@app.on_message(filters.command("rmwarn") & ~filters.edited)
-@adminsOnly("can_restrict_members")
-async def remove_warning(_, message: Message):
-    if not message.reply_to_message:
-        return await message.reply_text(
-            "Reply to a message to remove a user's warning."
-        )
-    user_id = message.reply_to_message.from_user.id
-    mention = message.reply_to_message.from_user.mention
-    chat_id = message.chat.id
+@app.on_callback_query(filters.regex("unwarn_"))
+async def remove_warning(_, cq: CallbackQuery):
+    from_user = cq.from_user
+    chat_id = cq.message.chat.id
+    permissions = await member_permissions(chat_id, from_user.id)
+    permission = "can_restrict_members"
+    if permission not in permissions:
+        return await cq.answer(
+                "You don't have enough permissions to perform this action.\n"
+                + f"Permission needed: {permission}",
+                show_alert=True,
+                )
+    user_id = cq.data.split("_")[1]
     warns = await get_warn(chat_id, await int_to_alpha(user_id))
     if warns:
         warns = warns["warns"]
-    if warns == 0 or not warns:
-        await message.reply_text(f"{mention} have no warnings.")
-    else:
-        warn = {"warns": warns - 1}
-        await add_warn(chat_id, await int_to_alpha(user_id), warn)
-        await message.reply_text(f"Removed warning of {mention}.")
+    if not warns or warns == 0:
+        return await cq.answer("User has no warnings.")
+    warn = {"warns": warns - 1}
+    await add_warn(chat_id, await int_to_alpha(user_id), warn)
+    text = cq.message.text.markdown
+    text = f"~~{text}~~\n\n"
+    text += f"__Warn removed by {from_user.mention}__"
+    await cq.message.edit(text)
 
 
 # Rmwarns
