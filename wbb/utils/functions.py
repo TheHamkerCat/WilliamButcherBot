@@ -30,10 +30,10 @@ from random import randint
 import aiofiles
 import aiohttp
 import speedtest
-from carbonnow import Carbon
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from wget import download
 
+from wbb import aiohttpsession as aiosession
 from wbb.utils import aiodownloader
 from wbb.utils.fetch import fetch
 
@@ -115,21 +115,26 @@ def test_speedtest():
 
 
 async def file_size_from_url(url: str) -> int:
-    async with aiohttp.ClientSession() as session:
-        async with session.head(url) as resp:
-            size = int(resp.headers["content-length"])
+    async with aiosession.head(url) as resp:
+        size = int(resp.headers["content-length"])
     return size
 
 
 async def get_http_status_code(url: str) -> int:
-    async with aiohttp.ClientSession() as session:
-        async with session.head(url) as resp:
-            return resp.status
+    async with aiosession.head(url) as resp:
+        return resp.status
 
 
 async def make_carbon(code):
-    carbon = Carbon(code=code)
-    image = await carbon.save(str(randint(1000, 10000)))
+    url = "https://carbonara.vercel.app/api/cook"
+    async with aiosession.post(
+            url,
+            json={"code": code}
+            ) as resp:
+        data = await resp.read()
+    image = f"{randint(100, 10000)}.png"
+    async with aiofiles.open(image, mode="wb") as f:
+        await f.write(data)
     return image
 
 

@@ -2,7 +2,6 @@ aiohttp
 aiofiles
 ffmpeg-python
 gTTS
-git+git://github.com/OpenRestfulAPI/carbon-now-sh-API-Wrapper
 cryptography
 dnspython
 future
