@@ -25,13 +25,20 @@ import asyncio
 
 from pyrogram import filters
 from pyrogram.types import (
-        ChatPermissions, Message, CallbackQuery,
-        InlineKeyboardMarkup, InlineKeyboardButton
-        )
+    ChatPermissions,
+    Message,
+    CallbackQuery,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+)
 from wbb import BOT_ID, SUDOERS, app
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.dbfunctions import (add_warn, get_warn, int_to_alpha,
-                                   remove_warns)
+from wbb.utils.dbfunctions import (
+    add_warn,
+    get_warn,
+    int_to_alpha,
+    remove_warns,
+)
 
 __MODULE__ = "Admin"
 __HELP__ = """/ban - Ban A User
@@ -311,7 +318,7 @@ async def pin(_, message: Message):
 @adminsOnly("can_restrict_members")
 async def mute(_, message: Message):
     if len(message.command) == 2:
-        user = (await app.get_users(message.text.split(None, 1)[1]))
+        user = await app.get_users(message.text.split(None, 1)[1])
     elif len(message.command) == 1 and message.reply_to_message:
         user = message.reply_to_message.from_user
     else:
@@ -322,14 +329,18 @@ async def mute(_, message: Message):
         return await message.reply_text("You Wanna Mute The Elevated One?")
     await message.chat.restrict_member(user.id, permissions=ChatPermissions())
     keyboard = InlineKeyboardMarkup(
-                [[
-                    InlineKeyboardButton(
-                        text="🚨   Unmute   🚨",
-                        callback_data=f"unmute_{user.id}"
-                    )
-                ]]
-            )
-    await message.reply_text(f"Enough freedom of speech, Muted {user.mention} !", reply_markup=keyboard)
+        [
+            [
+                InlineKeyboardButton(
+                    text="🚨   Unmute   🚨", callback_data=f"unmute_{user.id}"
+                )
+            ]
+        ]
+    )
+    await message.reply_text(
+        f"Enough freedom of speech, Muted {user.mention} !",
+        reply_markup=keyboard,
+    )
 
 
 # Unmute members
@@ -392,13 +403,15 @@ async def warn_user(_, message: Message):
         if user_id in await list_members(chat_id):
             warns = await get_warn(chat_id, await int_to_alpha(user_id))
             keyboard = InlineKeyboardMarkup(
-                        [[
-                            InlineKeyboardButton(
-                                text="🚨  Remove Warn  🚨",
-                                callback_data=f"unwarn_{user_id}",
-                            )
-                        ]]
-                    )
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="🚨  Remove Warn  🚨",
+                            callback_data=f"unwarn_{user_id}",
+                        )
+                    ]
+                ]
+            )
             if warns:
                 warns = warns["warns"]
             else:
@@ -421,7 +434,9 @@ async def warn_user(_, message: Message):
                     f"Warned {mention} | {warns+1}/3 warnings now.",
                     reply_markup=keyboard,
                 )
-                return await add_warn(chat_id, await int_to_alpha(user_id), warn)
+                return await add_warn(
+                    chat_id, await int_to_alpha(user_id), warn
+                )
         else:
             await message.reply_text("This user isn't here.")
 
@@ -434,10 +449,10 @@ async def remove_warning(_, cq: CallbackQuery):
     permission = "can_restrict_members"
     if permission not in permissions:
         return await cq.answer(
-                "You don't have enough permissions to perform this action.\n"
-                + f"Permission needed: {permission}",
-                show_alert=True,
-                )
+            "You don't have enough permissions to perform this action.\n"
+            + f"Permission needed: {permission}",
+            show_alert=True,
+        )
     user_id = cq.data.split("_")[1]
     warns = await get_warn(chat_id, await int_to_alpha(user_id))
     if warns:

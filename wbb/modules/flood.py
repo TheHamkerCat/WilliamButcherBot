@@ -23,9 +23,12 @@ SOFTWARE.
 """
 from pyrogram import filters
 from pyrogram.types import (
-        Message, ChatPermissions, CallbackQuery,
-        InlineKeyboardMarkup, InlineKeyboardButton
-        )
+    Message,
+    ChatPermissions,
+    CallbackQuery,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+)
 from time import time
 
 from wbb import app, SUDOERS
@@ -41,14 +44,17 @@ Except for admins ofc, and no, you can't change the number of messages or action
 """
 
 
-DB = {} # NOTE Use mongodb instead of a fucking dict.
+DB = {}  # NOTE Use mongodb instead of a fucking dict.
+
 
 @app.on_message(
-        ~filters.service
-        & ~filters.me
-        & ~filters.private
-        & ~filters.channel,
-        group=flood_group)
+    ~filters.service
+    & ~filters.me
+    & ~filters.private
+    & ~filters.channel
+    & ~filters.edited,
+    group=flood_group,
+)
 @capture_err
 async def flood_control_func(_, message: Message):
     if not message.from_user:
@@ -56,7 +62,7 @@ async def flood_control_func(_, message: Message):
     user_id = message.from_user.id
     mention = message.from_user.mention
     chat_id = message.chat.id
-    
+
     # Ignore devs and admins
     mods = (await list_admins(chat_id)) + SUDOERS
     if user_id in mods:
@@ -67,7 +73,7 @@ async def flood_control_func(_, message: Message):
         DB[chat_id] = {}
     if user_id not in DB[chat_id]:
         DB[chat_id][user_id] = 0
-    
+
     # Reset every other user's flood count if someone else sends a message.
     for user in DB[chat_id].keys():
         if user != user_id:
@@ -78,24 +84,26 @@ async def flood_control_func(_, message: Message):
         DB[chat_id][user_id] = 0
         try:
             await message.chat.restrict_member(
-                    user_id,
-                    permissions=ChatPermissions(),
-                    until_date=int(time() + 3600)
-                    )
+                user_id,
+                permissions=ChatPermissions(),
+                until_date=int(time() + 3600),
+            )
         except Exception:
             return
         keyboard = InlineKeyboardMarkup(
-                [[
+            [
+                [
                     InlineKeyboardButton(
                         text="🚨   Unmute   🚨",
-                        callback_data=f"unmute_{user_id}"
+                        callback_data=f"unmute_{user_id}",
                     )
-                ]]
-            )
+                ]
+            ]
+        )
         return await message.reply_text(
-                f"Imagine flooding the chat in front of me, Muted {mention} for an hour!",
-                reply_markup=keyboard
-                )
+            f"Imagine flooding the chat in front of me, Muted {mention} for an hour!",
+            reply_markup=keyboard,
+        )
     DB[chat_id][user_id] += 1
 
 
@@ -106,10 +114,10 @@ async def flood_callback_func(_, cq: CallbackQuery):
     permission = "can_restrict_members"
     if permission not in permissions:
         return await cq.answer(
-                "You don't have enough permissions to perform this action.\n"
-                + f"Permission needed: {permission}",
-                show_alert=True,
-                )
+            "You don't have enough permissions to perform this action.\n"
+            + f"Permission needed: {permission}",
+            show_alert=True,
+        )
     user_id = cq.data.split("_")[1]
     await cq.message.chat.unban_member(user_id)
     text = cq.message.text.markdown

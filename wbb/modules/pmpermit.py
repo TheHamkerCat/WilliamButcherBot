@@ -27,8 +27,11 @@ from pyrogram import filters
 from wbb import BOT_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.userbot import edit_or_reply
-from wbb.utils.dbfunctions import (approve_pmpermit, disapprove_pmpermit,
-                                   is_pmpermit_approved)
+from wbb.utils.dbfunctions import (
+    approve_pmpermit,
+    disapprove_pmpermit,
+    is_pmpermit_approved,
+)
 
 flood = {}
 

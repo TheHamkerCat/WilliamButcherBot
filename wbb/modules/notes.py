@@ -26,8 +26,12 @@ from pyrogram import filters
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
-from wbb.utils.dbfunctions import (delete_note, get_note, get_note_names,
-                                   save_note)
+from wbb.utils.dbfunctions import (
+    delete_note,
+    get_note,
+    get_note_names,
+    save_note,
+)
 
 __MODULE__ = "Notes"
 __HELP__ = """/notes To Get All The Notes In The Chat.

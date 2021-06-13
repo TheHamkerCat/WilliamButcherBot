@@ -29,18 +29,32 @@ from random import shuffle
 
 from pykeyboard import InlineKeyboard
 from pyrogram import filters
-from pyrogram.errors.exceptions.bad_request_400 import (ChatAdminRequired,
-                                                        UserNotParticipant)
-from pyrogram.types import (ChatPermissions, InlineKeyboardButton,
-                            InlineKeyboardMarkup, Message, User)
+from pyrogram.errors.exceptions.bad_request_400 import (
+    ChatAdminRequired,
+    UserNotParticipant,
+)
+from pyrogram.types import (
+    ChatPermissions,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+    User,
+)
 
 from wbb import SUDOERS, WELCOME_DELAY_KICK_SEC, app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
-from wbb.utils.dbfunctions import (captcha_off, captcha_on, del_welcome,
-                                   get_captcha_cache, get_welcome,
-                                   is_captcha_on, is_gbanned_user, set_welcome,
-                                   update_captcha_cache)
+from wbb.utils.dbfunctions import (
+    captcha_off,
+    captcha_on,
+    del_welcome,
+    get_captcha_cache,
+    get_welcome,
+    is_captcha_on,
+    is_gbanned_user,
+    set_welcome,
+    update_captcha_cache,
+)
 from wbb.utils.filter_groups import welcome_captcha_group
 from wbb.utils.functions import generate_captcha
 

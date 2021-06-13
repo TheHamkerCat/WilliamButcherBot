@@ -34,13 +34,26 @@ from pykeyboard import InlineKeyboard
 from pyrogram import __version__ as pyrover
 from pyrogram import filters
 from pyrogram.raw.functions import Ping
-from pyrogram.types import (InlineKeyboardButton, InlineQueryResultArticle,
-                            InlineQueryResultPhoto, InputTextMessageContent)
+from pyrogram.types import (
+    InlineKeyboardButton,
+    InlineQueryResultArticle,
+    InlineQueryResultPhoto,
+    InputTextMessageContent,
+)
 from search_engine_parser import GoogleSearch
 
-from wbb import (BOT_USERNAME, MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_ID,
-                 USERBOT_NAME, USERBOT_USERNAME, aiohttpsession, app, app2,
-                 arq)
+from wbb import (
+    BOT_USERNAME,
+    MESSAGE_DUMP_CHAT,
+    SUDOERS,
+    USERBOT_ID,
+    USERBOT_NAME,
+    USERBOT_USERNAME,
+    aiohttpsession,
+    app,
+    app2,
+    arq,
+)
 from wbb.core.types import InlineQueryResultCachedDocument
 from wbb.modules.info import get_chat_info, get_user_info
 from wbb.modules.music import download_youtube_audio
@@ -749,13 +762,13 @@ async def user_info_inline_func(answers, user):
         caption, _ = await get_user_info(user)
     except Exception:
         answers.append(
-                InlineQueryResultArticle(
-                    title="USER NOT FOUND",
-                    input_message_content=InputTextMessageContent(
-                        "USER NOT FOUND"
-                        )
-                    )
-                )
+            InlineQueryResultArticle(
+                title="USER NOT FOUND",
+                input_message_content=InputTextMessageContent(
+                    "USER NOT FOUND"
+                ),
+            )
+        )
         return answers
     answers.append(
         InlineQueryResultArticle(

@@ -29,9 +29,16 @@ from pyrogram import filters
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
-from wbb.utils.dbfunctions import (alpha_to_int, get_karma, get_karmas,
-                                   int_to_alpha, is_karma_on, karma_off,
-                                   karma_on, update_karma)
+from wbb.utils.dbfunctions import (
+    alpha_to_int,
+    get_karma,
+    get_karmas,
+    int_to_alpha,
+    is_karma_on,
+    karma_off,
+    karma_on,
+    update_karma,
+)
 from wbb.utils.filter_groups import karma_negative_group, karma_positive_group
 
 __MODULE__ = "Karma"
