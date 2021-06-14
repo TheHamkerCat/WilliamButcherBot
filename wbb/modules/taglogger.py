@@ -25,16 +25,8 @@ from pykeyboard import InlineKeyboard
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, Message
 
-from wbb import (
-    BOT_ID,
-    LOG_GROUP_ID,
-    LOG_MENTIONS,
-    USERBOT_ID,
-    USERBOT_NAME,
-    USERBOT_USERNAME,
-    app,
-    app2,
-)
+from wbb import (BOT_ID, LOG_GROUP_ID, LOG_MENTIONS, USERBOT_ID, USERBOT_NAME,
+                 USERBOT_USERNAME, app, app2)
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.filter_groups import taglog_group
 

@@ -28,12 +28,8 @@ from pyrogram import filters
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
-from wbb.utils.dbfunctions import (
-    delete_filter,
-    get_filter,
-    get_filters_names,
-    save_filter,
-)
+from wbb.utils.dbfunctions import (delete_filter, get_filter,
+                                   get_filters_names, save_filter)
 from wbb.utils.filter_groups import chat_filters_group
 
 __MODULE__ = "Filters"

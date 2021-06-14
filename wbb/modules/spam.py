@@ -22,18 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from pyrogram import filters
-from pyrogram.types import (
-    Message,
-    CallbackQuery,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-)
+from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
+                            InlineKeyboardMarkup, Message)
 
-from wbb import app, arq, SUDOERS, LOG_GROUP_ID
+from wbb import LOG_GROUP_ID, SUDOERS, app, arq
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.admin import list_admins, member_permissions
 from wbb.utils.filter_groups import spam_protection_group
-
 
 __MODULE__ = "AntiSpam"
 __HELP__ = """

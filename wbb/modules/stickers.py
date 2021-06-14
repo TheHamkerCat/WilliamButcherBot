@@ -26,28 +26,19 @@ import os
 from traceback import format_exc
 
 from pyrogram import filters
-from pyrogram.errors.exceptions.bad_request_400 import (
-    PeerIdInvalid,
-    ShortnameOccupyFailed,
-    StickerPngDimensions,
-    StickerPngNopng,
-    UserIsBlocked,
-)
+from pyrogram.errors.exceptions.bad_request_400 import (PeerIdInvalid,
+                                                        ShortnameOccupyFailed,
+                                                        StickerPngDimensions,
+                                                        StickerPngNopng,
+                                                        UserIsBlocked)
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from wbb import BOT_USERNAME, app
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.files import (
-    get_document_from_file_id,
-    resize_file_to_sticker_size,
-    upload_document,
-)
-from wbb.utils.stickerset import (
-    add_sticker_to_set,
-    create_sticker,
-    create_sticker_set,
-    get_sticker_set_by_name,
-)
+from wbb.utils.files import (get_document_from_file_id,
+                             resize_file_to_sticker_size, upload_document)
+from wbb.utils.stickerset import (add_sticker_to_set, create_sticker,
+                                  create_sticker_set, get_sticker_set_by_name)
 
 __MODULE__ = "Stickers"
 __HELP__ = """/sticker_id - To Get File ID of A Sticker.

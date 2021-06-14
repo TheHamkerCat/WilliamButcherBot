@@ -29,23 +29,13 @@ import time
 import psutil
 from pyrogram import filters
 
-from wbb import (
-    BOT_ID,
-    GBAN_LOG_GROUP_ID,
-    SUDOERS,
-    USERBOT_USERNAME,
-    app,
-    bot_start_time,
-)
+from wbb import (BOT_ID, GBAN_LOG_GROUP_ID, SUDOERS, USERBOT_USERNAME, app,
+                 bot_start_time)
 from wbb.core.decorators.errors import capture_err
 from wbb.utils import formatter
-from wbb.utils.dbfunctions import (
-    add_gban_user,
-    get_served_chats,
-    is_gbanned_user,
-    remove_gban_user,
-    start_restart_stage,
-)
+from wbb.utils.dbfunctions import (add_gban_user, get_served_chats,
+                                   is_gbanned_user, remove_gban_user,
+                                   start_restart_stage)
 
 __MODULE__ = "Sudoers"
 __HELP__ = """

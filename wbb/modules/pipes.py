@@ -28,12 +28,8 @@ from pyrogram.types import Message
 
 from wbb import BOT_ID, SUDOERS, USERBOT_ID, app, app2
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.dbfunctions import (
-    activate_pipe,
-    deactivate_pipe,
-    is_pipe_active,
-    show_pipes,
-)
+from wbb.utils.dbfunctions import (activate_pipe, deactivate_pipe,
+                                   is_pipe_active, show_pipes)
 from wbb.utils.filter_groups import pipes_group
 
 __MODULE__ = "Pipes"

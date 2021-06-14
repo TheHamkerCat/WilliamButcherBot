@@ -24,21 +24,14 @@ SOFTWARE.
 import asyncio
 
 from pyrogram import filters
-from pyrogram.types import (
-    ChatPermissions,
-    Message,
-    CallbackQuery,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-)
+from pyrogram.types import (CallbackQuery, ChatPermissions,
+                            InlineKeyboardButton, InlineKeyboardMarkup,
+                            Message)
+
 from wbb import BOT_ID, SUDOERS, app
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.dbfunctions import (
-    add_warn,
-    get_warn,
-    int_to_alpha,
-    remove_warns,
-)
+from wbb.utils.dbfunctions import (add_warn, get_warn, int_to_alpha,
+                                   remove_warns)
 
 __MODULE__ = "Admin"
 __HELP__ = """/ban - Ban A User

@@ -21,21 +21,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from pyrogram import filters
-from pyrogram.types import (
-    Message,
-    ChatPermissions,
-    CallbackQuery,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-)
 from time import time
 
-from wbb import app, SUDOERS
+from pyrogram import filters
+from pyrogram.types import (CallbackQuery, ChatPermissions,
+                            InlineKeyboardButton, InlineKeyboardMarkup,
+                            Message)
+
+from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.admin import list_admins, member_permissions
 from wbb.utils.filter_groups import flood_group
-
 
 __MODULE__ = "Flood"
 __HELP__ = """
@@ -47,37 +43,46 @@ Except for admins ofc, and no, you can't change the number of messages or action
 DB = {}  # NOTE Use mongodb instead of a fucking dict.
 
 
+def reset_flood(chat_id, user_id=0):
+    for user in DB[chat_id].keys():
+        if user != user_id:
+            DB[chat_id][user] = 0
+
+
 @app.on_message(
     ~filters.service
     & ~filters.me
     & ~filters.private
     & ~filters.channel
+    & ~filters.bot
     & ~filters.edited,
     group=flood_group,
 )
 @capture_err
 async def flood_control_func(_, message: Message):
+    chat_id = message.chat.id
+
+    # Initialize db if not already.
+    if chat_id not in DB:
+        DB[chat_id] = {}
+
     if not message.from_user:
+        reset_flood(chat_id)
         return
+
     user_id = message.from_user.id
     mention = message.from_user.mention
-    chat_id = message.chat.id
+
+    if user_id not in DB[chat_id]:
+        DB[chat_id][user_id] = 0
+
+    # Reset floodb of current chat if some other user sends a message
+    reset_flood(chat_id, user_id)
 
     # Ignore devs and admins
     mods = (await list_admins(chat_id)) + SUDOERS
     if user_id in mods:
         return
-
-    # Initialize db if not already.
-    if chat_id not in DB:
-        DB[chat_id] = {}
-    if user_id not in DB[chat_id]:
-        DB[chat_id][user_id] = 0
-
-    # Reset every other user's flood count if someone else sends a message.
-    for user in DB[chat_id].keys():
-        if user != user_id:
-            DB[chat_id][user] = 0
 
     # Mute if user sends more than 7 messages in a row
     if DB[chat_id][user_id] >= 7:
