@@ -743,7 +743,7 @@ async def get_trust_db(user_id: int) -> list:
 async def update_trust_db(user_id: int, new_data: float):
     user = await trustdb.find_one({"user_id": user_id})
     data = user["data"] if user else []
-    if len(data) >= 2000:
+    if len(data) >= 1000:
         data.remove(data[0])
     data.append(new_data)
     await trustdb.update_one(
