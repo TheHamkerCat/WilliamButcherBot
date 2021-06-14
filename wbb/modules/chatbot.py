@@ -92,11 +92,11 @@ async def chatbot_talk(_, message):
     if message.reply_to_message.from_user.id != BOT_ID:
         return
     query = message.text
-    await app2.send_chat_action(message.chat.id, "typing")
+    await app.send_chat_action(message.chat.id, "typing")
     response = await lunaQuery(
         query, message.from_user.id if message.from_user else 0
     )
-    await app2.send_chat_action(message.chat.id, "cancel")
+    await app.send_chat_action(message.chat.id, "cancel")
     await message.reply_text(response)
 
 
