@@ -35,8 +35,9 @@ from wbb.utils.filter_groups import flood_group
 
 __MODULE__ = "Flood"
 __HELP__ = """
-Anti-Flood system, the one who sends more than 7 messages in a row, gets muted for an hour.
-Except for admins ofc, and no, you can't change the number of messages or action type.
+Anti-Flood system, the one who sends more than 7 messages in a row, gets muted for an hour (Except for admins).
+
+And no, you can't change the number of messages or action type.
 """
 
 

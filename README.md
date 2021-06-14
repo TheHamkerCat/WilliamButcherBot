@@ -23,7 +23,7 @@
 
 ## Requirements
 
-- Python >= 3.7
+- Python >= 3.9
 - A [Telegram API key](https://docs.pyrogram.org/intro/setup#api-keys).
 - A [Telegram bot token](https://t.me/botfather).
 - A [MongoDB URI](https://telegra.ph/How-To-get-Mongodb-URI-04-06)

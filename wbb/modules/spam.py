@@ -32,21 +32,19 @@ from wbb.utils.filter_groups import spam_protection_group
 
 __MODULE__ = "AntiSpam"
 __HELP__ = """
-**Antispam helps from protect your group from spam.**
+**Antispam helps protect your group from spam.**
 
-- It's still new so it might be a bit less accurate.
-
-- You can enable or disable it according to your needs.
+- It's still new so it might be a bit inaccurate.
 
 - Currently, it only alerts for spam and gives you a button to delete the message,
   but in the future, it will delete the spam message automatically.
 
 **Commands:**
-    - /spam_protection [ENABLE|DISABLE]
-        To enable or disable this service.
     - /spam
         To mark a message as spam, this will help devs to 
         improve spam protection algorithm.
+
+As of now, you cannot turn this off, but we'll add an enable/disable command in the future
 """
 
 

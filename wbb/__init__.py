@@ -24,6 +24,7 @@ SOFTWARE.
 """
 print("[INFO]: INITIALIZING")
 import asyncio
+import logging
 import time
 from os import path
 
@@ -33,7 +34,24 @@ from pyrogram import Client
 from pyromod import listen
 from Python_ARQ import ARQ
 
+# Setup logging
+log_file = "error.log"
+
+with open(log_file, "w") as f:
+    f.write("PEAK OF LOG FILE")
+logging.basicConfig(
+    level=logging.ERROR,
+    format="[%(asctime)s.%(msecs)03d] %(filename)s:%(lineno)s %(levelname)s: %(message)s",
+    datefmt="%m-%d %H:%M",
+    filename=log_file,
+    filemode="w",
+)
+console = logging.StreamHandler()
+logging.getLogger("").addHandler(console)
+log = logging.getLogger()
+
 is_config = path.exists("config.py")
+
 if is_config:
     from config import *
 else:
@@ -84,15 +102,17 @@ else:
     print("[INFO]: INITIALIZING USERBOT CLIENT")
     app2 = Client(SESSION_STRING, api_id=API_ID, api_hash=API_HASH)
 
-# Bot client
-print("[INFO]: INITIALIZING BOT CLIENT")
-app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
 # Aiohttp Client
 print("[INFO]: INITIALZING AIOHTTP SESSION")
 aiohttpsession = ClientSession()
 # ARQ Client
 print("[INFO]: INITIALIZING ARQ CLIENT")
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
+listen.listen.PyroARQ(arq)
+# Bot client
+print("[INFO]: INITIALIZING BOT CLIENT")
+app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
+
 
 BOT_ID = 0
 BOT_NAME = ""
@@ -132,6 +152,7 @@ def get_info(app, app2):
     USERBOT_USERNAME = getme2.username
     USERBOT_MENTION = getme2.mention
     USERBOT_DC_ID = getme2.dc_id
+
     all_ub_chats = [
         i.chat.id
         for i in app2.iter_dialogs()

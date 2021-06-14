@@ -32,8 +32,8 @@ from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "Images"
 __HELP__ = """/cat  - Get Cute Cats Images
-For more images like wallpapers, use inline mode.
-send /inline for inline help."""
+For more images search like wallpapers etc, use inline mode.
+"""
 
 
 async def delete_message_with_delay(delay, message):

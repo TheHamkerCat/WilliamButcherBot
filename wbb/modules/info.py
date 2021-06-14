@@ -124,7 +124,10 @@ async def info_func(_, message: Message):
     elif not message.reply_to_message and len(message.command) != 1:
         user = message.text.split(None, 1)[1]
     m = await message.reply_text("Processing")
-    info_caption, photo_id = await get_user_info(user)
+    try:
+        info_caption, photo_id = await get_user_info(user)
+    except Exception as e:
+        return await m.edit(str(e))
     if not photo_id:
         return await m.edit(info_caption, disable_web_page_preview=True)
     photo = await app.download_media(photo_id)
