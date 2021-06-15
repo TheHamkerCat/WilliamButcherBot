@@ -11,7 +11,7 @@ pillow
 psutil
 pykeyboard
 pyrogram
-git+git://github.com/TheHamkerCat/pyromod
+pyromod
 python-arq
 requests
 search_engine_parser
