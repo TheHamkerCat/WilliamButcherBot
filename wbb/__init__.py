@@ -31,8 +31,9 @@ from os import path
 from aiohttp import ClientSession
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from pyrogram import Client
-from pyromod import listen
 from Python_ARQ import ARQ
+
+from pyromod import listen
 
 # Setup logging
 log_file = "error.log"
@@ -108,7 +109,6 @@ aiohttpsession = ClientSession()
 # ARQ Client
 print("[INFO]: INITIALIZING ARQ CLIENT")
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
-listen.listen.PyroARQ(arq)
 # Bot client
 print("[INFO]: INITIALIZING BOT CLIENT")
 app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
@@ -158,7 +158,7 @@ def get_info(app, app2):
         for i in app2.iter_dialogs()
         if i.chat.type in ["group", "supergroup", "private"]
     ]
-    ub_b_common_chats = [i.id for i in app2.get_common_chats(BOT_ID)]
+    ub_b_common_chats = [i.id for i in app2.get_common_chats(BOT_USERNAME)]
     USERBOT_BOT_CHAT_DIFFERENCE = list(
         set(all_ub_chats).difference(ub_b_common_chats)
     )

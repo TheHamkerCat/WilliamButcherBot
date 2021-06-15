@@ -80,12 +80,12 @@ from wbb.core.decorators.permissions import adminsOnly
 
 
 async def list_admins(chat_id: int):
-    list_of_admins = []
-    async for member in app.iter_chat_members(
-        chat_id, filter="administrators"
-    ):
-        list_of_admins.append(member.user.id)
-    return list_of_admins
+    return [
+        member.user.id
+        async for member in app.iter_chat_members(
+            chat_id, filter="administrators"
+        )
+    ]
 
 
 async def current_chat_permissions(chat_id):

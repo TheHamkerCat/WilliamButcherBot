@@ -4,7 +4,7 @@ from pyrogram import filters
 
 from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
-from wbb.modules.admin import member_permissions
+from wbb.core.decorators.permissions import adminsOnly
 from wbb.utils.dbfunctions import is_nsfw_on, nsfw_off, nsfw_on
 from wbb.utils.filter_groups import nsfw_detect_group
 
@@ -146,7 +146,7 @@ async def nsfw_scan_command(_, message):
 
 
 @app.on_message(filters.command("anti_nsfw") & ~filters.private)
-@capture_err
+@adminsOnly("can_change_info")
 async def nsfw_enable_disable(_, message):
     if len(message.command) != 2:
         await message.reply_text("Usage: /anti_nsfw [enable | disable]")
@@ -154,11 +154,6 @@ async def nsfw_enable_disable(_, message):
     status = message.text.split(None, 1)[1].strip()
     status = status.lower()
     chat_id = message.chat.id
-    user_id = message.from_user.id
-    permissions = await member_permissions(chat_id, user_id)
-    if "can_change_info" not in permissions:
-        await message.reply_text("You don't have enough permissions.")
-        return
     if status == "enable":
         await nsfw_on(chat_id)
         await message.reply_text(

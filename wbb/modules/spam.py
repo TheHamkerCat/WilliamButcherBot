@@ -28,6 +28,7 @@ from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
 from wbb import LOG_GROUP_ID, SUDOERS, app, arq
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.admin import list_admins, member_permissions
+from wbb.modules.trust import get_spam_data
 from wbb.utils.filter_groups import spam_protection_group
 
 __MODULE__ = "AntiSpam"
@@ -53,18 +54,16 @@ As of now, you cannot turn this off, but we'll add an enable/disable command in 
     group=spam_protection_group,
 )
 async def spam_protection_func(_, message: Message):
-    text = message.text if message.text else message.caption
-    user = message.from_user
+    text = message.text or message.caption
     chat_id = message.chat.id
+    user = message.from_user
     if not text or not user:
         return
 
     # We'll handle admins only if it's spam, ignore only sudo users for now.
     if user.id in SUDOERS:
         return
-
-    data = await arq.nlp(text)
-    data = data.result[0]
+    data = await get_spam_data(message, text)
     if not data.is_spam:
         return
     if user.id in (await list_admins(chat_id)):
@@ -72,7 +71,7 @@ async def spam_protection_func(_, message: Message):
     text = f"""
 🚨  **SPAM DETECTED** 🚨
 
-**User:** {message.from_user.mention}
+**User:** {user.mention}
 **Message:** [Link]({message.link})
 **Spam Probability:** {data.spam_probability} %
 **Action:** Alerted
@@ -82,13 +81,11 @@ async def spam_protection_func(_, message: Message):
             [
                 InlineKeyboardButton(
                     text="Yes it's spam", callback_data="s_p_spam"
-                )
-            ],
-            [
+                ),
                 InlineKeyboardButton(
                     text="No, it's not spam",
                     callback_data="s_p_ham",
-                )
+                ),
             ],
         ]
     )
