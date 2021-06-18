@@ -52,6 +52,10 @@ async def set_chat_title(_, message):
 @app.on_message(filters.command("set_user_title") & ~filters.private)
 @adminsOnly("can_change_info")
 async def set_user_title(_, message):
+    if not message.reply_to_message:
+        return await message.reply_text("Reply to user's message to set his admin title")
+    if not message.reply_to_message.from_user:
+        return await message.reply_text("I can't change admin title of an unknown entity")
     chat_id = message.chat.id
     from_user = message.reply_to_message.from_user
     if len(message.command) < 2:

@@ -21,32 +21,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import asyncio
-import json
-import urllib.request
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from pyrogram import filters
-
-from wbb import app
-from wbb.core.decorators.errors import capture_err
-
-__MODULE__ = "Images"
-__HELP__ = """/cat  - Get Cute Cats Images
-For more images search like wallpapers etc, use inline mode.
-"""
+from wbb.utils.functions import get_urls_from_text
 
 
-async def delete_message_with_delay(delay, message):
-    await asyncio.sleep(delay)
-    await message.delete()
+def btn(text, data, type=None):
+    type = "url" if get_urls_from_text(data) else "callback_data"
+    return InlineKeyboardButton(text, **{type: data})
 
 
-@app.on_message(filters.command("cat") & ~filters.edited)
-@capture_err
-async def cat(_, message):
-    with urllib.request.urlopen(
-        "https://api.thecatapi.com/v1/images/search"
-    ) as url:
-        data = json.loads(url.read().decode())
-    cat_url = data[0]["url"]
-    await message.reply_photo(cat_url)
+def ikb(keyboard: list):
+    lines = []
+    for row in keyboard:
+        line = []
+        for button in row:
+            button = btn(*button)  # InlineKeyboardButton
+            line.append(button)
+        lines.append(line)
+    return InlineKeyboardMarkup(inline_keyboard=lines)

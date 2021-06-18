@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from functools import wraps
+from traceback import format_exc as err
 
 from pyrogram.errors.exceptions.forbidden_403 import ChatWriteForbidden
 from pyrogram.types import Message
@@ -37,10 +38,9 @@ async def authorised(func, subFunc2, client, message, *args, **kwargs):
     except ChatWriteForbidden:
         await app.leave_chat(chatID)
     except Exception as e:
-        try:
-            await message.reply_text(str(e))
-        except ChatWriteForbidden:
-            await app.leave_chat(chatID)
+        await message.reply_text(str(e.MESSAGE))
+        e = err()
+        print(str(e))
     return subFunc2
 
 

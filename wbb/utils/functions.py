@@ -24,8 +24,10 @@ SOFTWARE.
 import codecs
 import pickle
 from asyncio import gather, get_running_loop
+from io import BytesIO
 from math import atan2, cos, radians, sin, sqrt
 from random import randint
+from re import findall
 
 import aiofiles
 import aiohttp
@@ -128,10 +130,8 @@ async def get_http_status_code(url: str) -> int:
 async def make_carbon(code):
     url = "https://carbonara.vercel.app/api/cook"
     async with aiosession.post(url, json={"code": code}) as resp:
-        data = await resp.read()
-    image = f"{randint(100, 10000)}.png"
-    async with aiofiles.open(image, mode="wb") as f:
-        await f.write(data)
+        image = BytesIO(await resp.read())
+    image.name = "carbon.png"
     return image
 
 
@@ -171,3 +171,57 @@ async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     distance = Radius_Earth * c
     return distance
+
+
+def get_urls_from_text(text: str) -> bool:
+    regex = r"""(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]
+                [.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(
+                \([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\
+                ()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))""".strip()
+    return [x[0] for x in findall(regex, text)]
+
+
+async def extract_userid(message, text: str):
+    text = text.strip()
+    entities = message.entities
+    app = message._client
+    if len(entities) < 2:
+        return (await app.get_users(text)).id
+    entity = entities[1]
+    if entity.type == "mention":
+        return (await app.get_users(text)).id
+    if entity.type == "text_mention":
+        return entity.user.id
+    return None
+
+
+async def extract_user_and_reason(message):
+    args = message.text.strip().split()
+    text = message.text
+    user = None
+    reason = None
+    if message.reply_to_message:
+        reply = message.reply_to_message
+        # if reply to a message and no reason is given
+        if not reply.from_user:
+            return None, None
+        if len(args) < 2:
+            reason = None
+        else:
+            reason = text.split(None, 1)[1]
+        return reply.from_user.id, reason
+
+    # if not reply to a message and no reason is given
+    if len(args) == 2:
+        user = text.split(None, 1)[1]
+        return await extract_userid(message, user), None
+    # if reason is given
+    elif len(args) > 2:
+        user, reason = text.split(None, 2)[1:]
+        return await extract_userid(message, user), reason
+
+    return user, reason
+
+
+async def extract_user(message):
+    return (await extract_user_and_reason())[0]

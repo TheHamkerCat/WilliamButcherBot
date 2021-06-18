@@ -48,7 +48,8 @@ __HELP__ = """
 /tr [en] - Translate A Message
 /json [URL] - Get JSON Response From An API or Something.
 /arq - Statistics Of ARQ API.
-#RTFM - Check it lol
+/webss [URL] - Take A Screenshot Of A Webpage
+#RTFM - Tell noobs to read the manual
 """
 
 
@@ -136,7 +137,6 @@ async def random(_, message):
             '"/random" Needs An Argurment.' " Ex: `/random 5`"
         )
     length = message.text.split(None, 1)[1]
-
     try:
         if 1 < int(length) < 1000:
             alphabet = string.ascii_letters + string.digits
@@ -148,9 +148,8 @@ async def random(_, message):
             await message.reply_text("Specify A Length Between 1-1000")
     except ValueError:
         await message.reply_text(
-            "Strings Won't Work!, Pass A" + " Positive Integer Between 1-1000"
+            "Strings Won't Work!, Pass A Positive Integer Less Than 1000"
         )
-
 
 # Encrypt
 
@@ -218,21 +217,6 @@ async def cheat(_, message):
         await m.edit(str(e))
         print(str(e))
 
-
-# Weather
-
-
-@app.on_message(filters.command("weather") & ~filters.edited)
-@capture_err
-async def weather(_, message):
-    if len(message.command) != 2:
-        return await message.reply_text("/weather [city]")
-    city = message.text.split(None, 1)[1]
-    m = await message.reply_text("Fetching Data")
-    data = await fetch_text(f"https://wttr.in/{city}?mnTC0")
-    await m.edit(f"`{data}`")
-
-
 # Translate
 
 
@@ -262,35 +246,36 @@ async def tr(_, message):
 @app.on_message(filters.command("json") & ~filters.edited)
 @capture_err
 async def json_fetch(_, message):
-    global fetch_limit
     if len(message.command) != 2:
         return await message.reply_text("/json [URL]")
     url = message.text.split(None, 1)[1]
+    m = await message.reply_text("Fetching")
     try:
         data = await fetch(url)
         data = await json_prettify(data)
-        fetch_limit += 1
         if len(data) < 4090:
-            await message.reply_text(data)
+            await m.edit(data)
         else:
             link = await paste(data)
-            await message.reply_text(
+            await m.edit(
                 f"[OUTPUT_TOO_LONG]({link})", disable_web_page_preview=True
             )
     except Exception as e:
-        await message.reply_text(str(e))
-        print(str(e))
+        await m.edit(str(e))
 
 
-@app.on_message(filters.command("bun"))
-async def bunn(_, message):
-    if message.reply_to_message:
-        await message.reply_to_message.reply_sticker(
-            "CAACAgUAAx0CWIlO9AABARyRYBhyjKXFATVhu7AGQwip3TzSFiMAAuMBAAJ7usBUIu2xBtXTmuweBA"
+@app.on_message(filters.command("webss"))
+@capture_err
+async def take_ss(_, message):
+    if len(message.command) != 2:
+        return await message.reply_text("Give A Url To Fetch Screenshot.")
+    url = message.text.split(None, 1)[1]
+    m = await message.reply_text("**Uploading**")
+    try:
+        await app.send_photo(
+            message.chat.id,
+            photo=f"https://webshot.amanoteam.com/print?q={url}",
         )
-        return await app.send_message(message.chat.id, text="Eat Bun")
-    if not message.reply_to_message:
-        await message.reply_sticker(
-            "CAACAgUAAx0CWIlO9AABARyRYBhyjKXFATVhu7AGQwip3TzSFiMAAuMBAAJ7usBUIu2xBtXTmuweBA"
-        )
-        await app.send_message(message.chat.id, text="Eat Bun")
+    except Exception:
+        return await m.edit("No Such Website.")
+    await m.delete()

@@ -4,8 +4,8 @@ import aiofiles
 from pyrogram import filters
 from pyrogram.types import CallbackQuery, Message
 
-from pyromod.helpers import ikb
 from wbb import SUDOERS, app, log_file
+from wbb.core.keyboard import ikb
 from wbb.utils.pastebin import paste
 
 callback = "log_paste"

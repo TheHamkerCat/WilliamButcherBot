@@ -33,7 +33,6 @@ from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from pyrogram import Client
 from Python_ARQ import ARQ
 
-from pyromod import listen
 
 # Setup logging
 log_file = "error.log"
