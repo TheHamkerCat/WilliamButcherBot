@@ -123,13 +123,13 @@ USERBOT_NAME = ""
 USERBOT_USERNAME = ""
 USERBOT_DC_ID = 0
 USERBOT_MENTION = ""
-USERBOT_BOT_CHAT_DIFFERENCE = []
+USERBOT_BOT_CHAT_COMMON = []
 
 
 def get_info(app, app2):
     global BOT_ID, BOT_NAME, BOT_USERNAME, BOT_DC_ID, BOT_MENTION
     global USERBOT_ID, USERBOT_NAME, USERBOT_USERNAME, USERBOT_DC_ID, USERBOT_MENTION
-    global USERBOT_BOT_CHAT_DIFFERENCE
+    global USERBOT_BOT_CHAT_COMMON
     getme = app.get_me()
     getme2 = app2.get_me()
     BOT_ID = getme.id
@@ -152,20 +152,7 @@ def get_info(app, app2):
     USERBOT_MENTION = getme2.mention
     USERBOT_DC_ID = getme2.dc_id
 
-    all_ub_chats = [
-        i.chat.id
-        for i in app2.iter_dialogs()
-        if i.chat.type in ["group", "supergroup", "private"]
-    ]
-    ub_b_common_chats = [i.id for i in app2.get_common_chats(BOT_USERNAME)]
-    USERBOT_BOT_CHAT_DIFFERENCE = list(
-        set(all_ub_chats).difference(ub_b_common_chats)
-    )
-    USERBOT_BOT_CHAT_DIFFERENCE = [
-        x
-        for x in USERBOT_BOT_CHAT_DIFFERENCE
-        if x not in SPAM_CHECK_EXCEPTION_GROUPS
-    ]
+    USERBOT_BOT_CHAT_COMMON = [i.id for i in app2.get_common_chats(BOT_USERNAME)] + SPAM_CHECK_EXCEPTION_GROUPS
 
 
 print("[INFO]: STARTING BOT CLIENT")

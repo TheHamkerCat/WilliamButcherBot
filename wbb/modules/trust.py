@@ -26,7 +26,7 @@ from asyncio import sleep
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import (BOT_ID, MESSAGE_DUMP_CHAT, USERBOT_BOT_CHAT_DIFFERENCE, app,
+from wbb import (BOT_ID, MESSAGE_DUMP_CHAT, USERBOT_BOT_CHAT_COMMON, app,
                  app2, arq)
 from wbb.utils.dbfunctions import get_trust_db, update_trust_db
 from wbb.utils.filter_groups import trust_group
@@ -47,7 +47,7 @@ async def get_spam_data(message: Message, text: str):
 @app2.on_message(
     (filters.text | filters.caption)
     & ~filters.chat(BOT_ID)
-    & filters.chat(USERBOT_BOT_CHAT_DIFFERENCE)
+    & ~filters.chat(USERBOT_BOT_CHAT_COMMON)
     & ~filters.me,
     group=trust_group,
 )
