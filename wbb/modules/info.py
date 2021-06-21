@@ -59,13 +59,6 @@ async def get_user_info(user):
         if spam_probab != 0
         else "Uncertain"
     )
-    isPotentialSpammer = (
-        True
-        if spam_probab > 40
-        else False
-        if spam_probab != 0
-        else "Uncertain"
-    )
     spam_probab = (
         str(round(spam_probab)) + " %" if spam_probab != 0 else "Uncertain"
     )

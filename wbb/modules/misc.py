@@ -76,7 +76,10 @@ async def runs(_, message):
 @app.on_message(filters.command("id"))
 async def getid(_, message):
     if len(message.command) == 2:
-        id = (await app.get_users(message.text.split(None, 1)[1])).id
+        try:
+            id = (await app.get_users(message.text.split(None, 1)[1].strip())).id
+        except Exception:
+            return await message.reply_text("No Such User")
         text = f"**ID:** `{id}`"
         return await message.reply_text(text, parse_mode="html")
     text_unping = "<b>Chat ID:</b>"
@@ -151,6 +154,7 @@ async def random(_, message):
             "Strings Won't Work!, Pass A Positive Integer Less Than 1000"
         )
 
+
 # Encrypt
 
 
@@ -216,6 +220,7 @@ async def cheat(_, message):
     except Exception as e:
         await m.edit(str(e))
         print(str(e))
+
 
 # Translate
 

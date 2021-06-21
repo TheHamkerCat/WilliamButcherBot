@@ -21,7 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import sleep, gather
+from asyncio import gather, sleep
+
 from pyrogram import filters
 from pyrogram.types import Message
 
@@ -39,7 +40,8 @@ __HELP__ = """
 active_chats_bot = []
 active_chats_ubot = []
 
-async def chat_bot_toggle(db, message):
+
+async def chat_bot_toggle(db, message: Message):
     status = message.text.split(None, 1)[1].lower()
     chat_id = message.chat.id
     if status == "on":
@@ -59,21 +61,26 @@ async def chat_bot_toggle(db, message):
     else:
         await edit_or_reply(message, text="**Usage**\n/chatbot [ON|OFF]")
 
+
 # Enabled | Disable Chatbot
 
 
 @app.on_message(filters.command("chatbot") & ~filters.edited)
 @capture_err
-async def chatbot_status(_, message):
+async def chatbot_status(_, message: Message):
     if len(message.command) != 2:
-        return await edit_or_reply(message, text="**Usage**\n/chatbot [ON|OFF]")
+        return await edit_or_reply(
+            message, text="**Usage**\n/chatbot [ON|OFF]"
+        )
     await chat_bot_toggle(active_chats_bot, message)
+
 
 async def lunaQuery(query: str, user_id: int):
     luna = await arq.luna(query, user_id)
     return luna.result
 
-async def type_and_send(message):
+
+async def type_and_send(message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id if message.from_user else 0
     query = message.text.strip()
@@ -81,6 +88,7 @@ async def type_and_send(message):
     response, _ = await gather(lunaQuery(query, user_id), sleep(3))
     await message.reply_text(response)
     await message._client.send_chat_action(chat_id, "cancel")
+
 
 @app.on_message(
     filters.text
@@ -91,7 +99,7 @@ async def type_and_send(message):
     group=chatbot_group,
 )
 @capture_err
-async def chatbot_talk(_, message):
+async def chatbot_talk(_, message: Message):
     if message.chat.id not in active_chats_bot:
         return
     if not message.reply_to_message:
@@ -110,7 +118,7 @@ async def chatbot_talk(_, message):
     & filters.user(SUDOERS)
 )
 @capture_err
-async def chatbot_status_ubot(_, message):
+async def chatbot_status_ubot(_, message: Message):
     if len(message.text.split()) != 2:
         return await edit_or_reply(
             message, text="**Usage**\n.chatbot [ON|OFF]"
@@ -123,7 +131,7 @@ async def chatbot_status_ubot(_, message):
     group=chatbot_group,
 )
 @capture_err
-async def chatbot_talk_ubot(_, message):
+async def chatbot_talk_ubot(_, message: Message):
     if message.chat.id not in active_chats_ubot:
         return
     username = "@" + str(USERBOT_USERNAME)
@@ -146,7 +154,7 @@ async def chatbot_talk_ubot(_, message):
     group=(chatbot_group + 1),
 )
 @capture_err
-async def chatbot_talk_ubot_pm(_, message):
+async def chatbot_talk_ubot_pm(_, message: Message):
     if message.chat.id not in active_chats_ubot:
         return
     await type_and_send(message)

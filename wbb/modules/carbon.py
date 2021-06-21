@@ -1,5 +1,3 @@
-import os
-
 from pyrogram import filters
 
 from wbb import app

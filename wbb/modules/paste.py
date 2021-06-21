@@ -37,7 +37,7 @@ from wbb.utils.pastebin import paste
 
 __MODULE__ = "Paste"
 __HELP__ = "/paste - To Paste Replied Text Or Document To Nekobin"
-pattern = re.compile(r'^text/|json$|yaml$|xml$|toml$')
+pattern = re.compile(r"^text/|json$|yaml$|xml$|toml$")
 
 
 async def isPreviewUp(preview: str) -> bool:

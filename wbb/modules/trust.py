@@ -21,13 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import sleep
-
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import (BOT_ID, MESSAGE_DUMP_CHAT, USERBOT_BOT_CHAT_COMMON, app,
-                 app2, arq)
+from wbb import (BOT_ID, MESSAGE_DUMP_CHAT, USERBOT_BOT_CHAT_COMMON, app, app2,
+                 arq)
 from wbb.utils.dbfunctions import get_trust_db, update_trust_db
 from wbb.utils.filter_groups import trust_group
 
@@ -73,6 +71,8 @@ async def trust_watcher_func(_, message: Message):
     if len(text) < 2:
         return
     data = await get_spam_data(message, text)
+    if isinstance(data, str):
+        return
     spam = data.spam
     await update_trust_db(user_id, spam)
 

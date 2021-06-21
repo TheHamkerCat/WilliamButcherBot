@@ -33,7 +33,6 @@ from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from pyrogram import Client
 from Python_ARQ import ARQ
 
-
 # Setup logging
 log_file = "error.log"
 
@@ -152,7 +151,9 @@ def get_info(app, app2):
     USERBOT_MENTION = getme2.mention
     USERBOT_DC_ID = getme2.dc_id
 
-    USERBOT_BOT_CHAT_COMMON = [i.id for i in app2.get_common_chats(BOT_USERNAME)] + SPAM_CHECK_EXCEPTION_GROUPS
+    USERBOT_BOT_CHAT_COMMON = [
+        i.id for i in app2.get_common_chats(BOT_USERNAME)
+    ] + SPAM_CHECK_EXCEPTION_GROUPS
 
 
 print("[INFO]: STARTING BOT CLIENT")

@@ -18,7 +18,7 @@ import aiofiles
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import SUDOERS, USERBOT_PREFIX, app, app2, arq
+from wbb import SUDOERS, USERBOT_PREFIX, app2, arq
 from wbb.core.decorators.misc import exec_time
 
 __MODULE__ = "Userbot"
@@ -166,11 +166,11 @@ async def shellrunner(client, message: Message):
         if len(output) > 4096:
             with open("output.txt", "w+") as file:
                 file.write(output)
-            await app.send_document(
+            await app2.send_document(
                 message.chat.id,
                 "output.txt",
                 reply_to_message_id=message.message_id,
-                caption="`Output`",
+                caption=escape(text),
             )
             return os.remove("output.txt")
         await edit_or_reply(

@@ -25,8 +25,7 @@ from pyrogram import filters
 from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
                             InlineKeyboardMarkup, Message)
 
-from wbb import LOG_GROUP_ID, SUDOERS, app, arq
-from wbb.core.decorators.errors import capture_err
+from wbb import LOG_GROUP_ID, SUDOERS, app
 from wbb.modules.admin import list_admins, member_permissions
 from wbb.modules.trust import get_spam_data
 from wbb.utils.filter_groups import spam_protection_group
@@ -42,7 +41,7 @@ __HELP__ = """
 
 **Commands:**
     - /spam
-        To mark a message as spam, this will help devs to 
+        To mark a message as spam, this will help devs to
         improve spam protection algorithm.
 
 As of now, you cannot turn this off, but we'll add an enable/disable command in the future
@@ -64,6 +63,8 @@ async def spam_protection_func(_, message: Message):
     if user.id in SUDOERS:
         return
     data = await get_spam_data(message, text)
+    if isinstance(data, str):
+        return
     if not data.is_spam:
         return
     if user.id in (await list_admins(chat_id)):

@@ -53,7 +53,12 @@ async def sendLog(message: Message):
 """
     button = InlineKeyboard(row_width=1)
     button.add(InlineKeyboardButton(text="Check Action", url=message.link))
-    await app.send_message(LOG_GROUP_ID, text=msg, reply_markup=button, disable_web_page_preview=True)
+    await app.send_message(
+        LOG_GROUP_ID,
+        text=msg,
+        reply_markup=button,
+        disable_web_page_preview=True,
+    )
 
 
 @app2.on_message(

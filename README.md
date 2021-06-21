@@ -81,6 +81,59 @@ $ sudo docker build . -t wbb
 $ sudo docker run wbb
 ```
 
+## Write new modules
+
+```py
+# Add license text here, get it from below
+
+from wbb import app # This is bot's client
+from wbb import app2 # userbot client, import it if module is related to userbot
+from pyrogram import filters # pyrogram filters
+...
+
+
+# For /help menu
+__MODULE__ = "Module Name"
+__HELP__ = "Module help message"
+
+
+@app.on_message(filters.command("start"))
+async def some_function(_, message):
+    await message.reply_text("I'm already up!!")
+
+# Many useful functions are in, wbb/utils/, wbb, and wbb/core/
+```
+
+And put that file in wbb/modules/, restart and test your bot.
+
+# LICENSE
+
+MIT
+
+```
+MIT License
+
+Copyright (c) 2021 TheHamkerCat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
 ## Note
 
-1. Support Chat: https://t.me/wbbsupport
+1. Support Chat: [WbbSupport](https://t.me/wbbsupport)

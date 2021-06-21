@@ -35,6 +35,7 @@ from wbb import app
 __MODULE__ = "TTS"
 __HELP__ = "/tts - Convert Text To Speech."
 
+
 def convert(text):
     audio = BytesIO()
     i = Translator().translate(text, dest="en")

@@ -22,12 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import asyncio
-from traceback import format_exc as err
 
 from pyrogram import filters
-from pyrogram.types import (CallbackQuery, ChatPermissions,
-                            InlineKeyboardButton, InlineKeyboardMarkup,
-                            Message)
+from pyrogram.types import CallbackQuery, ChatPermissions, Message
 
 from wbb import BOT_ID, SUDOERS, app
 from wbb.core.decorators.errors import capture_err
@@ -431,7 +428,7 @@ async def warn_user(_, message: Message):
         _, __, alpha = await asyncio.gather(
             message.chat.kick_member(user_id),
             message.reply_text(
-                "Number of warns of {mention} exceeded, BANNED!"
+                f"Number of warns of {mention} exceeded, BANNED!"
             ),
             int_to_alpha(user_id),
         )
