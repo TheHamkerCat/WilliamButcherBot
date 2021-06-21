@@ -23,6 +23,7 @@ SOFTWARE.
 """
 import asyncio
 import os
+import re
 
 import aiofiles
 from pykeyboard import InlineKeyboard
@@ -36,6 +37,7 @@ from wbb.utils.pastebin import paste
 
 __MODULE__ = "Paste"
 __HELP__ = "/paste - To Paste Replied Text Or Document To Nekobin"
+pattern = re.compile(r'^text/|json$|yaml$|xml$|toml$')
 
 
 async def isPreviewUp(preview: str) -> bool:
@@ -67,7 +69,7 @@ async def paste_func(_, message):
                 return await m.edit(
                     "You can only paste files smaller than 1MB."
                 )
-            if "text" not in document.mime_type:
+            if not pattern.search(document.mime_type):
                 return await m.edit("Only text files can be pasted.")
             doc = await message.reply_to_message.download()
             async with aiofiles.open(doc, mode="r") as f:
