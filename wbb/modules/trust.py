@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from asyncio import Lock
 from pyrogram import filters
 from pyrogram.types import Message
 
@@ -31,15 +32,17 @@ from wbb.utils.filter_groups import trust_group
 
 spam_db = {}
 
+lock_access = Lock()
 
 async def get_spam_data(message: Message, text: str):
-    c, m = message.chat.id, message.message_id
-    if c not in spam_db:
-        spam_db[c] = {}
-    if m not in spam_db[c]:
-        data = (await arq.nlp(text)).result[0]
-        spam_db[c][m] = data
-    return spam_db[c][m]
+    async with lock_access:
+        c, m = message.chat.id, message.message_id
+        if c not in spam_db:
+            spam_db[c] = {}
+        if m not in spam_db[c]:
+            data = (await arq.nlp(text)).result[0]
+            spam_db[c][m] = data
+        return spam_db[c][m]
 
 
 @app2.on_message(

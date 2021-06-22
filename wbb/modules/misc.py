@@ -238,10 +238,10 @@ async def tr(_, message):
             + " https://py-googletrans.readthedocs.io/en"
             + "/latest/#googletrans-languages"
         )
-    if message.reply_to_message.text:
-        text = message.reply_to_message.text
-    elif message.reply_to_message.caption:
-        text = message.reply_to_message.caption
+    reply = message.reply_to_message
+    text = message.text or message.reply
+    if not text:
+        return await message.reply_text("Reply to a text to translate it")
     result = await arq.translate(text, lang)
     if not result.ok:
         return await message.reply_text(result.result)

@@ -19,6 +19,7 @@ from pyrogram import filters
 from pyrogram.types import Message
 
 from wbb import SUDOERS, USERBOT_PREFIX, app2, arq
+from wbb import app # don't remove
 from wbb.core.decorators.misc import exec_time
 
 __MODULE__ = "Userbot"

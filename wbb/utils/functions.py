@@ -224,4 +224,4 @@ async def extract_user_and_reason(message):
 
 
 async def extract_user(message):
-    return (await extract_user_and_reason())[0]
+    return (await extract_user_and_reason(message))[0]
