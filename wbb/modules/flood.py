@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from asyncio import sleep, get_running_loop
 from time import time
 
 from pyrogram import filters
@@ -35,7 +36,7 @@ from wbb.utils.filter_groups import flood_group
 
 __MODULE__ = "Flood"
 __HELP__ = """
-Anti-Flood system, the one who sends more than 7 messages in a row, gets muted for an hour (Except for admins).
+Anti-Flood system, the one who sends more than 10 messages in a row, gets muted for an hour (Except for admins).
 
 And no, you can't change the number of messages or action type.
 """
@@ -85,8 +86,8 @@ async def flood_control_func(_, message: Message):
     if user_id in mods:
         return
 
-    # Mute if user sends more than 7 messages in a row
-    if DB[chat_id][user_id] >= 7:
+    # Mute if user sends more than 10 messages in a row
+    if DB[chat_id][user_id] >= 10:
         DB[chat_id][user_id] = 0
         try:
             await message.chat.restrict_member(
@@ -106,10 +107,18 @@ async def flood_control_func(_, message: Message):
                 ]
             ]
         )
-        return await message.reply_text(
+        m = await message.reply_text(
             f"Imagine flooding the chat in front of me, Muted {mention} for an hour!",
             reply_markup=keyboard,
         )
+        async def delete():
+            await sleep(3600)
+            try:
+                await m.delete()
+            except Exception:
+                pass
+        loop = get_running_loop()
+        return loop.create_task(delete())
     DB[chat_id][user_id] += 1
 
 

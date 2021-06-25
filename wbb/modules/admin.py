@@ -124,10 +124,7 @@ async def current_chat_permissions(chat_id):
 
 
 async def list_members(group_id):
-    list_of_members = []
-    async for member in app.iter_chat_members(group_id):
-        list_of_members.append(member.user.id)
-    return list_of_members
+    return [member.user.id async for member in app.iter_chat_members(group_id)]
 
 
 # Purge Messages
@@ -259,7 +256,9 @@ async def deleteFunc(_, message: Message):
 # Promote Members
 
 
-@app.on_message(filters.command("promote") & ~filters.edited & ~filters.private)
+@app.on_message(
+    filters.command("promote") & ~filters.edited & ~filters.private
+)
 @adminsOnly("can_promote_members")
 async def promoteFunc(_, message: Message):
     user_id = await extract_user(message)
@@ -354,6 +353,7 @@ async def mute(_, message: Message):
 **Muted User:** {mention}
 **Muted By:** {message.from_user.mention if message.from_user else 'Anon'}
 **Reason:** {reason or 'No Reason Provided.'}"""
+    
     await message.reply_text(msg, reply_markup=keyboard)
 
 
@@ -473,7 +473,9 @@ async def remove_warning(_, cq: CallbackQuery):
 # Rmwarns
 
 
-@app.on_message(filters.command("rmwarns") & ~filters.edited & ~filters.private)
+@app.on_message(
+    filters.command("rmwarns") & ~filters.edited & ~filters.private
+)
 @adminsOnly("can_restrict_members")
 async def remove_warnings(_, message: Message):
     if not message.reply_to_message:

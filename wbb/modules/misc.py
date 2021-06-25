@@ -49,6 +49,8 @@ __HELP__ = """
 /json [URL] - Get JSON Response From An API or Something.
 /arq - Statistics Of ARQ API.
 /webss [URL] - Take A Screenshot Of A Webpage
+/reverse - Reverse search an image.
+/carbon - Make Carbon from code.
 #RTFM - Tell noobs to read the manual
 """
 
@@ -77,7 +79,9 @@ async def runs(_, message):
 async def getid(_, message):
     if len(message.command) == 2:
         try:
-            id = (await app.get_users(message.text.split(None, 1)[1].strip())).id
+            id = (
+                await app.get_users(message.text.split(None, 1)[1].strip())
+            ).id
         except Exception:
             return await message.reply_text("No Such User")
         text = f"**ID:** `{id}`"

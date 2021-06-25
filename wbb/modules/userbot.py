@@ -18,14 +18,14 @@ import aiofiles
 from pyrogram import filters
 from pyrogram.types import Message
 
+from wbb import app  # don't remove
 from wbb import SUDOERS, USERBOT_PREFIX, app2, arq
-from wbb import app # don't remove
 from wbb.core.decorators.misc import exec_time
 
 __MODULE__ = "Userbot"
 __HELP__ = """
 .alive - Send Alive Message.
-.l - Execute Python Code.
+.py - Execute Python Code.
 .sh - Execute Shell Code.
 .approve | .disapprove - Approve Or Disapprove A User To PM You.
 .block | .unblock - Block Or Unblock A User.
@@ -58,7 +58,8 @@ async def edit_or_reply(msg: Message, **kwargs):
     filters.user(SUDOERS)
     & ~filters.forwarded
     & ~filters.via_bot
-    & filters.command("l", prefixes=USERBOT_PREFIX)
+    & ~filters.edited
+    & filters.command("py", prefixes=USERBOT_PREFIX)
 )
 async def executor(client, message: Message):
     global m, p, r
@@ -112,6 +113,7 @@ async def executor(client, message: Message):
     filters.user(SUDOERS)
     & ~filters.forwarded
     & ~filters.via_bot
+    & ~filters.edited
     & filters.command("sh", prefixes=USERBOT_PREFIX),
 )
 async def shellrunner(client, message: Message):
@@ -198,9 +200,13 @@ async def sendFile(message: Message, text: str):
 
 @app2.on_message(
     filters.command(["c", "cpp"], prefixes=USERBOT_PREFIX)
+    & ~filters.edited
+    & ~filters.via_bot
     & filters.user(SUDOERS)
 )
 async def c_cpp_eval(_, message: Message):
+    if len(message.command) < 2:
+        return await message.edit("Write Some Code..")
     code = message.text.split(None, 1)[1]
     file = "exec.c"
     compiler = "g++"

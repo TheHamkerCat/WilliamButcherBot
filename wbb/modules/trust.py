@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from asyncio import Lock
+
 from pyrogram import filters
 from pyrogram.types import Message
 
@@ -33,6 +34,7 @@ from wbb.utils.filter_groups import trust_group
 spam_db = {}
 
 lock_access = Lock()
+
 
 async def get_spam_data(message: Message, text: str):
     async with lock_access:

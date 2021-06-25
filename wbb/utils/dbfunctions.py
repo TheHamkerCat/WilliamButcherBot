@@ -746,6 +746,9 @@ async def update_trust_db(user_id: int, new_data: float):
     if len(data) >= 1000:
         data.remove(data[0])
     data.append(new_data)
-    await trustdb.update_one(
-        {"user_id": user_id}, {"$set": {"data": data}}, upsert=True
-    )
+    try:
+        await trustdb.update_one(
+            {"user_id": user_id}, {"$set": {"data": data}}, upsert=True
+        )
+    except Exception:
+        pass # to prevent stack overflow error
