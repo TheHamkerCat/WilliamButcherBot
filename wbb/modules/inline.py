@@ -145,7 +145,9 @@ async def inline_query_handler(client, query):
                 )
             tex = text.split(None, 1)[1].strip()
             answerss = await youtube_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss)
+            await client.answer_inline_query(
+                query.id, results=answerss
+            )
 
         elif text.split()[0] == "lyrics":
             if len(text.split()) < 2:
@@ -157,7 +159,9 @@ async def inline_query_handler(client, query):
                 )
             tex = text.split(None, 1)[1].strip()
             answerss = await lyrics_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss)
+            await client.answer_inline_query(
+                query.id, results=answerss
+            )
 
         elif text.split()[0] == "gh_user":
             if len(text.split()) < 2:

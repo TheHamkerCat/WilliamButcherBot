@@ -26,8 +26,8 @@ from pyrogram import filters
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
-from wbb.utils.dbfunctions import (delete_note, get_note, get_note_names,
-                                   save_note)
+from wbb.utils.dbfunctions import (delete_note, get_note,
+                                   get_note_names, save_note)
 
 __MODULE__ = "Notes"
 __HELP__ = """/notes To Get All The Notes In The Chat.
@@ -36,7 +36,9 @@ __HELP__ = """/notes To Get All The Notes In The Chat.
 /delete [NOTE_NAME] To Delete A Note."""
 
 
-@app.on_message(filters.command("save") & ~filters.edited & ~filters.private)
+@app.on_message(
+    filters.command("save") & ~filters.edited & ~filters.private
+)
 @adminsOnly("can_change_info")
 async def save_notee(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
@@ -54,7 +56,9 @@ async def save_notee(_, message):
     else:
         name = message.text.split(None, 1)[1].strip()
         if not name:
-            return await message.reply_text("**Usage**\n__/save [NOTE_NAME]__")
+            return await message.reply_text(
+                "**Usage**\n__/save [NOTE_NAME]__"
+            )
         _type = "text" if message.reply_to_message.text else "sticker"
         note = {
             "type": _type,
@@ -66,7 +70,9 @@ async def save_notee(_, message):
         await message.reply_text(f"__**Saved note {name}.**__")
 
 
-@app.on_message(filters.command("notes") & ~filters.edited & ~filters.private)
+@app.on_message(
+    filters.command("notes") & ~filters.edited & ~filters.private
+)
 @capture_err
 async def get_notes(_, message):
     _notes = await get_note_names(message.chat.id)
@@ -81,7 +87,9 @@ async def get_notes(_, message):
         await message.reply_text(msg)
 
 
-@app.on_message(filters.command("get") & ~filters.edited & ~filters.private)
+@app.on_message(
+    filters.command("get") & ~filters.edited & ~filters.private
+)
 @capture_err
 async def get_one_note(_, message):
     if len(message.command) < 2:
@@ -89,7 +97,9 @@ async def get_one_note(_, message):
     else:
         name = message.text.split(None, 1)[1].strip()
         if not name:
-            return await message.reply_text("**Usage**\n__/get [NOTE_NAME]__")
+            return await message.reply_text(
+                "**Usage**\n__/get [NOTE_NAME]__"
+            )
         _note = await get_note(message.chat.id, name)
         if not _note:
             await message.reply_text("**No such note.**")
@@ -102,17 +112,25 @@ async def get_one_note(_, message):
                 await message.reply_sticker(_note["data"])
 
 
-@app.on_message(filters.command("delete") & ~filters.edited & ~filters.private)
+@app.on_message(
+    filters.command("delete") & ~filters.edited & ~filters.private
+)
 @adminsOnly("can_change_info")
 async def del_note(_, message):
     if len(message.command) < 2:
-        return await message.reply_text("**Usage**\n__/delete [NOTE_NAME]__")
+        return await message.reply_text(
+            "**Usage**\n__/delete [NOTE_NAME]__"
+        )
     name = message.text.split(None, 1)[1].strip()
     if not name:
-        return await message.reply_text("**Usage**\n__/delete [NOTE_NAME]__")
+        return await message.reply_text(
+            "**Usage**\n__/delete [NOTE_NAME]__"
+        )
     chat_id = message.chat.id
     deleted = await delete_note(chat_id, name)
     if deleted:
-        await message.reply_text(f"**Deleted note {name} successfully.**")
+        await message.reply_text(
+            f"**Deleted note {name} successfully.**"
+        )
     else:
         await message.reply_text("**No such note.**")

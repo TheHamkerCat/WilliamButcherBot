@@ -83,7 +83,9 @@ async def upload_document(
     )
 
 
-async def get_document_from_file_id(file_id: str) -> raw.base.InputDocument:
+async def get_document_from_file_id(
+    file_id: str,
+) -> raw.base.InputDocument:
     decoded = FileId.decode(file_id)
     return raw.types.InputDocument(
         id=decoded.media_id,

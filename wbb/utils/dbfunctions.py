@@ -102,7 +102,9 @@ async def delete_note(chat_id: int, name: str) -> bool:
     if name in notesd:
         del notesd[name]
         await notesdb.update_one(
-            {"chat_id": chat_id}, {"$set": {"notes": notesd}}, upsert=True
+            {"chat_id": chat_id},
+            {"$set": {"notes": notesd}},
+            upsert=True,
         )
         return True
     return False
@@ -121,7 +123,10 @@ async def get_filters_count() -> dict:
         filters_name = await get_filters_names(chat["chat_id"])
         filters_count += len(filters_name)
         chats_count += 1
-    return {"chats_count": chats_count, "filters_count": filters_count}
+    return {
+        "chats_count": chats_count,
+        "filters_count": filters_count,
+    }
 
 
 async def _get_filters(chat_id: int) -> Dict[str, int]:
@@ -152,7 +157,9 @@ async def save_filter(chat_id: int, name: str, _filter: dict):
     _filters = await _get_filters(chat_id)
     _filters[name] = _filter
     await filtersdb.update_one(
-        {"chat_id": chat_id}, {"$set": {"filters": _filters}}, upsert=True
+        {"chat_id": chat_id},
+        {"$set": {"filters": _filters}},
+        upsert=True,
     )
 
 
@@ -162,7 +169,9 @@ async def delete_filter(chat_id: int, name: str) -> bool:
     if name in filtersd:
         del filtersd[name]
         await filtersdb.update_one(
-            {"chat_id": chat_id}, {"$set": {"filters": filtersd}}, upsert=True
+            {"chat_id": chat_id},
+            {"$set": {"filters": filtersd}},
+            upsert=True,
         )
         return True
     return False
@@ -233,7 +242,9 @@ async def remove_warns(chat_id: int, name: str) -> bool:
     if name in warnsd:
         del warnsd[name]
         await warnsdb.update_one(
-            {"chat_id": chat_id}, {"$set": {"warns": warnsd}}, upsert=True
+            {"chat_id": chat_id},
+            {"$set": {"warns": warnsd}},
+            upsert=True,
         )
         return True
     return False
@@ -263,7 +274,9 @@ async def user_global_karma(user_id) -> int:
         return 0
     total_karma = 0
     for chat in await chats.to_list(length=1000000):
-        karma = await get_karma(chat["chat_id"], await int_to_alpha(user_id))
+        karma = await get_karma(
+            chat["chat_id"], await int_to_alpha(user_id)
+        )
         if karma:
             if int(karma["karma"]) > 0:
                 total_karma += int(karma["karma"])
@@ -427,7 +440,9 @@ async def save_couple(chat_id: int, date: str, couple: dict):
     lovers = await _get_lovers(chat_id)
     lovers[date] = couple
     await coupledb.update_one(
-        {"chat_id": chat_id}, {"$set": {"couple": lovers}}, upsert=True
+        {"chat_id": chat_id},
+        {"$set": {"couple": lovers}},
+        upsert=True,
     )
 
 
@@ -554,7 +569,9 @@ async def update_captcha_cache(captcha_dict):
     if not pickle:
         return
     await captcha_cachedb.update_one(
-        {"captcha": "cache"}, {"$set": {"pickled": pickle}}, upsert=True
+        {"captcha": "cache"},
+        {"$set": {"pickled": pickle}},
+        upsert=True,
     )
 
 
@@ -578,11 +595,16 @@ async def get_blacklist_filters_count() -> dict:
         filters = await get_blacklisted_words(chat["chat_id"])
         filters_count += len(filters)
         chats_count += 1
-    return {"chats_count": chats_count, "filters_count": filters_count}
+    return {
+        "chats_count": chats_count,
+        "filters_count": filters_count,
+    }
 
 
 async def get_blacklisted_words(chat_id: int) -> List[str]:
-    _filters = await blacklist_filtersdb.find_one({"chat_id": chat_id})
+    _filters = await blacklist_filtersdb.find_one(
+        {"chat_id": chat_id}
+    )
     if not _filters:
         return []
     return _filters["filters"]
@@ -593,7 +615,9 @@ async def save_blacklist_filter(chat_id: int, word: str):
     _filters = await get_blacklisted_words(chat_id)
     _filters.append(word)
     await blacklist_filtersdb.update_one(
-        {"chat_id": chat_id}, {"$set": {"filters": _filters}}, upsert=True
+        {"chat_id": chat_id},
+        {"$set": {"filters": _filters}},
+        upsert=True,
     )
 
 
@@ -603,7 +627,9 @@ async def delete_blacklist_filter(chat_id: int, word: str) -> bool:
     if word in filtersd:
         filtersd.remove(word)
         await blacklist_filtersdb.update_one(
-            {"chat_id": chat_id}, {"$set": {"filters": filtersd}}, upsert=True
+            {"chat_id": chat_id},
+            {"$set": {"filters": filtersd}},
+            upsert=True,
         )
         return True
     return False
@@ -612,7 +638,9 @@ async def delete_blacklist_filter(chat_id: int, word: str) -> bool:
 """ PIPES SYSTEM """
 
 
-async def activate_pipe(from_chat_id: int, to_chat_id: int, fetcher: str):
+async def activate_pipe(
+    from_chat_id: int, to_chat_id: int, fetcher: str
+):
     pipes = await show_pipes()
     pipe = {
         "from_chat_id": from_chat_id,
@@ -689,7 +717,10 @@ async def remove_sudo(user_id: int) -> bool:
 
 async def blacklisted_chats() -> list:
     chats = blacklist_chatdb.find({"chat_id": {"$lt": 0}})
-    return [chat["chat_id"] for chat in await chats.to_list(length=1000000000)]
+    return [
+        chat["chat_id"]
+        for chat in await chats.to_list(length=1000000000)
+    ]
 
 
 async def blacklist_chat(chat_id: int) -> bool:
@@ -727,7 +758,10 @@ async def clean_restart_stage() -> dict:
     if not data:
         return {}
     await restart_stagedb.delete_one({"something": "something"})
-    return {"chat_id": data["chat_id"], "message_id": data["message_id"]}
+    return {
+        "chat_id": data["chat_id"],
+        "message_id": data["message_id"],
+    }
 
 
 """ TRUST DB """
@@ -748,7 +782,9 @@ async def update_trust_db(user_id: int, new_data: float):
     data.append(new_data)
     try:
         await trustdb.update_one(
-            {"user_id": user_id}, {"$set": {"data": data}}, upsert=True
+            {"user_id": user_id},
+            {"$set": {"data": data}},
+            upsert=True,
         )
     except Exception:
-        pass # to prevent stack overflow error
+        pass  # to prevent stack overflow error

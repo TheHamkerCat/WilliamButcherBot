@@ -57,7 +57,9 @@ __HELP__ = """
 
 @app.on_message(filters.command("commit") & ~filters.edited)
 async def commit(_, message):
-    await message.reply_text((await random_line("wbb/utils/commit.txt")))
+    await message.reply_text(
+        (await random_line("wbb/utils/commit.txt"))
+    )
 
 
 @app.on_message(filters.command("RTFM", "#"))
@@ -72,7 +74,9 @@ async def rtfm(_, message):
 
 @app.on_message(filters.command("runs") & ~filters.edited)
 async def runs(_, message):
-    await message.reply_text((await random_line("wbb/utils/runs.txt")))
+    await message.reply_text(
+        (await random_line("wbb/utils/runs.txt"))
+    )
 
 
 @app.on_message(filters.command("id"))
@@ -80,7 +84,9 @@ async def getid(_, message):
     if len(message.command) == 2:
         try:
             id = (
-                await app.get_users(message.text.split(None, 1)[1].strip())
+                await app.get_users(
+                    message.text.split(None, 1)[1].strip()
+                )
             ).id
         except Exception:
             return await message.reply_text("No Such User")
@@ -88,9 +94,7 @@ async def getid(_, message):
         return await message.reply_text(text, parse_mode="html")
     text_unping = "<b>Chat ID:</b>"
     if message.chat.username:
-        text_unping = (
-            f'<a href="https://t.me/{message.chat.username}">{text_unping}</a>'
-        )
+        text_unping = f'<a href="https://t.me/{message.chat.username}">{text_unping}</a>'
     text_unping += f" <code>{message.chat.id}</code>\n"
     text = "<b>Message ID:</b>"
     if message.link:
@@ -129,7 +133,9 @@ async def getid(_, message):
     )
     if text_unping != text_ping:
         await reply.edit_text(
-            text_ping, disable_web_page_preview=True, parse_mode="html"
+            text_ping,
+            disable_web_page_preview=True,
+            parse_mode="html",
         )
 
 
@@ -152,7 +158,9 @@ async def random(_, message):
             )
             await message.reply_text(f"`{password}`")
         else:
-            await message.reply_text("Specify A Length Between 1-1000")
+            await message.reply_text(
+                "Specify A Length Between 1-1000"
+            )
     except ValueError:
         await message.reply_text(
             "Strings Won't Work!, Pass A Positive Integer Less Than 1000"
@@ -166,7 +174,9 @@ async def random(_, message):
 @capture_err
 async def encrypt(_, message):
     if not message.reply_to_message:
-        return await message.reply_text("Reply To A Message To Encrypt It.")
+        return await message.reply_text(
+            "Reply To A Message To Encrypt It."
+        )
     text = message.reply_to_message.text
     text_in_bytes = bytes(text, "utf-8")
     cipher_suite = Fernet(FERNET_ENCRYPTION_KEY)
@@ -182,7 +192,9 @@ async def encrypt(_, message):
 @capture_err
 async def decrypt(_, message):
     if not message.reply_to_message:
-        return await message.reply_text("Reply To A Message To Decrypt It.")
+        return await message.reply_text(
+            "Reply To A Message To Decrypt It."
+        )
     text = message.reply_to_message.text
     text_in_bytes = bytes(text, "utf-8")
     cipher_suite = Fernet(FERNET_ENCRYPTION_KEY)
@@ -217,7 +229,9 @@ async def cheat(_, message):
         ftext = text.split()
         language = ftext[0]
         query = ftext[1]
-        data = await fetch_text(f"http://cht.sh/{language}/{query}?QT")
+        data = await fetch_text(
+            f"http://cht.sh/{language}/{query}?QT"
+        )
         if not data:
             return await m.edit("Found Literally Nothing!")
         await m.edit(f"`{data}`")
@@ -245,7 +259,9 @@ async def tr(_, message):
     reply = message.reply_to_message
     text = message.text or message.reply
     if not text:
-        return await message.reply_text("Reply to a text to translate it")
+        return await message.reply_text(
+            "Reply to a text to translate it"
+        )
     result = await arq.translate(text, lang)
     if not result.ok:
         return await message.reply_text(result.result)
@@ -267,7 +283,8 @@ async def json_fetch(_, message):
         else:
             link = await paste(data)
             await m.edit(
-                f"[OUTPUT_TOO_LONG]({link})", disable_web_page_preview=True
+                f"[OUTPUT_TOO_LONG]({link})",
+                disable_web_page_preview=True,
             )
     except Exception as e:
         await m.edit(str(e))
@@ -277,7 +294,9 @@ async def json_fetch(_, message):
 @capture_err
 async def take_ss(_, message):
     if len(message.command) != 2:
-        return await message.reply_text("Give A Url To Fetch Screenshot.")
+        return await message.reply_text(
+            "Give A Url To Fetch Screenshot."
+        )
     url = message.text.split(None, 1)[1]
     m = await message.reply_text("**Uploading**")
     try:

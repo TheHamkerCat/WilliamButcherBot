@@ -74,7 +74,9 @@ class DownloadJob:
             # Checkning the response code
             if 200 <= resp.status < 300:
                 # Saving the data to the file chunk by chunk.
-                async with aiofiles.open(self.file_path, "wb") as file:
+                async with aiofiles.open(
+                    self.file_path, "wb"
+                ) as file:
 
                     # Downloading the file using the aiohttp.StreamReader
                     async for data in resp.content.iter_chunked(
@@ -111,7 +113,9 @@ class Handler:
     ):
 
         self._loop = loop or asyncio.get_event_loop()
-        self._session = session or aiohttp.ClientSession(loop=self._loop)
+        self._session = session or aiohttp.ClientSession(
+            loop=self._loop
+        )
         self._chunk_size = chunk_size
 
     def _job_factory(
@@ -143,6 +147,12 @@ class Handler:
 
         await task
         file_name = url.split("/")[-1]
-        file_name = file_name[0:230] if len(file_name) > 230 else file_name
-        path = os.getcwd() + "/" + file_name if not save_path else save_path
+        file_name = (
+            file_name[0:230] if len(file_name) > 230 else file_name
+        )
+        path = (
+            os.getcwd() + "/" + file_name
+            if not save_path
+            else save_path
+        )
         return path

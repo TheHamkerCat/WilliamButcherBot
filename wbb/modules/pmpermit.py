@@ -27,7 +27,8 @@ from pyrogram import filters
 from wbb import BOT_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.userbot import edit_or_reply
-from wbb.utils.dbfunctions import (approve_pmpermit, disapprove_pmpermit,
+from wbb.utils.dbfunctions import (approve_pmpermit,
+                                   disapprove_pmpermit,
                                    is_pmpermit_approved)
 
 flood = {}
@@ -56,11 +57,18 @@ async def pmpermit_func(_, message):
     else:
         flood[str(user_id)] = 1
     if flood[str(user_id)] > 5:
-        await message.reply_text("SPAM DETECTED, BLOCKED USER AUTOMATICALLY!")
+        await message.reply_text(
+            "SPAM DETECTED, BLOCKED USER AUTOMATICALLY!"
+        )
         return await app2.block_user(user_id)
-    results = await app2.get_inline_bot_results(BOT_ID, f"pmpermit {user_id}")
+    results = await app2.get_inline_bot_results(
+        BOT_ID, f"pmpermit {user_id}"
+    )
     await app2.send_inline_bot_result(
-        user_id, results.query_id, results.results[0].id, hide_via=True
+        user_id,
+        results.query_id,
+        results.results[0].id,
+        hide_via=True,
     )
 
 
@@ -96,7 +104,9 @@ async def pm_disapprove(_, message):
         )
     user_id = message.reply_to_message.from_user.id
     if not await is_pmpermit_approved(user_id):
-        await edit_or_reply(message, text="User is already disapproved to pm")
+        await edit_or_reply(
+            message, text="User is already disapproved to pm"
+        )
         async for m in app2.iter_history(user_id, limit=6):
             if m.reply_markup:
                 try:
@@ -137,7 +147,9 @@ async def unblock_user_func(_, message):
         )
     user_id = message.reply_to_message.from_user.id
     await app2.unblock_user(user_id)
-    await edit_or_reply(message, text="Successfully Unblocked the user")
+    await edit_or_reply(
+        message, text="Successfully Unblocked the user"
+    )
 
 
 """ CALLBACK QUERY HANDLER """
@@ -148,7 +160,10 @@ flood2 = {}
 @app.on_callback_query(filters.regex("pmpermit"))
 async def pmpermit_cq(_, cq):
     user_id = cq.from_user.id
-    data, victim = cq.data.split(None, 2)[1], cq.data.split(None, 2)[2]
+    data, victim = (
+        cq.data.split(None, 2)[1],
+        cq.data.split(None, 2)[2],
+    )
     if data == "approve":
         if user_id != USERBOT_ID:
             return await cq.answer("This Button Is Not For You")
@@ -164,7 +179,9 @@ async def pmpermit_cq(_, cq):
         async for m in app2.iter_history(user_id, limit=6):
             if m.reply_markup:
                 await m.delete()
-        await app2.send_message(user_id, "Blocked, Go scam someone else.")
+        await app2.send_message(
+            user_id, "Blocked, Go scam someone else."
+        )
         await app2.block_user(user_id)
 
     elif data == "approve_me":
@@ -173,7 +190,9 @@ async def pmpermit_cq(_, cq):
         else:
             flood2[str(user_id)] = 1
         if flood2[str(user_id)] > 5:
-            await app2.send_message(user_id, "SPAM DETECTED, USER BLOCKED.")
+            await app2.send_message(
+                user_id, "SPAM DETECTED, USER BLOCKED."
+            )
             return await app2.block_user(user_id)
         await app2.send_message(
             user_id,

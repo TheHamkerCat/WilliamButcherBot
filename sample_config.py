@@ -2,16 +2,16 @@ from dotenv import load_dotenv
 
 load_dotenv("config.env")
 
-HEROKU = (
-    True  # NOTE Make it false if you're not deploying on heroku or docker.
-)
+HEROKU = True  # NOTE Make it false if you're not deploying on heroku or docker.
 
 if HEROKU:
     from os import environ
 
     BOT_TOKEN = environ.get("BOT_TOKEN", None)
     API_ID = int(environ.get("API_ID", 6))
-    API_HASH = environ.get("API_HASH", "eb06d4abfb49dc3eeb1aeb98ae0f581e")
+    API_HASH = environ.get(
+        "API_HASH", "eb06d4abfb49dc3eeb1aeb98ae0f581e"
+    )
     SESSION_STRING = environ.get("SESSION_STRING", None)
     USERBOT_PREFIX = environ.get("USERBOT_PREFIX", ".")
     SUDO_USERS_ID = list(
@@ -21,7 +21,9 @@ if HEROKU:
     GBAN_LOG_GROUP_ID = int(environ.get("GBAN_LOG_GROUP_ID", None))
     MESSAGE_DUMP_CHAT = int(environ.get("MESSAGE_DUMP_CHAT", None))
     FERNET_ENCRYPTION_KEY = environ.get("FERNET_ENCRYPTION_KEY", None)
-    WELCOME_DELAY_KICK_SEC = int(environ.get("WELCOME_DELAY_KICK_SEC", None))
+    WELCOME_DELAY_KICK_SEC = int(
+        environ.get("WELCOME_DELAY_KICK_SEC", None)
+    )
     MONGO_DB_URI = environ.get("MONGO_DB_URI", None)
     ARQ_API_URL = environ.get("ARQ_API_URL", None)
     ARQ_API_KEY = environ.get("ARQ_API_KEY", None)
@@ -29,7 +31,10 @@ if HEROKU:
         True if int(environ.get("LOG_MENTIONS", None)) == 1 else False
     )
     SPAM_CHECK_EXCEPTION_GROUPS = list(
-        int(y) for y in environ.get("SPAM_CHECK_EXCEPTION_GROUPS", "").split()
+        int(y)
+        for y in environ.get(
+            "SPAM_CHECK_EXCEPTION_GROUPS", ""
+        ).split()
     )
 else:
     BOT_TOKEN = "467677575:YZfaakjwd545dfg-N6JStihhuw5gQeZHntc"
@@ -44,9 +49,7 @@ else:
     LOG_GROUP_ID = -100125431255
     GBAN_LOG_GROUP_ID = -100125431255
     MESSAGE_DUMP_CHAT = -1001181696437
-    FERNET_ENCRYPTION_KEY = (
-        "iKMq0WZMnJKjMQxZWKtv-cplMuF_LoyshXj0XbTGGWM="  # Leave this as it is
-    )
+    FERNET_ENCRYPTION_KEY = "iKMq0WZMnJKjMQxZWKtv-cplMuF_LoyshXj0XbTGGWM="  # Leave this as it is
     WELCOME_DELAY_KICK_SEC = 300
     MONGO_DB_URI = "mongodb+srv://username:password@cluster0.ksiis.mongodb.net/YourDataBaseName?retryWrites=true&w=majority"
     ARQ_API_KEY = "Get this from @ARQRobot"

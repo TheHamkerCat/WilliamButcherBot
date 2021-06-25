@@ -21,13 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import sleep, get_running_loop
+from asyncio import get_running_loop, sleep
 from time import time
 
 from pyrogram import filters
 from pyrogram.types import (CallbackQuery, ChatPermissions,
-                            InlineKeyboardButton, InlineKeyboardMarkup,
-                            Message)
+                            InlineKeyboardButton,
+                            InlineKeyboardMarkup, Message)
 
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
@@ -111,12 +111,14 @@ async def flood_control_func(_, message: Message):
             f"Imagine flooding the chat in front of me, Muted {mention} for an hour!",
             reply_markup=keyboard,
         )
+
         async def delete():
             await sleep(3600)
             try:
                 await m.delete()
             except Exception:
                 pass
+
         loop = get_running_loop()
         return loop.create_task(delete())
     DB[chat_id][user_id] += 1
@@ -125,7 +127,9 @@ async def flood_control_func(_, message: Message):
 @app.on_callback_query(filters.regex("unmute_"))
 async def flood_callback_func(_, cq: CallbackQuery):
     from_user = cq.from_user
-    permissions = await member_permissions(cq.message.chat.id, from_user.id)
+    permissions = await member_permissions(
+        cq.message.chat.id, from_user.id
+    )
     permission = "can_restrict_members"
     if permission not in permissions:
         return await cq.answer(

@@ -60,7 +60,9 @@ async def get_user_info(user):
         else "Uncertain"
     )
     spam_probab = (
-        str(round(spam_probab)) + " %" if spam_probab != 0 else "Uncertain"
+        str(round(spam_probab)) + " %"
+        if spam_probab != 0
+        else "Uncertain"
     )
     caption = f"""
 **ID:** `{user_id}`
@@ -122,9 +124,13 @@ async def info_func(_, message: Message):
     except Exception as e:
         return await m.edit(str(e))
     if not photo_id:
-        return await m.edit(info_caption, disable_web_page_preview=True)
+        return await m.edit(
+            info_caption, disable_web_page_preview=True
+        )
     photo = await app.download_media(photo_id)
-    await message.reply_photo(photo, caption=info_caption, quote=False)
+    await message.reply_photo(
+        photo, caption=info_caption, quote=False
+    )
     await m.delete()
     os.remove(photo)
 
@@ -144,9 +150,13 @@ async def chat_info_func(_, message: Message):
         m = await message.reply_text("Processing")
         info_caption, photo_id = await get_chat_info(chat)
         if not photo_id:
-            return await m.edit(info_caption, disable_web_page_preview=True)
+            return await m.edit(
+                info_caption, disable_web_page_preview=True
+            )
         photo = await app.download_media(photo_id)
-        await message.reply_photo(photo, caption=info_caption, quote=False)
+        await message.reply_photo(
+            photo, caption=info_caption, quote=False
+        )
         await m.delete()
         os.remove(photo)
     except Exception as e:

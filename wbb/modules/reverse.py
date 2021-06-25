@@ -1,17 +1,16 @@
 import os
+from asyncio import get_running_loop
 from random import randint
 
 import aiofiles
 import aiohttp
 import requests
-from asyncio import get_running_loop
 from bs4 import BeautifulSoup
 from pyrogram import filters
 
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.nsfw import get_file_id_from_message
-
 
 
 @app.on_message(filters.command("reverse"))
@@ -36,7 +35,9 @@ async def reverse_image_search(_, message):
     file_id = await get_file_id_from_message(reply)
     if not file_id:
         return m.edit("Can't reverse that")
-    image = await app.download_media(file_id, f"{randint(1000, 10000)}.jpg")
+    image = await app.download_media(
+        file_id, f"{randint(1000, 10000)}.jpg"
+    )
     await m.edit("Uploading to google's server")
     async with aiofiles.open(image, "rb") as f:
         if image:
@@ -45,12 +46,16 @@ async def reverse_image_search(_, message):
                 "encoded_image": (image, await f.read()),
                 "image_content": "",
             }
+
             def post_non_blocking():
                 return requests.post(
                     search_url, files=multipart, allow_redirects=False
-            )
+                )
+
             loop = get_running_loop()
-            response = await loop.run_in_executor(None, post_non_blocking)
+            response = await loop.run_in_executor(
+                None, post_non_blocking
+            )
             location = response.headers.get("Location")
             os.remove(image)
         else:
@@ -76,5 +81,3 @@ async def reverse_image_search(_, message):
     except Exception:
         text = f"**Result**: [Link]({location})"
         await m.edit(text)
-
-

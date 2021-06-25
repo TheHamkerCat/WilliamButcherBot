@@ -30,8 +30,8 @@ import psutil
 from pyrogram import filters
 from pyrogram.errors import FloodWait
 
-from wbb import (BOT_ID, GBAN_LOG_GROUP_ID, SUDOERS, USERBOT_USERNAME, app,
-                 bot_start_time)
+from wbb import (BOT_ID, GBAN_LOG_GROUP_ID, SUDOERS, USERBOT_USERNAME,
+                 app, bot_start_time)
 from wbb.core.decorators.errors import capture_err
 from wbb.utils import formatter
 from wbb.utils.dbfunctions import (add_gban_user, get_served_chats,
@@ -93,13 +93,17 @@ async def ban_globally(_, message):
         user = await app.get_users(user)
         from_user = message.from_user
         if user.id == from_user.id:
-            await message.reply_text("You want to gban yourself? FOOL!")
+            await message.reply_text(
+                "You want to gban yourself? FOOL!"
+            )
         elif user.id == BOT_ID:
             await message.reply_text(
                 "Should i gban myself? I'm not fool like you, HUMAN!"
             )
         elif user.id in SUDOERS:
-            await message.reply_text("You want to ban a sudo user? GET REKT!!")
+            await message.reply_text(
+                "You want to ban a sudo user? GET REKT!!"
+            )
         else:
             served_chats = await get_served_chats()
             m = await message.reply_text(
@@ -110,7 +114,9 @@ async def ban_globally(_, message):
             number_of_chats = 0
             for served_chat in served_chats:
                 try:
-                    await app.kick_chat_member(served_chat["chat_id"], user.id)
+                    await app.kick_chat_member(
+                        served_chat["chat_id"], user.id
+                    )
                     number_of_chats += 1
                     await asyncio.sleep(1)
                 except Exception:
@@ -163,11 +169,15 @@ __**New Global Ban**__
             "Should i gban myself? I'm not fool like you, HUMAN!"
         )
     elif user_id in SUDOERS:
-        await message.reply_text("You want to ban a sudo user? GET REKT!!")
+        await message.reply_text(
+            "You want to ban a sudo user? GET REKT!!"
+        )
     else:
         is_gbanned = await is_gbanned_user(user_id)
         if is_gbanned:
-            await message.reply_text("He's already gbanned, why bully him?")
+            await message.reply_text(
+                "He's already gbanned, why bully him?"
+            )
         else:
             served_chats = await get_served_chats()
             m = await message.reply_text(
@@ -177,7 +187,9 @@ __**New Global Ban**__
             number_of_chats = 0
             for served_chat in served_chats:
                 try:
-                    await app.kick_chat_member(served_chat["chat_id"], user_id)
+                    await app.kick_chat_member(
+                        served_chat["chat_id"], user_id
+                    )
                     number_of_chats += 1
                     await asyncio.sleep(1)
                 except Exception:
@@ -234,20 +246,28 @@ async def unban_globally(_, message):
         user = await app.get_users(user)
         from_user = message.from_user
         if user.id == from_user.id:
-            await message.reply_text("You want to ungban yourself? FOOL!")
+            await message.reply_text(
+                "You want to ungban yourself? FOOL!"
+            )
         elif user.id == BOT_ID:
             await message.reply_text(
                 "Should i ungban myself? But i'm not gbanned."
             )
         elif user.id in SUDOERS:
-            await message.reply_text("Sudo users can't be gbanned/ungbanned.")
+            await message.reply_text(
+                "Sudo users can't be gbanned/ungbanned."
+            )
         else:
             is_gbanned = await is_gbanned_user(user.id)
             if not is_gbanned:
-                await message.reply_text("He's already free, why bully him?")
+                await message.reply_text(
+                    "He's already free, why bully him?"
+                )
             else:
                 await remove_gban_user(user.id)
-                await message.reply_text(f"Unbanned {user.mention} Globally!")
+                await message.reply_text(
+                    f"Unbanned {user.mention} Globally!"
+                )
         return
 
     from_user_id = message.from_user.id
@@ -260,11 +280,15 @@ async def unban_globally(_, message):
             "Should i ungban myself? But i'm not gbanned."
         )
     elif user_id in SUDOERS:
-        await message.reply_text("Sudo users can't be gbanned/ungbanned.")
+        await message.reply_text(
+            "Sudo users can't be gbanned/ungbanned."
+        )
     else:
         is_gbanned = await is_gbanned_user(user_id)
         if not is_gbanned:
-            await message.reply_text("He's already free, why bully him?")
+            await message.reply_text(
+                "He's already free, why bully him?"
+            )
         else:
             await remove_gban_user(user_id)
             await message.reply_text(f"Unbanned {mention} Globally!")
@@ -274,12 +298,16 @@ async def unban_globally(_, message):
 
 
 @app.on_message(
-    filters.command("broadcast") & filters.user(SUDOERS) & ~filters.edited
+    filters.command("broadcast")
+    & filters.user(SUDOERS)
+    & ~filters.edited
 )
 @capture_err
 async def broadcast_message(_, message):
     if len(message.command) < 2:
-        return await message.reply_text("**Usage**:\n/broadcast [MESSAGE]")
+        return await message.reply_text(
+            "**Usage**:\n/broadcast [MESSAGE]"
+        )
     sleep_time = 3
     text = message.text.split(None, 1)[1]
     sent = 0

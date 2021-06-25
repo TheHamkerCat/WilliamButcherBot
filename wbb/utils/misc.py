@@ -89,11 +89,15 @@ def paginate_modules(page_n, module_dict, prefix, chat=None):
             (
                 EqInlineKeyboardButton(
                     "<",
-                    callback_data="{}_prev({})".format(prefix, modulo_page),
+                    callback_data="{}_prev({})".format(
+                        prefix, modulo_page
+                    ),
                 ),
                 EqInlineKeyboardButton(
                     ">",
-                    callback_data="{}_next({})".format(prefix, modulo_page),
+                    callback_data="{}_next({})".format(
+                        prefix, modulo_page
+                    ),
                 ),
             )
         ]
@@ -102,4 +106,6 @@ def paginate_modules(page_n, module_dict, prefix, chat=None):
 
 
 def is_module_loaded(name):
-    return (not MOD_LOAD or name in MOD_LOAD) and name not in MOD_NOLOAD
+    return (
+        not MOD_LOAD or name in MOD_LOAD
+    ) and name not in MOD_NOLOAD

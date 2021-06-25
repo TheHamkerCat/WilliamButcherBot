@@ -34,13 +34,15 @@ from pykeyboard import InlineKeyboard
 from pyrogram import __version__ as pyrover
 from pyrogram import filters
 from pyrogram.raw.functions import Ping
-from pyrogram.types import (InlineKeyboardButton, InlineQueryResultArticle,
-                            InlineQueryResultPhoto, InputTextMessageContent)
+from pyrogram.types import (InlineKeyboardButton,
+                            InlineQueryResultArticle,
+                            InlineQueryResultPhoto,
+                            InputTextMessageContent)
 from search_engine_parser import GoogleSearch
 
 from wbb import (BOT_USERNAME, MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_ID,
-                 USERBOT_NAME, USERBOT_USERNAME, aiohttpsession, app, app2,
-                 arq)
+                 USERBOT_NAME, USERBOT_USERNAME, aiohttpsession, app,
+                 app2, arq)
 from wbb.core.types import InlineQueryResultCachedDocument
 from wbb.modules.info import get_chat_info, get_user_info
 from wbb.modules.music import download_youtube_audio
@@ -78,7 +80,11 @@ async def inline_help_func(__HELP__):
     buttons = InlineKeyboard(row_width=4)
     buttons.add(
         *[
-            (InlineKeyboardButton(text=i, switch_inline_query_current_chat=i))
+            (
+                InlineKeyboardButton(
+                    text=i, switch_inline_query_current_chat=i
+                )
+            )
             for i in keywords_list
         ]
     )
@@ -147,7 +153,9 @@ async def translate_func(answers, lang, tex):
             InlineQueryResultArticle(
                 title="Error",
                 description=result.result,
-                input_message_content=InputTextMessageContent(result.result),
+                input_message_content=InputTextMessageContent(
+                    result.result
+                ),
             )
         )
         return answers
@@ -185,7 +193,9 @@ async def urban_func(answers, text):
             InlineQueryResultArticle(
                 title="Error",
                 description=results.result,
-                input_message_content=InputTextMessageContent(results.result),
+                input_message_content=InputTextMessageContent(
+                    results.result
+                ),
             )
         )
         return answers
@@ -242,7 +252,9 @@ async def wall_func(answers, text):
             InlineQueryResultArticle(
                 title="Error",
                 description=results.result,
-                input_message_content=InputTextMessageContent(results.result),
+                input_message_content=InputTextMessageContent(
+                    results.result
+                ),
             )
         )
         return answers
@@ -294,7 +306,9 @@ async def torrent_func(answers, text):
             InlineQueryResultArticle(
                 title="Error",
                 description=results.result,
-                input_message_content=InputTextMessageContent(results.result),
+                input_message_content=InputTextMessageContent(
+                    results.result
+                ),
             )
         )
         return answers
@@ -335,7 +349,9 @@ async def youtube_func(answers, text):
             InlineQueryResultArticle(
                 title="Error",
                 description=results.result,
-                input_message_content=InputTextMessageContent(results.result),
+                input_message_content=InputTextMessageContent(
+                    results.result
+                ),
             )
         )
         return answers
@@ -351,9 +367,7 @@ async def youtube_func(answers, text):
 **Duration:** {i.duration}
 **Uploaded:** {i.publish_time}
 **Description:** {i.long_desc}"""
-        description = (
-            f"{i.views} | {i.channel} | {i.duration} | {i.publish_time}"
-        )
+        description = f"{i.views} | {i.channel} | {i.duration} | {i.publish_time}"
         answers.append(
             InlineQueryResultArticle(
                 title=i.title,
@@ -375,7 +389,9 @@ async def lyrics_func(answers, text):
             InlineQueryResultArticle(
                 title="Error",
                 description=song.result,
-                input_message_content=InputTextMessageContent(song.result),
+                input_message_content=InputTextMessageContent(
+                    song.result
+                ),
             )
         )
         return answers
@@ -504,10 +520,13 @@ async def tg_search_func(answers, text, user_id):
         buttons.add(
             InlineKeyboardButton(
                 text="Origin",
-                url=message.link if message.link else "https://t.me/telegram",
+                url=message.link
+                if message.link
+                else "https://t.me/telegram",
             ),
             InlineKeyboardButton(
-                text="Search again", switch_inline_query_current_chat="search"
+                text="Search again",
+                switch_inline_query_current_chat="search",
             ),
         )
         name = (
@@ -564,7 +583,9 @@ async def music_inline_func(answers, query):
         messages_ids_and_duration.append(
             {
                 "message_id": f_.message_id,
-                "duration": f_.audio.duration if f_.audio.duration else 0,
+                "duration": f_.audio.duration
+                if f_.audio.duration
+                else 0,
             }
         )
     messages = list(
@@ -577,7 +598,8 @@ async def music_inline_func(answers, query):
     for message_ in messages:
         answers.append(
             InlineQueryResultCachedDocument(
-                file_id=message_.audio.file_id, title=message_.audio.title
+                file_id=message_.audio.file_id,
+                title=message_.audio.title,
             )
         )
     return answers
@@ -590,7 +612,9 @@ async def wiki_func(answers, text):
             InlineQueryResultArticle(
                 title="Error",
                 description=data.result,
-                input_message_content=InputTextMessageContent(data.result),
+                input_message_content=InputTextMessageContent(
+                    data.result
+                ),
             )
         )
         return answers
@@ -627,7 +651,9 @@ async def speedtest_init(query):
     msg = "**Click The Button Below To Perform A Speedtest**"
     button = InlineKeyboard(row_width=1)
     button.add(
-        InlineKeyboardButton(text="Test", callback_data="test_speedtest")
+        InlineKeyboardButton(
+            text="Test", callback_data="test_speedtest"
+        )
     )
     answers.append(
         InlineQueryResultArticle(
@@ -649,7 +675,9 @@ async def test_speedtest_cq(_, cq):
     inline_message_id = cq.inline_message_id
     await app.edit_inline_text(inline_message_id, "**Testing**")
     loop = asyncio.get_running_loop()
-    download, upload, info = await loop.run_in_executor(None, test_speedtest)
+    download, upload, info = await loop.run_in_executor(
+        None, test_speedtest
+    )
     msg = f"""
 **Download:** `{download}`
 **Upload:** `{upload}`
@@ -671,7 +699,8 @@ async def pmpermit_func(answers, user_id, victim):
             text="To Scam You", callback_data="pmpermit to_scam_you a"
         ),
         InlineKeyboardButton(
-            text="For promotion", callback_data="pmpermit to_scam_you a"
+            text="For promotion",
+            callback_data="pmpermit to_scam_you a",
         ),
         InlineKeyboardButton(
             text="Approve me", callback_data="pmpermit approve_me a"
@@ -699,7 +728,9 @@ async def ping_func(answers):
     answers.append(
         InlineQueryResultArticle(
             title=ping,
-            input_message_content=InputTextMessageContent(f"__**{ping}**__"),
+            input_message_content=InputTextMessageContent(
+                f"__**{ping}**__"
+            ),
         )
     )
     return answers
@@ -710,7 +741,9 @@ async def yt_music_func(answers, url):
         url = (await arq.youtube(url)).result[0]
         url = f"https://youtube.com{url.url_suffix}"
     loop = asyncio.get_running_loop()
-    music = await loop.run_in_executor(None, download_youtube_audio, url)
+    music = await loop.run_in_executor(
+        None, download_youtube_audio, url
+    )
     if not music:
         msg = "**ERROR**\n__MUSIC TOO LONG__"
         answers.append(
@@ -739,7 +772,9 @@ async def yt_music_func(answers, url):
     os.remove(audio)
     os.remove(thumbnail)
     answers.append(
-        InlineQueryResultCachedDocument(title=title, file_id=m.audio.file_id)
+        InlineQueryResultCachedDocument(
+            title=title, file_id=m.audio.file_id
+        )
     )
     return answers
 
@@ -788,7 +823,9 @@ async def tmdb_func(answers, query):
             InlineQueryResultArticle(
                 title="Error",
                 description=response.result,
-                input_message_content=InputTextMessageContent(response.result),
+                input_message_content=InputTextMessageContent(
+                    response.result
+                ),
             )
         )
         return answers
@@ -800,7 +837,9 @@ async def tmdb_func(answers, query):
             genre = None
         else:
             genre = " | ".join(result.genre)
-        description = result.overview[0:900] if result.overview else "None"
+        description = (
+            result.overview[0:900] if result.overview else "None"
+        )
         caption = f"""
 **{result.title}**
 **Type:** {result.type}
@@ -812,7 +851,8 @@ async def tmdb_func(answers, query):
         buttons = InlineKeyboard(row_width=1)
         buttons.add(
             InlineKeyboardButton(
-                "Search Again", switch_inline_query_current_chat="tmdb"
+                "Search Again",
+                switch_inline_query_current_chat="tmdb",
             )
         )
         answers.append(
@@ -836,13 +876,16 @@ async def pypiSearchFunc(answers: list, query: str) -> list:
             InlineQueryResultArticle(
                 title="No Such Package",
                 description=result.result,
-                input_message_content=InputTextMessageContent(result.result),
+                input_message_content=InputTextMessageContent(
+                    result.result
+                ),
             )
         )
         return answers
     result = result.result
     pURLS = [
-        f"**{key}**: {value}" for key, value in result.projectURLS.items()
+        f"**{key}**: {value}"
+        for key, value in result.projectURLS.items()
     ]
     pURLS = ("\n" + "\n".join(pURLS)) if pURLS else None
     caption = f"""
@@ -867,7 +910,8 @@ async def pypiSearchFunc(answers: list, query: str) -> list:
     button.add(
         InlineKeyboardButton(text="Open Page", url=result.pypiURL),
         InlineKeyboardButton(
-            text="Search Again", switch_inline_query_current_chat="pypi"
+            text="Search Again",
+            switch_inline_query_current_chat="pypi",
         ),
     )
     answers.append(
@@ -890,7 +934,9 @@ async def image_func(answers, query):
             InlineQueryResultArticle(
                 title="Error",
                 description=results.result,
-                input_message_content=InputTextMessageContent(results.result),
+                input_message_content=InputTextMessageContent(
+                    results.result
+                ),
             )
         )
         return answers
@@ -898,7 +944,8 @@ async def image_func(answers, query):
     buttons = InlineKeyboard(row_width=2)
     buttons.add(
         InlineKeyboardButton(
-            text="Search again", switch_inline_query_current_chat="image"
+            text="Search again",
+            switch_inline_query_current_chat="image",
         ),
     )
     for i in results:

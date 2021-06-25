@@ -25,7 +25,8 @@ from typing import List, Optional, Union
 
 import pyrogram
 from pyrogram import raw, types, utils
-from pyrogram.file_id import DOCUMENT_TYPES, PHOTO_TYPES, FileId, FileType
+from pyrogram.file_id import (DOCUMENT_TYPES, PHOTO_TYPES, FileId,
+                              FileType)
 from pyrogram.types import InlineQueryResult
 
 
@@ -97,7 +98,9 @@ class InlineQueryResultAudio(InlineQueryResult):
         reply_markup: "types.InlineKeyboardMarkup" = None,
         input_message_content: "types.InputMessageContent" = None,
     ):
-        super().__init__("audio", id, input_message_content, reply_markup)
+        super().__init__(
+            "audio", id, input_message_content, reply_markup
+        )
 
         self.audio_url = audio_url
         self.thumb_url = thumb_url
@@ -142,7 +145,10 @@ class InlineQueryResultAudio(InlineQueryResult):
 
         message, entities = (
             await utils.parse_text_entities(
-                client, self.caption, self.parse_mode, self.caption_entities
+                client,
+                self.caption,
+                self.parse_mode,
+                self.caption_entities,
             )
         ).values()
 
@@ -229,7 +235,9 @@ class InlineQueryResultCachedDocument(InlineQueryResult):
         reply_markup: "types.InlineKeyboardMarkup" = None,
         input_message_content: "types.InputMessageContent" = None,
     ):
-        super().__init__("file", id, input_message_content, reply_markup)
+        super().__init__(
+            "file", id, input_message_content, reply_markup
+        )
 
         self.file_id = file_id
         self.title = title
@@ -245,7 +253,10 @@ class InlineQueryResultCachedDocument(InlineQueryResult):
 
         message, entities = (
             await utils.parse_text_entities(
-                client, self.caption, self.parse_mode, self.caption_entities
+                client,
+                self.caption,
+                self.parse_mode,
+                self.caption_entities,
             )
         ).values()
 
@@ -284,7 +295,10 @@ def get_input_file_from_file_id(
 
     file_type = decoded.file_type
 
-    if expected_file_type is not None and file_type != expected_file_type:
+    if (
+        expected_file_type is not None
+        and file_type != expected_file_type
+    ):
         raise ValueError(
             f'Expected: "{expected_file_type}", got "{file_type}" file_id instead'
         )

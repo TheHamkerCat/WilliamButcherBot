@@ -93,7 +93,9 @@ def generate_captcha():
     for t in range(4):
         letter = gen_letter()
         correct_answer += letter
-        draw.text((60 * t + 50, 15), letter, font=font, fill=rndColor2())
+        draw.text(
+            (60 * t + 50, 15), letter, font=font, fill=rndColor2()
+        )
     image = image.filter(ImageFilter.BLUR)
     image.save(file, "jpeg")
     return [file, correct_answer, wrong_answers]
@@ -139,7 +141,9 @@ async def transfer_sh(file):
     async with aiofiles.open(file, "rb") as f:
         params = {file: await f.read()}
     async with aiohttp.ClientSession() as session:
-        async with session.post("https://transfer.sh/", data=params) as resp:
+        async with session.post(
+            "https://transfer.sh/", data=params
+        ) as resp:
             download_link = str(await resp.text()).strip()
     return download_link
 
@@ -159,7 +163,8 @@ def str_to_obj(string: str):
 async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
     Radius_Earth = 6371.0088
     data1, data2 = await gather(
-        fetch(f"http://ipinfo.io/{ip1}"), fetch(f"http://ipinfo.io/{ip2}")
+        fetch(f"http://ipinfo.io/{ip1}"),
+        fetch(f"http://ipinfo.io/{ip2}"),
     )
     lat1, lon1 = data1["loc"].split(",")
     lat2, lon2 = data2["loc"].split(",")
@@ -167,7 +172,10 @@ async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
     lat2, lon2 = radians(float(lat2)), radians(float(lon2))
     dlon = lon2 - lon1
     dlat = lat2 - lat1
-    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+    a = (
+        sin(dlat / 2) ** 2
+        + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+    )
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     distance = Radius_Earth * c
     return distance

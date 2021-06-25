@@ -83,7 +83,9 @@ async def load_sudoers():
         if user_id not in sudoers:
             sudoers.append(user_id)
             await sudoersdb.update_one(
-                {"sudo": "sudo"}, {"$set": {"sudoers": sudoers}}, upsert=True
+                {"sudo": "sudo"},
+                {"$set": {"sudoers": sudoers}},
+                upsert=True,
             )
     SUDOERS = (SUDOERS + sudoers) if sudoers else SUDOERS
     print("[INFO]: LOADED SUDOERS")
@@ -95,7 +97,10 @@ loop.run_until_complete(load_sudoers())
 if not HEROKU:
     print("[INFO]: INITIALIZING USERBOT CLIENT")
     app2 = Client(
-        "userbot", phone_number=PHONE_NUMBER, api_id=API_ID, api_hash=API_HASH
+        "userbot",
+        phone_number=PHONE_NUMBER,
+        api_id=API_ID,
+        api_hash=API_HASH,
     )
 else:
     print("[INFO]: INITIALIZING USERBOT CLIENT")
@@ -109,7 +114,9 @@ print("[INFO]: INITIALIZING ARQ CLIENT")
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
 # Bot client
 print("[INFO]: INITIALIZING BOT CLIENT")
-app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
+app = Client(
+    "wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH
+)
 
 
 BOT_ID = 0

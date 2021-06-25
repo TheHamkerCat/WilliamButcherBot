@@ -26,8 +26,8 @@ from asyncio import gather, sleep
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import (BOT_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX, USERBOT_USERNAME,
-                 app, app2, arq)
+from wbb import (BOT_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX,
+                 USERBOT_USERNAME, app, app2, arq)
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.userbot import edit_or_reply
 from wbb.utils.filter_groups import chatbot_group
@@ -52,14 +52,22 @@ async def chat_bot_toggle(db, message: Message):
                 + "Of Mine To Get A Reply"
             )
             return await edit_or_reply(message, text=text)
-        await edit_or_reply(message, text="ChatBot Is Already Enabled.")
+        await edit_or_reply(
+            message, text="ChatBot Is Already Enabled."
+        )
     elif status == "off":
         if chat_id in db:
             db.remove(chat_id)
-            return await edit_or_reply(message, text="Chatbot Disabled!")
-        await edit_or_reply(message, text="ChatBot Is Already Disabled.")
+            return await edit_or_reply(
+                message, text="Chatbot Disabled!"
+            )
+        await edit_or_reply(
+            message, text="ChatBot Is Already Disabled."
+        )
     else:
-        await edit_or_reply(message, text="**Usage**\n/chatbot [ON|OFF]")
+        await edit_or_reply(
+            message, text="**Usage**\n/chatbot [ON|OFF]"
+        )
 
 
 # Enabled | Disable Chatbot

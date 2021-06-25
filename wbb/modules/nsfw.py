@@ -149,7 +149,9 @@ async def nsfw_scan_command(_, message):
 @adminsOnly("can_change_info")
 async def nsfw_enable_disable(_, message):
     if len(message.command) != 2:
-        await message.reply_text("Usage: /anti_nsfw [enable | disable]")
+        await message.reply_text(
+            "Usage: /anti_nsfw [enable | disable]"
+        )
         return
     status = message.text.split(None, 1)[1].strip()
     status = status.lower()

@@ -80,7 +80,9 @@ def download_youtube_audio(url: str, m=0):
             audio_file = audio_file_opus
         thumbnail_url = info_dict["thumbnail"]
         thumbnail_file = (
-            basename + "." + get_file_extension_from_url(thumbnail_url)
+            basename
+            + "."
+            + get_file_extension_from_url(thumbnail_url)
         )
         title = info_dict["title"]
         performer = info_dict["uploader"]
@@ -93,7 +95,9 @@ def download_youtube_audio(url: str, m=0):
 async def music(_, message):
     global is_downloading
     if len(message.command) != 2:
-        return await message.reply_text("/ytmusic needs a link as argument")
+        return await message.reply_text(
+            "/ytmusic needs a link as argument"
+        )
     url = message.text.split(None, 1)[1]
     if is_downloading:
         return await message.reply_text(
@@ -154,7 +158,9 @@ async def download_song(url):
 async def jssong(_, message):
     global is_downloading
     if len(message.command) < 2:
-        return await message.reply_text("/saavn requires an argument.")
+        return await message.reply_text(
+            "/saavn requires an argument."
+        )
     if is_downloading:
         return await message.reply_text(
             "Another download is in progress, try again after sometime."
@@ -195,7 +201,9 @@ async def jssong(_, message):
 async def deezsong(_, message):
     global is_downloading
     if len(message.command) < 2:
-        return await message.reply_text("/deezer requires an argument.")
+        return await message.reply_text(
+            "/deezer requires an argument."
+        )
     if is_downloading:
         return await message.reply_text(
             "Another download is in progress, try again after sometime."
@@ -215,7 +223,9 @@ async def deezsong(_, message):
         await m.edit("Downloading")
         proxy = "http://52.187.67.188:5000"
         try:
-            song = await download_song(f"{proxy}/mirror?url={url}.mp3")
+            song = await download_song(
+                f"{proxy}/mirror?url={url}.mp3"
+            )
         except Exception:
             song = await download_song(url)
         if not song:

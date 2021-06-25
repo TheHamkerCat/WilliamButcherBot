@@ -125,7 +125,8 @@ async def spam_p_callback(_, cq: CallbackQuery):
             return
         text = cq.message.text.markdown
         text = text.replace(
-            "Alerted", f"Deleted Message With {from_user.mention}'s Approval."
+            "Alerted",
+            f"Deleted Message With {from_user.mention}'s Approval.",
         )
         await cq.message.edit(text)
         if cq.message.reply_to_message:
@@ -176,4 +177,6 @@ __{dev_forward}__
     await message.reply_text(
         "Message was flagged as spam, Devs will use it to improve spam protection algorithm."
     )
-    await app.send_message(LOG_GROUP_ID, msg, disable_web_page_preview=True)
+    await app.send_message(
+        LOG_GROUP_ID, msg, disable_web_page_preview=True
+    )

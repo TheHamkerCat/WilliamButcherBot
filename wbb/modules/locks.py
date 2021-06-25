@@ -45,7 +45,9 @@ Example:
     /lock all
 """
 
-incorrect_parameters = "Incorrect Parameters, Check Locks Section In Help."
+incorrect_parameters = (
+    "Incorrect Parameters, Check Locks Section In Help."
+)
 data = {
     "messages": "can_send_messages",
     "stickers": "can_send_stickers",
@@ -81,7 +83,9 @@ async def tg_lock(message, permissions: list, perm: str, lock: bool):
     await message.reply_text(("Locked." if lock else "Unlocked."))
 
 
-@app.on_message(filters.command(["lock", "unlock"]) & ~filters.private)
+@app.on_message(
+    filters.command(["lock", "unlock"]) & ~filters.private
+)
 @adminsOnly("can_restrict_members")
 async def locks_func(_, message):
     if len(message.command) != 2:

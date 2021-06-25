@@ -65,13 +65,16 @@ def isArgInt(message: Message) -> bool:
 
 
 @app2.on_message(
-    filters.command("q", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
+    filters.command("q", prefixes=USERBOT_PREFIX)
+    & filters.user(SUDOERS)
 )
 @app.on_message(filters.command("q") & ~filters.private)
 @capture_err
 async def quotly_func(client, message: Message):
     if not message.reply_to_message:
-        return await message.reply_text("Reply to a message to quote it.")
+        return await message.reply_text(
+            "Reply to a message to quote it."
+        )
     if not message.reply_to_message.text:
         return await message.reply_text(
             "Replied message has no text, can't quote it."

@@ -29,17 +29,18 @@ from random import shuffle
 
 from pykeyboard import InlineKeyboard
 from pyrogram import filters
-from pyrogram.errors.exceptions.bad_request_400 import (ChatAdminRequired,
-                                                        UserNotParticipant)
+from pyrogram.errors.exceptions.bad_request_400 import (
+    ChatAdminRequired, UserNotParticipant)
 from pyrogram.types import (ChatPermissions, InlineKeyboardButton,
                             InlineKeyboardMarkup, Message, User)
 
 from wbb import SUDOERS, WELCOME_DELAY_KICK_SEC, app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
-from wbb.utils.dbfunctions import (captcha_off, captcha_on, del_welcome,
-                                   get_captcha_cache, get_welcome,
-                                   is_captcha_on, is_gbanned_user, set_welcome,
+from wbb.utils.dbfunctions import (captcha_off, captcha_on,
+                                   del_welcome, get_captcha_cache,
+                                   get_welcome, is_captcha_on,
+                                   is_gbanned_user, set_welcome,
                                    update_captcha_cache)
 from wbb.utils.filter_groups import welcome_captcha_group
 from wbb.utils.functions import generate_captcha
@@ -111,7 +112,9 @@ async def welcome(_, message: Message):
                 continue
             if member.is_bot:
                 continue  # ignore bots
-            await message.chat.restrict_member(member.id, ChatPermissions())
+            await message.chat.restrict_member(
+                member.id, ChatPermissions()
+            )
             text = (
                 f"{(member.mention())} Are you human?\n"
                 f"Solve this captcha in {WELCOME_DELAY_KICK_SEC} seconds and 4 attempts or you'll be kicked."
@@ -194,7 +197,9 @@ async def send_welcome_message(callback_query, pending_user_id):
     text = raw_text.split("~")[0].strip()
     buttons_text_list = raw_text.split("~")[1].strip().splitlines()
     if "{chat}" in text:
-        text = text.replace("{chat}", callback_query.message.chat.title)
+        text = text.replace(
+            "{chat}", callback_query.message.chat.title
+        )
     if "{name}" in text:
         text = text.replace(
             "{name}", (await app.get_users(pending_user_id)).mention
@@ -251,9 +256,13 @@ async def callback_query_welcome_button(_, callback_query):
                     attempts = iii["attempts"]
                     if attempts >= 3:
                         answers_dicc.remove(iii)
-                        await button_message.chat.kick_member(pending_user_id)
+                        await button_message.chat.kick_member(
+                            pending_user_id
+                        )
                         await asyncio.sleep(1)
-                        await button_message.chat.unban_member(pending_user_id)
+                        await button_message.chat.unban_member(
+                            pending_user_id
+                        )
                         await button_message.delete()
                         await update_captcha_cache(answers_dicc)
                         return
@@ -266,7 +275,8 @@ async def callback_query_welcome_button(_, callback_query):
             shuffle(keyboard)
             keyboard = InlineKeyboardMarkup(keyboard)
             await button_message.edit(
-                text=button_message.caption.markdown, reply_markup=keyboard
+                text=button_message.caption.markdown,
+                reply_markup=keyboard,
             )
             return
         await callback_query.answer("Captcha passed successfully!")
@@ -306,7 +316,9 @@ async def kick_restricted_after_delay(
             if i["user_id"] == user_id:
                 answers_dicc.remove(i)
                 await update_captcha_cache(answers_dicc)
-    await _ban_restricted_user_until_date(group_chat, user_id, duration=delay)
+    await _ban_restricted_user_until_date(
+        group_chat, user_id, duration=delay
+    )
 
 
 async def _ban_restricted_user_until_date(
@@ -316,7 +328,9 @@ async def _ban_restricted_user_until_date(
         member = await group_chat.get_member(user_id)
         if member.status == "restricted":
             until_date = int(datetime.utcnow().timestamp() + duration)
-            await group_chat.kick_member(user_id, until_date=until_date)
+            await group_chat.kick_member(
+                user_id, until_date=until_date
+            )
     except UserNotParticipant:
         pass
 
@@ -357,7 +371,9 @@ async def set_welcome_func(_, message):
     chat_id = message.chat.id
     raw_text = str(message.reply_to_message.text.markdown)
     await set_welcome(chat_id, raw_text)
-    await message.reply_text("Welcome message has been successfully set.")
+    await message.reply_text(
+        "Welcome message has been successfully set."
+    )
 
 
 @app.on_message(filters.command("del_welcome") & ~filters.private)
