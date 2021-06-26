@@ -48,7 +48,7 @@ async def repo(_, message):
         )
         count += 1
 
-    text = f"""[Github](https://github.com/thehamkercat/WilliamButcherBot) | [Group](t.me/PatheticProgrammers)
+    text = f"""[Github](https://github.com/thehamkercat/WilliamButcherBot) | [Group](t.me/Grup_Anime_Chat)
 ```----------------
 | Contributors |
 ----------------```
