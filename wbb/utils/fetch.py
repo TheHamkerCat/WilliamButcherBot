@@ -21,18 +21,28 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from wbb import aiohttpsession
+from asyncio import gather
+from wbb import aiohttpsession as session
 
-headers = {
-    "Accept": "application/json",
-    "Content-Type": "application/json",
-}
-
-
-async def fetch(url: str):
-    async with aiohttpsession.get(url, headers=headers) as resp:
+async def fetch(url: str, *args, **kwargs):
+    async with session.get(url, *args, **kwargs) as resp:
         try:
             data = await resp.json()
         except Exception:
             data = await resp.text()
     return data
+
+
+async def post(url: str, *args, **kwargs):
+    async with session.get(url, *args, **kwargs) as resp:
+        try:
+            data = await resp.json()
+        except Exception:
+            data = await resp.text()
+    return data
+
+async def multifetch(url: str, times: int, *args, **kwargs):
+    return await gather(*[fetch(url, *args, **kwargs) for _ in range(times)])
+
+async def multipost(url: str, times: int, *args, **kwargs):
+    return await gather(*[post(url, *args, **kwargs) for _ in range(times)])

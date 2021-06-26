@@ -775,16 +775,14 @@ async def get_trust_db(user_id: int) -> list:
 
 
 async def update_trust_db(user_id: int, new_data: float):
-    try:
-        user = await trustdb.find_one({"user_id": user_id})
-        data = user["data"] if user else []
-        if len(data) >= 1000:
-            data.remove(data[0])
-        data.append(new_data)
-        await trustdb.update_one(
-            {"user_id": user_id},
-            {"$set": {"data": data}},
-            upsert=True,
-        )
-    except Exception:
-        pass  # to prevent stack overflow error
+    user = await trustdb.find_one({"user_id": user_id})
+    data = user["data"] if user else []
+    if len(data) >= 100:
+        data = data[:99]
+    data.append(new_data)
+    data = [i for i in data if isinstance(i, float) or isinstance(i, int)]
+    await trustdb.update_one(
+        {"user_id": user_id},
+        {"$set": {"data": data}},
+        upsert=True,
+    )

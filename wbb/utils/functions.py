@@ -28,6 +28,7 @@ from io import BytesIO
 from math import atan2, cos, radians, sin, sqrt
 from random import randint
 from re import findall
+from time import time
 
 import aiofiles
 import aiohttp
@@ -35,7 +36,7 @@ import speedtest
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from wget import download
 
-from wbb import aiohttpsession as aiosession
+from wbb import aiohttpsession as aiosession, arq
 from wbb.utils import aiodownloader
 from wbb.utils.fetch import fetch
 
@@ -233,3 +234,36 @@ async def extract_user_and_reason(message):
 
 async def extract_user(message):
     return (await extract_user_and_reason(message))[0]
+
+async def test_ARQ(message):
+    results = ""
+    funcs ={"deezer": arq.deezer("attention", 1),
+            "image": arq.image("something"),
+            "luna": arq.luna("hello"),
+            "lyrics": arq.lyrics("attention"),
+            "nlp": arq.nlp("bitcoin"),
+            "nsfw_scan": arq.nsfw_scan(url="https://www.pixsy.com/wp-content/uploads/2021/04/ben-sweet-2LowviVHZ-E-unsplash-1.jpeg"),
+            "pornhub": arq.pornhub("incest"),
+            "proxy": arq.proxy(),
+            "pypi": arq.pypi("python-arq"),
+            "reddit": arq.reddit("porn"),
+            "quotly": arq.quotly(message),
+            "saavn": arq.saavn("attention"),
+            "stats": arq.stats(),
+            "tmdb": arq.tmdb("flash"),
+            "torrent": arq.torrent("porn"),
+            "translate": arq.translate("hello"),
+            "urbandict": arq.urbandict("wtf"),
+            "wall": arq.wall("anime"),
+            "wiki": arq.wiki("cat"),
+            "youtube": arq.youtube("never gonna give you up")}
+
+    for key, value in funcs.items():
+        try:
+            t1 = time()
+            await value
+            t2 = time()
+            results += f"**{key.capitalize()}:** `{t2-t1}`\n"
+        except Exception:
+            results += f"**{key.capitalize()}:** `Failed`\n"
+    return results
