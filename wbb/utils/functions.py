@@ -34,12 +34,13 @@ import aiofiles
 import aiohttp
 import speedtest
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from pyrogram.types import Message
 from wget import download
 
 from wbb import aiohttpsession as aiosession
 from wbb import arq
 from wbb.utils import aiodownloader
-from wbb.utils.fetch import fetch
+from wbb.utils.http import get
 
 """
 Just import 'downloader' anywhere and do downloader.download() to
@@ -139,7 +140,10 @@ async def make_carbon(code):
     return image
 
 
-async def transfer_sh(file):
+async def transfer_sh(file_or_message):
+    if is_instance(file_or_message, Message):
+        file_or_message = await file_or_message.download()
+    file = file_or_message
     async with aiofiles.open(file, "rb") as f:
         params = {file: await f.read()}
     async with aiohttp.ClientSession() as session:
@@ -165,8 +169,8 @@ def str_to_obj(string: str):
 async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
     Radius_Earth = 6371.0088
     data1, data2 = await gather(
-        fetch(f"http://ipinfo.io/{ip1}"),
-        fetch(f"http://ipinfo.io/{ip2}"),
+        get(f"http://ipinfo.io/{ip1}"),
+        get(f"http://ipinfo.io/{ip2}"),
     )
     lat1, lon1 = data1["loc"].split(",")
     lat2, lon2 = data2["loc"].split(",")
@@ -267,9 +271,12 @@ async def test_ARQ(message):
     for key, value in funcs.items():
         try:
             t1 = time()
-            await value
+            result = await value
             t2 = time()
-            results += f"**{key.capitalize()}:** `{t2-t1}`\n"
+            if result.ok:
+                results += f"**{key.capitalize()}:** `{t2-t1}`\n"
+            else:
+                resuls += f"**{key.capitalize()}:** `Failed`\n"
         except Exception:
             results += f"**{key.capitalize()}:** `Failed`\n"
     return results

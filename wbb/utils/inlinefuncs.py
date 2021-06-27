@@ -46,7 +46,7 @@ from wbb import (BOT_USERNAME, MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_ID,
 from wbb.core.types import InlineQueryResultCachedDocument
 from wbb.modules.info import get_chat_info, get_user_info
 from wbb.modules.music import download_youtube_audio
-from wbb.utils.fetch import fetch
+from wbb.utils.http import get
 from wbb.utils.functions import test_speedtest
 from wbb.utils.pastebin import paste
 
@@ -417,7 +417,7 @@ async def lyrics_func(answers, text):
 
 async def github_user_func(answers, text):
     URL = f"https://api.github.com/users/{text}"
-    result = await fetch(URL)
+    result = await get(URL)
     buttons = InlineKeyboard(row_width=1)
     buttons.add(
         InlineKeyboardButton(
@@ -453,7 +453,7 @@ async def github_repo_func(answers, text):
         text = text[0:-1]
     URL = f"https://api.github.com/repos/{text}"
     URL2 = f"https://api.github.com/repos/{text}/contributors"
-    results = await asyncio.gather(fetch(URL), fetch(URL2))
+    results = await asyncio.gather(get(URL), get(URL2))
     r = results[0]
     r1 = results[1]
     commits = 0
@@ -562,7 +562,7 @@ async def music_inline_func(answers, query):
         messages = [
             m
             async for m in app2.search_messages(
-                chat_id, query, filter="audio", limit=199
+                chat_id, query, filter="audio", limit=100
             )
         ]
     except Exception as e:
@@ -591,19 +591,14 @@ async def music_inline_func(answers, query):
     messages = list(
         {v["duration"]: v for v in messages_ids_and_duration}.values()
     )
-    messages_ids = []
-    for ff_ in messages:
-        messages_ids.append(ff_["message_id"])
+    messages_ids = [ff_["message_id"] for ff_ in messages]
     messages = await app.get_messages(chat_id, messages_ids[0:48])
-    for message_ in messages:
-        answers.append(
+    return [
             InlineQueryResultCachedDocument(
                 file_id=message_.audio.file_id,
                 title=message_.audio.title,
-            )
-        )
-    return answers
-
+            ) for message_ in messages
+            ]
 
 async def wiki_func(answers, text):
     data = await arq.wiki(text)
@@ -708,6 +703,9 @@ async def pmpermit_func(answers, user_id, victim):
         InlineKeyboardButton(
             text="Approve", callback_data=f"pmpermit approve {victim}"
         ),
+        InlineKeyboardButton(
+            text="Block", callback_data=f"pmpermit block {victim}"
+        ),
     )
     answers.append(
         InlineQueryResultArticle(
@@ -724,7 +722,7 @@ async def ping_func(answers):
     ping = Ping(ping_id=randint(696969, 6969696))
     await app.send(ping)
     t2 = time()
-    ping = f"{str(round((t2 - t1), 6) * 100)} ms"
+    ping = f"{str(round((t2 - t1) * 1000, 2))} ms"
     answers.append(
         InlineQueryResultArticle(
             title=ping,
@@ -829,7 +827,7 @@ async def tmdb_func(answers, query):
             )
         )
         return answers
-    results = response.result[0:48]
+    results = response.result[:49]
     for result in results:
         if not result.poster and not result.backdrop:
             continue
@@ -940,7 +938,7 @@ async def image_func(answers, query):
             )
         )
         return answers
-    results = results.result[0:48]
+    results = results.result[:49]
     buttons = InlineKeyboard(row_width=2)
     buttons.add(
         InlineKeyboardButton(

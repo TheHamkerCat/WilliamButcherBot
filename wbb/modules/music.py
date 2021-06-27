@@ -37,7 +37,7 @@ from pyrogram import filters
 
 from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.fetch import fetch
+from wbb.utils.http import get
 from wbb.utils.pastebin import paste
 
 __MODULE__ = "Music"
@@ -243,7 +243,7 @@ async def deezsong(_, message):
         return await m.edit(str(e))
     is_downloading = False
     try:
-        await fetch(f"{proxy}/remove")
+        await get(f"{proxy}/remove")
     except Exception:
         pass
 

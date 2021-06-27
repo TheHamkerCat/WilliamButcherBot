@@ -26,7 +26,7 @@ from asyncio import gather
 from wbb import aiohttpsession as session
 
 
-async def fetch(url: str, *args, **kwargs):
+async def get(url: str, *args, **kwargs):
     async with session.get(url, *args, **kwargs) as resp:
         try:
             data = await resp.json()
@@ -34,9 +34,16 @@ async def fetch(url: str, *args, **kwargs):
             data = await resp.text()
     return data
 
+async def head(url: str, *args, **kwargs):
+    async with session.head(url, *args, **kwargs) as resp:
+        try:
+            data = await resp.json()
+        except Exception:
+            data = await resp.text()
+    return data
 
 async def post(url: str, *args, **kwargs):
-    async with session.get(url, *args, **kwargs) as resp:
+    async with session.post(url, *args, **kwargs) as resp:
         try:
             data = await resp.json()
         except Exception:
@@ -44,11 +51,15 @@ async def post(url: str, *args, **kwargs):
     return data
 
 
-async def multifetch(url: str, times: int, *args, **kwargs):
+async def multiget(url: str, times: int, *args, **kwargs):
     return await gather(
-        *[fetch(url, *args, **kwargs) for _ in range(times)]
+        *[get(url, *args, **kwargs) for _ in range(times)]
     )
 
+async def multihead(url: str, times: int, *args, **kwargs):
+    return await gather(
+        *[head(url, *args, **kwargs) for _ in range(times)]
+    )
 
 async def multipost(url: str, times: int, *args, **kwargs):
     return await gather(

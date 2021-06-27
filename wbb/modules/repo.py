@@ -25,7 +25,7 @@ from pyrogram import filters
 
 from wbb import app
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.fetch import fetch
+from wbb.utils.http import get
 
 __MODULE__ = "Repo"
 __HELP__ = (
@@ -37,7 +37,7 @@ __HELP__ = (
 @app.on_message(filters.command("repo") & ~filters.edited)
 @capture_err
 async def repo(_, message):
-    users = await fetch(
+    users = await get(
         "https://api.github.com/repos/thehamkercat/williambutcherbot/contributors"
     )
     list_of_users = ""

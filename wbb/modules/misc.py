@@ -31,7 +31,7 @@ from pyrogram import filters
 from wbb import FERNET_ENCRYPTION_KEY, app, arq
 from wbb.core.decorators.errors import capture_err
 from wbb.utils import random_line
-from wbb.utils.fetch import fetch
+from wbb.utils.http import get
 from wbb.utils.json_prettify import json_prettify
 from wbb.utils.pastebin import paste
 
@@ -58,8 +58,8 @@ __HELP__ = """
 @app.on_message(filters.command("commit") & ~filters.edited)
 async def commit(_, message):
     await message.reply_text(
-        (await random_line("wbb/utils/commit.txt"))
-    )
+            await get("http://whatthecommit.com/index.txt")
+            )
 
 
 @app.on_message(filters.command("RTFM", "#"))
@@ -276,7 +276,7 @@ async def json_fetch(_, message):
     url = message.text.split(None, 1)[1]
     m = await message.reply_text("Fetching")
     try:
-        data = await fetch(url)
+        data = await get(url)
         data = await json_prettify(data)
         if len(data) < 4090:
             await m.edit(data)

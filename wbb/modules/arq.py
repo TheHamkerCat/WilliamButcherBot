@@ -44,7 +44,7 @@ async def arq_stats(_, message):
     bot = data.bot
     statistics = f"""
 **Uptime:** `{uptime}`
-**Requests:** `{requests}`
+**Requests Since Uptime:** `{requests}`
 **CPU:** `{cpu}`
 **Memory:**
     **Total Used:** `{server_mem}`
