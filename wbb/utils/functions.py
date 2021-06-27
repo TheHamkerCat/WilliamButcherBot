@@ -36,7 +36,8 @@ import speedtest
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from wget import download
 
-from wbb import aiohttpsession as aiosession, arq
+from wbb import aiohttpsession as aiosession
+from wbb import arq
 from wbb.utils import aiodownloader
 from wbb.utils.fetch import fetch
 
@@ -235,28 +236,33 @@ async def extract_user_and_reason(message):
 async def extract_user(message):
     return (await extract_user_and_reason(message))[0]
 
+
 async def test_ARQ(message):
     results = ""
-    funcs ={"deezer": arq.deezer("attention", 1),
-            "image": arq.image("something"),
-            "luna": arq.luna("hello"),
-            "lyrics": arq.lyrics("attention"),
-            "nlp": arq.nlp("bitcoin"),
-            "nsfw_scan": arq.nsfw_scan(url="https://www.pixsy.com/wp-content/uploads/2021/04/ben-sweet-2LowviVHZ-E-unsplash-1.jpeg"),
-            "pornhub": arq.pornhub("incest"),
-            "proxy": arq.proxy(),
-            "pypi": arq.pypi("python-arq"),
-            "reddit": arq.reddit("porn"),
-            "quotly": arq.quotly(message),
-            "saavn": arq.saavn("attention"),
-            "stats": arq.stats(),
-            "tmdb": arq.tmdb("flash"),
-            "torrent": arq.torrent("porn"),
-            "translate": arq.translate("hello"),
-            "urbandict": arq.urbandict("wtf"),
-            "wall": arq.wall("anime"),
-            "wiki": arq.wiki("cat"),
-            "youtube": arq.youtube("never gonna give you up")}
+    funcs = {
+        "deezer": arq.deezer("attention", 1),
+        "image": arq.image("something"),
+        "luna": arq.luna("hello"),
+        "lyrics": arq.lyrics("attention"),
+        "nlp": arq.nlp("bitcoin"),
+        "nsfw_scan": arq.nsfw_scan(
+            url="https://www.pixsy.com/wp-content/uploads/2021/04/ben-sweet-2LowviVHZ-E-unsplash-1.jpeg"
+        ),
+        "pornhub": arq.pornhub("incest"),
+        "proxy": arq.proxy(),
+        "pypi": arq.pypi("python-arq"),
+        "reddit": arq.reddit("porn"),
+        "quotly": arq.quotly(message),
+        "saavn": arq.saavn("attention"),
+        "stats": arq.stats(),
+        "tmdb": arq.tmdb("flash"),
+        "torrent": arq.torrent("porn"),
+        "translate": arq.translate("hello"),
+        "urbandict": arq.urbandict("wtf"),
+        "wall": arq.wall("anime"),
+        "wiki": arq.wiki("cat"),
+        "youtube": arq.youtube("never gonna give you up"),
+    }
 
     for key, value in funcs.items():
         try:

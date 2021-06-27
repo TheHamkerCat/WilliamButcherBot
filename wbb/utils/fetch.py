@@ -22,7 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from asyncio import gather
+
 from wbb import aiohttpsession as session
+
 
 async def fetch(url: str, *args, **kwargs):
     async with session.get(url, *args, **kwargs) as resp:
@@ -41,8 +43,14 @@ async def post(url: str, *args, **kwargs):
             data = await resp.text()
     return data
 
+
 async def multifetch(url: str, times: int, *args, **kwargs):
-    return await gather(*[fetch(url, *args, **kwargs) for _ in range(times)])
+    return await gather(
+        *[fetch(url, *args, **kwargs) for _ in range(times)]
+    )
+
 
 async def multipost(url: str, times: int, *args, **kwargs):
-    return await gather(*[post(url, *args, **kwargs) for _ in range(times)])
+    return await gather(
+        *[post(url, *args, **kwargs) for _ in range(times)]
+    )

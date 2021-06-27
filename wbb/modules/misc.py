@@ -257,7 +257,7 @@ async def tr(_, message):
             + "/latest/#googletrans-languages"
         )
     reply = message.reply_to_message
-    text = message.text or message.reply
+    text = reply.text or reply.caption
     if not text:
         return await message.reply_text(
             "Reply to a text to translate it"
