@@ -24,7 +24,7 @@ SOFTWARE.
 import asyncio
 import importlib
 import re
-
+import random
 import uvloop
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -156,6 +156,15 @@ async def help_command(_, message):
             ],
         ]
     )
+    
+    STICKERS = (
+    "CAACAgEAAxkDAAEE5zBgzpDoaKGN_MxWotYtWkpb1ifgMgACXAADni6oMXCx-PB6sonJHgQ",
+    "CAACAgEAAxkDAAEE5zFgzpFDFp_0V9vi-r5ZnKaOUDCVkAACVQADni6oMROiUdEEyPN8HgQ",
+    "CAACAgEAAxkDAAEE5zJgzpFxlslQcP9Xdjsvqb2oqkZrxQACeAADni6oMQhcS_oH6wPjHgQ",
+    "CAACAgEAAxkDAAEE5zNgzpGbRbc_ecGW1qIk2qojT0yTmgACdwADni6oMd2k3jP94wO6HgQ",
+    "CAACAgEAAxkDAAEE5zZgzpG9wHOrBm-X_gNGWlUSGXkEMQACWAADni6oMe7FeddXzDLoHgQ",
+)
+    await message.reply_sticker(random.choice(STICKERS))
     await message.reply(
         f"Hey there! My name is {BOT_NAME}. I can manage your group with lots of useful features, feel free to add me to your group.",
         reply_markup=keyboard,
