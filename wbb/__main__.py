@@ -162,6 +162,12 @@ async def help_command(_, message):
     "CAACAgEAAxkDAAEE5zJgzpFxlslQcP9Xdjsvqb2oqkZrxQACeAADni6oMQhcS_oH6wPjHgQ",
     "CAACAgEAAxkDAAEE5zNgzpGbRbc_ecGW1qIk2qojT0yTmgACdwADni6oMd2k3jP94wO6HgQ",
     "CAACAgEAAxkDAAEE5zZgzpG9wHOrBm-X_gNGWlUSGXkEMQACWAADni6oMe7FeddXzDLoHgQ",
+    "CAACAgUAAx0CRI6ivgAC1qVg2iEgaRvIKr9auH4VGEalNK8UGAACAQMAAvEAAdBWNmr7bsO-rvseBA",
+    "CAACAgUAAx0CRI6ivgAC1rFg2iIT1mcmXTV1TZvM2WaA0tmKuAACRAMAAmpP0Fb1Txeqb6b0AR4E",
+    "CAACAgUAAx0CRI6ivgAC1rpg2iJ0UnLFLvWLw86DTatSLyKnvgAChwMAAlf90VYju1kc0R0pdB4E",
+    "CAACAgUAAx0CRI6ivgAC1sJg2iLnlFEKWs07Jw-ws784R01FTwACrQIAAlhx0FaXbV8XMcrAWx4E",
+    "CAACAgUAAx0CRI6ivgAC1sxg2iNwFjooHU0PjKL48FdVRw_NIwACyAMAAoyf0FaMuLOiawABEEceBA",
+    "CAACAgUAAx0CRI6ivgAC1tRg2iPn9I5BtWpa_dL0kq7b4qvd-AAC-QIAArxX0VbSgHcf_OyMMB4E",
 )
     await message.reply_sticker(random.choice(STICKERS))
     await message.reply(
@@ -176,14 +182,13 @@ async def help_parser(name, keyboard=None):
             paginate_modules(0, HELPABLE, "help")
         )
     return (
-        """Hello {first_name}! My name is {bot_name}!
-I'm a group management bot with some usefule features.
-You can choose an option below, by clicking a button.
-Also you can ask anything in Support Group.
-
-General command are:
- - /start: Start the bot
- - /help: Give this message""".format(
+        """Main commands available[:](https://telegra.ph/file/3c0e87516360f7343668b.jpg)
+ ➛ /help: PM's you this message.
+ ➛ /help <module name>: PM's you info about that module.
+ ➛ /donate: information on how to donate!
+ ➛ /settings:
+   ❂ in PM: will send you your settings for all supported modules.
+   ❂ in a group: will redirect you to pm, with all that chat's settings.""".format(
             first_name=name,
             bot_name=BOT_NAME,
         ),
