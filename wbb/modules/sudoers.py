@@ -31,7 +31,7 @@ from pyrogram import filters
 from pyrogram.errors import FloodWait
 
 from wbb import (BOT_ID, GBAN_LOG_GROUP_ID, SUDOERS, USERBOT_USERNAME,
-                 app, bot_start_time)
+                 app, bot_start_time, BOT_NAME)
 from wbb.core.decorators.errors import capture_err
 from wbb.utils import formatter
 from wbb.utils.dbfunctions import (add_gban_user, get_served_chats,
