@@ -42,7 +42,7 @@ from search_engine_parser import GoogleSearch
 
 from wbb import (BOT_USERNAME, MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_ID,
                  USERBOT_NAME, USERBOT_USERNAME, aiohttpsession, app,
-                 app2, arq)
+                 app2, arq, BOT_NAME)
 from wbb.core.types import InlineQueryResultCachedDocument
 from wbb.modules.info import get_chat_info, get_user_info
 from wbb.modules.music import download_youtube_audio
@@ -123,7 +123,7 @@ async def alive_function(answers):
     )
 
     msg = f"""
-**[Oda✨](https://github.com/UserLazy/OdaNobunaga):**
+**[Oda Nobunaga](https://github.com/UserLazy/OdaNobunaga):**
 **MainBot:** `{bot_state}`
 **UserBot:** `{ubot_state}`
 **Python:** `{pyver.split()[0]}`
