@@ -34,7 +34,7 @@ from wbb.utils.dbfunctions import (get_blacklist_filters_count,
                                    get_served_chats, get_served_users,
                                    get_warns_count,
                                    remove_served_chat)
-from wbb.utils.fetch import fetch
+from wbb.utils.http import get
 from wbb.utils.inlinefuncs import keywords_list
 
 """ CHAT WATCHER IS IN filters.py"""
@@ -100,7 +100,7 @@ async def global_stats(_, message):
     # Contributors/Developers count and commits on github
     url = "https://api.github.com/repos/thehamkercat/williambutcherbot/contributors"
     rurl = "https://github.com/thehamkercat/williambutcherbot"
-    developers = await fetch(url)
+    developers = await get(url)
     commits = 0
     for developer in developers:
         commits += developer["contributions"]
