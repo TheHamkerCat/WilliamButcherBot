@@ -183,10 +183,10 @@ async def help_parser(name, keyboard=None):
         )
     return (
         """Main commands available[:](https://telegra.ph/file/3c0e87516360f7343668b.jpg)
- ➛ /help: PM's you this message.
+ ➛ /start: check my Alive in your PM!
  ➛ /help <module name>: PM's you info about that module.
- ➛ /donate: information on how to donate!
- ➛ /settings:
+ ➛ /repo: fo get source code
+ ➛ /help:
    ❂ in PM: will send you your settings for all supported modules.
    ❂ in a group: will redirect you to pm, with all that chat's settings.""".format(
             first_name=name,
