@@ -105,12 +105,12 @@ async def help_command(_, message):
             [
                 [
                     InlineKeyboardButton(
-                        text="Help ",
+                        text="[► Help ◄]",
                         url=f"t.me/{BOT_USERNAME}?start=help",
                     ),
                     InlineKeyboardButton(
-                        text="Join Group ",
-                        url="https://t.me/Grup_Anime_Chat",
+                        text="✫ Source Code ✫",
+                        url="https://UserLazy.github.io/UserLazy",
                     ),
                 ],
                 [
@@ -119,7 +119,7 @@ async def help_command(_, message):
                         callback_data="stats_callback",
                     ),
                     InlineKeyboardButton(
-                        text="Join Channel ", url="t.me/animechanelindo"
+                        text="✯ Anime Group ✯", url="t.me/Grup_Anime_Chat"
                     ),
                 ],
             ]
@@ -132,11 +132,11 @@ async def help_command(_, message):
         [
             [
                 InlineKeyboardButton(
-                    text="Commands ❓", callback_data="bot_commands"
+                    text="[► Help ◄]", callback_data="bot_commands"
                 ),
                 InlineKeyboardButton(
-                    text="Join Group ",
-                    url="https://t.me/Grup_Anime_Chat",
+                    text="✯ Support Group ✯",
+                    url="https://t.me/OdaSupport",
                 ),
             ],
             [
@@ -145,12 +145,12 @@ async def help_command(_, message):
                     callback_data="stats_callback",
                 ),
                 InlineKeyboardButton(
-                    text="Join Channel ", url="t.me/animechanelindo"
+                    text="✯ Anime Group ✯", url="t.me/Grup_Anime_Chat"
                 ),
             ],
             [
                 InlineKeyboardButton(
-                    text="Add Me To Your Group",
+                    text="✤ Add to your Group ✤",
                     url=f"http://t.me/{BOT_USERNAME}?startgroup=new",
                 )
             ],
