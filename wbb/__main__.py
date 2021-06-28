@@ -228,12 +228,13 @@ async def help_button(client, query):
     top_text = f"""
 Hello {query.from_user.first_name}! My name is {BOT_NAME}!
 I'm a group management bot with some usefule features.
-You can choose an option below, by clicking a button.
-Also you can ask anything in Support Group.
-
-General command are:
- - /start: Start the bot
- - /help: Give this message
+Main commands available[:](https://telegra.ph/file/3c0e87516360f7343668b.jpg)
+ ➛ /start: check my Alive in your PM!
+ ➛ /help <module name>: PM's you info about that module.
+ ➛ /repo: fo get source code
+ ➛ /help:
+   ❂ in PM: will send you your settings for all supported modules.
+   ❂ in a group: will redirect you to pm, with all that chat's settings.
  """
     if mod_match:
         module = mod_match.group(1)
