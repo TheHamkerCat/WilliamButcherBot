@@ -26,6 +26,7 @@ import json
 import os
 import sys
 from random import randint
+from re import sub as re_sub
 from sys import version as pyver
 from time import ctime, time
 
@@ -46,8 +47,8 @@ from wbb import (BOT_USERNAME, MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_ID,
 from wbb.core.types import InlineQueryResultCachedDocument
 from wbb.modules.info import get_chat_info, get_user_info
 from wbb.modules.music import download_youtube_audio
-from wbb.utils.http import get
 from wbb.utils.functions import test_speedtest
+from wbb.utils.http import get
 from wbb.utils.pastebin import paste
 
 keywords_list = [
@@ -201,17 +202,18 @@ async def urban_func(answers, text):
         return answers
     results = results.result[0:48]
     for i in results:
+        clean = lambda x: re_sub(r"[\[\]]", "", x)
         msg = f"""
 **Query:** {text}
 
-**Definition:** __{i.definition}__
+**Definition:** __{clean(i.definition)}__
 
-**Example:** __{i.example}__"""
+**Example:** __{clean(i.example)}__"""
 
         answers.append(
             InlineQueryResultArticle(
                 title=i.word,
-                description=i.definition,
+                description=clean(i.definition),
                 input_message_content=InputTextMessageContent(msg),
             )
         )
@@ -594,11 +596,13 @@ async def music_inline_func(answers, query):
     messages_ids = [ff_["message_id"] for ff_ in messages]
     messages = await app.get_messages(chat_id, messages_ids[0:48])
     return [
-            InlineQueryResultCachedDocument(
-                file_id=message_.audio.file_id,
-                title=message_.audio.title,
-            ) for message_ in messages
-            ]
+        InlineQueryResultCachedDocument(
+            file_id=message_.audio.file_id,
+            title=message_.audio.title,
+        )
+        for message_ in messages
+    ]
+
 
 async def wiki_func(answers, text):
     data = await arq.wiki(text)

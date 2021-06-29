@@ -58,8 +58,8 @@ __HELP__ = """
 @app.on_message(filters.command("commit") & ~filters.edited)
 async def commit(_, message):
     await message.reply_text(
-            await get("http://whatthecommit.com/index.txt")
-            )
+        await get("http://whatthecommit.com/index.txt")
+    )
 
 
 @app.on_message(filters.command("RTFM", "#"))

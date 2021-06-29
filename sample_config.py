@@ -53,7 +53,7 @@ else:
     WELCOME_DELAY_KICK_SEC = 300
     MONGO_DB_URI = "mongodb+srv://username:password@cluster0.ksiis.mongodb.net/YourDataBaseName?retryWrites=true&w=majority"
     ARQ_API_KEY = "Get this from @ARQRobot"
-    ARQ_API_URL = "http://thearq.tech"
+    ARQ_API_URL = "https://thearq.tech"
     LOG_MENTIONS = True
     SPAM_CHECK_EXCEPTION_GROUPS = (
         []
