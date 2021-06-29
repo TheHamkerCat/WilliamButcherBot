@@ -13,7 +13,7 @@ from wbb.core.decorators.errors import capture_err
 from wbb.modules.nsfw import get_file_id_from_message
 
 
-@app.on_message(filters.command("reverse"))
+@app.on_message(filters.command("reverse | grs"))
 @capture_err
 async def reverse_image_search(_, message):
     if not message.reply_to_message:
