@@ -252,7 +252,7 @@ async def test_ARQ(message):
         "nsfw_scan": arq.nsfw_scan(
             url="https://www.pixsy.com/wp-content/uploads/2021/04/ben-sweet-2LowviVHZ-E-unsplash-1.jpeg"
         ),
-        "pornhub": arq.pornhub("incest"),
+        "pornhub": arq.pornhub("something"),
         "proxy": arq.proxy(),
         "pypi": arq.pypi("python-arq"),
         "reddit": arq.reddit("porn"),
