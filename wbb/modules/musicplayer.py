@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__mod_name__ = "Music Player"
-__help__ = """
+__MODULE__ = "Music Player"
+__HELP__ = """
           <b>》** OdaXMusic ** 《</b>
             
  OdaXMusic plays plays music in your group's voice chat
