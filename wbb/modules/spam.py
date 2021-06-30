@@ -98,7 +98,7 @@ async def spam_protection_func(_, message: Message):
 
 
 dev_forward = (
-    "If you're not a developer of WBB, forward this message to devs, "
+    "If you're not a developer of @OdaRobot, forward this message to devs, "
     + "so that they can use it to improve spam protection algorithm."
 )
 
