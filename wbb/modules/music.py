@@ -91,7 +91,7 @@ def download_youtube_audio(url: str, m=0):
     return [title, performer, duration, audio_file, thumbnail_file]
 
 
-@app.on_message(filters.command("ytdl"))
+@app.on_message(filters.command("ytmusic"))
 @capture_err
 async def music(_, message):
     global is_downloading
