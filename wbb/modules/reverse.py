@@ -14,9 +14,9 @@ from wbb.modules.nsfw import get_file_id_from_message
 
 __MODULE__= "Reverse"
 __HELP__ = """
-/reverse | /grs for get result of image/sticker with reply."""
+/reverse for get result of image/sticker with reply."""
 
-@app.on_message(filters.command("reverse", "grs"))
+@app.on_message(filters.command("reverse"))
 @capture_err
 async def reverse_image_search(_, message):
     if not message.reply_to_message:
