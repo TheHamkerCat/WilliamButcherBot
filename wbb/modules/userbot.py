@@ -118,17 +118,13 @@ async def executor(client, message: Message):
 )
 async def shellrunner(client, message: Message):
     if len(message.command) < 2:
-        return await edit_or_reply(
-            message, text="**Usage:**\n/sh git pull"
-        )
+        return await edit_or_reply(message, text="**Usage:**\n/sh git pull")
     text = message.text.split(None, 1)[1]
     if "\n" in text:
         code = text.split("\n")
         output = ""
         for x in code:
-            shell = re.split(
-                """ (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x
-            )
+            shell = re.split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x)
             try:
                 process = subprocess.Popen(
                     shell,
@@ -233,9 +229,7 @@ async def c_cpp_eval(_, message: Message):
     out = pRun.stdout.decode()
     err = f"**RUNTIME ERROR:**\n```{escape(err)}```" if err else None
     out = f"**OUTPUT:**\n```{escape(out)}```" if out else None
-    text = (
-        f"**INPUT:**\n```{escape(code)}```\n\n{err if err else out}"
-    )
+    text = f"**INPUT:**\n```{escape(code)}```\n\n{err if err else out}"
     if len(text) > 4090:
         return await sendFile(message, text)
     await edit_or_reply(message, text=text)

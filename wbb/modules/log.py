@@ -20,9 +20,7 @@ async def logs_chat(_, message):
 **Log Type:** `ERROR`
 """
     try:
-        await message.reply_document(
-            log_file, caption=caption, reply_markup=keyboard
-        )
+        await message.reply_document(log_file, caption=caption, reply_markup=keyboard)
     except ValueError:
         await message.reply_text("**LOGS ARE EMPTY**")
 
@@ -30,12 +28,8 @@ async def logs_chat(_, message):
 @app.on_callback_query(filters.regex(callback))
 async def paste_log_neko(_, cq: CallbackQuery):
     if cq.from_user.id not in SUDOERS:
-        return await cq.answer(
-            "Stop clicking at whichever thing you come across."
-        )
+        return await cq.answer("Stop clicking at whichever thing you come across.")
     async with aiofiles.open(log_file, mode="r") as f:
         link = await paste(await f.read())
     message: Message = cq.message
-    return await message.edit_caption(
-        f"{message.caption.markdown}\n**Paste:** {link}"
-    )
+    return await message.edit_caption(f"{message.caption.markdown}\n**Paste:** {link}")
