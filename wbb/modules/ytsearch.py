@@ -23,7 +23,7 @@ SOFTWARE.
 """
 __MODULE__ = "YT-Search"
 __HELP__ = """
-/search [query] for search link video by youtube result
+/search [query] - for search link video by youtube result
 
 Or use inline mode:
 @OdaRobot ytmusic [query]."""
