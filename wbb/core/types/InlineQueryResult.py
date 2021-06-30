@@ -25,8 +25,7 @@ from typing import List, Optional, Union
 
 import pyrogram
 from pyrogram import raw, types, utils
-from pyrogram.file_id import (DOCUMENT_TYPES, PHOTO_TYPES, FileId,
-                              FileType)
+from pyrogram.file_id import DOCUMENT_TYPES, PHOTO_TYPES, FileId, FileType
 from pyrogram.types import InlineQueryResult
 
 
@@ -98,9 +97,7 @@ class InlineQueryResultAudio(InlineQueryResult):
         reply_markup: "types.InlineKeyboardMarkup" = None,
         input_message_content: "types.InputMessageContent" = None,
     ):
-        super().__init__(
-            "audio", id, input_message_content, reply_markup
-        )
+        super().__init__("audio", id, input_message_content, reply_markup)
 
         self.audio_url = audio_url
         self.thumb_url = thumb_url
@@ -160,9 +157,7 @@ class InlineQueryResultAudio(InlineQueryResult):
             thumb=thumb,
             content=audio,
             send_message=(
-                await self.input_message_content.write(
-                    client, self.reply_markup
-                )
+                await self.input_message_content.write(client, self.reply_markup)
                 if self.input_message_content
                 else raw.types.InputBotInlineMessageMediaAuto(
                     reply_markup=await self.reply_markup.write(client)
@@ -235,9 +230,7 @@ class InlineQueryResultCachedDocument(InlineQueryResult):
         reply_markup: "types.InlineKeyboardMarkup" = None,
         input_message_content: "types.InputMessageContent" = None,
     ):
-        super().__init__(
-            "file", id, input_message_content, reply_markup
-        )
+        super().__init__("file", id, input_message_content, reply_markup)
 
         self.file_id = file_id
         self.title = title
@@ -267,9 +260,7 @@ class InlineQueryResultCachedDocument(InlineQueryResult):
             description=self.description,
             document=document,
             send_message=(
-                await self.input_message_content.write(
-                    client, self.reply_markup
-                )
+                await self.input_message_content.write(client, self.reply_markup)
                 if self.input_message_content
                 else raw.types.InputBotInlineMessageMediaAuto(
                     reply_markup=await self.reply_markup.write(client)
@@ -295,18 +286,13 @@ def get_input_file_from_file_id(
 
     file_type = decoded.file_type
 
-    if (
-        expected_file_type is not None
-        and file_type != expected_file_type
-    ):
+    if expected_file_type is not None and file_type != expected_file_type:
         raise ValueError(
             f'Expected: "{expected_file_type}", got "{file_type}" file_id instead'
         )
 
     if file_type in (FileType.THUMBNAIL, FileType.CHAT_PHOTO):
-        raise ValueError(
-            f"This file_id can only be used for download: {file_id}"
-        )
+        raise ValueError(f"This file_id can only be used for download: {file_id}")
 
     if file_type in PHOTO_TYPES:
         return raw.types.InputPhoto(

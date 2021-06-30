@@ -48,8 +48,7 @@ can even delete your account.
 
 
 @app2.on_message(
-    filters.command("useradd", prefixes=USERBOT_PREFIX)
-    & filters.user(SUDOERS)
+    filters.command("useradd", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
 )
 @capture_err
 async def useradd(_, message: Message):
@@ -61,9 +60,7 @@ async def useradd(_, message: Message):
     user_id = message.reply_to_message.from_user.id
     sudoers = await get_sudoers()
     if user_id in sudoers:
-        return await edit_or_reply(
-            message, text="User is already in sudoers."
-        )
+        return await edit_or_reply(message, text="User is already in sudoers.")
     if user_id == BOT_ID:
         return await edit_or_reply(
             message, text="You can't add assistant bot in sudoers."
@@ -75,14 +72,11 @@ async def useradd(_, message: Message):
             text="Successfully added user in sudoers, Bot will be restarted now.",
         )
         return os.execvp("python3", ["python3", "-m", "wbb"])
-    await edit_or_reply(
-        message, text="Something wrong happened, check logs."
-    )
+    await edit_or_reply(message, text="Something wrong happened, check logs.")
 
 
 @app2.on_message(
-    filters.command("userdel", prefixes=USERBOT_PREFIX)
-    & filters.user(SUDOERS)
+    filters.command("userdel", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
 )
 @capture_err
 async def userdel(_, message: Message):
@@ -93,9 +87,7 @@ async def userdel(_, message: Message):
         )
     user_id = message.reply_to_message.from_user.id
     if user_id not in await get_sudoers():
-        return await edit_or_reply(
-            message, text="User is not in sudoers."
-        )
+        return await edit_or_reply(message, text="User is not in sudoers.")
     removed = await remove_sudo(user_id)
     if removed:
         await edit_or_reply(
@@ -103,14 +95,11 @@ async def userdel(_, message: Message):
             text="Successfully removed user from sudoers, Bot will be restarted now.",
         )
         return os.execvp("python3", ["python3", "-m", "wbb"])
-    await edit_or_reply(
-        message, text="Something wrong happened, check logs."
-    )
+    await edit_or_reply(message, text="Something wrong happened, check logs.")
 
 
 @app2.on_message(
-    filters.command("sudoers", prefixes=USERBOT_PREFIX)
-    & filters.user(SUDOERS)
+    filters.command("sudoers", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
 )
 @capture_err
 async def sudoers_list(_, message: Message):

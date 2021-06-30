@@ -114,9 +114,7 @@ print("[INFO]: INITIALIZING ARQ CLIENT")
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
 # Bot client
 print("[INFO]: INITIALIZING BOT CLIENT")
-app = Client(
-    "wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH
-)
+app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
 
 
 BOT_ID = 0
@@ -141,9 +139,7 @@ def get_info(app, app2):
     BOT_ID = getme.id
     USERBOT_ID = getme2.id
     BOT_NAME = (
-        f"{getme.first_name} {getme.last_name}"
-        if getme.last_name
-        else getme.first_name
+        f"{getme.first_name} {getme.last_name}" if getme.last_name else getme.first_name
     )
     BOT_USERNAME = getme.username
     BOT_MENTION = getme.mention

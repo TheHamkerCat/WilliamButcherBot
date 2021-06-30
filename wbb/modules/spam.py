@@ -22,8 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from pyrogram import filters
-from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
-                            InlineKeyboardMarkup, Message)
+from pyrogram.types import (
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+)
 
 from wbb import LOG_GROUP_ID, SUDOERS, app
 from wbb.modules.admin import list_admins, member_permissions
@@ -80,9 +84,7 @@ async def spam_protection_func(_, message: Message):
     keyboard = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton(
-                    text="Yes it's spam", callback_data="s_p_spam"
-                ),
+                InlineKeyboardButton(text="Yes it's spam", callback_data="s_p_spam"),
                 InlineKeyboardButton(
                     text="No, it's not spam",
                     callback_data="s_p_ham",
@@ -131,7 +133,9 @@ async def spam_p_callback(_, cq: CallbackQuery):
         await cq.message.edit(text)
         if cq.message.reply_to_message:
             text = f"**ADMINS OF {chat_id} FLAGGED THIS MESSAGE AS SPAM**\n\n"
-            text += f"`{cq.message.reply_to_message.text.markdown}`\n\n__{dev_forward}__"
+            text += (
+                f"`{cq.message.reply_to_message.text.markdown}`\n\n__{dev_forward}__"
+            )
             return await app.send_message(
                 LOG_GROUP_ID, text, disable_web_page_preview=True
             )
@@ -141,29 +145,21 @@ async def spam_p_callback(_, cq: CallbackQuery):
     if cq.message.reply_to_message:
         text = f"**ADMINS OF {chat_id} FLAGGED THIS MESSAGE AS NOT SPAM**\n\n"
         text += f"`{cq.message.reply_to_message.text.markdown}`\n\n__{dev_forward}__"
-        return await app.send_message(
-            LOG_GROUP_ID, text, disable_web_page_preview=True
-        )
+        return await app.send_message(LOG_GROUP_ID, text, disable_web_page_preview=True)
 
 
 @app.on_message(filters.command("spam") & ~filters.private)
 async def spam_flag_func(_, message: Message):
     if not message.reply_to_message:
-        return await message.reply_text(
-            "Reply to a message to flag it as spam"
-        )
+        return await message.reply_text("Reply to a message to flag it as spam")
 
     r = message.reply_to_message
     if not r.text and not r.caption:
-        return await message.reply_text(
-            "Reply to a text message to flag it as spam"
-        )
+        return await message.reply_text("Reply to a text message to flag it as spam")
 
     text = r.text or r.caption
     if not text:
-        return await message.reply_text(
-            "Reply to a text message to flag it as spam"
-        )
+        return await message.reply_text("Reply to a text message to flag it as spam")
 
     msg = f"""
 **ADMINS OF {message.chat.id} FLAGGED THIS MESSAGE AS SPAM**
@@ -177,6 +173,4 @@ __{dev_forward}__
     await message.reply_text(
         "Message was flagged as spam, Devs will use it to improve spam protection algorithm."
     )
-    await app.send_message(
-        LOG_GROUP_ID, msg, disable_web_page_preview=True
-    )
+    await app.send_message(LOG_GROUP_ID, msg, disable_web_page_preview=True)
