@@ -14,7 +14,7 @@ from wbb.modules.nsfw import get_file_id_from_message
 
 __MODULE__= "Reverse"
 __HELP__ = """
-/reverse for get result of image/sticker with reply."""
+/reverse - To get result of image/sticker with reply."""
 
 @app.on_message(filters.command("reverse"))
 @capture_err
