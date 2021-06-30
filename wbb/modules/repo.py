@@ -29,12 +29,12 @@ from wbb.utils.http import get
 
 __MODULE__ = "Source Code"
 __HELP__ = (
-    "/repo | /source - To Get My Github Repository Link "
+    "/repo - To Get My Github Repository Link "
     "And Support Group Link"
 )
 
 
-@app.on_message(filters.command("repo", "source") & ~filters.edited)
+@app.on_message(filters.command("repo") & ~filters.edited)
 @capture_err
 async def repo(_, message):
     users = await get(
