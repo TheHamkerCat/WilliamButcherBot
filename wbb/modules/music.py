@@ -41,7 +41,8 @@ from wbb.utils.http import get
 from wbb.utils.pastebin import paste
 
 __MODULE__ = "Music"
-__HELP__ = """/ytmusic | /ytdl [link] To Download Music From Various Websites Including Youtube. [SUDOERS]
+__HELP__ = """
+/ytdl [link] To Download Music From Various Websites Including Youtube. [SUDOERS]
 /saavn [query] To Download Music From Saavn.
 /deezer [query] To Download Music From Deezer.
 /lyrics [query] To Get Lyrics Of A Song."""
@@ -90,7 +91,7 @@ def download_youtube_audio(url: str, m=0):
     return [title, performer, duration, audio_file, thumbnail_file]
 
 
-@app.on_message(filters.command("ytmusic", "ytdl"))
+@app.on_message(filters.command("ytdl"))
 @capture_err
 async def music(_, message):
     global is_downloading
