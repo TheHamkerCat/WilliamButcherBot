@@ -7,7 +7,7 @@
 
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![LICENSE](https://img.shields.io/github/license/UserLazy/OdaNobunaga?style=for-the-badge&logo=appveyor)&nbsp;
-![Contributors](https://img.shields.io/github/contributor/UserLazy/OdaNobunaga?style=for-the-badge&logo=appveyor)&nbsp;
+![Contributors](https://img.shields.io/github/contributors/UserLazy/OdaNobunaga?style=for-the-badge&logo=appveyor)&nbsp;
 ![Repository Size](https://img.shields.io/github/repo-size/UserLazy/OdaNobunaga?style=for-the-badge&logo=appveyor)
 
 
