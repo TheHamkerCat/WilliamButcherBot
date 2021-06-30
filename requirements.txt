@@ -21,4 +21,4 @@ youtube_dl
 bs4
 wget
 python-dotenv
-launchpadlib==1.10.13
+
