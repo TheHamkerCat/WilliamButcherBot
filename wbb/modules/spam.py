@@ -30,7 +30,7 @@ from wbb.modules.admin import list_admins, member_permissions
 from wbb.modules.trust import get_spam_data
 from wbb.utils.filter_groups import spam_protection_group
 
-__MODULE__ = "AntiSpam"
+__MODULE__ = "Anti-Spam"
 __HELP__ = """
 **Antispam helps protect your group from spam.**
 
