@@ -29,7 +29,34 @@ from wbb import app
 from wbb.utils.inlinefuncs import *
 
 __MODULE__ = "Inline"
-__HELP__ = """See inline for help related to inline"""
+__HELP__ = """
+Inline commands can be used by anyone via inline.
+
+Syntax:
+   @OdaRobot [command] [query]
+
+Commands Available:
+- alive - Check Bot's Stats.
+- yt [query] - Youtube Search.
+- tr [LANGUAGE_CODE] [QUERY]** - Translate Text.
+- lyrics [QUERY] - Search Song Lyrics
+- google [QUERY] - Google Search.
+- info [ID/USERNAME] - Get Profile User Telegram.
+-chat_info [ID/USERNAME GROUP] - Get Profile Group Telegram.
+- bitly [URL] - Shorten A Link.
+- wall [Query] - Find Wallpapers.
+- image [Query] - Find pictures.
+- ytmusic [SONG_NAME] - Get Songs From Youtube Music.
+- music [SONG_NAME] - Get Songs.
+- torrent [QUERY] - Torrent Search.
+- tmdb [QUERY] - Search movies on imdb.
+- gh_repo [QUERY] - Search github repo.
+- gh_user [QUERY] - Search github user.
+- wiki [QUERY] - Search wikipedia.
+- ping - Check ping rate.
+- ud [QUERY] - Urban Dictionary Query.
+-speedtest - Check Speed Server.
+-pypi [PACKAGE NAME] - Check pkg/pip Python."""
 
 
 @app.on_inline_query()
