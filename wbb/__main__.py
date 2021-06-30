@@ -172,6 +172,9 @@ async def help_command(_, message):
     await message.reply_sticker(random.choice(STICKERS))
     await message.reply(
         f"Hey there! My name is {BOT_NAME}. I can manage your group with lots of useful features, feel free to add me to your group.",
+        f"═════════════════════════════",
+        f"Maintained By @RxyMX",
+        f"═════════════════════════════",
         reply_markup=keyboard,
     )
 
@@ -228,6 +231,9 @@ async def help_button(client, query):
     top_text = f"""
 Hello {query.from_user.first_name}! My name is {BOT_NAME}!
 I'm a group management bot with some usefule features.
+═════════════════════════════
+Maintained By @RxyMX
+═════════════════════════════
 Main commands available[:](https://telegra.ph/file/3c0e87516360f7343668b.jpg)
  ➛ /start: check my Alive in your PM!
  ➛ /help <module name>: PM's you info about that module.
@@ -248,10 +254,14 @@ Main commands available[:](https://telegra.ph/file/3c0e87516360f7343668b.jpg)
         await query.message.edit(
             text=text,
             reply_markup=InlineKeyboardMarkup(
+            [
                 [
-                    [
-                        InlineKeyboardButton(
-                            "back", callback_data="help_back"
+                    InlineKeyboardButton(
+                        "back", callback_data="help_back"
+                    ),
+                    InlineKeyboardButton(
+                        text="✫ OdaXMusic Repo ✫",
+                        url="https://github.con/UserLazy/Oda_Music",
                         )
                     ]
                 ]
