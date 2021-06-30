@@ -27,18 +27,18 @@ from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.http import get
 
-__MODULE__ = "Repo"
+__MODULE__ = "Source Code"
 __HELP__ = (
-    "/repo - To Get My Github Repository Link "
+    "/repo | /source - To Get My Github Repository Link "
     "And Support Group Link"
 )
 
 
-@app.on_message(filters.command("repo") & ~filters.edited)
+@app.on_message(filters.command("repo", "source") & ~filters.edited)
 @capture_err
 async def repo(_, message):
     users = await get(
-        "https://api.github.com/repos/thehamkercat/williambutcherbot/contributors"
+        "https://api.github.com/repos/UserLazy/OdaNobunaga/contributors"
     )
     list_of_users = ""
     count = 1
