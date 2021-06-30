@@ -8,7 +8,7 @@ from wbb.core.decorators.permissions import adminsOnly
 from wbb.utils.dbfunctions import is_nsfw_on, nsfw_off, nsfw_on
 from wbb.utils.filter_groups import nsfw_detect_group
 
-__MODULE__ = "NSFW"
+__MODULE__ = "Anti-NSFW"
 __HELP__ = """
 /nsfw_scan - Manually Scan An Image/Sticker/Document.
 /anti_nsfw [ENABLE | DISABLE] - Turn This Module On/Off
