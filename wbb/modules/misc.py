@@ -44,7 +44,6 @@ __HELP__ = """
 /encrypt - Encrypt Text [Can Only Be Decrypted By This Bot]
 /decrypt - Decrypt Text
 /cheat [Language] [Query] - Get Programming Related Help
-/weather [City] - To Get Weather Info
 /tr [en] - Translate A Message
 /json [URL] - Get JSON Response From An API or Something.
 /arq - Statistics Of ARQ API.
