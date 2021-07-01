@@ -29,8 +29,8 @@ from wbb.utils.http import get
 
 __MODULE__ = "Repo"
 __HELP__ = (
-    "/repo - To Get My Github Repository Link "
-    "And Support Group Link"
+    "/repo - To Get My Github Profile "
+    "And Developer Profile Link"
 )
 
 
@@ -38,7 +38,7 @@ __HELP__ = (
 @capture_err
 async def repo(_, message):
     users = await get(
-        "https://api.github.com/repos/thehamkercat/williambutcherbot/contributors"
+        "https://api.github.com/repos/nisarga-developer/williambutcherbot/contributors"
     )
     list_of_users = ""
     count = 1
@@ -48,7 +48,7 @@ async def repo(_, message):
         )
         count += 1
 
-    text = f"""[Github](https://github.com/thehamkercat/WilliamButcherBot) | [Group](t.me/PatheticProgrammers)
+    text = f"""[Github](https://github.com/nisarga-developer/) | [Developer](t.me/Nisarga_Adhikary)
 ```----------------
 | Contributors |
 ----------------```
