@@ -22,9 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from pyrogram import filters
-from pyrogram.types import (InlineKeyboardButton,
-                            InlineKeyboardMarkup, InputMediaPhoto,
-                            InputMediaVideo, Message)
+from pyrogram.types import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    InputMediaPhoto,
+    InputMediaVideo,
+    Message,
+)
 
 from wbb import app
 from wbb.core.decorators.errors import capture_err
@@ -51,12 +55,8 @@ async def rice(_, message: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(
-                        "Approve (Forward)", callback_data="forward"
-                    ),
-                    InlineKeyboardButton(
-                        "Ignore", callback_data="ignore"
-                    ),
+                    InlineKeyboardButton("Approve (Forward)", callback_data="forward"),
+                    InlineKeyboardButton("Ignore", callback_data="ignore"),
                 ]
             ]
         ),
@@ -77,30 +77,18 @@ async def callback_query_forward_rice(_, callback_query):
     await callback_query.answer("Successfully approved")
     m_op = callback_query.message.reply_to_message
     u_op = m_op.from_user
-    arg_caption = (
-        f"{m_op.caption}\nOP: [{u_op.first_name}]({m_op.link})"
-    )
+    arg_caption = f"{m_op.caption}\nOP: [{u_op.first_name}]({m_op.link})"
     if m_op.media_group_id:
         message_id = m_op.message_id
-        media_group = await app.get_media_group(
-            RICE_GROUP, message_id
-        )
+        media_group = await app.get_media_group(RICE_GROUP, message_id)
         arg_media = []
         for m in media_group:
             if m.photo and m.caption:
-                arg_media.append(
-                    InputMediaPhoto(
-                        m.photo.file_id, caption=arg_caption
-                    )
-                )
+                arg_media.append(InputMediaPhoto(m.photo.file_id, caption=arg_caption))
             elif m.photo:
                 arg_media.append(InputMediaPhoto(m.photo.file_id))
             elif m.video and m.caption:
-                arg_media.append(
-                    InputMediaVideo(
-                        m.video.file_id, caption=arg_caption
-                    )
-                )
+                arg_media.append(InputMediaVideo(m.video.file_id, caption=arg_caption))
             elif m.video:
                 arg_media.append(InputMediaVideo(m.video.file_id))
         m_cp = await app.send_media_group(RICE_CHANNEL, arg_media)
@@ -121,21 +109,13 @@ async def callback_query_forward_rice(_, callback_query):
 async def callback_query_ignore_rice(_, callback_query):
     c_group = callback_query.message.chat
     u_disprover = callback_query.from_user
-    disprover_status = (
-        await c_group.get_member(u_disprover.id)
-    ).status
+    disprover_status = (await c_group.get_member(u_disprover.id)).status
     m_op = callback_query.message.reply_to_message
     u_op = m_op.from_user
     if u_disprover.id == u_op.id:
-        await callback_query.answer(
-            "Ok, this rice won't be forwarded"
-        )
+        await callback_query.answer("Ok, this rice won't be forwarded")
     elif disprover_status in ("creator", "administrator"):
-        await m_op.reply_text(
-            f"{u_disprover.mention} ignored this rice"
-        )
+        await m_op.reply_text(f"{u_disprover.mention} ignored this rice")
     else:
-        return await callback_query.answer(
-            "Only admin or OP could ignore it"
-        )
+        return await callback_query.answer("Only admin or OP could ignore it")
     await callback_query.message.delete()

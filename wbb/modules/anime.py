@@ -22,9 +22,7 @@ def shorten(description, info="anilist.co"):
     ms_g = ""
     if len(description) > 700:
         description = description[0:500] + "...."
-        ms_g += (
-            f"\n**Description**: __{description}__[More here]({info})"
-        )
+        ms_g += f"\n**Description**: __{description}__[More here]({info})"
     else:
         ms_g += f"\n**Description**: __{description}__"
     return (
@@ -179,9 +177,7 @@ def format_bytes(size):
 
 def return_progress_string(current, total):
     filled_length = int(30 * current // total)
-    return (
-        "[" + "=" * filled_length + " " * (30 - filled_length) + "]"
-    )
+    return "[" + "=" * filled_length + " " * (30 - filled_length) + "]"
 
 
 def calculate_eta(current, total, start_time):
@@ -190,9 +186,7 @@ def calculate_eta(current, total, start_time):
     end_time = time.time()
     elapsed_time = end_time - start_time
     seconds = (elapsed_time * (total / current)) - elapsed_time
-    thing = "".join(
-        str(timedelta(seconds=seconds)).split(".")[:-1]
-    ).split(", ")
+    thing = "".join(str(timedelta(seconds=seconds)).split(".")[:-1]).split(", ")
     thing[-1] = thing[-1].rjust(8, "0")
     return ", ".join(thing)
 
@@ -209,9 +203,7 @@ async def anime_search(_, message):
     search = message.text.split(None, 1)[1]
     variables = {"search": search}
     json = (
-        requests.post(
-            url, json={"query": anime_query, "variables": variables}
-        )
+        requests.post(url, json={"query": anime_query, "variables": variables})
         .json()["data"]
         .get("Media", None)
     )
@@ -238,9 +230,7 @@ async def anime_search(_, message):
             .replace("<br>", "")
         )
         msg += shorten(description, info)
-        image = info.replace(
-            "anilist.co/anime/", "img.anili.st/media/"
-        )
+        image = info.replace("anilist.co/anime/", "img.anili.st/media/")
         if trailer:
             buttons = [
                 [
@@ -273,17 +263,15 @@ async def manga_search(_, message):
     search = message.text.split(None, 1)[1]
     variables = {"search": search}
     json = (
-        requests.post(
-            url, json={"query": manga_query, "variables": variables}
-        )
+        requests.post(url, json={"query": manga_query, "variables": variables})
         .json()["data"]
         .get("Media", None)
     )
     ms_g = ""
     if json:
-        title, title_native = json["title"].get(
-            "romaji", False
-        ), json["title"].get("native", False)
+        title, title_native = json["title"].get("romaji", False), json["title"].get(
+            "native", False
+        )
         start_date, status, score = (
             json["startDate"].get("year", False),
             json.get("status", False),
@@ -333,7 +321,9 @@ async def character_search(_, message):
         .get("Character", None)
     )
     if json:
-        ms_g = f"**{json.get('name').get('full')}**(`{json.get('name').get('native')}`)\n"
+        ms_g = (
+            f"**{json.get('name').get('full')}**(`{json.get('name').get('native')}`)\n"
+        )
         description = f"{json['description']}"
         site_url = json.get("siteUrl")
         ms_g += shorten(description, site_url)

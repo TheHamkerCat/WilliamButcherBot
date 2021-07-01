@@ -32,9 +32,7 @@ async def get_sticker_set_by_name(
     try:
         return await client.send(
             raw.functions.messages.GetStickerSet(
-                stickerset=raw.types.InputStickerSetShortName(
-                    short_name=name
-                )
+                stickerset=raw.types.InputStickerSetShortName(short_name=name)
             )
         )
     except errors.exceptions.not_acceptable_406.StickersetInvalid:
@@ -81,6 +79,4 @@ async def add_sticker_to_set(
 async def create_sticker(
     sticker: raw.base.InputDocument, emoji: str
 ) -> raw.base.InputStickerSetItem:
-    return raw.types.InputStickerSetItem(
-        document=sticker, emoji=emoji
-    )
+    return raw.types.InputStickerSetItem(document=sticker, emoji=emoji)

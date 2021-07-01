@@ -40,9 +40,7 @@ __HELP__ = """
 @adminsOnly("can_change_info")
 async def set_chat_title(_, message):
     if len(message.command) < 2:
-        return await message.reply_text(
-            "**Usage:**\n/set_chat_title NEW NAME"
-        )
+        return await message.reply_text("**Usage:**\n/set_chat_title NEW NAME")
     old_title = message.chat.title
     new_title = message.text.split(None, 1)[1]
     await message.chat.set_title(new_title)
@@ -79,16 +77,9 @@ async def set_user_title(_, message):
 @adminsOnly("can_change_info")
 async def set_chat_photo(_, message):
     if not message.reply_to_message:
-        return await message.reply_text(
-            "Reply to a photo to set it as chat_photo"
-        )
-    if (
-        not message.reply_to_message.photo
-        and not message.reply_to_message.document
-    ):
-        return await message.reply_text(
-            "Reply to a photo to set it as chat_photo"
-        )
+        return await message.reply_text("Reply to a photo to set it as chat_photo")
+    if not message.reply_to_message.photo and not message.reply_to_message.document:
+        return await message.reply_text("Reply to a photo to set it as chat_photo")
     photo = await message.reply_to_message.download()
     await message.chat.set_photo(photo)
     await message.reply_text("Successfully Changed Group Photo")
