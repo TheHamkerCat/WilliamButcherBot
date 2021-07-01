@@ -225,7 +225,7 @@ Main commands available[:](https://telegra.ph/file/3c0e87516360f7343668b.jpg)
                         InlineKeyboardButton("back", callback_data="help_back"),
                         InlineKeyboardButton(
                             text="✫ OdaXMusic Repo ✫",
-                            url="https://github.con/UserLazy/Oda_Music",
+                            url="https://github.com/UserLazy/Oda_Music",
                         ),
                     ]
                 ]
