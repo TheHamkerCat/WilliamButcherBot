@@ -54,18 +54,12 @@ async def post(url: str, *args, **kwargs):
 
 
 async def multiget(url: str, times: int, *args, **kwargs):
-    return await gather(
-        *[get(url, *args, **kwargs) for _ in range(times)]
-    )
+    return await gather(*[get(url, *args, **kwargs) for _ in range(times)])
 
 
 async def multihead(url: str, times: int, *args, **kwargs):
-    return await gather(
-        *[head(url, *args, **kwargs) for _ in range(times)]
-    )
+    return await gather(*[head(url, *args, **kwargs) for _ in range(times)])
 
 
 async def multipost(url: str, times: int, *args, **kwargs):
-    return await gather(
-        *[post(url, *args, **kwargs) for _ in range(times)]
-    )
+    return await gather(*[post(url, *args, **kwargs) for _ in range(times)])

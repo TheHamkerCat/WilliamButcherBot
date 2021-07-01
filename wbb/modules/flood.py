@@ -25,9 +25,13 @@ from asyncio import get_running_loop, sleep
 from time import time
 
 from pyrogram import filters
-from pyrogram.types import (CallbackQuery, ChatPermissions,
-                            InlineKeyboardButton,
-                            InlineKeyboardMarkup, Message)
+from pyrogram.types import (
+    CallbackQuery,
+    ChatPermissions,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+)
 
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
@@ -127,9 +131,7 @@ async def flood_control_func(_, message: Message):
 @app.on_callback_query(filters.regex("unmute_"))
 async def flood_callback_func(_, cq: CallbackQuery):
     from_user = cq.from_user
-    permissions = await member_permissions(
-        cq.message.chat.id, from_user.id
-    )
+    permissions = await member_permissions(cq.message.chat.id, from_user.id)
     permission = "can_restrict_members"
     if permission not in permissions:
         return await cq.answer(
