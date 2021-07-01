@@ -11,8 +11,8 @@ COPY requirements.txt .
 RUN pip3 install --no-cache-dir -U -r requirements.txt
 
 # If u want to use /update feature, uncomment the following and edit
-#RUN git config --global user.email "your_email"
-#RUN git config --global user.name "git_username"
+RUN git config --global user.email "ihsanzcoki@gmail.com"
+RUN git config --global user.name "UserLazy"
 
 #Copying All Source
 COPY . .
