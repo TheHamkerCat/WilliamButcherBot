@@ -12,16 +12,17 @@ from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.nsfw import get_file_id_from_message
 
-__MODULE__ = "Reverse"
+__MODULE__= "Reverse"
 __HELP__ = """
 /reverse - To get result of image/sticker with reply."""
-
 
 @app.on_message(filters.command("reverse"))
 @capture_err
 async def reverse_image_search(_, message):
     if not message.reply_to_message:
-        return await message.reply_text("Reply to a message to reverse search it.")
+        return await message.reply_text(
+            "Reply to a message to reverse search it."
+        )
     reply = message.reply_to_message
     if (
         not reply.document
@@ -37,7 +38,9 @@ async def reverse_image_search(_, message):
     file_id = await get_file_id_from_message(reply)
     if not file_id:
         return m.edit("Can't reverse that")
-    image = await app.download_media(file_id, f"{randint(1000, 10000)}.jpg")
+    image = await app.download_media(
+        file_id, f"{randint(1000, 10000)}.jpg"
+    )
     await m.edit("Uploading to google's server")
     async with aiofiles.open(image, "rb") as f:
         if image:
@@ -48,10 +51,14 @@ async def reverse_image_search(_, message):
             }
 
             def post_non_blocking():
-                return requests.post(search_url, files=multipart, allow_redirects=False)
+                return requests.post(
+                    search_url, files=multipart, allow_redirects=False
+                )
 
             loop = get_running_loop()
-            response = await loop.run_in_executor(None, post_non_blocking)
+            response = await loop.run_in_executor(
+                None, post_non_blocking
+            )
             location = response.headers.get("Location")
             os.remove(image)
         else:

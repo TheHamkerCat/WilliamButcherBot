@@ -15,7 +15,8 @@ from io import StringIO
 from time import time
 
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from pyrogram.types import (InlineKeyboardButton,
+                            InlineKeyboardMarkup, Message)
 
 from wbb import SUDOERS, app
 
@@ -108,7 +109,9 @@ async def executor(client, message):
                 ]
             ]
         )
-        await edit_or_reply(message, text=final_output, reply_markup=keyboard)
+        await edit_or_reply(
+            message, text=final_output, reply_markup=keyboard
+        )
 
 
 @app.on_callback_query(filters.regex(r"runtime"))
@@ -126,13 +129,17 @@ async def runtime_func_cq(_, cq):
 )
 async def shellrunner(client, message):
     if len(message.command) < 2:
-        return await edit_or_reply(message, text="**Usage:**\n/sh git pull")
+        return await edit_or_reply(
+            message, text="**Usage:**\n/sh git pull"
+        )
     text = message.text.split(None, 1)[1]
     if "\n" in text:
         code = text.split("\n")
         output = ""
         for x in code:
-            shell = re.split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x)
+            shell = re.split(
+                """ (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x
+            )
             try:
                 process = subprocess.Popen(
                     shell,
@@ -141,7 +148,9 @@ async def shellrunner(client, message):
                 )
             except Exception as err:
                 print(err)
-                await edit_or_reply(message, text=f"**ERROR:**\n```{err}```")
+                await edit_or_reply(
+                    message, text=f"**ERROR:**\n```{err}```"
+                )
             output += f"**{code}**\n"
             output += process.stdout.read()[:-1].decode("utf-8")
             output += "\n"
@@ -180,6 +189,8 @@ async def shellrunner(client, message):
                 caption="`Output`",
             )
             return os.remove("output.txt")
-        await edit_or_reply(message, text=f"**OUTPUT:**\n```{output}```")
+        await edit_or_reply(
+            message, text=f"**OUTPUT:**\n```{output}```"
+        )
     else:
         await edit_or_reply(message, text="**OUTPUT: **\n`No output`")

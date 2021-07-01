@@ -37,7 +37,9 @@ from wbb.utils.pastebin import paste
 
 __MODULE__ = "Paste"
 __HELP__ = "/paste - To Paste Replied Text Or Document To Nekobin"
-pattern = re.compile(r"^text/|json$|yaml$|xml$|toml$|x-sh$|x-shellscript$")
+pattern = re.compile(
+    r"^text/|json$|yaml$|xml$|toml$|x-sh$|x-shellscript$"
+)
 
 
 async def isPreviewUp(preview: str) -> bool:
@@ -66,7 +68,9 @@ async def paste_func(_, message):
         elif message.reply_to_message.document:
             document = message.reply_to_message.document
             if document.file_size > 1048576:
-                return await m.edit("You can only paste files smaller than 1MB.")
+                return await m.edit(
+                    "You can only paste files smaller than 1MB."
+                )
             if not pattern.search(document.mime_type):
                 return await m.edit("Only text files can be pasted.")
             doc = await message.reply_to_message.download()
@@ -79,7 +83,9 @@ async def paste_func(_, message):
         button.add(InlineKeyboardButton(text="Paste Link", url=link))
 
         if await isPreviewUp(preview):
-            await message.reply_photo(photo=preview, quote=False, reply_markup=button)
+            await message.reply_photo(
+                photo=preview, quote=False, reply_markup=button
+            )
             return await m.delete()
         await m.edit(link)
     else:

@@ -28,24 +28,23 @@ from pyrogram import filters
 from wbb import BOT_ID, BOT_NAME, SUDOERS, app
 from wbb.core.decorators.errors import capture_err
 from wbb.modules import ALL_MODULES
-from wbb.utils.dbfunctions import (
-    get_blacklist_filters_count,
-    get_filters_count,
-    get_gbans_count,
-    get_karmas_count,
-    get_notes_count,
-    get_served_chats,
-    get_served_users,
-    get_warns_count,
-    remove_served_chat,
-)
+from wbb.utils.dbfunctions import (get_blacklist_filters_count,
+                                   get_filters_count, get_gbans_count,
+                                   get_karmas_count, get_notes_count,
+                                   get_served_chats, get_served_users,
+                                   get_warns_count,
+                                   remove_served_chat)
 from wbb.utils.http import get
 from wbb.utils.inlinefuncs import keywords_list
 
 """ CHAT WATCHER IS IN filters.py"""
 
 
-@app.on_message(filters.command("gstats") & filters.user(SUDOERS) & ~filters.edited)
+@app.on_message(
+    filters.command("gstats")
+    & filters.user(SUDOERS)
+    & ~filters.edited
+)
 @capture_err
 async def global_stats(_, message):
     m = await app.send_message(

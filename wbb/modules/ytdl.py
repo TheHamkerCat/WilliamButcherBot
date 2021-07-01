@@ -32,7 +32,8 @@ from pyrogram.types import InlineKeyboardButton
 
 from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.formatter import convert_seconds_to_minutes as timeFormat
+from wbb.utils.formatter import \
+    convert_seconds_to_minutes as timeFormat
 from wbb.utils.functions import downloader
 
 __MODULE__ = "YoutubeDL"
@@ -46,7 +47,9 @@ VIDEO_DATA = {}
 @capture_err
 async def ytdl_func(_, message):
     if len(message.command) != 2:
-        return await message.reply_text("**Usage:**/ytdl [VIDEO_LINK]")
+        return await message.reply_text(
+            "**Usage:**/ytdl [VIDEO_LINK]"
+        )
     m = await message.reply_text("Processing")
     url = message.text.split(None, 1)[1]
     results = await arq.ytdl(url)
@@ -72,7 +75,9 @@ async def ytdl_func(_, message):
             "duration": duration,
             "format": format,
             "thumbnail": thumbnail,
-            "cc": message.from_user.mention if message.from_user else "Anon",
+            "cc": message.from_user.mention
+            if message.from_user
+            else "Anon",
         }
         keyboard.append(
             InlineKeyboardButton(
@@ -85,7 +90,9 @@ async def ytdl_func(_, message):
 **Title:** {title}
 **Duration:** {await timeFormat(duration)}
 """
-    await message.reply_photo(thumbnail, caption=caption, reply_markup=buttons)
+    await message.reply_photo(
+        thumbnail, caption=caption, reply_markup=buttons
+    )
     await m.delete()
 
 

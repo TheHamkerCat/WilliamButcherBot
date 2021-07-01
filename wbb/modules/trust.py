@@ -26,7 +26,8 @@ from asyncio import Lock
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import BOT_ID, MESSAGE_DUMP_CHAT, USERBOT_BOT_CHAT_COMMON, app, app2, arq
+from wbb import (BOT_ID, MESSAGE_DUMP_CHAT, USERBOT_BOT_CHAT_COMMON,
+                 app, app2, arq)
 from wbb.utils.dbfunctions import get_trust_db, update_trust_db
 from wbb.utils.filter_groups import trust_group
 

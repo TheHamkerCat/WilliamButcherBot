@@ -26,16 +26,8 @@ from asyncio import gather, sleep
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import (
-    BOT_ID,
-    SUDOERS,
-    USERBOT_ID,
-    USERBOT_PREFIX,
-    USERBOT_USERNAME,
-    app,
-    app2,
-    arq,
-)
+from wbb import (BOT_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX,
+                 USERBOT_USERNAME, app, app2, arq)
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.userbot import edit_or_reply
 from wbb.utils.filter_groups import chatbot_group
@@ -55,16 +47,27 @@ async def chat_bot_toggle(db, message: Message):
     if status == "on":
         if chat_id not in db:
             db.append(chat_id)
-            text = "Chatbot Enabled Reply To Any Message " + "Of Mine To Get A Reply"
+            text = (
+                "Chatbot Enabled Reply To Any Message "
+                + "Of Mine To Get A Reply"
+            )
             return await edit_or_reply(message, text=text)
-        await edit_or_reply(message, text="ChatBot Is Already Enabled.")
+        await edit_or_reply(
+            message, text="ChatBot Is Already Enabled."
+        )
     elif status == "off":
         if chat_id in db:
             db.remove(chat_id)
-            return await edit_or_reply(message, text="Chatbot Disabled!")
-        await edit_or_reply(message, text="ChatBot Is Already Disabled.")
+            return await edit_or_reply(
+                message, text="Chatbot Disabled!"
+            )
+        await edit_or_reply(
+            message, text="ChatBot Is Already Disabled."
+        )
     else:
-        await edit_or_reply(message, text="**Usage**\n/chatbot [ON|OFF]")
+        await edit_or_reply(
+            message, text="**Usage**\n/chatbot [ON|OFF]"
+        )
 
 
 # Enabled | Disable Chatbot
@@ -74,7 +77,9 @@ async def chat_bot_toggle(db, message: Message):
 @capture_err
 async def chatbot_status(_, message: Message):
     if len(message.command) != 2:
-        return await edit_or_reply(message, text="**Usage**\n/chatbot [ON|OFF]")
+        return await edit_or_reply(
+            message, text="**Usage**\n/chatbot [ON|OFF]"
+        )
     await chat_bot_toggle(active_chats_bot, message)
 
 
@@ -94,7 +99,11 @@ async def type_and_send(message: Message):
 
 
 @app.on_message(
-    filters.text & filters.reply & ~filters.bot & ~filters.via_bot & ~filters.forwarded,
+    filters.text
+    & filters.reply
+    & ~filters.bot
+    & ~filters.via_bot
+    & ~filters.forwarded,
     group=chatbot_group,
 )
 @capture_err
@@ -119,7 +128,9 @@ async def chatbot_talk(_, message: Message):
 @capture_err
 async def chatbot_status_ubot(_, message: Message):
     if len(message.text.split()) != 2:
-        return await edit_or_reply(message, text="**Usage**\n.chatbot [ON|OFF]")
+        return await edit_or_reply(
+            message, text="**Usage**\n.chatbot [ON|OFF]"
+        )
     await chat_bot_toggle(active_chats_ubot, message)
 
 

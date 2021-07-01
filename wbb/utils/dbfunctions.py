@@ -274,7 +274,9 @@ async def user_global_karma(user_id) -> int:
         return 0
     total_karma = 0
     for chat in await chats.to_list(length=1000000):
-        karma = await get_karma(chat["chat_id"], await int_to_alpha(user_id))
+        karma = await get_karma(
+            chat["chat_id"], await int_to_alpha(user_id)
+        )
         if karma:
             if int(karma["karma"]) > 0:
                 total_karma += int(karma["karma"])
@@ -600,7 +602,9 @@ async def get_blacklist_filters_count() -> dict:
 
 
 async def get_blacklisted_words(chat_id: int) -> List[str]:
-    _filters = await blacklist_filtersdb.find_one({"chat_id": chat_id})
+    _filters = await blacklist_filtersdb.find_one(
+        {"chat_id": chat_id}
+    )
     if not _filters:
         return []
     return _filters["filters"]
@@ -634,7 +638,9 @@ async def delete_blacklist_filter(chat_id: int, word: str) -> bool:
 """ PIPES SYSTEM """
 
 
-async def activate_pipe(from_chat_id: int, to_chat_id: int, fetcher: str):
+async def activate_pipe(
+    from_chat_id: int, to_chat_id: int, fetcher: str
+):
     pipes = await show_pipes()
     pipe = {
         "from_chat_id": from_chat_id,
@@ -652,7 +658,10 @@ async def deactivate_pipe(from_chat_id: int, to_chat_id: int):
     if not pipes:
         return
     for pipe in pipes:
-        if pipe["from_chat_id"] == from_chat_id and pipe["to_chat_id"] == to_chat_id:
+        if (
+            pipe["from_chat_id"] == from_chat_id
+            and pipe["to_chat_id"] == to_chat_id
+        ):
             pipes.remove(pipe)
     return await pipesdb.update_one(
         {"pipe": "pipe"}, {"$set": {"pipes": pipes}}, upsert=True
@@ -661,7 +670,10 @@ async def deactivate_pipe(from_chat_id: int, to_chat_id: int):
 
 async def is_pipe_active(from_chat_id: int, to_chat_id: int) -> bool:
     for pipe in await show_pipes():
-        if pipe["from_chat_id"] == from_chat_id and pipe["to_chat_id"] == to_chat_id:
+        if (
+            pipe["from_chat_id"] == from_chat_id
+            and pipe["to_chat_id"] == to_chat_id
+        ):
             return True
 
 
@@ -705,7 +717,10 @@ async def remove_sudo(user_id: int) -> bool:
 
 async def blacklisted_chats() -> list:
     chats = blacklist_chatdb.find({"chat_id": {"$lt": 0}})
-    return [chat["chat_id"] for chat in await chats.to_list(length=1000000000)]
+    return [
+        chat["chat_id"]
+        for chat in await chats.to_list(length=1000000000)
+    ]
 
 
 async def blacklist_chat(chat_id: int) -> bool:
@@ -765,7 +780,9 @@ async def update_trust_db(user_id: int, new_data: float):
     if len(data) >= 100:
         data = data[:99]
     data.append(new_data)
-    data = [i for i in data if isinstance(i, float) or isinstance(i, int)]
+    data = [
+        i for i in data if isinstance(i, float) or isinstance(i, int)
+    ]
     await trustdb.update_one(
         {"user_id": user_id},
         {"$set": {"data": data}},

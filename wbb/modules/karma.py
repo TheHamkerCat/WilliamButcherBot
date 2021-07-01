@@ -29,17 +29,12 @@ from pyrogram import filters
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
-from wbb.utils.dbfunctions import (
-    alpha_to_int,
-    get_karma,
-    get_karmas,
-    int_to_alpha,
-    is_karma_on,
-    karma_off,
-    karma_on,
-    update_karma,
-)
-from wbb.utils.filter_groups import karma_negative_group, karma_positive_group
+from wbb.utils.dbfunctions import (alpha_to_int, get_karma,
+                                   get_karmas, int_to_alpha,
+                                   is_karma_on, karma_off, karma_on,
+                                   update_karma)
+from wbb.utils.filter_groups import (karma_negative_group,
+                                     karma_positive_group)
 
 __MODULE__ = "Karma"
 __HELP__ = """[UPVOTE] - Use upvote keywords like "+", "+1", "thanks" etc to upvote a message.
@@ -49,9 +44,7 @@ Reply to a message with /karma to check a user's karma
 Send /karma without replying to any message to chek karma list of top 10 users"""
 
 
-regex_upvote = (
-    r"^(\+|\+\+|\+1|thx|tnx|ty|thank you|thanx|thanks|pro|cool|good|👍|\+\+ .+)$"
-)
+regex_upvote = r"^(\+|\+\+|\+1|thx|tnx|ty|thank you|thanx|thanks|pro|cool|good|👍|\+\+ .+)$"
 regex_downvote = r"^(-|--|-1|👎|-- .+)$"
 
 
@@ -79,16 +72,22 @@ async def upvote(_, message):
     chat_id = message.chat.id
     user_id = message.reply_to_message.from_user.id
     user_mention = message.reply_to_message.from_user.mention
-    current_karma = await get_karma(chat_id, await int_to_alpha(user_id))
+    current_karma = await get_karma(
+        chat_id, await int_to_alpha(user_id)
+    )
     if current_karma:
         current_karma = current_karma["karma"]
         karma = current_karma + 1
         new_karma = {"karma": karma}
-        await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
+        await update_karma(
+            chat_id, await int_to_alpha(user_id), new_karma
+        )
     else:
         karma = 1
         new_karma = {"karma": karma}
-        await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
+        await update_karma(
+            chat_id, await int_to_alpha(user_id), new_karma
+        )
     await message.reply_text(
         f"Incremented Karma of {user_mention} By 1 \nTotal Points: {karma}"
     )
@@ -119,16 +118,22 @@ async def downvote(_, message):
     chat_id = message.chat.id
     user_id = message.reply_to_message.from_user.id
     user_mention = message.reply_to_message.from_user.mention
-    current_karma = await get_karma(chat_id, await int_to_alpha(user_id))
+    current_karma = await get_karma(
+        chat_id, await int_to_alpha(user_id)
+    )
     if current_karma:
         current_karma = current_karma["karma"]
         karma = current_karma - 1
         new_karma = {"karma": karma}
-        await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
+        await update_karma(
+            chat_id, await int_to_alpha(user_id), new_karma
+        )
     else:
         karma = 1
         new_karma = {"karma": karma}
-        await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
+        await update_karma(
+            chat_id, await int_to_alpha(user_id), new_karma
+        )
     await message.reply_text(
         f"Decremented Karma Of {user_mention} By 1 \nTotal Points: {karma}"
     )
@@ -139,7 +144,9 @@ async def downvote(_, message):
 async def command_karma(_, message):
     chat_id = message.chat.id
     if not message.reply_to_message:
-        m = await message.reply_text("Analyzing Karma...Will Take 10 Seconds")
+        m = await message.reply_text(
+            "Analyzing Karma...Will Take 10 Seconds"
+        )
         karma = await get_karmas(chat_id)
         if not karma:
             await m.edit("No karma in DB for this chat.")

@@ -27,11 +27,9 @@ from pyrogram import filters
 from wbb import BOT_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.userbot import edit_or_reply
-from wbb.utils.dbfunctions import (
-    approve_pmpermit,
-    disapprove_pmpermit,
-    is_pmpermit_approved,
-)
+from wbb.utils.dbfunctions import (approve_pmpermit,
+                                   disapprove_pmpermit,
+                                   is_pmpermit_approved)
 
 flood = {}
 
@@ -59,9 +57,13 @@ async def pmpermit_func(_, message):
     else:
         flood[str(user_id)] = 1
     if flood[str(user_id)] > 5:
-        await message.reply_text("SPAM DETECTED, BLOCKED USER AUTOMATICALLY!")
+        await message.reply_text(
+            "SPAM DETECTED, BLOCKED USER AUTOMATICALLY!"
+        )
         return await app2.block_user(user_id)
-    results = await app2.get_inline_bot_results(BOT_ID, f"pmpermit {user_id}")
+    results = await app2.get_inline_bot_results(
+        BOT_ID, f"pmpermit {user_id}"
+    )
     await app2.send_inline_bot_result(
         user_id,
         results.query_id,
@@ -83,7 +85,9 @@ async def pm_approve(_, message):
         )
     user_id = message.reply_to_message.from_user.id
     if await is_pmpermit_approved(user_id):
-        return await edit_or_reply(message, text="User is already approved to pm")
+        return await edit_or_reply(
+            message, text="User is already approved to pm"
+        )
     await approve_pmpermit(user_id)
     await edit_or_reply(message, text="User is approved to pm")
 
@@ -100,7 +104,9 @@ async def pm_disapprove(_, message):
         )
     user_id = message.reply_to_message.from_user.id
     if not await is_pmpermit_approved(user_id):
-        await edit_or_reply(message, text="User is already disapproved to pm")
+        await edit_or_reply(
+            message, text="User is already disapproved to pm"
+        )
         async for m in app2.iter_history(user_id, limit=6):
             if m.reply_markup:
                 try:
@@ -120,7 +126,9 @@ async def pm_disapprove(_, message):
 @capture_err
 async def block_user_func(_, message):
     if not message.reply_to_message:
-        return await edit_or_reply(message, text="Reply to a user's message to block.")
+        return await edit_or_reply(
+            message, text="Reply to a user's message to block."
+        )
     user_id = message.reply_to_message.from_user.id
     # Blocking user after editing the message so that other person can get the update.
     await edit_or_reply(message, text="Successfully blocked the user")
@@ -139,7 +147,9 @@ async def unblock_user_func(_, message):
         )
     user_id = message.reply_to_message.from_user.id
     await app2.unblock_user(user_id)
-    await edit_or_reply(message, text="Successfully Unblocked the user")
+    await edit_or_reply(
+        message, text="Successfully Unblocked the user"
+    )
 
 
 """ CALLBACK QUERY HANDLER """
@@ -169,7 +179,9 @@ async def pmpermit_cq(_, cq):
         async for m in app2.iter_history(user_id, limit=6):
             if m.reply_markup:
                 await m.delete()
-        await app2.send_message(user_id, "Blocked, Go scam someone else.")
+        await app2.send_message(
+            user_id, "Blocked, Go scam someone else."
+        )
         await app2.block_user(user_id)
 
     elif data == "approve_me":
@@ -178,7 +190,9 @@ async def pmpermit_cq(_, cq):
         else:
             flood2[str(user_id)] = 1
         if flood2[str(user_id)] > 5:
-            await app2.send_message(user_id, "SPAM DETECTED, USER BLOCKED.")
+            await app2.send_message(
+                user_id, "SPAM DETECTED, USER BLOCKED."
+            )
             return await app2.block_user(user_id)
         await app2.send_message(
             user_id,

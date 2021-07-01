@@ -4,7 +4,8 @@ import sys
 import traceback
 from functools import wraps
 
-from pyrogram.errors.exceptions.forbidden_403 import ChatWriteForbidden
+from pyrogram.errors.exceptions.forbidden_403 import \
+    ChatWriteForbidden
 
 from wbb import LOG_GROUP_ID, app
 
@@ -45,7 +46,9 @@ def capture_err(func):
             )
             error_feedback = split_limits(
                 "**ERROR** | `{}` | `{}`\n\n```{}```\n\n```{}```\n".format(
-                    0 if not message.from_user else message.from_user.id,
+                    0
+                    if not message.from_user
+                    else message.from_user.id,
                     0 if not message.chat else message.chat.id,
                     message.text or message.caption,
                     "".join(errors),

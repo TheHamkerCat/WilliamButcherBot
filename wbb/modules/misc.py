@@ -56,7 +56,9 @@ __HELP__ = """
 
 @app.on_message(filters.command("commit") & ~filters.edited)
 async def commit(_, message):
-    await message.reply_text(await get("http://whatthecommit.com/index.txt"))
+    await message.reply_text(
+        await get("http://whatthecommit.com/index.txt")
+    )
 
 
 @app.on_message(filters.command("RTFM", "#"))
@@ -64,28 +66,34 @@ async def rtfm(_, message):
     await message.delete()
     if not message.reply_to_message:
         return await message.reply_text("Reply To A Message lol")
-    await message.reply_to_message.reply_text("Are You Lost? READ THE FUCKING DOCS!")
+    await message.reply_to_message.reply_text(
+        "Are You Lost? READ THE FUCKING DOCS!"
+    )
 
 
 @app.on_message(filters.command("runs") & ~filters.edited)
 async def runs(_, message):
-    await message.reply_text((await random_line("wbb/utils/runs.txt")))
+    await message.reply_text(
+        (await random_line("wbb/utils/runs.txt"))
+    )
 
 
 @app.on_message(filters.command("id"))
 async def getid(_, message):
     if len(message.command) == 2:
         try:
-            id = (await app.get_users(message.text.split(None, 1)[1].strip())).id
+            id = (
+                await app.get_users(
+                    message.text.split(None, 1)[1].strip()
+                )
+            ).id
         except Exception:
             return await message.reply_text("No Such User")
         text = f"**ID:** `{id}`"
         return await message.reply_text(text, parse_mode="html")
     text_unping = "<b>Chat ID:</b>"
     if message.chat.username:
-        text_unping = (
-            f'<a href="https://t.me/{message.chat.username}">{text_unping}</a>'
-        )
+        text_unping = f'<a href="https://t.me/{message.chat.username}">{text_unping}</a>'
     text_unping += f" <code>{message.chat.id}</code>\n"
     text = "<b>Message ID:</b>"
     if message.link:
@@ -115,9 +123,7 @@ async def getid(_, message):
             text_unping += "\n"
             text = "<b>Forwarded User ID:</b>"
             if reply.forward_from.username:
-                text = (
-                    f'<a href="https://t.me/{reply.forward_from.username}">{text}</a>'
-                )
+                text = f'<a href="https://t.me/{reply.forward_from.username}">{text}</a>'
             text += f" <code>{reply.forward_from.id}</code>\n"
             text_unping += text
             text_ping += f'\n<b><a href="tg://user?id={reply.forward_from.id}">Forwarded User ID:</a></b> <code>{reply.forward_from.id}</code>\n'
@@ -146,10 +152,14 @@ async def random(_, message):
     try:
         if 1 < int(length) < 1000:
             alphabet = string.ascii_letters + string.digits
-            password = "".join(secrets.choice(alphabet) for i in range(int(length)))
+            password = "".join(
+                secrets.choice(alphabet) for i in range(int(length))
+            )
             await message.reply_text(f"`{password}`")
         else:
-            await message.reply_text("Specify A Length Between 1-1000")
+            await message.reply_text(
+                "Specify A Length Between 1-1000"
+            )
     except ValueError:
         await message.reply_text(
             "Strings Won't Work!, Pass A Positive Integer Less Than 1000"
@@ -163,7 +173,9 @@ async def random(_, message):
 @capture_err
 async def encrypt(_, message):
     if not message.reply_to_message:
-        return await message.reply_text("Reply To A Message To Encrypt It.")
+        return await message.reply_text(
+            "Reply To A Message To Encrypt It."
+        )
     text = message.reply_to_message.text
     text_in_bytes = bytes(text, "utf-8")
     cipher_suite = Fernet(FERNET_ENCRYPTION_KEY)
@@ -179,7 +191,9 @@ async def encrypt(_, message):
 @capture_err
 async def decrypt(_, message):
     if not message.reply_to_message:
-        return await message.reply_text("Reply To A Message To Decrypt It.")
+        return await message.reply_text(
+            "Reply To A Message To Decrypt It."
+        )
     text = message.reply_to_message.text
     text_in_bytes = bytes(text, "utf-8")
     cipher_suite = Fernet(FERNET_ENCRYPTION_KEY)
@@ -192,7 +206,9 @@ async def decrypt(_, message):
 
 
 async def fetch_text(url):
-    async with aiohttp.ClientSession(headers={"user-agent": "curl"}) as session:
+    async with aiohttp.ClientSession(
+        headers={"user-agent": "curl"}
+    ) as session:
         async with session.get(url) as resp:
             data = await resp.text()
     return data
@@ -212,7 +228,9 @@ async def cheat(_, message):
         ftext = text.split()
         language = ftext[0]
         query = ftext[1]
-        data = await fetch_text(f"http://cht.sh/{language}/{query}?QT")
+        data = await fetch_text(
+            f"http://cht.sh/{language}/{query}?QT"
+        )
         if not data:
             return await m.edit("Found Literally Nothing!")
         await m.edit(f"`{data}`")
@@ -240,7 +258,9 @@ async def tr(_, message):
     reply = message.reply_to_message
     text = reply.text or reply.caption
     if not text:
-        return await message.reply_text("Reply to a text to translate it")
+        return await message.reply_text(
+            "Reply to a text to translate it"
+        )
     result = await arq.translate(text, lang)
     if not result.ok:
         return await message.reply_text(result.result)
@@ -273,7 +293,9 @@ async def json_fetch(_, message):
 @capture_err
 async def take_ss(_, message):
     if len(message.command) != 2:
-        return await message.reply_text("Give A Url To Fetch Screenshot.")
+        return await message.reply_text(
+            "Give A Url To Fetch Screenshot."
+        )
     url = message.text.split(None, 1)[1]
     m = await message.reply_text("**Uploading**")
     try:
