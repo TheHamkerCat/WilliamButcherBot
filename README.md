@@ -104,7 +104,7 @@ SOFTWARE.
 ```
 
 ## Note
-Tsuzumi Bot can be found here [Tsuzumi](https://telegram.me/TsuzumiBot)
-    Tsuzumi is a custom fork of WilliamButcherBot. Thanks to TheHamkerCat. 
+Tsuzumi Bot can be found here [Tsuzumi](https://telegram.me/TsuzumiBot) 😎
+    Tsuzumi is a custom fork of WilliamButcherBot. Thanks to TheHamkerCat. 😀
     [Original WilliamButcherBot Repo](https://github.com/Nisarga-Developer/WilliamButcherBot)
     
