@@ -32,9 +32,6 @@ from pyrogram.types import Message
 
 from wbb import app
 
-__MODULE__ = "TTS"
-__HELP__ = "/tts - Convert Text To Speech."
-
 
 def convert(text):
     audio = BytesIO()

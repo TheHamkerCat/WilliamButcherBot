@@ -60,7 +60,7 @@ async def save_filters(_, message):
     name = message.text.split(None, 1)[1].strip()
     if not name:
         return await message.reply_text(
-            "**Usage**\n__/filter [FILTER_NAME]__"
+            "**Usage:**\n__/filter [FILTER_NAME]__"
         )
     chat_id = message.chat.id
     _type = "text" if message.reply_to_message.text else "sticker"
@@ -96,12 +96,12 @@ async def get_filterss(_, message):
 async def del_filter(_, message):
     if len(message.command) < 2:
         return await message.reply_text(
-            "**Usage**\n__/stop [FILTER_NAME]__"
+            "**Usage:**\n__/stop [FILTER_NAME]__"
         )
     name = message.text.split(None, 1)[1].strip()
     if not name:
         return await message.reply_text(
-            "**Usage**\n__/stop [FILTER_NAME]__"
+            "**Usage:**\n__/stop [FILTER_NAME]__"
         )
     chat_id = message.chat.id
     deleted = await delete_filter(chat_id, name)

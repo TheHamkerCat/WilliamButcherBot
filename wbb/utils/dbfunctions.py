@@ -26,6 +26,13 @@ from typing import Dict, List, Union
 from wbb import db
 from wbb.utils.functions import obj_to_str, str_to_obj
 
+"""
+SOME THINGS ARE FUCKED UP HERE, LIKE TOGGLEABLES HAVE THEIR OWN COLLECTION
+(SHOULD FIX IT WITH SOMETHING LIKE TOGGLEDB, BUT I WON'T, AS IT WILL TAKE 
+TOO MUCH TIME AND WILL BE BAD FOR ALREADY STORED DATA)
+"""
+
+
 notesdb = db.notes
 filtersdb = db.filters
 warnsdb = db.warns
@@ -46,6 +53,8 @@ sudoersdb = db.sudoers
 blacklist_chatdb = db.blacklistChat
 restart_stagedb = db.restart_stage
 trustdb = db.trust
+flood_toggle_db = db.flood_toggle
+spam_toggle_db = db.spam_toggle
 
 """ Notes functions """
 
@@ -788,3 +797,51 @@ async def update_trust_db(user_id: int, new_data: float):
         {"$set": {"data": data}},
         upsert=True,
     )
+
+
+"""SPAM DETECTION System"""
+
+
+async def is_spam_detection_on(chat_id: int) -> bool:
+    chat = await spam_toggle_db.find_one({"chat_id": chat_id})
+    if not chat:
+        return True
+    return False
+
+
+async def spam_detection_on(chat_id: int):
+    is_on = await is_spam_detection_on(chat_id)
+    if is_on:
+        return
+    return await spam_toggle_db.delete_one({"chat_id": chat_id})
+
+
+async def spam_detection_off(chat_id: int):
+    is_on = await is_spam_detection_on(chat_id)
+    if not is_on:
+        return
+    return await spam_toggle_db.insert_one({"chat_id": chat_id})
+
+
+"""FLOOD System"""
+
+
+async def is_flood_on(chat_id: int) -> bool:
+    chat = await flood_toggle_db.find_one({"chat_id": chat_id})
+    if not chat:
+        return True
+    return False
+
+
+async def flood_on(chat_id: int):
+    is_flood = await is_flood_on(chat_id)
+    if is_flood:
+        return
+    return await flood_toggle_db.delete_one({"chat_id": chat_id})
+
+
+async def flood_off(chat_id: int):
+    is_flood = await is_flood_on(chat_id)
+    if not is_flood:
+        return
+    return await flood_toggle_db.insert_one({"chat_id": chat_id})

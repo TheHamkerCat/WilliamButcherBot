@@ -26,8 +26,12 @@ from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
                             InlineKeyboardMarkup, Message)
 
 from wbb import LOG_GROUP_ID, SUDOERS, app
+from wbb.core.decorators.permissions import adminsOnly
 from wbb.modules.admin import list_admins, member_permissions
 from wbb.modules.trust import get_spam_data
+from wbb.utils.dbfunctions import (is_spam_detection_on,
+                                   spam_detection_off,
+                                   spam_detection_on)
 from wbb.utils.filter_groups import spam_protection_group
 
 __MODULE__ = "AntiSpam"
@@ -44,7 +48,10 @@ __HELP__ = """
         To mark a message as spam, this will help devs to
         improve spam protection algorithm.
 
-As of now, you cannot turn this off, but we'll add an enable/disable command in the future
+    - /spam_detection [ENABLE|DISABLE]
+        To turn off spam detection in your chat.
+
+**Plot Twist:** NO, WE'RE NOT USING INTELLIVOID'S SPAM DETECTION API!
 """
 
 
@@ -62,6 +69,9 @@ async def spam_protection_func(_, message: Message):
     # We'll handle admins only if it's spam, ignore only sudo users for now.
     if user.id in SUDOERS:
         return
+    enabled = await is_spam_detection_on(chat_id)
+    if not enabled:
+        return
     data = await get_spam_data(message, text)
     if isinstance(data, str):
         return
@@ -70,7 +80,7 @@ async def spam_protection_func(_, message: Message):
     if user.id in (await list_admins(chat_id)):
         return
     text = f"""
-🚨  **SPAM DETECTED** 🚨
+🚨  **SPAM DETECTED**  🚨
 
 **User:** {user.mention}
 **Message:** [Link]({message.link})
@@ -166,7 +176,7 @@ async def spam_flag_func(_, message: Message):
         )
 
     msg = f"""
-**ADMINS OF {message.chat.id} FLAGGED THIS MESSAGE AS SPAM**
+**ADMINS OF {message.chat.id} FLAGGED THIS MESSAGE AS SPAM. [Suggestion]**
 
 ```
 {text.markdown}
@@ -180,3 +190,25 @@ __{dev_forward}__
     await app.send_message(
         LOG_GROUP_ID, msg, disable_web_page_preview=True
     )
+
+
+@app.on_message(filters.command("spam_detection") & ~filters.private)
+@adminsOnly("can_change_info")
+async def spam_toggle(_, message: Message):
+    if len(message.command) != 2:
+        return await message.reply_text(
+            "Usage: /spam_detection [ENABLE|DISABLE]"
+        )
+    status = message.text.split(None, 1)[1].strip()
+    status = status.lower()
+    chat_id = message.chat.id
+    if status == "enable":
+        await spam_detection_on(chat_id)
+        await message.reply_text("Enabled Spam Detection System.")
+    elif status == "disable":
+        await spam_detection_off(chat_id)
+        await message.reply_text("Disabled Spam Detection System.")
+    else:
+        await message.reply_text(
+            "Unknown Suffix, Use /spam_detection [ENABLE|DISABLE]"
+        )
