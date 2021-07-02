@@ -37,7 +37,7 @@ from wbb.utils.formatter import \
 from wbb.utils.functions import downloader
 
 __MODULE__ = "YoutubeDL"
-__HELP__ = "/ytdl [VIDEO_LINK] - Download a youtube video."
+__HELP__ = "/ytdl [VIDEO_LINK] - Download a youtube video. This command might not work yet."
 
 
 VIDEO_DATA = {}

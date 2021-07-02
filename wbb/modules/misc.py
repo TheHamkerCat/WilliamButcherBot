@@ -44,13 +44,15 @@ __HELP__ = """
 /encrypt - Encrypt Text [Can Only Be Decrypted By This Bot]
 /decrypt - Decrypt Text
 /cheat [Language] [Query] - Get Programming Related Help
+/hehe - Test it yourself
+/date - Get Date & Time
+/whatdoesthebotsay - What does the bot say? It's a mystery
 /tr [en] - Translate A Message
 /json [URL] - Get JSON Response From An API or Something.
 /arq - Statistics Of ARQ API.
 /webss [URL] - Take A Screenshot Of A Webpage
 /reverse - Reverse search an image.
 /carbon - Make Carbon from code.
-#RTFM - Tell noobs to read the manual
 """
 
 
@@ -59,6 +61,12 @@ async def commit(_, message):
     await message.reply_text(
         await get("http://whatthecommit.com/index.txt")
     )
+
+@app.on_message(filters.command("date") & ~filters.edited)
+async def date(_, message):
+    await message.reply_text(
+        await get("https://timeanddateapi.vercel.app/api/date.ts")
+    )    
 
 
 @app.on_message(filters.command("RTFM", "#"))
@@ -75,6 +83,24 @@ async def rtfm(_, message):
 async def runs(_, message):
     await message.reply_text(
         (await random_line("wbb/utils/runs.txt"))
+    )
+
+@app.on_message(filters.command("hehe") & ~filters.edited)
+async def hehe(_, message):
+    await message.reply_text(
+        (await random_line("wbb/utils/hehe.txt"))
+    )
+
+@app.on_message(filters.command("whatdoesthebotsay") & ~filters.edited)
+async def whatdoesthebotsay(_, message):
+    await message.reply_text(
+        (await random_line("wbb/utils/whatdoesthebotsay.txt"))
+    )
+
+@app.on_message(filters.command("test_command_unknown") & ~filters.edited)
+async def test_command_unknown(_, message):
+    await message.reply_text(
+        (await random_line("wbb/utils/hehe.txt"))
     )
 
 
