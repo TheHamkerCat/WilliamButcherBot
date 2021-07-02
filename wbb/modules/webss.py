@@ -25,6 +25,7 @@ from pyrogram import filters
 
 from wbb import app
 from wbb.core.decorators.errors import capture_err
+from pyrogram.types import Message
 
 __MODULE__ = "WebSS"
 __HELP__ = "/webss | .webss [URL] - Take A Screenshot Of A Webpage"
@@ -32,7 +33,7 @@ __HELP__ = "/webss | .webss [URL] - Take A Screenshot Of A Webpage"
 
 @app.on_message(filters.command("webss"))
 @capture_err
-async def take_ss(_, message):
+async def take_ss(_, message: Message):
     try:
         if len(message.command) != 2:
             return await message.reply_text(
@@ -42,9 +43,9 @@ async def take_ss(_, message):
         m = await message.reply_text("**Taking Screenshot**")
         await m.edit("**Uploading**")
         try:
-            await app.send_photo(
-                message.chat.id,
+            await message.reply_photo(
                 photo=f"https://webshot.amanoteam.com/print?q={url}",
+                quote=False,
             )
         except TypeError:
             return await m.edit("No Such Website.")

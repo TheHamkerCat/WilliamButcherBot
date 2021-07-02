@@ -168,10 +168,18 @@ async def pmpermit_cq(_, cq):
         if user_id != USERBOT_ID:
             return await cq.answer("This Button Is Not For You")
         await approve_pmpermit(int(victim))
-        await app.edit_inline_text(
+        return await app.edit_inline_text(
             cq.inline_message_id, "User Has Been Approved To PM."
         )
-        return
+    
+    if data == "block":
+        if user_id != USERBOT_ID:
+            return await cq.answer("This Button Is Not For You")
+        await app.edit_inline_text(
+            cq.inline_message_id, "Successfully blocked the user."
+        )
+        return await app2.block_user(int(victim))
+
     if user_id == USERBOT_ID:
         return await cq.answer("It's For The Other Person.")
 

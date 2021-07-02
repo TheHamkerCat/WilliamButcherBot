@@ -44,13 +44,13 @@ __HELP__ = """
 /encrypt - Encrypt Text [Can Only Be Decrypted By This Bot]
 /decrypt - Decrypt Text
 /cheat [Language] [Query] - Get Programming Related Help
-/weather [City] - To Get Weather Info
 /tr [en] - Translate A Message
 /json [URL] - Get JSON Response From An API or Something.
 /arq - Statistics Of ARQ API.
 /webss [URL] - Take A Screenshot Of A Webpage
 /reverse - Reverse search an image.
 /carbon - Make Carbon from code.
+/tts - Convert Text To Speech.
 #RTFM - Tell noobs to read the manual
 """
 
