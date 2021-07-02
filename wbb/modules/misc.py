@@ -1,18 +1,14 @@
 """
 MIT License
-
 Copyright (c) 2021 TheHamkerCat
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -44,15 +40,14 @@ __HELP__ = """
 /encrypt - Encrypt Text [Can Only Be Decrypted By This Bot]
 /decrypt - Decrypt Text
 /cheat [Language] [Query] - Get Programming Related Help
-/hehe - Test it yourself
-/date - Get Date & Time
-/whatdoesthebotsay - What does the bot say? It's a mystery
 /tr [en] - Translate A Message
 /json [URL] - Get JSON Response From An API or Something.
 /arq - Statistics Of ARQ API.
 /webss [URL] - Take A Screenshot Of A Webpage
 /reverse - Reverse search an image.
 /carbon - Make Carbon from code.
+/tts - Convert Text To Speech.
+#RTFM - Tell noobs to read the manual
 """
 
 
@@ -61,12 +56,6 @@ async def commit(_, message):
     await message.reply_text(
         await get("http://whatthecommit.com/index.txt")
     )
-
-@app.on_message(filters.command("date") & ~filters.edited)
-async def date(_, message):
-    await message.reply_text(
-        await get("https://timeanddateapi.vercel.app/api/date.ts")
-    )    
 
 
 @app.on_message(filters.command("RTFM", "#"))
@@ -83,24 +72,6 @@ async def rtfm(_, message):
 async def runs(_, message):
     await message.reply_text(
         (await random_line("wbb/utils/runs.txt"))
-    )
-
-@app.on_message(filters.command("hehe") & ~filters.edited)
-async def hehe(_, message):
-    await message.reply_text(
-        (await random_line("wbb/utils/hehe.txt"))
-    )
-
-@app.on_message(filters.command("whatdoesthebotsay") & ~filters.edited)
-async def whatdoesthebotsay(_, message):
-    await message.reply_text(
-        (await random_line("wbb/utils/whatdoesthebotsay.txt"))
-    )
-
-@app.on_message(filters.command("test_command_unknown") & ~filters.edited)
-async def test_command_unknown(_, message):
-    await message.reply_text(
-        (await random_line("wbb/utils/hehe.txt"))
     )
 
 
