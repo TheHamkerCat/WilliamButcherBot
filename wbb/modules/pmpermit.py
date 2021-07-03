@@ -171,7 +171,7 @@ async def pmpermit_cq(_, cq):
         return await app.edit_inline_text(
             cq.inline_message_id, "User Has Been Approved To PM."
         )
-    
+
     if data == "block":
         if user_id != USERBOT_ID:
             return await cq.answer("This Button Is Not For You")

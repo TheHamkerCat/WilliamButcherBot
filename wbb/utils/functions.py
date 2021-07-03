@@ -255,7 +255,7 @@ async def test_ARQ(message):
         "pornhub": arq.pornhub("something"),
         "proxy": arq.proxy(),
         "pypi": arq.pypi("python-arq"),
-        "reddit": arq.reddit("porn"),
+        "reddit": arq.reddit("badcode"),
         "quotly": arq.quotly(message),
         "saavn": arq.saavn("attention"),
         "stats": arq.stats(),

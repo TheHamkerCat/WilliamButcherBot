@@ -36,3 +36,4 @@ chat_watcher_group = 12
 trust_group = 13
 flood_group = 14
 spam_protection_group = 15
+autocorrect_group = 16
