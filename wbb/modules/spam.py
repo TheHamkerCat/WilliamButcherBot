@@ -25,10 +25,11 @@ from pyrogram import filters
 from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
                             InlineKeyboardMarkup, Message)
 
-from wbb import LOG_GROUP_ID, SUDOERS, app
+from wbb import LOG_GROUP_ID, SUDOERS, app, app2, arq, USERBOT_PREFIX
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.modules.admin import list_admins, member_permissions
 from wbb.modules.trust import get_spam_data
+from wbb.modules.userbot import edit_or_reply
 from wbb.utils.dbfunctions import (is_spam_detection_on,
                                    spam_detection_off,
                                    spam_detection_on)
@@ -212,3 +213,23 @@ async def spam_toggle(_, message: Message):
         await message.reply_text(
             "Unknown Suffix, Use /spam_detection [ENABLE|DISABLE]"
         )
+
+@app.on_message(filters.command("spam_scan"))
+@app2.on_message(filters.command("spam_scan", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS))
+async def scanNLP(_, message: Message):
+    if not message.reply_to_message:
+        return await edit_or_reply(message, text="Reply to a message to scan it.")
+    r = message.reply_to_message
+    text = r.text or r.caption
+    if not text:
+       return await edit_or_reply(message, text="Can't scan that")
+    data = await arq.nlp(text)
+    data = data.result[0]
+    msg = f"""
+**Is Spam:** {data.is_spam}
+**Spam Probability:** {data.spam_probability} %
+**Spam:** {data.spam}
+**Ham:** {data.ham}
+**Profanity:** {data.profanity}
+"""
+    await edit_or_reply(message, text=msg)
