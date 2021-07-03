@@ -48,7 +48,7 @@ async def autocorrect_ubot_toggle(_, message: Message):
         await message.edit("Enabled!")
     elif state == "disable":
         IS_ENABLED = False
-        await message.edit("Enabled!")
+        await message.edit("Disabled!")
     else:
         return await message.edit(
             "Wrong argument, Pass (ENABLE|DISABLE)."
@@ -56,7 +56,10 @@ async def autocorrect_ubot_toggle(_, message: Message):
 
 
 @app2.on_message(
-    filters.text & filters.user(USERBOT_ID), group=autocorrect_group
+    filters.text
+    & ~filters.edited
+    & filters.user(USERBOT_ID),
+    group=autocorrect_group
 )
 async def autocorrect_ubot(_, message: Message):
     if not IS_ENABLED:
