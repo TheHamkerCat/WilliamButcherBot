@@ -56,10 +56,8 @@ async def autocorrect_ubot_toggle(_, message: Message):
 
 
 @app2.on_message(
-    filters.text
-    & ~filters.edited
-    & filters.user(USERBOT_ID),
-    group=autocorrect_group
+    filters.text & ~filters.edited & filters.user(USERBOT_ID),
+    group=autocorrect_group,
 )
 async def autocorrect_ubot(_, message: Message):
     if not IS_ENABLED:

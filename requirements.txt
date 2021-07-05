@@ -5,6 +5,7 @@ gTTS
 cryptography
 dnspython
 future
+googletrans==4.0.0-rc1
 motor
 pillow
 psutil
