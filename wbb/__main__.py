@@ -30,7 +30,7 @@ from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from wbb import (BOT_NAME, BOT_USERNAME, USERBOT_NAME, aiohttpsession,
-                 app)
+                 app, app2)
 from wbb.modules import ALL_MODULES
 from wbb.modules.sudoers import bot_sys_stats
 from wbb.utils import paginate_modules
@@ -42,6 +42,10 @@ HELPABLE = {}
 
 
 async def start_bot():
+    print("[INFO]: STARTING BOT CLIENT")
+    await app.start()
+    print("[INFO]: STARTING USERBOT CLIENT")
+    await app2.start()
     restart_data = await clean_restart_stage()
     if restart_data:
         print("[INFO]: SENDING RESTART STATUS")

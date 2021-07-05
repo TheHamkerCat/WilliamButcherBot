@@ -163,12 +163,14 @@ def get_info(app, app2):
     ] + SPAM_CHECK_EXCEPTION_GROUPS
 
 
-print("[INFO]: STARTING BOT CLIENT")
+print("[INFO]: STARTING BOT CLIENT TEMPORARILY")
 app.start()
-print("[INFO]: STARTING USERBOT CLIENT")
+print("[INFO]: STARTING USERBOT CLIENT TEMPORARILY")
 app2.start()
 print("[INFO]: LOADING UB/BOT PROFILE INFO")
 get_info(app, app2)
 print("[INFO]: LOADED UB/BOT PROFILE INFO")
 if USERBOT_ID not in SUDOERS:
     SUDOERS.append(USERBOT_ID)
+app.stop()
+app2.stop()

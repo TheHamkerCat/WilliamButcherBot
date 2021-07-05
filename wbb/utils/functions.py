@@ -141,7 +141,7 @@ async def make_carbon(code):
 
 
 async def transfer_sh(file_or_message):
-    if is_instance(file_or_message, Message):
+    if isinstance(file_or_message, Message):
         file_or_message = await file_or_message.download()
     file = file_or_message
     async with aiofiles.open(file, "rb") as f:
@@ -276,7 +276,7 @@ async def test_ARQ(message):
             if result.ok:
                 results += f"**{key.capitalize()}:** `{t2-t1}`\n"
             else:
-                resuls += f"**{key.capitalize()}:** `Failed`\n"
+                results += f"**{key.capitalize()}:** `Failed`\n"
         except Exception:
             results += f"**{key.capitalize()}:** `Failed`\n"
     return results
