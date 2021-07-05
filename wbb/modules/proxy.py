@@ -6,6 +6,10 @@ from pyrogram.types import CallbackQuery, Message
 from wbb import app, arq
 from wbb.core.keyboard import ikb
 
+__MODULE__ = "Proxy"
+__HELP__ = "/proxy - Get socks5 proxy which you can" \
+           + " use with telegram or other things"
+
 proxies = []
 
 
