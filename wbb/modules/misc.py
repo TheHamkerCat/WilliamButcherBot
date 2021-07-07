@@ -81,67 +81,26 @@ async def runs(_, message):
 
 @app.on_message(filters.command("id"))
 async def getid(_, message):
-    if len(message.command) == 2:
-        try:
-            id = (
-                await app.get_users(
-                    message.text.split(None, 1)[1].strip()
-                )
-            ).id
-        except Exception:
-            return await message.reply_text("No Such User")
-        text = f"**ID:** `{id}`"
-        return await message.reply_text(text, parse_mode="html")
-    text_unping = "<b>Chat ID:</b>"
-    if message.chat.username:
-        text_unping = f'<a href="https://t.me/{message.chat.username}">{text_unping}</a>'
-    text_unping += f" <code>{message.chat.id}</code>\n"
-    text = "<b>Message ID:</b>"
-    if message.link:
-        text = f'<a href="{message.link}">{text}</a>'
-    text += f" <code>{message.message_id}</code>\n"
-    text_unping += text
-    if message.from_user:
-        text_unping += f'<b><a href="tg://user?id={message.from_user.id}">User ID:</a></b> <code>{message.from_user.id}</code>\n'
-    text_ping = text_unping
+    chat = message.chat
+    your_id = message.from_user.id
+    message_id = message.message_id
     reply = message.reply_to_message
+    text = f"**[Message ID:]({message.link})** `{message_id}`\n"
+    text += f"**[Your ID:](tg://user?id={your_id})** `{your_id}`\n"
+    if len(message.command) == 2:
+        split = message.text.split(None, 1)[1].strip()
+        user_id = (await app.get_users(split)).id
+        text += f"**[User ID:](tg://user?id={user_id})** `{user_id}`\n"
+    text += f"**[Chat ID:](https://t.me/{chat.username})** `{chat.id}`\n\n"
     if not getattr(reply, "empty", True):
-        text_unping += "\n"
-        text = "<b>Replied Message ID:</b>"
-        if reply.link:
-            text = f'<a href="{reply.link}">{text}</a>'
-        text += f" <code>{reply.message_id}</code>\n"
-        text_unping += text
-        text_ping = text_unping
-        if reply.from_user:
-            text = "<b>Replied User ID:</b>"
-            if reply.from_user.username:
-                text = f'<a href="https://t.me/{reply.from_user.username}">{text}</a>'
-            text += f" <code>{reply.from_user.id}</code>\n"
-            text_unping += text
-            text_ping += f'<b><a href="tg://user?id={reply.from_user.id}">Replied User ID:</a></b> <code>{reply.from_user.id}</code>\n'
-        if reply.forward_from:
-            text_unping += "\n"
-            text = "<b>Forwarded User ID:</b>"
-            if reply.forward_from.username:
-                text = f'<a href="https://t.me/{reply.forward_from.username}">{text}</a>'
-            text += f" <code>{reply.forward_from.id}</code>\n"
-            text_unping += text
-            text_ping += f'\n<b><a href="tg://user?id={reply.forward_from.id}">Forwarded User ID:</a></b> <code>{reply.forward_from.id}</code>\n'
-    reply = await message.reply_text(
-        text_unping, disable_web_page_preview=True, parse_mode="html"
+        text += f"**[Replied Message ID:]({reply.link})** `{reply.message_id}`\n"
+        text += f"**[Replied User ID:](tg://user?id={reply.from_user.id})** `{reply.from_user.id}`"
+    await message.reply_text(
+        text, disable_web_page_preview=True, parse_mode="md"
     )
-    if text_unping != text_ping:
-        await reply.edit_text(
-            text_ping,
-            disable_web_page_preview=True,
-            parse_mode="html",
-        )
 
 
 # Random
-
-
 @app.on_message(filters.command("random") & ~filters.edited)
 @capture_err
 async def random(_, message):
@@ -168,8 +127,6 @@ async def random(_, message):
 
 
 # Encrypt
-
-
 @app.on_message(filters.command("encrypt") & ~filters.edited)
 @capture_err
 async def encrypt(_, message):
@@ -186,8 +143,6 @@ async def encrypt(_, message):
 
 
 # Decrypt
-
-
 @app.on_message(filters.command("decrypt") & ~filters.edited)
 @capture_err
 async def decrypt(_, message):
@@ -216,8 +171,6 @@ async def fetch_text(url):
 
 
 # Cheat.sh
-
-
 @app.on_message(filters.command("cheat") & ~filters.edited)
 @capture_err
 async def cheat(_, message):
@@ -241,8 +194,6 @@ async def cheat(_, message):
 
 
 # Translate
-
-
 @app.on_message(filters.command("tr") & ~filters.edited)
 @capture_err
 async def tr(_, message):
