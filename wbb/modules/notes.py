@@ -32,7 +32,7 @@ from wbb.utils.dbfunctions import (delete_note, get_note,
 __MODULE__ = "Notes"
 __HELP__ = """/notes To Get All The Notes In The Chat.
 /save [NOTE_NAME] To Save A Note (Can be a sticker or text).
-/get [NOTE_NAME] To Get A Note.
+#NOTE_NAME To Get A Note.
 /delete [NOTE_NAME] To Delete A Note."""
 
 
@@ -83,33 +83,26 @@ async def get_notes(_, message):
         msg = f"List of notes in {message.chat.title}\n"
         for note in _notes:
             msg += f"**-** `{note}`\n"
-        msg += "Use **/get note_name** to get a note."
         await message.reply_text(msg)
 
 
 @app.on_message(
-    filters.command("get") & ~filters.edited & ~filters.private
+    filters.regex(r"^#.+") & ~filters.edited & ~filters.private
 )
 @capture_err
 async def get_one_note(_, message):
-    if len(message.command) < 2:
-        await message.reply_text("**Usage**\n__/get [NOTE_NAME]__")
+    name = message.text.replace("#", "", 1)
+    if not name:
+        return
+    _note = await get_note(message.chat.id, name)
+    if not _note:
+        return
+    if _note["type"] == "text":
+        await message.reply_text(
+            _note["data"], disable_web_page_preview=True
+        )
     else:
-        name = message.text.split(None, 1)[1].strip()
-        if not name:
-            return await message.reply_text(
-                "**Usage**\n__/get [NOTE_NAME]__"
-            )
-        _note = await get_note(message.chat.id, name)
-        if not _note:
-            await message.reply_text("**No such note.**")
-        else:
-            if _note["type"] == "text":
-                await message.reply_text(
-                    _note["data"], disable_web_page_preview=True
-                )
-            else:
-                await message.reply_sticker(_note["data"])
+        await message.reply_sticker(_note["data"])
 
 
 @app.on_message(
