@@ -96,7 +96,7 @@ async def getid(_, message):
             )
         except Exception:
             return await message.reply_text(
-                "Didn't find this user"
+                "This user doesn't exist."
             )
     text += f"**[Chat ID:](https://t.me/{chat.username})** `{chat.id}`\n\n"
     if not getattr(reply, "empty", True):
