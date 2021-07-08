@@ -29,6 +29,7 @@ __HELP__ = """
 .sh - Execute Shell Code.
 .approve | .disapprove - Approve Or Disapprove A User To PM You.
 .block | .unblock - Block Or Unblock A User.
+.create (b|s|c) Name - create [basic|super]group & channel
 """
 
 # Eval and Sh module from nana-remix
