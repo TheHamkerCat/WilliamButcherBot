@@ -88,11 +88,16 @@ async def getid(_, message):
     text = f"**[Message ID:]({message.link})** `{message_id}`\n"
     text += f"**[Your ID:](tg://user?id={your_id})** `{your_id}`\n"
     if len(message.command) == 2:
-        split = message.text.split(None, 1)[1].strip()
-        user_id = (await app.get_users(split)).id
-        text += (
-            f"**[User ID:](tg://user?id={user_id})** `{user_id}`\n"
-        )
+        try:
+            split = message.text.split(None, 1)[1].strip()
+            user_id = (await app.get_users(split)).id
+            text += (
+                f"**[User ID:](tg://user?id={user_id})** `{user_id}`\n"
+            )
+        except Exception:
+            return await message.reply_text(
+                "This user doesn't exist."
+            )
     text += f"**[Chat ID:](https://t.me/{chat.username})** `{chat.id}`\n\n"
     if not getattr(reply, "empty", True):
         text += f"**[Replied Message ID:]({reply.link})** `{reply.message_id}`\n"
