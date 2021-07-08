@@ -1,4 +1,5 @@
 from pyrogram import filters
+
 from wbb import BOT_USERNAME, SUDOERS, USERBOT_PREFIX, app2
 from wbb.modules.userbot import edit_or_reply
 
@@ -27,6 +28,7 @@ async def create(_, message):
         await edit_or_reply(
             message,
             text=f"**Basicgroup Created: [{group_name}]({link['invite_link']})**",
+            disable_web_page_preview=True,
         )
     elif group_type == "s":  # for supergroup
         _id = await app2.create_supergroup(group_name, desc)
@@ -34,6 +36,7 @@ async def create(_, message):
         await edit_or_reply(
             message,
             text=f"**Supergroup Created: [{group_name}]({link['invite_link']})**",
+            disable_web_page_preview=True,
         )
     elif group_type == "c":  # for channel
         _id = await app2.create_channel(group_name, desc)
@@ -41,4 +44,5 @@ async def create(_, message):
         await edit_or_reply(
             message,
             text=f"**Channel Created: [{group_name}]({link['invite_link']})**",
+            disable_web_page_preview=True,
         )

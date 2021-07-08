@@ -90,7 +90,9 @@ async def getid(_, message):
     if len(message.command) == 2:
         split = message.text.split(None, 1)[1].strip()
         user_id = (await app.get_users(split)).id
-        text += f"**[User ID:](tg://user?id={user_id})** `{user_id}`\n"
+        text += (
+            f"**[User ID:](tg://user?id={user_id})** `{user_id}`\n"
+        )
     text += f"**[Chat ID:](https://t.me/{chat.username})** `{chat.id}`\n\n"
     if not getattr(reply, "empty", True):
         text += f"**[Replied Message ID:]({reply.link})** `{reply.message_id}`\n"

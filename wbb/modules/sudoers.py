@@ -333,11 +333,14 @@ async def broadcast_message(_, message):
 
 @app.on_message(filters.command("update") & filters.user(SUDOERS))
 async def update_restart(_, message):
-    await message.reply_text(
-        f'```{subprocess.check_output(["git", "pull"]).decode("UTF-8")}```'
-    )
+    try:
+        await message.reply_text(
+            f'```{subprocess.check_output(["git", "pull"]).decode("UTF-8")}```'
+        )
+    except Exception as e:
+        return await message.reply_text(str(e))
     m = await message.reply_text(
-        "**Updated with default branch, restarting now**"
+        "**Updated with default branch, restarting now.**"
     )
     await start_restart_stage(m.chat.id, m.message_id)
-    os.execvp("python3", ["python3", "-m", "wbb"])
+    os.execvp("python3.9", ["python3.9", "-m", "wbb"])
