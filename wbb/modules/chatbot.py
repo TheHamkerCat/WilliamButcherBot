@@ -109,6 +109,8 @@ async def chatbot_talk(_, message: Message):
         return
     if not message.reply_to_message:
         return
+    if not message.reply_to_message.from_user:
+        return
     if message.reply_to_message.from_user.id != BOT_ID:
         return
     await type_and_send(message)

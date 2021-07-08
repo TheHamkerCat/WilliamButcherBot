@@ -87,7 +87,10 @@ async def get_notes(_, message):
 
 
 @app.on_message(
-    filters.regex(r"^#.+") & ~filters.edited & ~filters.private
+    filters.regex(r"^#.+")
+    & filters.text
+    & ~filters.edited 
+    & ~filters.private
 )
 @capture_err
 async def get_one_note(_, message):
