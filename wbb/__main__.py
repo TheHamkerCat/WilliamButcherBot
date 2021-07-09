@@ -109,21 +109,21 @@ async def help_command(_, message):
             [
                 [
                     InlineKeyboardButton(
-                        text="Help ❓",
+                        text="Help",
                         url=f"t.me/{BOT_USERNAME}?start=help",
                     ),
                     InlineKeyboardButton(
-                        text="Repo 🛠",
+                        text="",
                         url="https://github.com/thehamkercat/WilliamButcherBot",
                     ),
                 ],
                 [
                     InlineKeyboardButton(
-                        text="System Stats 💻",
+                        text="",
                         callback_data="stats_callback",
                     ),
                     InlineKeyboardButton(
-                        text="Support 👨", url="t.me/WBBSupport"
+                        text="", url="t.me/WBBSupport"
                     ),
                 ],
             ]
@@ -136,25 +136,25 @@ async def help_command(_, message):
         [
             [
                 InlineKeyboardButton(
-                    text="Commands ❓", callback_data="bot_commands"
+                    text="", callback_data="bot_commands"
                 ),
                 InlineKeyboardButton(
-                    text="Repo 🛠",
+                    text="",
                     url="https://github.com/thehamkercat/WilliamButcherBot",
                 ),
             ],
             [
                 InlineKeyboardButton(
-                    text="System Stats 🖥",
+                    text="",
                     callback_data="stats_callback",
                 ),
                 InlineKeyboardButton(
-                    text="Support 👨", url="t.me/WBBSupport"
+                    text="", url="t.me/WBBSupport"
                 ),
             ],
             [
                 InlineKeyboardButton(
-                    text="Add Me To Your Group 🎉",
+                    text="Add me to your chat",
                     url=f"http://t.me/{BOT_USERNAME}?startgroup=new",
                 )
             ],
