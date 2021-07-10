@@ -54,7 +54,7 @@ async def get_user_info(user):
     spam_probab, n_messages = await get_spam_probability(user_id)
     isSpammer = (
         True
-        if spam_probab > 70
+        if spam_probab > 50
         else False
         if spam_probab != 0
         else "Uncertain"

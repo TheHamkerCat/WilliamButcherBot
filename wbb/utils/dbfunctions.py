@@ -787,7 +787,7 @@ async def update_trust_db(user_id: int, new_data: float):
     user = await trustdb.find_one({"user_id": user_id})
     data = user["data"] if user else []
     if len(data) >= 100:
-        data = data[:99]
+        data = data[1:100]
     data.append(new_data)
     data = [
         i for i in data if isinstance(i, float) or isinstance(i, int)
