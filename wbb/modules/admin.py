@@ -35,18 +35,26 @@ from wbb.utils.functions import extract_user, extract_user_and_reason
 
 __MODULE__ = "Admin"
 __HELP__ = """/ban - Ban A User
+/dban - Delete the replied message banning its sender
+/sban - Ban a user silently
 /unban - Unban A User
 /warn - Warn A User
+/dwarn - Delete the replied message warning its sender
+/swarn - Warn a user silently
 /rmwarn - Remove 1 Warning Of A User
 /rmwarns - Remove All Warning of A User
 /warns - Show Warning Of A User
 /kick - Kick A User
+/dkick - Delete the replied message banning its sender
+/skick - Kick a user silently
 /purge - Purge Messages
 /del - Delete Replied Message
 /promote - Promote A Member
 /demote - Demote A Member
 /pin - Pin A Message
 /mute - Mute A User
+/dmute - Delete the replied message muting its sender
+/smute - Mute a user silently
 /unmute - Unmute A User
 /ban_ghosts - Ban Deleted Accounts
 /report | @admins - Report A Message To Admins."""
