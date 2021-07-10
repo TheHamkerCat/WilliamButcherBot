@@ -168,7 +168,7 @@ async def purgeFunc(client, message: Message):
 
 
 @app.on_message(
-    filters.command("kick") & ~filters.edited & ~filters.private
+    filters.command(["kick", "skick", "dkick"]) & ~filters.edited & ~filters.private
 )
 @adminsOnly("can_restrict_members")
 async def kickFunc(_, message: Message):
@@ -193,7 +193,12 @@ async def kickFunc(_, message: Message):
 **Kicked By:** {message.from_user.mention if message.from_user else 'Anon'}
 **Reason:** {reason or 'No Reason Provided.'}"""
     await message.chat.kick_member(user_id)
-    await message.reply_text(msg)
+    if message.command[0][0] in ("s", "d"):
+        await message.reply_to_message.delete()
+    if message.command[0][0] == "s":
+        await message.delete()
+    if message.command[0][0] != "s":
+        await message.reply_text(msg)
     await asyncio.sleep(1)
     await message.chat.unban_member(user_id)
 
@@ -227,9 +232,11 @@ async def banFunc(_, message: Message):
 **Banned By:** {message.from_user.mention if message.from_user else 'Anon'}
 **Reason:** {reason or 'No Reason Provided.'}"""
     await message.chat.kick_member(user_id)
-    if message.command[0] in ["sban", "dban"]:
+    if message.command[0][0] in ("s", "d"):
+        await message.reply_to_message.delete()
+    if message.command[0][0] == "s":
         await message.delete()
-    if message.command[0] != "sban":
+    if message.command[0][0] != "s":
         await message.reply_text(msg)
 
 
@@ -433,7 +440,7 @@ async def ban_deleted_accounts(_, message: Message):
 
 
 @app.on_message(
-    filters.command("warn") & ~filters.edited & ~filters.private
+    filters.command(["warn", "swarn", "dwarn"]) & ~filters.edited & ~filters.private
 )
 @adminsOnly("can_restrict_members")
 async def warn_user(_, message: Message):
@@ -465,15 +472,18 @@ async def warn_user(_, message: Message):
         warns = warns["warns"]
     else:
         warns = 0
+    if message.command[0][0] in ('s', 'd'):
+        await message.reply_to_message.delete()
+    if message.command[0][0] == 's':
+        await message.delete()
     if warns >= 2:
-        _, __, alpha = await asyncio.gather(
-            message.chat.kick_member(user_id),
-            message.reply_text(
-                f"Number of warns of {mention} exceeded, BANNED!"
-            ),
-            int_to_alpha(user_id),
-        )
-        await remove_warns(chat_id, alpha)
+        await message.chat.kick_member(user_id)
+
+        if message.command[0][0] != 's':
+            await message.reply_text(
+                    f"Number of warns of {mention} exceeded, BANNED!"
+                )
+        await remove_warns(chat_id, await int_to_alpha(user_id))
     else:
         warn = {"warns": warns + 1}
         msg = f"""
@@ -481,7 +491,8 @@ async def warn_user(_, message: Message):
 **Warned By:** {message.from_user.mention if message.from_user else 'Anon'}
 **Reason:** {reason or 'No Reason Provided.'}
 **Warns:** {warns + 1}/3"""
-        await message.reply_text(msg, reply_markup=keyboard)
+        if message.command[0][0] != 's':
+            await message.reply_text(msg, reply_markup=keyboard)
         await add_warn(chat_id, await int_to_alpha(user_id), warn)
 
 
