@@ -45,7 +45,7 @@ __HELP__ = """/ban - Ban A User
 /rmwarns - Remove All Warning of A User
 /warns - Show Warning Of A User
 /kick - Kick A User
-/dkick - Delete the replied message banning its sender
+/dkick - Delete the replied message kicking its sender
 /skick - Kick a user silently
 /purge - Purge Messages
 /del - Delete Replied Message
