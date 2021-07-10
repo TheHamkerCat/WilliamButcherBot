@@ -272,20 +272,13 @@ async def wall_func(answers, text):
     return answers
 
 
-# Used my api key here, don't fuck it
 async def shortify(url):
     if "." not in url:
         return
-    header = {
-        "Authorization": "Bearer ad39983fa42d0b19e4534f33671629a4940298dc",
-        "Content-Type": "application/json",
-    }
-    payload = {"long_url": f"{url}"}
-    payload = json.dumps(payload)
+    params = dict(url=url)
     async with aiohttpsession.post(
-        "https://api-ssl.bitly.com/v4/shorten",
-        headers=header,
-        data=payload,
+        "https://s.itayki.com/api/add",
+        params=params,
     ) as resp:
         data = await resp.json()
     msg = data["link"]
