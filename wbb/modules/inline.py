@@ -91,12 +91,12 @@ async def inline_query_handler(client, query):
                 query.id,
                 results=answerss,
             )
-        elif text.split()[0] == "bitly":
+        elif text.split()[0] == "short":
             if len(text.split()) < 2:
                 return await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text="Link Shortener | bitly [LINK]",
+                    switch_pm_text="Link Shortener | short [LINK]",
                     switch_pm_parameter="inline",
                 )
             tex = text.split(None, 1)[1].strip()
