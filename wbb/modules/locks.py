@@ -27,10 +27,9 @@ from pyrogram.types import ChatPermissions
 
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.functions import get_urls_from_text
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.modules.admin import current_chat_permissions, list_admins
-
+from wbb.utils.functions import get_urls_from_text
 
 __MODULE__ = "Locks"
 __HELP__ = """
@@ -51,7 +50,7 @@ incorrect_parameters = (
     "Incorrect Parameters, Check Locks Section In Help."
 )
 # Using disable_preview as a switch for url checker
-# That way we won't need an additional db to check 
+# That way we won't need an additional db to check
 # If url lock is enabled/disabled for a chat
 data = {
     "messages": "can_send_messages",
@@ -123,25 +122,29 @@ async def locktypes(_, message):
     for i in permissions:
         perms += f"__**{i}**__\n"
     await message.reply_text(perms)
-    
 
-@app.on_message(filters.text & ~filters.private)
+
+@app.on_message(filters.text & ~filters.private, group=69)
 async def url_detector(_, message):
     user = message.from_user
     chat_id = message.chat.id
     text = message.text.lower().strip()
-    if not text: return
-    if not user: return
-    if user.id in SUDOERS: return
-    if user.id in await list_admins(chat_id): return
+    if not text:
+        return
+    if not user:
+        return
+    if user.id in SUDOERS:
+        return
+    if user.id in await list_admins(chat_id):
+        return
     check = get_urls_from_text(text)
     if check:
         permissions = await current_chat_permissions(chat_id)
-        if 'can_add_web_page_previews' not in permissions:
+        if "can_add_web_page_previews" not in permissions:
             try:
                 await message.delete()
             except Exception:
                 await message.reply_text(
-                         "This message contains a URL, "
-                         + "but i don't have enough permissions to delete it"
+                    "This message contains a URL, "
+                    + "but i don't have enough permissions to delete it"
                 )

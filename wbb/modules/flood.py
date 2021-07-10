@@ -64,6 +64,8 @@ def reset_flood(chat_id, user_id=0):
 )
 @capture_err
 async def flood_control_func(_, message: Message):
+    if not message.chat:
+        return
     chat_id = message.chat.id
     if not (await is_flood_on(chat_id)):
         return

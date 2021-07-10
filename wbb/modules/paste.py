@@ -61,7 +61,9 @@ async def isPreviewUp(preview: str) -> bool:
 @capture_err
 async def paste_func(_, message):
     if not message.reply_to_message:
-        return await message.reply_text("Reply To A Message With /paste")
+        return await message.reply_text(
+            "Reply To A Message With /paste"
+        )
     m = await message.reply_text("Pasting...")
     if message.reply_to_message.text:
         content = str(message.reply_to_message.text)
@@ -87,7 +89,7 @@ async def paste_func(_, message):
             await message.reply_photo(
                 photo=preview, quote=False, reply_markup=button
             )
-            await m.delete()
+            return await m.delete()
         except Exception:
             pass
     return await m.edit(link)

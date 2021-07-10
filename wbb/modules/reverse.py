@@ -34,7 +34,7 @@ async def reverse_image_search(_, message):
     m = await message.reply_text("Downloading")
     file_id = await get_file_id_from_message(reply)
     if not file_id:
-        return m.edit("Can't reverse that")
+        return await m.edit("Can't reverse that")
     image = await app.download_media(
         file_id, f"{randint(1000, 10000)}.jpg"
     )

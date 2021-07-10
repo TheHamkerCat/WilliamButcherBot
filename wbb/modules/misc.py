@@ -91,9 +91,7 @@ async def getid(_, message):
         try:
             split = message.text.split(None, 1)[1].strip()
             user_id = (await app.get_users(split)).id
-            text += (
-                f"**[User ID:](tg://user?id={user_id})** `{user_id}`\n"
-            )
+            text += f"**[User ID:](tg://user?id={user_id})** `{user_id}`\n"
         except Exception:
             return await message.reply_text(
                 "This user doesn't exist."
@@ -265,3 +263,10 @@ async def take_ss(_, message):
     except Exception:
         return await m.edit("No Such Website.")
     await m.delete()
+
+
+@app.on_message(filters.command(["kickme", "banme"]))
+async def kickbanme(_, message):
+    await message.reply_text(
+        "Haha, it doesn't work that way, You're stuck with everyone here."
+    )
