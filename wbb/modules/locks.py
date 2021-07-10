@@ -50,6 +50,9 @@ Example:
 incorrect_parameters = (
     "Incorrect Parameters, Check Locks Section In Help."
 )
+# Using disable_preview as a switch for url checker
+# That way we won't need an additional db to check 
+# If url lock is enabled/disabled for a chat
 data = {
     "messages": "can_send_messages",
     "stickers": "can_send_stickers",
@@ -57,7 +60,7 @@ data = {
     "media": "can_send_media_messages",
     "games": "can_send_games",
     "inline": "can_use_inline_bots",
-    "url": "can_add_web_page_previews", # we are using disable_preview as a url here
+    "url": "can_add_web_page_previews",
     "polls": "can_send_polls",
     "group_info": "can_change_info",
     "useradd": "can_invite_users",
@@ -132,14 +135,13 @@ async def url_detector(_, message):
     if user.id in SUDOERS: return
     if user.id in await list_admins(chat_id): return
     check = get_urls_from_text(text)
-    if ''.join(check) != "":
-        # if we'll not use this permission check then bot will delete automatically url contain message
-        # or we can use db for this but using db for just this url thing not a good option
-        # also after locking url... link_preview is useless for non-admin users
+    if check:
         permissions = await current_chat_permissions(chat_id)
         if 'can_add_web_page_previews' not in permissions:
-            # change text according to you or remove this reply message
-            await message.reply_text(
-                f"{user.first_name} Your message contain an url"
-            )
-            await message.delete()
+            try:
+                await message.delete()
+            except Exception:
+                await message.reply_text(
+                         "This message contains a URL, "
+                         + "but i don't have enough permissions to delete it"
+                )
