@@ -202,7 +202,7 @@ async def kickFunc(_, message: Message):
 
 
 @app.on_message(
-    filters.command("ban") & ~filters.edited & ~filters.private
+    filters.command(["ban", "sban", "dban"]) & ~filters.edited & ~filters.private
 )
 @adminsOnly("can_restrict_members")
 async def banFunc(_, message: Message):
@@ -227,7 +227,10 @@ async def banFunc(_, message: Message):
 **Banned By:** {message.from_user.mention if message.from_user else 'Anon'}
 **Reason:** {reason or 'No Reason Provided.'}"""
     await message.chat.kick_member(user_id)
-    await message.reply_text(msg)
+    if message.command[0] in ["sban", "dban"]:
+        await message.delete()
+    if message.command[0] != "sban":
+        await message.reply_text(msg)
 
 
 # Unban members
