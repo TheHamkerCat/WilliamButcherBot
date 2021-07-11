@@ -26,7 +26,7 @@ import os
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import BOT_ID, OWNER_ID, SUDOERS, USERBOT_PREFIX, app2
+from wbb import BOT_ID, SUDOERS, USERBOT_PREFIX, app2
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.userbot import edit_or_reply
 from wbb.utils.dbfunctions import add_sudo, get_sudoers, remove_sudo
@@ -115,8 +115,6 @@ async def userdel(_, message: Message):
 @capture_err
 async def sudoers_list(_, message: Message):
     sudoers = await get_sudoers()
-    if isinstance(sudoers, list):
-        sudoers.append(OWNER_ID)
     text = ""
     for count, user_id in enumerate(sudoers, 1):
         user = await app2.get_users(user_id)
