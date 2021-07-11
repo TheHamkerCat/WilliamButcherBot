@@ -242,8 +242,11 @@ async def banFunc(_, message: Message):
         if temp_reason:
             msg += f"**Reason:** {temp_reason}"
         try:
-            await message.chat.kick_member(user_id, until_date=temp_ban)
-            await message.reply_text(msg)
+            if len(time_value[:-1]) < 3:
+                await message.chat.kick_member(user_id, until_date=temp_ban)
+                await message.reply_text(msg)
+            else:
+                await message.reply_text("You can't use more than 99")
         except AttributeError:
             pass
         return
@@ -412,10 +415,13 @@ async def mute(_, message: Message):
         if temp_reason:
             msg += f"**Reason:** {temp_reason}"
         try:
-            await message.chat.restrict_member(
-                user_id, permissions=ChatPermissions(), until_date=temp_mute,
-            )
-            await message.reply_text(msg, reply_markup=keyboard)
+            if len(time_value[:-1]) < 3:
+                await message.chat.restrict_member(
+                    user_id, permissions=ChatPermissions(), until_date=temp_mute,
+                )
+                await message.reply_text(msg, reply_markup=keyboard)
+            else:
+                await message.reply_text("You can't use more than 99")
         except AttributeError:
             pass
         return
