@@ -196,7 +196,7 @@ def get_urls_from_text(text: str) -> bool:
     return [x[0] for x in findall(regex, text)]
 
 
-async def time_converter(message, time_value):
+async def time_converter(message: Message, time_value: str) -> int:
     unit = ["m", "h", "d"]  # m == minutes | h == hours | d == days
     check_unit = ''.join(list(filter(time_value[-1].lower().endswith, unit)))
     currunt_time = datetime.now()
