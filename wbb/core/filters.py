@@ -24,7 +24,7 @@ SOFTWARE.
 from pyrogram import filters as filters_
 from pyrogram.types import Message
 
-from wbb import OWNER_ID, SUDOERS
+from wbb import USERBOT_ID as OWNER_ID, SUDOERS
 from wbb.modules.trust import get_spam_data
 from wbb.utils.functions import get_urls_from_text
 
