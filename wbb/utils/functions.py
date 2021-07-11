@@ -29,6 +29,7 @@ from math import atan2, cos, radians, sin, sqrt
 from random import randint
 from re import findall
 from time import time
+from datetime import timedelta, datetime
 
 import aiofiles
 import aiohttp
@@ -193,6 +194,30 @@ def get_urls_from_text(text: str) -> bool:
                 \([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\
                 ()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))""".strip()
     return [x[0] for x in findall(regex, text)]
+
+
+async def time_converter(message, time_value):
+    unit = ["m", "h", "d"]  # m == minutes | h == hours | d == days
+    check_unit = ''.join(list(filter(time_value[-1].lower().endswith, unit)))
+    currunt_time = datetime.now()
+    time_digit = time_value[:-1]
+    if not time_digit.isdigit():
+        return await message.reply_text("Incorrect time specified")
+    if check_unit == "m":
+        temp_time = currunt_time + timedelta(
+            minutes=int(time_digit)
+        )
+    elif check_unit == "h":
+        temp_time = currunt_time + timedelta(
+            hours=int(time_digit)
+        )
+    elif check_unit == "d":
+        temp_time = currunt_time + timedelta(
+            days=int(time_digit)
+        )
+    else:
+        return await message.reply_text("Incorrect time specified.")
+    return int(datetime.timestamp(temp_time))
 
 
 async def extract_userid(message, text: str):
