@@ -55,6 +55,7 @@ restart_stagedb = db.restart_stage
 trustdb = db.trust
 flood_toggle_db = db.flood_toggle
 spam_toggle_db = db.spam_toggle
+rssdb = db.rss
 
 """ Notes functions """
 
@@ -845,3 +846,47 @@ async def flood_off(chat_id: int):
     if not is_flood:
         return
     return await flood_toggle_db.insert_one({"chat_id": chat_id})
+
+
+""" RSS DB """
+
+
+async def add_rss_feed(chat_id: int, url: str, last_title: str):
+    return await rssdb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"url": url, "last_title": last_title}},
+        upsert=True,
+    )
+
+
+async def remove_rss_feed(chat_id: int):
+    return await rssdb.delete_one({"chat_id": chat_id})
+
+
+async def update_rss_feed(chat_id: int, last_title: str):
+    return await rssdb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"last_title": last_title}},
+        upsert=True,
+    )
+
+
+async def is_rss_active(chat_id: int) -> bool:
+    return await rssdb.find_one({"chat_id": chat_id})
+
+
+async def get_rss_feeds() -> list:
+    feeds = rssdb.find({"chat_id": {"$exists": 1}})
+    feeds = await feeds.to_list(length=10000000)
+    if not feeds:
+        return
+    data = []
+    for feed in feeds:
+        data.append(
+            dict(
+                chat_id=feed["chat_id"],
+                url=feed["url"],
+                last_title=feed["last_title"],
+            )
+        )
+    return data

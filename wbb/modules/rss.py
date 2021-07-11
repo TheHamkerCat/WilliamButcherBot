@@ -1,0 +1,101 @@
+from asyncio import get_event_loop, sleep
+from time import time
+
+from pyrogram import filters
+from pyrogram.types import Message
+
+from wbb import RSS_DELAY, app
+from wbb.core.decorators.errors import capture_err
+from wbb.utils.dbfunctions import (add_rss_feed, get_rss_feeds,
+                                   is_rss_active, remove_rss_feed,
+                                   update_rss_feed)
+from wbb.utils.functions import (get_http_status_code,
+                                 get_urls_from_text)
+from wbb.utils.rss import Feed
+
+__MODULE__ = "RSS"
+__HELP__ = f"""
+/add_feed [URL] - Add a feed to chat
+/rm_feed - Remove feed from chat
+
+**Note:** 
+    - This will check for updates every {RSS_DELAY//60} minutes.
+    - You can only add one feed per chat.
+    - Currently RSS and ATOM feeds are supported.
+"""
+
+
+async def rss_worker():
+    print("[INFO]: RSS WORKER STARTED")
+    while True:
+        t1 = time()
+        feeds = await get_rss_feeds()
+        if not feeds:
+            await sleep(RSS_DELAY)
+            continue
+        for _feed in feeds:
+            chat = _feed["chat_id"]
+            url = _feed["url"]
+            last_title = _feed.get("last_title")
+            feed = Feed(url)
+            if feed.title == last_title:
+                continue
+            await app.send_message(
+                chat, feed.parsed(), disable_web_page_preview=True
+            )
+            await update_rss_feed(chat, feed.title)
+        t2 = time()
+        if (t2 - t1) >= RSS_DELAY:
+            continue
+        await sleep(RSS_DELAY - (t2 - t1))
+
+
+loop = get_event_loop()
+loop.create_task(rss_worker())
+
+
+@app.on_message(filters.command("add_feed"))
+async def add_feed_func(_, m: Message):
+    if len(m.command) != 2:
+        return await m.reply("Read 'RSS' section in help menu.")
+    url = m.text.split(None, 1)[1].strip()
+
+    if not url:
+        return await m.reply("[ERROR]: Invalid Argument")
+
+    urls = get_urls_from_text(url)
+    if not urls:
+        return await m.reply("[ERROR]: Invalid URL")
+
+    url = urls[0]
+    status = await get_http_status_code(url)
+    if status != 200:
+        return await m.reply("[ERROR]: Invalid Url")
+
+    ns = "[ERROR]: This feed isn't supported."
+    try:
+        feed = Feed(url)
+    except Exception:
+        return await m.reply(ns)
+    if not feed:
+        return await m.reply(ns)
+
+    chat_id = m.chat.id
+    if await is_rss_active(chat_id):
+        return await m.reply(
+            "[ERROR]: You already have an RSS feed enabled."
+        )
+    try:
+        await m.reply(feed.parsed(), disable_web_page_preview=True)
+    except Exception as e:
+        return await m.reply(str(e))
+    await add_rss_feed(chat_id, feed.url, feed.title)
+
+
+@app.on_message(filters.command("rm_feed"))
+async def rm_feed_func(_, m: Message):
+    if await is_rss_active(m.chat.id):
+        await remove_rss_feed(m.chat.id)
+        await m.reply("Removed RSS Feed")
+    else:
+        await m.reply("There are no active RSS Feeds in this chat.")

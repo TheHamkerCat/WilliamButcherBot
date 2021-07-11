@@ -173,7 +173,9 @@ async def purgeFunc(client, message: Message):
 
 
 @app.on_message(
-    filters.command(["kick", "dkick"]) & ~filters.edited & ~filters.private
+    filters.command(["kick", "dkick"])
+    & ~filters.edited
+    & ~filters.private
 )
 @adminsOnly("can_restrict_members")
 async def kickFunc(_, message: Message):
@@ -209,7 +211,9 @@ async def kickFunc(_, message: Message):
 
 
 @app.on_message(
-    filters.command(["ban", "dban"]) & ~filters.edited & ~filters.private
+    filters.command(["ban", "dban"])
+    & ~filters.edited
+    & ~filters.private
 )
 @adminsOnly("can_restrict_members")
 async def banFunc(_, message: Message):
@@ -439,7 +443,9 @@ async def ban_deleted_accounts(_, message: Message):
 
 
 @app.on_message(
-    filters.command(["warn", "dwarn"]) & ~filters.edited & ~filters.private
+    filters.command(["warn", "dwarn"])
+    & ~filters.edited
+    & ~filters.private
 )
 @adminsOnly("can_restrict_members")
 async def warn_user(_, message: Message):
@@ -476,8 +482,8 @@ async def warn_user(_, message: Message):
     if warns >= 2:
         await message.chat.kick_member(user_id)
         await message.reply_text(
-                    f"Number of warns of {mention} exceeded, BANNED!"
-                )
+            f"Number of warns of {mention} exceeded, BANNED!"
+        )
         await remove_warns(chat_id, await int_to_alpha(user_id))
     else:
         warn = {"warns": warns + 1}
