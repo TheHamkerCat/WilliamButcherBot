@@ -625,4 +625,4 @@ async def report_user(_, message):
     text = f"Reported {user_mention} to admins."
     for admin in list_of_admins:
         text += f"[\u2063](tg://user?id={admin})"
-    await message.reply_text(text)
+    await message.reply_to_message.reply_text(text)
