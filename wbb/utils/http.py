@@ -69,3 +69,11 @@ async def multipost(url: str, times: int, *args, **kwargs):
     return await gather(
         *[post(url, *args, **kwargs) for _ in range(times)]
     )
+
+
+async def resp_get(url: str, *args, **kwargs):
+    return await session.get(url, *args, **kwargs)
+
+
+async def resp_post(url: str, *args, **kwargs):
+    return await session.post(url, *args, **kwargs)
