@@ -890,3 +890,8 @@ async def get_rss_feeds() -> list:
             )
         )
     return data
+
+async def get_rss_feeds_count() -> int:
+    feeds = rssdb.find({"chat_id": {"$exists": 1}})
+    feeds = await feeds.to_list(length=10000000)
+    return len(feeds)

@@ -32,12 +32,10 @@ from wbb.utils.dbfunctions import (get_blacklist_filters_count,
                                    get_filters_count, get_gbans_count,
                                    get_karmas_count, get_notes_count,
                                    get_served_chats, get_served_users,
-                                   get_warns_count,
-                                   remove_served_chat)
+                                   get_warns_count, remove_served_chat,
+                                   get_rss_feeds_count)
 from wbb.utils.http import get
 from wbb.utils.inlinefuncs import keywords_list
-
-""" CHAT WATCHER IS IN filters.py"""
 
 
 @app.on_message(
@@ -105,6 +103,9 @@ async def global_stats(_, message):
     for developer in developers:
         commits += developer["contributions"]
     developers = len(developers)
+
+    # Rss feeds
+    rss_count = await get_rss_feeds_count()
     # Modules info
     modules_count = len(ALL_MODULES)
 
@@ -112,6 +113,7 @@ async def global_stats(_, message):
 **Global Stats of {BOT_NAME}**:
 **{modules_count}** Modules Loaded
 **{len(keywords_list)}** Inline Modules Loaded.
+**{rss_count}** Active RSS Feeds.
 **{gbans}** Globally banned users.
 **{filters_count}** Filters, Across **{filters_chats_count}** chats.
 **{blacklist_filters_count}** Blacklist Filters, Across **{blacklist_filters_chats_count}** chats.
