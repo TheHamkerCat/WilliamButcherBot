@@ -55,6 +55,7 @@ loop.create_task(rss_worker())
 
 
 @app.on_message(filters.command("add_feed"))
+@capture_err
 async def add_feed_func(_, m: Message):
     if len(m.command) != 2:
         return await m.reply("Read 'RSS' section in help menu.")
@@ -87,8 +88,8 @@ async def add_feed_func(_, m: Message):
         )
     try:
         await m.reply(feed.parsed(), disable_web_page_preview=True)
-    except Exception as e:
-        return await m.reply(str(e))
+    except Exception:
+        return await m.reply(ns)
     await add_rss_feed(chat_id, feed.url, feed.title)
 
 

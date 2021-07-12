@@ -1,6 +1,5 @@
 from feedparser import parse
 
-
 class Feed:
     def __init__(self, url: str):
         self.url = url
@@ -21,20 +20,16 @@ class Feed:
         self.summary = entry.get("summary") or ""
 
     def parsed(self):
-        text = ""
-        if self.title:
-            text += f"**Title:** {self.title}\n"
+        text = f"**Title:** [{self.title.strip()}]({self.link or 'https://google.com'})\n"
         if self.author:
             text += f"**Author:** {self.author}\n"
-        if self.link:
-            text += f"**Link:** {self.link}\n"
-        if self.updated:
-            text += f"**Last Updated:** {self.updated}\n"
         if self.published:
-            text += f"**Published:** {self.published}\n"
+            text += f"**Published:** `{self.published}`\n"
+        if self.updated:
+            text += f"**Last Updated:** `{self.updated}`\n"
         if self.summary:
             if "<div" not in self.summary:
-                text += f"**Summary:** {self.summary}\n"
+                text += f"**Summary:** __{self.summary.strip()}__\n"
 
         if text:
             text = "\n".join([i.strip() for i in text.splitlines()])
