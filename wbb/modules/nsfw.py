@@ -127,8 +127,8 @@ async def nsfw_scan_command(_, message):
     file = await app.download_media(file_id)
     try:
         results = await arq.nsfw_scan(file=file)
-    except Exception:
-        return
+    except Exception as e:
+        return await m.edit(str(e))
     remove(file)
     if not results.ok:
         return await m.edit(results.result)

@@ -31,9 +31,10 @@ from wbb.modules import ALL_MODULES
 from wbb.utils.dbfunctions import (get_blacklist_filters_count,
                                    get_filters_count, get_gbans_count,
                                    get_karmas_count, get_notes_count,
+                                   get_rss_feeds_count,
                                    get_served_chats, get_served_users,
-                                   get_warns_count, remove_served_chat,
-                                   get_rss_feeds_count)
+                                   get_warns_count,
+                                   remove_served_chat)
 from wbb.utils.http import get
 from wbb.utils.inlinefuncs import keywords_list
 

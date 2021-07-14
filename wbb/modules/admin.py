@@ -31,7 +31,9 @@ from wbb.core.decorators.errors import capture_err
 from wbb.core.keyboard import ikb
 from wbb.utils.dbfunctions import (add_warn, get_warn, int_to_alpha,
                                    remove_warns)
-from wbb.utils.functions import extract_user, extract_user_and_reason, time_converter
+from wbb.utils.functions import (extract_user,
+                                 extract_user_and_reason,
+                                 time_converter)
 
 __MODULE__ = "Admin"
 __HELP__ = """/ban - Ban A User
@@ -233,8 +235,10 @@ async def banFunc(_, message: Message):
             "I can't ban an admin, You know the rules, so do i."
         )
     mention = (await app.get_users(user_id)).mention
-    msg = f"**Banned User:** {mention}\n" \
-          f"**Banned By:** {message.from_user.mention if message.from_user else 'Anon'}\n"
+    msg = (
+        f"**Banned User:** {mention}\n"
+        f"**Banned By:** {message.from_user.mention if message.from_user else 'Anon'}\n"
+    )
     if message.command[0][0] == "d":
         await message.reply_to_message.delete()
     if message.command[0] == "tban":
@@ -247,7 +251,9 @@ async def banFunc(_, message: Message):
             msg += f"**Reason:** {temp_reason}"
         try:
             if len(time_value[:-1]) < 3:
-                await message.chat.kick_member(user_id, until_date=temp_ban)
+                await message.chat.kick_member(
+                    user_id, until_date=temp_ban
+                )
                 await message.reply_text(msg)
             else:
                 await message.reply_text("You can't use more than 99")
@@ -386,7 +392,9 @@ async def pin(_, message: Message):
 
 
 @app.on_message(
-    filters.command(["mute", "tmute"]) & ~filters.edited & ~filters.private
+    filters.command(["mute", "tmute"])
+    & ~filters.edited
+    & ~filters.private
 )
 @adminsOnly("can_restrict_members")
 async def mute(_, message: Message):
@@ -408,8 +416,10 @@ async def mute(_, message: Message):
     )
     mention = (await app.get_users(user_id)).mention
     keyboard = ikb([[("🚨   Unmute   🚨", f"unmute_{user_id}")]])
-    msg = f"**Muted User:** {mention}\n" \
-          f"**Muted By:** {message.from_user.mention if message.from_user else 'Anon'}\n"
+    msg = (
+        f"**Muted User:** {mention}\n"
+        f"**Muted By:** {message.from_user.mention if message.from_user else 'Anon'}\n"
+    )
     if message.command[0] == "tmute":
         split = reason.split(None, 1)
         time_value = split[0]
@@ -421,7 +431,9 @@ async def mute(_, message: Message):
         try:
             if len(time_value[:-1]) < 3:
                 await message.chat.restrict_member(
-                    user_id, permissions=ChatPermissions(), until_date=temp_mute,
+                    user_id,
+                    permissions=ChatPermissions(),
+                    until_date=temp_mute,
                 )
                 await message.reply_text(msg, reply_markup=keyboard)
             else:

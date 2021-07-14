@@ -34,16 +34,20 @@ async def rss_worker():
             await sleep(RSS_DELAY)
             continue
         for _feed in feeds:
-            chat = _feed["chat_id"]
-            url = _feed["url"]
-            last_title = _feed.get("last_title")
-            feed = Feed(url)
-            if feed.title == last_title:
-                continue
-            await app.send_message(
-                chat, feed.parsed(), disable_web_page_preview=True
-            )
-            await update_rss_feed(chat, feed.title)
+            try:
+                chat = _feed["chat_id"]
+                url = _feed["url"]
+                last_title = _feed.get("last_title")
+                feed = Feed(url)
+                if feed.title == last_title:
+                    continue
+                await app.send_message(
+                    chat, feed.parsed(), disable_web_page_preview=True
+                )
+                await update_rss_feed(chat, feed.title)
+            except Exception as e:
+                print(str(e), "RSS")
+                pass
         t2 = time()
         if (t2 - t1) >= RSS_DELAY:
             continue

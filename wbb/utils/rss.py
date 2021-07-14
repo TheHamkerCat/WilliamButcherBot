@@ -1,5 +1,6 @@
 from feedparser import parse
 
+
 class Feed:
     def __init__(self, url: str):
         self.url = url
@@ -29,7 +30,7 @@ class Feed:
             text += f"**Last Updated:** `{self.updated}`\n"
         if self.summary:
             if "<div" not in self.summary:
-                text += f"**Summary:** __{self.summary.strip()}__\n"
+                text += f"**Summary:** {self.summary.strip()}\n"
 
         if text:
             text = "\n".join([i.strip() for i in text.splitlines()])
