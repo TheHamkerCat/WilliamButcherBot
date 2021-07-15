@@ -30,12 +30,6 @@ if HEROKU:
     LOG_MENTIONS = (
         True if int(environ.get("LOG_MENTIONS", None)) == 1 else False
     )
-    SPAM_CHECK_EXCEPTION_GROUPS = list(
-        int(y)
-        for y in environ.get(
-            "SPAM_CHECK_EXCEPTION_GROUPS", ""
-        ).split()
-    )
     RSS_DELAY = int(environ.get("RSS_DELAY", None))
 else:
     BOT_TOKEN = "467677575:YZfaakjwd545dfg-N6JStihhuw5gQeZHntc"
@@ -56,7 +50,4 @@ else:
     ARQ_API_KEY = "Get this from @ARQRobot"
     ARQ_API_URL = "https://thearq.tech"
     LOG_MENTIONS = True
-    SPAM_CHECK_EXCEPTION_GROUPS = (
-        []
-    )  # Leave it empty if you don't know about it
     RSS_DELAY = 300  # In seconds

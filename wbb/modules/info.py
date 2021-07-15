@@ -28,7 +28,6 @@ from pyrogram.types import Message
 
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
-from wbb.modules.trust import get_spam_probability
 from wbb.utils.dbfunctions import is_gbanned_user, user_global_karma
 
 __MODULE__ = "Info"
@@ -51,19 +50,6 @@ async def get_user_info(user):
     is_gbanned = await is_gbanned_user(user_id)
     is_sudo = user_id in SUDOERS
     karma = await user_global_karma(user_id)
-    spam_probab, n_messages = await get_spam_probability(user_id)
-    isSpammer = (
-        True
-        if spam_probab > 50
-        else False
-        if spam_probab != 0
-        else "Uncertain"
-    )
-    spam_probab = (
-        str(round(spam_probab)) + " %"
-        if spam_probab != 0
-        else "Uncertain"
-    )
     caption = f"""
 **ID:** `{user_id}`
 **DC:** {dc_id}
@@ -73,10 +59,6 @@ async def get_user_info(user):
 **Sudo:** {is_sudo}
 **Karma:** {karma}
 **Gbanned:** {is_gbanned}
-**ARQ Spam Detection:**
-    **Spammer:** {isSpammer}
-    **Spam Probability:** {spam_probab}
-    __Stats Of Last {n_messages} Messages.__
 """
     return [caption, photo_id]
 

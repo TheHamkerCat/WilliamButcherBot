@@ -52,9 +52,7 @@ pipesdb = db.pipes
 sudoersdb = db.sudoers
 blacklist_chatdb = db.blacklistChat
 restart_stagedb = db.restart_stage
-trustdb = db.trust
 flood_toggle_db = db.flood_toggle
-spam_toggle_db = db.spam_toggle
 rssdb = db.rss
 
 """ Notes functions """
@@ -773,55 +771,6 @@ async def clean_restart_stage() -> dict:
         "message_id": data["message_id"],
     }
 
-
-""" TRUST DB """
-
-
-async def get_trust_db(user_id: int) -> list:
-    user = await trustdb.find_one({"user_id": user_id})
-    if not user:
-        return []
-    return user["data"]
-
-
-async def update_trust_db(user_id: int, new_data: float):
-    user = await trustdb.find_one({"user_id": user_id})
-    data = user["data"] if user else []
-    if len(data) >= 100:
-        data = data[1:100]
-    data.append(new_data)
-    data = [
-        i for i in data if isinstance(i, float) or isinstance(i, int)
-    ]
-    await trustdb.update_one(
-        {"user_id": user_id},
-        {"$set": {"data": data}},
-        upsert=True,
-    )
-
-
-"""SPAM DETECTION System"""
-
-
-async def is_spam_detection_on(chat_id: int) -> bool:
-    chat = await spam_toggle_db.find_one({"chat_id": chat_id})
-    if not chat:
-        return True
-    return False
-
-
-async def spam_detection_on(chat_id: int):
-    is_on = await is_spam_detection_on(chat_id)
-    if is_on:
-        return
-    return await spam_toggle_db.delete_one({"chat_id": chat_id})
-
-
-async def spam_detection_off(chat_id: int):
-    is_on = await is_spam_detection_on(chat_id)
-    if not is_on:
-        return
-    return await spam_toggle_db.insert_one({"chat_id": chat_id})
 
 
 """FLOOD System"""

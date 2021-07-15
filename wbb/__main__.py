@@ -173,13 +173,10 @@ async def help_parser(name, keyboard=None):
         )
     return (
         """Hello {first_name}! My name is {bot_name}!
-I'm a group management bot with some usefule features.
+I'm a group management bot with some useful features.
 You can choose an option below, by clicking a button.
 Also you can ask anything in Support Group.
-
-General command are:
- - /start: Start the bot
- - /help: Give this message""".format(
+""".format(
             first_name=name,
             bot_name=BOT_NAME,
         ),

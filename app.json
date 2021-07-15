@@ -75,10 +75,6 @@
             "description": "Userbot command prefix, Leave it empty if you don't know what that is.",
             "required": false
         },
-        "SPAM_CHECK_EXCEPTION_GROUPS": {
-            "description": "Groups where spam scans shouldn't happen, leave it empty if you don't know what that is",
-            "required": false
-        },
         "RSS_DELAY": {
             "description": "Delay in which RSS will send updates in chat",
             "value": 300,
