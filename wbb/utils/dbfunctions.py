@@ -45,7 +45,6 @@ captchadb = db.captcha
 antiservicedb = db.antiservice
 pmpermitdb = db.pmpermit
 welcomedb = db.welcome_text
-nsfwdb = db.nsfw
 captcha_cachedb = db.captcha_cache
 blacklist_filtersdb = db.blacklistFilters
 pipesdb = db.pipes
@@ -544,30 +543,6 @@ async def del_welcome(chat_id: int):
     return await welcomedb.delete_one({"chat_id": chat_id})
 
 
-"""NSFW System"""
-
-
-async def is_nsfw_on(chat_id: int) -> bool:
-    chat = await nsfwdb.find_one({"chat_id": chat_id})
-    if not chat:
-        return True
-    return False
-
-
-async def nsfw_on(chat_id: int):
-    is_nsfw = await is_nsfw_on(chat_id)
-    if is_nsfw:
-        return
-    return await nsfwdb.delete_one({"chat_id": chat_id})
-
-
-async def nsfw_off(chat_id: int):
-    is_nsfw = await is_nsfw_on(chat_id)
-    if not is_nsfw:
-        return
-    return await nsfwdb.insert_one({"chat_id": chat_id})
-
-
 """ CAPTCHA CACHE SYSTEM """
 
 
@@ -770,7 +745,6 @@ async def clean_restart_stage() -> dict:
         "chat_id": data["chat_id"],
         "message_id": data["message_id"],
     }
-
 
 
 """FLOOD System"""

@@ -10,7 +10,7 @@ from pyrogram import filters
 
 from wbb import app
 from wbb.core.decorators.errors import capture_err
-from wbb.modules.nsfw import get_file_id_from_message
+from wbb.utils.functions import get_file_id_from_message
 
 
 @app.on_message(filters.command("reverse"))
