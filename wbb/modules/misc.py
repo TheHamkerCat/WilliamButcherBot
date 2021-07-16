@@ -181,17 +181,20 @@ async def fetch_text(url):
 async def cheat(_, message):
     if len(message.command) < 3:
         return await message.reply_text("/cheat [language] [query]")
-    text = message.text.split(None, 1)[1]
+    text = message.text.split(None, 2)
     m = await message.reply_text("Searching")
     try:
-        ftext = text.split()
-        language = ftext[0]
-        query = ftext[1]
+        language = text[1]
+        query = text[2]
         data = await fetch_text(
             f"http://cht.sh/{language}/{query}?QT"
         )
         if not data:
             return await m.edit("Found Literally Nothing!")
+        if data > 4090:
+            with open("cheat.txt", "w") as f:
+                f.write(data)
+            return await message.reply_document(data)
         await m.edit(f"`{data}`")
     except Exception as e:
         await m.edit(str(e))
