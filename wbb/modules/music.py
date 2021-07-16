@@ -221,10 +221,10 @@ async def deezsong(_, message):
         url = songs.result[0].url
         artist = songs.result[0].artist
         await m.edit("Downloading")
-        proxy = "http://52.187.67.188:5000"
+        proxy = "https://quotly-api.herokuapp.com"
         try:
             song = await download_song(
-                f"{proxy}/mirror?url={url}.mp3"
+                f"{proxy}?url={url}"
             )
         except Exception:
             song = await download_song(url)
