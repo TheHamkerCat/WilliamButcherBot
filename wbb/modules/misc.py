@@ -191,7 +191,7 @@ async def cheat(_, message):
         )
         if not data:
             return await m.edit("Found Literally Nothing!")
-        if data > 4090:
+        if len(data) > 4090:
             with open("cheat.txt", "w") as f:
                 f.write(data)
             return await message.reply_document(data)
