@@ -184,5 +184,3 @@ async def get_note_func(message, name, noformat=False):
                 reply_markup=keyboard,
                 parse_mode="md",
             )
-    else:
-        print("Not already exists")
