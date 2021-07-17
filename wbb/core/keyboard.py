@@ -40,3 +40,25 @@ def ikb(keyboard: list):
             line.append(button)
         lines.append(line)
     return InlineKeyboardMarkup(inline_keyboard=lines)
+
+
+def build_button(buttons: list):
+        if not buttons:
+            return None
+        keyboard = []
+        for button in buttons:
+            if button[2] and keyboard:
+                keyboard[-1].append(InlineKeyboardButton(button[0], url=button[1]))
+            else:
+                keyboard.append([InlineKeyboardButton(button[0], url=button[1])])
+        return InlineKeyboardMarkup(keyboard)
+
+
+def revert_button(button: list):
+        res = ""
+        for btn in button:
+            if btn[2]:
+                res += f"\n[{btn[0]}, {btn[1]}, 2]"
+            else:
+                res += f"\n[{btn[0]}, {btn[1]}]"
+        return res
