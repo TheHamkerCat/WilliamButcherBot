@@ -334,3 +334,28 @@ async def get_file_id_from_message(message):
             return
         file_id = message.video.thumbs[0].file_id
     return file_id
+
+
+def button_parser(text):
+    note_data = ""
+    buttons = []
+    prev = 0
+    if not text:
+        return "", buttons
+    btn_url_re = re.compile(r"(\[([^\[]+?), (?:/{0,2})(.+?)(, 2)?])")
+    for match in btn_url_re.finditer(text):
+        n_escapes = 0
+        to_check = match.start(1) - 1
+        while to_check > 0 and text[to_check] == "\\":
+            n_escapes += 1
+            to_check -= 1
+        if n_escapes % 2 == 0:
+            buttons.append((match.group(2), match.group(3), bool(match.group(4))))
+            note_data += text[prev:match.start(1)]
+            prev = match.end(1)
+        else:
+            note_data += text[prev:to_check]
+            prev = match.start(1) - 1
+    note_data += text[prev:]
+    return note_data, buttons
+
