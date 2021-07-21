@@ -28,7 +28,7 @@ from traceback import format_exc
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import (
     PeerIdInvalid, ShortnameOccupyFailed, StickerPngDimensions,
-    StickerPngNopng, UserIsBlocked)
+    StickerPngNopng, UserIsBlocked, StickerEmojiInvalid)
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from wbb import BOT_USERNAME, app
@@ -162,7 +162,10 @@ async def kang(client, message):
                 )
                 continue
             else:
-                await add_sticker_to_set(client, stickerset, sticker)
+                try:
+                    await add_sticker_to_set(client, stickerset, sticker)
+                except StickerEmojiInvalid:
+                    return await msg.edit("[ERROR]: INVALID_EMOJI_IN_ARGUMENT")
             break
 
         await msg.edit(
