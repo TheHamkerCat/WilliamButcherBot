@@ -68,7 +68,7 @@
             "required": true
         },
         "LOG_MENTIONS": {
-            "description": "Fill 1 to turn this one, or 0 to turn it off.",
+            "description": "Fill 1 to turn this on, or 0 to turn it off.",
             "required": true
         },
         "USERBOT_PREFIX": {
