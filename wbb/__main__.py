@@ -29,8 +29,8 @@ import uvloop
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from wbb import (BOT_NAME, BOT_USERNAME, USERBOT_NAME, aiohttpsession,
-                 app, app2)
+from wbb import (BOT_NAME, BOT_USERNAME, LOG_GROUP_ID, USERBOT_NAME,
+                 aiohttpsession, app, app2)
 from wbb.modules import ALL_MODULES
 from wbb.modules.sudoers import bot_sys_stats
 from wbb.utils import paginate_modules
@@ -46,17 +46,6 @@ async def start_bot():
     await app.start()
     print("[INFO]: STARTING USERBOT CLIENT")
     await app2.start()
-    restart_data = await clean_restart_stage()
-    if restart_data:
-        print("[INFO]: SENDING RESTART STATUS")
-        try:
-            await app.edit_message_text(
-                restart_data["chat_id"],
-                restart_data["message_id"],
-                "**Restarted Successfully**",
-            )
-        except Exception:
-            pass
     for module in ALL_MODULES:
         imported_module = importlib.import_module(
             "wbb.modules." + module
@@ -97,6 +86,19 @@ async def start_bot():
     )
     print(f"[INFO]: BOT STARTED AS {BOT_NAME}!")
     print(f"[INFO]: USERBOT STARTED AS {USERBOT_NAME}!")
+    restart_data = await clean_restart_stage()
+    if restart_data:
+        print("[INFO]: SENDING RESTART STATUS")
+        try:
+            await app.edit_message_text(
+                restart_data["chat_id"],
+                restart_data["message_id"],
+                "**Restarted Successfully**",
+            )
+        except Exception:
+            pass
+    else:
+        await app.send_message(LOG_GROUP_ID, "Bot started!")
     await idle()
     print("[INFO]: STOPPING BOT AND CLOSING AIOHTTP SESSION")
     await aiohttpsession.close()
