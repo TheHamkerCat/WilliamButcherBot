@@ -1,7 +1,7 @@
 {
     "name": "WilliamButcherBot",
     "description": "Telegram Group Management Bot Written In Python Using Pyrogram.",
-    "repository": "https://github.com/thehamkercat/WilliamButcherBot",
+    "repository": "https://github.com/TheHamkerCat/WilliamButcherBot",
     "logo": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg",
     "keywords": [
     "python3",
@@ -12,6 +12,11 @@
     "pyrogram"
     ],
     "stack": "container",
+    "buildpacks": [
+        {
+            "url": "heroku/python"
+        }     
+    ],
     "env": {
         "BOT_TOKEN": {
             "description": "Obtain a Telegram bot token by contacting @BotFather",
