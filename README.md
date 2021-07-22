@@ -20,6 +20,10 @@
 
 <img src="https://static2.aniimg.com/upload/20170515/414/c/d/7/cd7EEF.jpg" width="300" align="right">
 
+## Ready to use method
+
+A ready-to-use running instance of this bot can be found on 
+telegram as [WilliamButcherBot](https://t.me/WilliamButcherBot)
 
 ## Requirements
 

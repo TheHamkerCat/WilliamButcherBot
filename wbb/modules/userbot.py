@@ -192,6 +192,18 @@ async def shellrunner(client, message: Message):
         )
 
 
+def shell(cmd: list) -> tuple:
+    proc = subprocess.run(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    stdout, stderr = proc.stdout, proc.stderr
+    stdout = stdout.decode() if stdout else None
+    stderr = stderr.decode() if stderr else None
+    return stdout, stderr
+
+
 """ C and CPP Eval """
 
 
@@ -215,28 +227,49 @@ async def c_cpp_eval(_, message: Message):
     code = message.text.split(None, 1)[1]
     file = "exec.c"
     compiler = "g++"
-    out = "exec"
-    cmdCompile = [compiler, "-g", file, "-o", out]
-    cmdRun = [f"./{out}"]
+    out_file = "exec"
+    cmdCompile = [compiler, "-g", file, "-o", out_file]
+    cmdRun = [f"./{out_file}"]
     async with aiofiles.open(file, mode="w+") as f:
         await f.write(code)
-    pCompile = subprocess.run(cmdCompile, capture_output=True)
+    out, err = shell(cmdCompile)
     os.remove(file)
-    err = pCompile.stderr.decode()
     if err:
         text = f"**INPUT:**\n```{escape(code)}```\n\n**COMPILE-TIME ERROR:**```{escape(err)}```"
         if len(text) > 4090:
             return await sendFile(message, text)
         return await edit_or_reply(message, text=text)
-    pRun = subprocess.run(cmdRun, capture_output=True)
-    os.remove(out)
-    err = pRun.stderr.decode()
-    out = pRun.stdout.decode()
+    out, err = shell(cmdRun)
+    os.remove(out_file)
     err = f"**RUNTIME ERROR:**\n```{escape(err)}```" if err else None
     out = f"**OUTPUT:**\n```{escape(out)}```" if out else None
     text = (
-        f"**INPUT:**\n```{escape(code)}```\n\n{err if err else out}"
+        f"**INPUT:**\n```{escape(code)}```\n\n{out if out else err}"
     )
+    if len(text) > 4090:
+        return await sendFile(message, text)
+    await edit_or_reply(message, text=text)
+
+
+@app2.on_message(
+    filters.command("go", prefixes=USERBOT_PREFIX)
+    & ~filters.edited
+    & ~filters.via_bot
+    & filters.user(SUDOERS)
+)
+async def goval(_, message: Message):
+    if len(message.command) < 2:
+        return await message.edit("Write Some Code...")
+    code = message.text.split(None, 1)[1]
+    file = "main.go"
+    cmdRun = ["go", "run", file]
+    async with aiofiles.open(file, mode="w+") as f:
+        await f.write(code)
+    stdout, stderr = shell(cmdRun)
+    os.remove(file)
+    out = stdout or stderr or None
+    out = f"**OUTPUT:**\n```{escape(out)}```"
+    text = f"**INPUT:**\n```{escape(code)}```\n\n{out}"
     if len(text) > 4090:
         return await sendFile(message, text)
     await edit_or_reply(message, text=text)
