@@ -21,10 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
-""" THIS MODULE IS SPECIFICALLY FOR @DE_WM GROUP, YOU CAN REMOVE IT IN YOUR FORK IF YOU WANT TO """
-
-
 from pyrogram import filters
 from pyrogram.types import (InlineKeyboardButton,
                             InlineKeyboardMarkup, InputMediaPhoto,
@@ -32,6 +28,8 @@ from pyrogram.types import (InlineKeyboardButton,
 
 from wbb import app
 from wbb.core.decorators.errors import capture_err
+
+""" THIS MODULE IS SPECIFICALLY FOR @DE_WM GROUP, YOU CAN REMOVE IT IN YOUR FORK IF YOU WANT TO """
 
 RICE_GROUP = "DE_WM"
 RICE_CHANNEL = "RiceGallery"

@@ -37,7 +37,7 @@ def url_from_proxy(proxy: str) -> str:
 @app.on_message(filters.command("proxy") & ~filters.edited)
 async def proxy_func(_, message: Message):
     if len(proxies) == 0:
-        await asyncio.sleep(0.5)
+        await sleep(0.5)
     location = proxies[0].location
     proxy = proxies[0].proxy
     url = url_from_proxy(proxy)
@@ -45,8 +45,8 @@ async def proxy_func(_, message: Message):
         [
             [("Connect", url)],
             [
-                ("←", f"proxy_arq_-1"),
-                ("→", f"proxy_arq_1"),
+                ("←", "proxy_arq_-1"),
+                ("→", "proxy_arq_1"),
             ],
         ]
     )

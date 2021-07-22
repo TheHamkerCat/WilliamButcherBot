@@ -25,7 +25,6 @@ import asyncio
 import json
 import os
 import sys
-from random import randint
 from re import sub as re_sub
 from sys import version as pyver
 from time import ctime, time
@@ -722,8 +721,8 @@ async def pmpermit_func(answers, user_id, victim):
 
 
 async def ping_func(answers):
+    ping = Ping(ping_id=app.rnd_id())
     t1 = time()
-    ping = Ping(ping_id=randint(696969, 6969696))
     await app.send(ping)
     t2 = time()
     ping = f"{str(round((t2 - t1) * 1000, 2))} ms"

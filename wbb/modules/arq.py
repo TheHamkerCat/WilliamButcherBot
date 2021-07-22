@@ -23,8 +23,9 @@ SOFTWARE.
 """
 from pyrogram import filters
 
-from wbb import ARQ_API_URL, app, arq
+from wbb import app, arq
 from wbb.core.sections import section
+
 
 @app.on_message(filters.command("arq"))
 async def arq_stats(_, message):
@@ -33,14 +34,14 @@ async def arq_stats(_, message):
         return await message.reply_text(data.result)
     server = data.result
     body = {
-            "Uptime": server.uptime,
-            "Requests Since Uptime": server.requests,
-            "CPU": server.cpu,
-            "Memory": server.memory.server,
-            "Platform": server.platform,
-            "Python": server.python,
-            "Users": server.users,
-            "Bot": [server.bot],
-            }
+        "Uptime": server.uptime,
+        "Requests Since Uptime": server.requests,
+        "CPU": server.cpu,
+        "Memory": server.memory.server,
+        "Platform": server.platform,
+        "Python": server.python,
+        "Users": server.users,
+        "Bot": [server.bot],
+    }
     text = section("A.R.Q", body)
     await message.reply_text(text)

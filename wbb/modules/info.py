@@ -52,15 +52,15 @@ async def get_user_info(user):
     is_sudo = user_id in SUDOERS
     karma = await user_global_karma(user_id)
     body = {
-            "ID": user_id,
-            "DC": dc_id,
-            "Name": [first_name],
-            "Username": [("@" + username) if username else None],
-            "Mention": [mention],
-            "Sudo": is_sudo,
-            "Karma": karma,
-            "Gbanned": is_gbanned
-            }
+        "ID": user_id,
+        "DC": dc_id,
+        "Name": [first_name],
+        "Username": [("@" + username) if username else None],
+        "Mention": [mention],
+        "Sudo": is_sudo,
+        "Karma": karma,
+        "Gbanned": is_gbanned,
+    }
     caption = section("User info", body)
     return [caption, photo_id]
 
@@ -79,17 +79,17 @@ async def get_chat_info(chat):
     dc_id = chat.dc_id
     photo_id = chat.photo.big_file_id if chat.photo else None
     body = {
-            "ID": chat_id,
-            "DC": dc_id,
-            "Type": type,
-            "Name": [title],
-            "Username": [("@" + username) if username else None],
-            "Mention": [link],
-            "Members": members,
-            "Scam": is_scam,
-            "Restricted": is_restricted,
-            "Description": [description],
-            }
+        "ID": chat_id,
+        "DC": dc_id,
+        "Type": type,
+        "Name": [title],
+        "Username": [("@" + username) if username else None],
+        "Mention": [link],
+        "Members": members,
+        "Scam": is_scam,
+        "Restricted": is_restricted,
+        "Description": [description],
+    }
     caption = section("Chat info", body)
     return [caption, photo_id]
 
