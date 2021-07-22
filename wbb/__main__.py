@@ -29,8 +29,8 @@ import uvloop
 from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from wbb import (BOT_NAME, BOT_USERNAME, USERBOT_NAME, aiohttpsession,
-                 app, app2)
+from wbb import (BOT_NAME, BOT_USERNAME, MESSAGE_DUMP_CHAT, USERBOT_NAME,
+                 aiohttpsession, app, app2)
 from wbb.modules import ALL_MODULES
 from wbb.modules.sudoers import bot_sys_stats
 from wbb.utils import paginate_modules
@@ -97,6 +97,7 @@ async def start_bot():
     )
     print(f"[INFO]: BOT STARTED AS {BOT_NAME}!")
     print(f"[INFO]: USERBOT STARTED AS {USERBOT_NAME}!")
+    await app.send_message(MESSAGE_DUMP_CHAT, "I am now active !")
     await idle()
     print("[INFO]: STOPPING BOT AND CLOSING AIOHTTP SESSION")
     await aiohttpsession.close()
