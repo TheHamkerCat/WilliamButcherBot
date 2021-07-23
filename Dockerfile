@@ -1,11 +1,9 @@
-FROM python:3.9.5-buster
+FROM williambutcherbot/python:latest
 
 WORKDIR /wbb
 RUN chmod 777 /wbb
-RUN apt-get update -y
-RUN apt-get install -y wget curl bash git neofetch sudo software-properties-common ffmpeg
 
-#Updating Libraries
+# Installing Requirements
 RUN pip3 install -U pip
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -U -r requirements.txt
@@ -14,8 +12,8 @@ RUN pip3 install --no-cache-dir -U -r requirements.txt
 #RUN git config --global user.email "your_email"
 #RUN git config --global user.name "git_username"
 
-#Copying All Source
+# Copying All Source
 COPY . .
 
-#Starting Bot
+# Starting Bot
 CMD ["python3", "-m", "wbb"]
