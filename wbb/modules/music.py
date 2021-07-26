@@ -41,10 +41,11 @@ from wbb.utils.http import get
 from wbb.utils.pastebin import paste
 
 __MODULE__ = "Music"
-__HELP__ = """/ytmusic [link] To Download Music From Various Websites Including Youtube. [SUDOERS]
+__HELP__ = """
+/ytmusic [link] To Download Music From Various Websites Including Youtube. [SUDOERS]
 /saavn [query] To Download Music From Saavn.
-/deezer [query] To Download Music From Deezer.
-/lyrics [query] To Get Lyrics Of A Song."""
+/lyrics [query] To Get Lyrics Of A Song.
+"""
 
 is_downloading = False
 
@@ -191,60 +192,6 @@ async def jssong(_, message):
         is_downloading = False
         return await m.edit(str(e))
     is_downloading = False
-
-
-# Deezer Music
-
-
-@app.on_message(filters.command("deezer") & ~filters.edited)
-@capture_err
-async def deezsong(_, message):
-    global is_downloading
-    if len(message.command) < 2:
-        return await message.reply_text(
-            "/deezer requires an argument."
-        )
-    if is_downloading:
-        return await message.reply_text(
-            "Another download is in progress, try again after sometime."
-        )
-    is_downloading = True
-    text = message.text.split(None, 1)[1]
-    m = await message.reply_text("Searching...")
-    try:
-        songs = await arq.deezer(text, 1, 9)
-        if not songs.ok:
-            await m.edit(songs.result)
-            is_downloading = False
-            return
-        title = songs.result[0].title
-        url = songs.result[0].url
-        artist = songs.result[0].artist
-        await m.edit("Downloading")
-        proxy = "https://quotly-api.herokuapp.com"
-        try:
-            song = await download_song(f"{proxy}?url={url}")
-        except Exception:
-            song = await download_song(url)
-        if not song:
-            song = await download_song(url)
-        await m.edit("Uploading")
-        await message.reply_audio(
-            audio=song,
-            title=title,
-            performer=artist,
-        )
-        os.remove(song)
-        await m.delete()
-    except Exception as e:
-        is_downloading = False
-        return await m.edit(str(e))
-    is_downloading = False
-    try:
-        await get(f"{proxy}/remove")
-    except Exception:
-        pass
-
 
 # Lyrics
 
