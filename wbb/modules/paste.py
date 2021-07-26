@@ -79,6 +79,8 @@ async def paste_func(_, message):
         async with aiofiles.open(doc, mode="r") as f:
             content = await f.read()
         os.remove(doc)
+    else:
+        return await message.reply("Reply to a text message or DOC.")
     link = await paste(content)
     preview = link + "/preview.png"
     button = InlineKeyboard(row_width=1)

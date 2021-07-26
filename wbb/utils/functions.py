@@ -265,7 +265,6 @@ async def extract_user(message):
 async def test_ARQ(message):
     results = ""
     funcs = {
-        "deezer": arq.deezer("attention", 1),
         "image": arq.image("something"),
         "luna": arq.luna("hello"),
         "lyrics": arq.lyrics("attention"),

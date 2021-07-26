@@ -37,7 +37,6 @@ from pyrogram import filters
 
 from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.http import get
 from wbb.utils.pastebin import paste
 
 __MODULE__ = "Music"
@@ -192,6 +191,7 @@ async def jssong(_, message):
         is_downloading = False
         return await m.edit(str(e))
     is_downloading = False
+
 
 # Lyrics
 
