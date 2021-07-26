@@ -37,6 +37,7 @@ from wbb.utils.pastebin import paste
 
 __MODULE__ = "Misc"
 __HELP__ = """
+/asq - Ask a question
 /commit - Generate Funny Commit Messages
 /runs  - Idk Test Yourself
 /id - Get Chat_ID or User_ID
@@ -54,6 +55,20 @@ __HELP__ = """
 #RTFM - Tell noobs to read the manual
 """
 
+@app.on_message(filters.command("asq"))
+async def asq(_, message):
+    err = "Reply to text message or pass the question as argument"
+    if message.reply_to_message:
+        if not message.reply_to_message.text:
+            return await message.reply(err)
+        question = message.reply_to_message.text
+    else:
+        if len(message.command) < 2:
+            return await message.reply(err)
+        question = message.text.split(None, 1)[1]
+    m = await message.reply("Thinking...")
+    resp = await arq.asq(question)
+    await m.edit(resp.result)
 
 @app.on_message(filters.command("commit") & ~filters.edited)
 async def commit(_, message):
