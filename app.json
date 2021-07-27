@@ -11,12 +11,8 @@
     "telegram-bot",
     "pyrogram"
     ],
+    "repository": "https://github.com/TheHamkerCat/WilliamButcherBot",
     "stack": "container",
-    "buildpacks": [
-        {
-            "url": "heroku/python"
-        }     
-    ],
     "env": {
         "BOT_TOKEN": {
             "description": "Obtain a Telegram bot token by contacting @BotFather",
@@ -82,7 +78,7 @@
         },
         "RSS_DELAY": {
             "description": "Delay in which RSS will send updates in chat",
-            "value": 300,
+            "value": "300",
             "required": true
         }
     }
