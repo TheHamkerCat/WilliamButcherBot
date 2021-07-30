@@ -157,7 +157,7 @@ async def help_command(_, message):
         ]
     )
     await message.reply(
-        f"Hey there! My name is {BOT_NAME}. I can manage your group with lots of useful features, feel free to add me to your group.",
+        f"Hey there [👋](https://telegra.ph/file/9e18b7a767fa5d87e63db.jpg)! My name is {BOT_NAME}. I can manage your group with lots of useful features, feel free to add me to your group.",
         reply_markup=keyboard,
     )
 
