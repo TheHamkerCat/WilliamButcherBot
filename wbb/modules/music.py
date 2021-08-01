@@ -177,6 +177,7 @@ async def jssong(_, message):
         sname = songs.result[0].song
         slink = songs.result[0].media_url
         ssingers = songs.result[0].singers
+        sduration = songs.result[0].duration
         await m.edit("Downloading")
         song = await download_song(slink)
         await m.edit("Uploading")
@@ -184,6 +185,7 @@ async def jssong(_, message):
             audio=song,
             title=sname,
             performer=ssingers,
+            duration=sduration,
         )
         os.remove(song)
         await m.delete()
