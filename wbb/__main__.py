@@ -75,7 +75,7 @@ async def start_bot():
         "+===============================================================+"
     )
     print(
-        "|                              WBB                              |"
+        "|                              Emi                              |"
     )
     print(
         "+===============+===============+===============+===============+"
@@ -210,7 +210,7 @@ async def help_button(client, query):
     back_match = re.match(r"help_back", query.data)
     create_match = re.match(r"help_create", query.data)
     top_text = f"""
-Hello [👋](https://telegra.ph/file/9e18b7a767fa5d87e63db.jpg) {query.from_user.first_name}! My name is {BOT_NAME}!
+Hello [👋](https://telegra.ph/file/ebe4732fde622cb629748.jpg) {query.from_user.first_name}! My name is {BOT_NAME}!
 I'm a group management bot with some usefule features.
 You can choose an option below, by clicking a button.
 Also you can ask anything in Support Group.
