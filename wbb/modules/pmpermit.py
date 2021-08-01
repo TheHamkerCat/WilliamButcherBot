@@ -178,7 +178,8 @@ async def pmpermit_cq(_, cq):
         await app.edit_inline_text(
             cq.inline_message_id, "Successfully blocked the user."
         )
-        return await app2.block_user(int(victim))
+        await app2.block_user(int(victim))
+        return await cq.answer()
 
     if user_id == USERBOT_ID:
         return await cq.answer("It's For The Other Person.")
@@ -191,8 +192,10 @@ async def pmpermit_cq(_, cq):
             user_id, "Blocked, Go scam someone else."
         )
         await app2.block_user(user_id)
+        await cq.answer()
 
     elif data == "approve_me":
+        await cq.answer()
         if str(user_id) in flood2:
             flood2[str(user_id)] += 1
         else:
