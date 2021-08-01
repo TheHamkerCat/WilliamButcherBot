@@ -48,7 +48,7 @@ from wbb.utils.inlinefuncs import keywords_list
 async def global_stats(_, message):
     m = await app.send_message(
         message.chat.id,
-        text="__**Analysing Stats**__",
+        text="__**𝑹𝒖𝒏𝒏𝒊𝒏𝒈 𝑺𝒕𝒂𝒕𝒊𝒔𝒕𝒊𝒄 𝑺𝒊𝒎𝒖𝒍𝒂𝒕𝒊𝒐𝒏**__",
         disable_web_page_preview=True,
     )
 
@@ -58,7 +58,7 @@ async def global_stats(_, message):
     for chat in chats:
         served_chats.append(int(chat["chat_id"]))
     await m.edit(
-        f"__**Generating Statistics Report, Should Take {len(served_chats)*2}+ Seconds.**__",
+        f"__**𝑨𝒏𝒂𝒍𝒚𝒔𝒊𝒏𝒈 𝑮𝒍𝒐𝒃𝒂𝒍 𝑺𝒕𝒂𝒕𝒊𝒔𝒕𝒊𝒄𝒔, 𝑻𝒉𝒊𝒔 𝑺𝒉𝒐𝒖𝒍𝒅 𝑻𝒂𝒌𝒆 {len(served_chats)*2}+ 𝑺𝒆𝒄𝒔.**__",
         disable_web_page_preview=True,
     )
     for served_chat in served_chats:
@@ -96,31 +96,22 @@ async def global_stats(_, message):
     karmas_count = _karmas["karmas_count"]
     karmas_chats_count = _karmas["chats_count"]
 
-    # Contributors/Developers count and commits on github
-    url = "https://api.github.com/repos/thehamkercat/williambutcherbot/contributors"
-    rurl = "https://github.com/thehamkercat/williambutcherbot"
-    developers = await get(url)
-    commits = 0
-    for developer in developers:
-        commits += developer["contributions"]
-    developers = len(developers)
-
     # Rss feeds
     rss_count = await get_rss_feeds_count()
     # Modules info
     modules_count = len(ALL_MODULES)
 
     msg = f"""
-**Global Stats of {BOT_NAME}**:
-**{modules_count}** Modules Loaded
-**{len(keywords_list)}** Inline Modules Loaded.
-**{rss_count}** Active RSS Feeds.
-**{gbans}** Globally banned users.
-**{filters_count}** Filters, Across **{filters_chats_count}** chats.
-**{blacklist_filters_count}** Blacklist Filters, Across **{blacklist_filters_chats_count}** chats.
-**{notes_count}** Notes, Across **{notes_chats_count}** chats.
-**{warns_count}** Warns, Across **{warns_chats_count}** chats.
-**{karmas_count}** Karma, Across **{karmas_chats_count}** chats.
-**{len(served_users)}** Users, Across **{len(served_chats)}** chats.
+**Gʟᴏʙᴀʟ Sᴛᴀᴛs Oғ {BOT_NAME}**:
+**{modules_count}** 𝙼𝚘𝚍𝚞𝚕𝚎𝚜 𝙻𝚘𝚊𝚍𝚎𝚍.
+**{len(keywords_list)}** 𝙸𝚗𝚕𝚒𝚗𝚎 𝙼𝚘𝚍𝚞𝚕𝚎𝚜 𝙻𝚘𝚊𝚍𝚎𝚍.
+**{rss_count}** 𝙰𝚌𝚝𝚒𝚟𝚎 𝚁𝚂𝚂 𝙵𝚎𝚎𝚍𝚜.
+**{gbans}** G𝙱𝚊𝚗𝚗𝚎𝚍 𝚄𝚜𝚎𝚛𝚜.
+**{filters_count}** 𝙵𝚒𝚕𝚝𝚎𝚛𝚜, 𝙰𝚌𝚛𝚘𝚜𝚜 **{filters_chats_count}** 𝙲𝚑𝚊𝚝𝚜.
+**{blacklist_filters_count}** 𝙱𝚕𝚊𝚌𝚔𝚕𝚒𝚜𝚝 𝙵𝚒𝚕𝚝𝚎𝚛𝚜, 𝙰𝚌𝚛𝚘𝚜𝚜 **{blacklist_filters_chats_count}** 𝙲𝚑𝚊𝚝𝚜.
+**{notes_count}** 𝙽𝚘𝚝𝚎𝚜, 𝙰𝚌𝚛𝚘𝚜𝚜 **{notes_chats_count}** 𝙲𝚑𝚊𝚝𝚜.
+**{warns_count}** 𝚆𝚊𝚛𝚗𝚜, 𝙰𝚌𝚛𝚘𝚜𝚜 **{warns_chats_count}** 𝙲𝚑𝚊𝚝𝚜.
+**{karmas_count}** 𝙺𝚊𝚛𝚖𝚊, **{karmas_chats_count}** 𝙲𝚑𝚊𝚝𝚜.
+**{len(served_users)}** 𝚄𝚜𝚎𝚛𝚜, 𝙰𝚌𝚛𝚘𝚜𝚜 **{len(served_chats)}** 𝙲𝚑𝚊𝚝𝚜.
 """
     await m.edit(msg, disable_web_page_preview=True)
