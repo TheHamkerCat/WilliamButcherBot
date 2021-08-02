@@ -84,7 +84,7 @@
         "PM_PERMIT":{
             "description": "Pm permit, fill 1 to enable or 0 to disable it.",
             "value": "1",
-            "requirend": true
+            "required": true
         }
     }
 }
