@@ -55,6 +55,7 @@ __HELP__ = """
 #RTFM - Tell noobs to read the manual
 """
 
+
 @app.on_message(filters.command("asq"))
 async def asq(_, message):
     err = "Reply to text message or pass the question as argument"
@@ -69,6 +70,7 @@ async def asq(_, message):
     m = await message.reply("Thinking...")
     resp = await arq.asq(question)
     await m.edit(resp.result)
+
 
 @app.on_message(filters.command("commit") & ~filters.edited)
 async def commit(_, message):

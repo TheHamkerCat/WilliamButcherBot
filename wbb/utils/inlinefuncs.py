@@ -707,7 +707,8 @@ async def pmpermit_func(answers, user_id, victim):
             text="Approve", callback_data=f"pmpermit approve {victim}"
         ),
         InlineKeyboardButton(
-            text="Block", callback_data=f"pmpermit block {victim}"
+            text="Block & Delete",
+            callback_data=f"pmpermit block {victim}",
         ),
     )
     answers.append(

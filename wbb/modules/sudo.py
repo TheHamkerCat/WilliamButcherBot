@@ -21,8 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import os
-
 from pyrogram import filters
 from pyrogram.types import Message
 
@@ -30,6 +28,7 @@ from wbb import BOT_ID, SUDOERS, USERBOT_PREFIX, app2
 from wbb.core.decorators.errors import capture_err
 from wbb.modules.userbot import edit_or_reply
 from wbb.utils.dbfunctions import add_sudo, get_sudoers, remove_sudo
+from wbb.utils.functions import restart
 
 __MODULE__ = "Sudo"
 __HELP__ = """
@@ -74,7 +73,7 @@ async def useradd(_, message: Message):
             message,
             text="Successfully added user in sudoers, Bot will be restarted now.",
         )
-        return os.execvp("python3", ["python3", "-m", "wbb"])
+        return await restart(None)
     await edit_or_reply(
         message, text="Something wrong happened, check logs."
     )
@@ -102,7 +101,7 @@ async def userdel(_, message: Message):
             message,
             text="Successfully removed user from sudoers, Bot will be restarted now.",
         )
-        return os.execvp("python3", ["python3", "-m", "wbb"])
+        return await restart(None)
     await edit_or_reply(
         message, text="Something wrong happened, check logs."
     )

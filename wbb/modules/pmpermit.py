@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 from pyrogram import filters
+from pyrogram.raw.functions.messages import DeleteHistory
 
 from wbb import BOT_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2
 from wbb.core.decorators.errors import capture_err
@@ -175,10 +176,18 @@ async def pmpermit_cq(_, cq):
     if data == "block":
         if user_id != USERBOT_ID:
             return await cq.answer("This Button Is Not For You")
+        await cq.answer()
         await app.edit_inline_text(
             cq.inline_message_id, "Successfully blocked the user."
         )
-        return await app2.block_user(int(victim))
+        await app2.block_user(int(victim))
+        return await app2.send(
+            DeleteHistory(
+                peer=(await app2.resolve_peer(victim)),
+                max_id=0,
+                revoke=False,
+            )
+        )
 
     if user_id == USERBOT_ID:
         return await cq.answer("It's For The Other Person.")
@@ -191,8 +200,10 @@ async def pmpermit_cq(_, cq):
             user_id, "Blocked, Go scam someone else."
         )
         await app2.block_user(user_id)
+        await cq.answer()
 
     elif data == "approve_me":
+        await cq.answer()
         if str(user_id) in flood2:
             flood2[str(user_id)] += 1
         else:

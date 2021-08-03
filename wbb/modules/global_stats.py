@@ -24,6 +24,7 @@ SOFTWARE.
 import asyncio
 
 from pyrogram import filters
+from pyrogram.errors import FloodWait
 
 from wbb import BOT_ID, BOT_NAME, SUDOERS, app
 from wbb.core.decorators.errors import capture_err
@@ -40,6 +41,33 @@ from wbb.utils.inlinefuncs import keywords_list
 
 
 @app.on_message(
+    filters.command("clean_db")
+    & filters.user(SUDOERS)
+    & ~filters.edited
+)
+@capture_err
+async def clean_db(_, message):
+    served_chats = [
+        int(i["chat_id"]) for i in (await get_served_chats())
+    ]
+    m = await message.reply(
+        f"__**Cleaning database, Might take around {len(served_chats)*2} seconds.**__",
+    )
+    for served_chat in served_chats:
+        try:
+            await app.get_chat_members(served_chat, BOT_ID)
+            await asyncio.sleep(2)
+        except FloodWait as e:
+            await asyncio.sleep(int(e.x))
+        except Exception:
+            await remove_served_chat(served_chat)
+            served_chats.remove(served_chat)
+            pass
+    await m.edit("**Database Cleaned.**")
+    # TODO Add shit to clean filters, notes and other things of left chats.
+
+
+@app.on_message(
     filters.command("gstats")
     & filters.user(SUDOERS)
     & ~filters.edited
@@ -48,28 +76,13 @@ from wbb.utils.inlinefuncs import keywords_list
 async def global_stats(_, message):
     m = await app.send_message(
         message.chat.id,
-        text="__**Analysing Stats**__",
+        text="__**Analysing Stats...**__",
         disable_web_page_preview=True,
     )
 
     # For bot served chat and users count
-    served_chats = []
-    chats = await get_served_chats()
-    for chat in chats:
-        served_chats.append(int(chat["chat_id"]))
-    await m.edit(
-        f"__**Generating Statistics Report, Should Take {len(served_chats)*2}+ Seconds.**__",
-        disable_web_page_preview=True,
-    )
-    for served_chat in served_chats:
-        try:
-            await app.get_chat_members(served_chat, BOT_ID)
-            await asyncio.sleep(2)
-        except Exception:
-            await remove_served_chat(served_chat)
-            served_chats.remove(served_chat)
-            pass
-    served_users = await get_served_users()
+    served_chats = len(await get_served_chats())
+    served_users = len(await get_served_users())
     # Gbans count
     gbans = await get_gbans_count()
     _notes = await get_notes_count()
@@ -121,7 +134,7 @@ async def global_stats(_, message):
 **{notes_count}** Notes, Across **{notes_chats_count}** chats.
 **{warns_count}** Warns, Across **{warns_chats_count}** chats.
 **{karmas_count}** Karma, Across **{karmas_chats_count}** chats.
-**{len(served_users)}** Users, Across **{len(served_chats)}** chats.
+**{served_users}** Users, Across **{served_chats}** chats.
 **{developers}** Developers And **{commits}** Commits On **[Github]({rurl})**.
 """
     await m.edit(msg, disable_web_page_preview=True)

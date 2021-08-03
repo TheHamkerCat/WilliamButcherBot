@@ -4,7 +4,7 @@ def section(
     text = f"**--{title}**--:\n" if underline else f"**{title}**:\n"
     for key, value in body.items():
         if not isinstance(value, list):
-            text += f"{' ' * indent}**{key}:** `{value}`\n"
+            text += f"{' ' * indent}`→` **{key}:** `{value}`\n"
         else:
-            text += f"{' ' * indent}**{key}:** {value[0]}\n"
+            text += f"{' ' * indent}`→` **{key}:** {value[0]}\n"
     return text

@@ -21,14 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import codecs
-import pickle
 from asyncio import gather, get_running_loop
 from datetime import datetime, timedelta
 from io import BytesIO
 from math import atan2, cos, radians, sin, sqrt
+from os import execvp
 from random import randint
 from re import findall
+from sys import executable
 from time import time
 
 import aiofiles
@@ -41,6 +41,7 @@ from wget import download
 from wbb import aiohttpsession as aiosession
 from wbb import arq
 from wbb.utils import aiodownloader
+from wbb.utils.dbfunctions import start_restart_stage
 from wbb.utils.http import get
 
 """
@@ -56,6 +57,12 @@ async def download_url(url: str):
     loop = get_running_loop()
     file = await loop.run_in_executor(None, download, url)
     return file
+
+
+async def restart(m: Message):
+    if m:
+        await start_restart_stage(m.chat.id, m.message_id)
+    execvp(executable, [executable, "-m", "wbb"])
 
 
 def generate_captcha():
@@ -155,18 +162,6 @@ async def transfer_sh(file_or_message):
     return download_link
 
 
-def obj_to_str(object):
-    if not object:
-        return False
-    string = codecs.encode(pickle.dumps(object), "base64").decode()
-    return string
-
-
-def str_to_obj(string: str):
-    object = pickle.loads(codecs.decode(string.encode(), "base64"))
-    return object
-
-
 async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
     Radius_Earth = 6371.0088
     data1, data2 = await gather(
@@ -217,7 +212,18 @@ async def time_converter(message: Message, time_value: str) -> int:
 
 
 async def extract_userid(message, text: str):
+    def is_int(text: str):
+        try:
+            int(text)
+        except ValueError:
+            return False
+        return True
+
     text = text.strip()
+
+    if is_int(text):
+        return int(text)
+
     entities = message.entities
     app = message._client
     if len(entities) < 2:
@@ -265,7 +271,6 @@ async def extract_user(message):
 async def test_ARQ(message):
     results = ""
     funcs = {
-        "deezer": arq.deezer("attention", 1),
         "image": arq.image("something"),
         "luna": arq.luna("hello"),
         "lyrics": arq.lyrics("attention"),
