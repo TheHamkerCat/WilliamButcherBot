@@ -41,7 +41,6 @@ from wbb.utils.functions import (extract_user,
 
 __MODULE__ = "Sudoers"
 __HELP__ = """
-/stats - To Check System Status.
 /gstats - To Check Bot's Global Stats.
 /gban - To Ban A User Globally.
 /clean_db - Clean database.
