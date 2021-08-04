@@ -133,6 +133,7 @@ async def ytdlCallback(_, cq):
                 caption=caption,
                 quote=False,
                 duration=duration,
+                thumb=thumb,
                 supports_streaming=True,
             )
         del VIDEO_DATA[data_]
