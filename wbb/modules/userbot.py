@@ -60,7 +60,6 @@ async def edit_or_reply(msg: Message, **kwargs):
     & ~filters.forwarded
     & ~filters.via_bot
     & ~filters.edited
-    & ~filters.reply  # To prevent Blind Keyboard attack
     & filters.command("py", prefixes=USERBOT_PREFIX)
 )
 async def executor(client, message: Message):
@@ -116,7 +115,6 @@ async def executor(client, message: Message):
     & ~filters.forwarded
     & ~filters.via_bot
     & ~filters.edited
-    & ~filters.reply
     & filters.command("sh", prefixes=USERBOT_PREFIX),
 )
 async def shellrunner(client, message: Message):
@@ -222,7 +220,6 @@ async def sendFile(message: Message, text: str):
     & ~filters.edited
     & ~filters.via_bot
     & filters.user(SUDOERS)
-    & ~filters.reply
 )
 async def c_cpp_eval(_, message: Message):
     if len(message.command) < 2:
@@ -258,7 +255,6 @@ async def c_cpp_eval(_, message: Message):
     filters.command("go", prefixes=USERBOT_PREFIX)
     & ~filters.edited
     & ~filters.via_bot
-    & ~filters.reply
     & filters.user(SUDOERS)
 )
 async def goval(_, message: Message):
