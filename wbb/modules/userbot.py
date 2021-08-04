@@ -16,7 +16,7 @@ from io import StringIO
 
 import aiofiles
 from pyrogram import filters
-from pyrogram.types import Message
+from pyrogram.types import Message, ReplyKeyboardMarkup
 
 from wbb import app  # don't remove
 from wbb import SUDOERS, USERBOT_PREFIX, app2, arq
@@ -70,8 +70,11 @@ async def executor(client, message: Message):
         return await message.delete()
     m = message
     p = print
-    if message.reply_to_message:
-        r = message.reply_to_message
+    if m.reply_to_message:
+        r = m.reply_to_message
+        if r.reply_markup:
+            if isinstance(r.reply_markup, ReplyKeyboardMarkup):
+                return await m.edit("INSECURE!")
     old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = StringIO()
@@ -122,6 +125,13 @@ async def shellrunner(client, message: Message):
         return await edit_or_reply(
             message, text="**Usage:**\n/sh git pull"
         )
+    
+    if message.reply_to_message:
+        r = message.reply_to_message
+        if r.reply_markup:
+            if isinstance(r.reply_markup, ReplyKeyboardMarkup):
+                return await message.edit("INSECURE!")
+
     text = message.text.split(None, 1)[1]
     if "\n" in text:
         code = text.split("\n")
@@ -224,6 +234,13 @@ async def sendFile(message: Message, text: str):
 async def c_cpp_eval(_, message: Message):
     if len(message.command) < 2:
         return await message.edit("Write Some Code..")
+    
+    if message.reply_to_message:
+        r = message.reply_to_message
+        if r.reply_markup:
+            if isinstance(r.reply_markup, ReplyKeyboardMarkup):
+                return await message.edit("INSECURE!")
+
     code = message.text.split(None, 1)[1]
     file = "exec.c"
     compiler = "g++"
@@ -260,6 +277,13 @@ async def c_cpp_eval(_, message: Message):
 async def goval(_, message: Message):
     if len(message.command) < 2:
         return await message.edit("Write Some Code...")
+    
+    if message.reply_to_message:
+        r = message.reply_to_message
+        if r.reply_markup:
+            if isinstance(r.reply_markup, ReplyKeyboardMarkup):
+                return await message.edit("INSECURE!")
+
     code = message.text.split(None, 1)[1]
     file = "main.go"
     cmdRun = ["go", "run", file]
