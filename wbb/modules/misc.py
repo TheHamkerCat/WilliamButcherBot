@@ -23,6 +23,7 @@ SOFTWARE.
 """
 import secrets
 import string
+from asyncio import Lock
 
 import aiohttp
 from cryptography.fernet import Fernet
@@ -55,8 +56,10 @@ __HELP__ = """
 #RTFM - Tell noobs to read the manual
 """
 
+ASQ_LOCK = Lock()
 
-@app.on_message(filters.command("asq"))
+
+@app.on_message(filters.command("asq") & ~filters.edited)
 async def asq(_, message):
     err = "Reply to text message or pass the question as argument"
     if message.reply_to_message:
@@ -68,8 +71,9 @@ async def asq(_, message):
             return await message.reply(err)
         question = message.text.split(None, 1)[1]
     m = await message.reply("Thinking...")
-    resp = await arq.asq(question)
-    await m.edit(resp.result)
+    async with ASQ_LOCK:
+        resp = await arq.asq(question)
+        await m.edit(resp.result)
 
 
 @app.on_message(filters.command("commit") & ~filters.edited)
