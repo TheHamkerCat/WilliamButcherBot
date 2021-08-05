@@ -47,6 +47,8 @@ __HELP__ = """
 /clean_db - Clean database.
 /broadcast - To Broadcast A Message To All Groups.
 /update - To Update And Restart The Bot
+.anonymize - Change Name/PFP Randomly.
+.impersonate [User_ID|Username|Reply] - Clone profile of a user.
 """
 
 # Stats Module

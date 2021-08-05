@@ -212,6 +212,10 @@ async def time_converter(message: Message, time_value: str) -> int:
 
 
 async def extract_userid(message, text: str):
+    """
+    NOT TO BE USED OUTSIDE THIS FILE
+    """
+
     def is_int(text: str):
         try:
             int(text)

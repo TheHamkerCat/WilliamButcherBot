@@ -415,7 +415,7 @@ async def mute(_, message: Message):
         user_id, permissions=ChatPermissions()
     )
     mention = (await app.get_users(user_id)).mention
-    keyboard = ikb([[("🚨   Unmute   🚨", f"unmute_{user_id}")]])
+    keyboard = ikb({"🚨   Unmute   🚨": f"unmute_{user_id}"})
     msg = (
         f"**Muted User:** {mention}\n"
         f"**Muted By:** {message.from_user.mention if message.from_user else 'Anon'}\n"
@@ -522,7 +522,7 @@ async def warn_user(_, message: Message):
         get_warn(chat_id, await int_to_alpha(user_id)),
     )
     mention = user.mention
-    keyboard = ikb([[("🚨  Remove Warn  🚨", f"unwarn_{user_id}")]])
+    keyboard = ikb({"🚨  Remove Warn  🚨": f"unwarn_{user_id}"})
     if warns:
         warns = warns["warns"]
     else:

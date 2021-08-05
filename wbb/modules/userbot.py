@@ -52,7 +52,9 @@ async def aexec(code, client, message):
 async def edit_or_reply(msg: Message, **kwargs):
     func = msg.edit_text if msg.from_user.is_self else msg.reply
     spec = getfullargspec(func.__wrapped__).args
-    await func(**{k: v for k, v in kwargs.items() if k in spec})
+    return await func(
+        **{k: v for k, v in kwargs.items() if k in spec}
+    )
 
 
 @app2.on_message(
@@ -125,7 +127,7 @@ async def shellrunner(client, message: Message):
         return await edit_or_reply(
             message, text="**Usage:**\n/sh git pull"
         )
-    
+
     if message.reply_to_message:
         r = message.reply_to_message
         if r.reply_markup:
@@ -234,7 +236,7 @@ async def sendFile(message: Message, text: str):
 async def c_cpp_eval(_, message: Message):
     if len(message.command) < 2:
         return await message.edit("Write Some Code..")
-    
+
     if message.reply_to_message:
         r = message.reply_to_message
         if r.reply_markup:
@@ -277,7 +279,7 @@ async def c_cpp_eval(_, message: Message):
 async def goval(_, message: Message):
     if len(message.command) < 2:
         return await message.edit("Write Some Code...")
-    
+
     if message.reply_to_message:
         r = message.reply_to_message
         if r.reply_markup:

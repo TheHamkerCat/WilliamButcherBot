@@ -42,13 +42,11 @@ async def proxy_func(_, message: Message):
     proxy = proxies[0].proxy
     url = url_from_proxy(proxy)
     keyb = ikb(
-        [
-            [("Connect", url)],
-            [
-                ("←", "proxy_arq_-1"),
-                ("→", "proxy_arq_1"),
-            ],
-        ]
+        {
+            "←": "proxy_arq_-1",
+            "→": "proxy_arq_1",
+            "Connect": url,
+        }
     )
     await message.reply_text(
         f"""
@@ -69,15 +67,11 @@ async def proxy_callback_func(_, cq: CallbackQuery):
     proxy = proxies[index].proxy
     url = url_from_proxy(proxy)
     keyb = ikb(
-        [
-            [
-                ("Connect", url),
-            ],
-            [
-                ("←", f"proxy_arq_{index-1}"),
-                ("→", f"proxy_arq_{index+1}"),
-            ],
-        ]
+        {
+            "←": f"proxy_arq_{index-1}",
+            "→": f"proxy_arq_{index+1}",
+            "Connect": url,
+        }
     )
     await cq.message.edit(
         f"""

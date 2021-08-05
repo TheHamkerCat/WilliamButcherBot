@@ -13,7 +13,7 @@ callback = "log_paste"
 
 @app.on_message(filters.command("logs") & filters.user(SUDOERS))
 async def logs_chat(_, message):
-    keyboard = ikb([[("📎   Pastebin   📎", callback)]])
+    keyboard = ikb({"📎   Pastebin   📎": callback})
     time = (datetime.now()).strftime("%d/%m/%Y %H:%M:%S")
     caption = f"""
 **Time:** `{time}`
