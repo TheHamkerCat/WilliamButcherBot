@@ -41,7 +41,10 @@ async def authorised(
     except ChatWriteForbidden:
         await app.leave_chat(chatID)
     except Exception as e:
-        await message.reply_text(str(e.MESSAGE))
+        try:
+            await message.reply_text(str(e.MESSAGE))
+        except AttributeError:
+            await message.reply_text(str(e))
         e = err()
         print(str(e))
     return subFunc2
