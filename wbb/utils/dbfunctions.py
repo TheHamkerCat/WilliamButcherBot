@@ -544,6 +544,8 @@ async def disapprove_pmpermit(user_id: int):
 
 async def get_welcome(chat_id: int) -> str:
     text = await welcomedb.find_one({"chat_id": chat_id})
+    if not text:
+        return ""
     return text["text"]
 
 

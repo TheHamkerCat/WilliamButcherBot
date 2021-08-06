@@ -28,9 +28,11 @@ from pyrogram import filters
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
+from wbb.core.keyboard import ikb
 from wbb.utils.dbfunctions import (delete_filter, get_filter,
                                    get_filters_names, save_filter)
 from wbb.utils.filter_groups import chat_filters_group
+from wbb.utils.functions import extract_text_and_keyb
 
 __MODULE__ = "Filters"
 __HELP__ = """/filters To Get All The Filters In The Chat.
@@ -133,20 +135,30 @@ async def filters_re(_, message):
             data_type = _filter["type"]
             data = _filter["data"]
             if data_type == "text":
+                keyb = None
+                if re.findall(r"\[.+\,.+\]", data):
+                    keyboard = extract_text_and_keyb(ikb, data)
+                    if keyboard:
+                        data, keyb = keyboard
+
                 if message.reply_to_message:
                     await message.reply_to_message.reply_text(
-                        data, disable_web_page_preview=True
+                        data,
+                        reply_markup=keyb,
+                        disable_web_page_preview=True,
                     )
-                    if text[0] == "~":
+                    if text.startswith("~"):
                         return await message.delete()
                     return
-                await message.reply_text(
-                    data, disable_web_page_preview=True
+                return await message.reply_text(
+                    data,
+                    reply_markup=keyb,
+                    disable_web_page_preview=True,
                 )
             else:
                 if message.reply_to_message:
                     await message.reply_to_message.reply_sticker(data)
-                    if text[0] == "~":
+                    if text.startswith("~"):
                         return await message.delete()
                     return
                 return await message.reply_sticker(data)

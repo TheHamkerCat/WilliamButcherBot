@@ -31,19 +31,22 @@ from pykeyboard import InlineKeyboard
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import (
     ChatAdminRequired, UserNotParticipant)
-from pyrogram.types import (ChatPermissions, InlineKeyboardButton,
+from pyrogram.types import (Chat, ChatPermissions,
+                            InlineKeyboardButton,
                             InlineKeyboardMarkup, Message, User)
 
 from wbb import SUDOERS, WELCOME_DELAY_KICK_SEC, app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
+from wbb.core.keyboard import ikb
 from wbb.utils.dbfunctions import (captcha_off, captcha_on,
                                    del_welcome, get_captcha_cache,
                                    get_welcome, is_captcha_on,
                                    is_gbanned_user, set_welcome,
                                    update_captcha_cache)
 from wbb.utils.filter_groups import welcome_captcha_group
-from wbb.utils.functions import generate_captcha
+from wbb.utils.functions import (extract_text_and_keyb,
+                                 generate_captcha)
 
 __MODULE__ = "Greetings"
 __HELP__ = """
@@ -186,41 +189,25 @@ async def welcome(_, message: Message):
         await asyncio.sleep(0.5)
 
 
-async def send_welcome_message(callback_query, pending_user_id):
-    try:
-        raw_text = await get_welcome(callback_query.message.chat.id)
-    except TypeError:
-        return
-    raw_text = raw_text.strip().replace("`", "")
+async def send_welcome_message(chat: Chat, user_id: int):
+    raw_text = await get_welcome(chat.id)
+
     if not raw_text:
         return
-    text = raw_text.split("~")[0].strip()
-    buttons_text_list = raw_text.split("~")[1].strip().splitlines()
+
+    text, keyb = extract_text_and_keyb(ikb, raw_text)
+
     if "{chat}" in text:
-        text = text.replace(
-            "{chat}", callback_query.message.chat.title
-        )
+        text = text.replace("{chat}", chat.title)
     if "{name}" in text:
         text = text.replace(
-            "{name}", (await app.get_users(pending_user_id)).mention
+            "{name}", (await app.get_users(user_id)).mention
         )
-    buttons = InlineKeyboard(row_width=2)
-    list_of_buttons = []
-    for button_string in buttons_text_list:
-        button_string = button_string.strip().split("=")[1].strip()
-        button_string = button_string.replace("[", "").strip()
-        button_string = button_string.replace("]", "").strip()
-        button_string = button_string.split(",")
-        button_text = button_string[0].strip()
-        button_url = button_string[1].strip()
-        list_of_buttons.append(
-            InlineKeyboardButton(text=button_text, url=button_url)
-        )
-    buttons.add(*list_of_buttons)
+
     await app.send_message(
-        callback_query.message.chat.id,
+        chat.id,
         text=text,
-        reply_markup=buttons,
+        reply_markup=keyb,
         disable_web_page_preview=True,
     )
 
@@ -291,7 +278,9 @@ async def callback_query_welcome_button(_, callback_query):
                     answers_dicc.remove(ii)
                     await update_captcha_cache(answers_dicc)
         """ send welcome message """
-        await send_welcome_message(callback_query, pending_user_id)
+        await send_welcome_message(
+            callback_query.message.chat, pending_user_id
+        )
         return
     else:
         await callback_query.answer("This is not for you")
@@ -369,7 +358,11 @@ async def set_welcome_func(_, message):
         await message.reply_text(usage)
         return
     chat_id = message.chat.id
-    raw_text = str(message.reply_to_message.text.markdown)
+    raw_text = message.reply_to_message.text.markdown
+    if not (extract_text_and_keyb(ikb, raw_text)):
+        return await message.reply_text(
+            "Wrong formating, check help section."
+        )
     await set_welcome(chat_id, raw_text)
     await message.reply_text(
         "Welcome message has been successfully set."
@@ -387,6 +380,15 @@ async def del_welcome_func(_, message):
 @app.on_message(filters.command("get_welcome") & ~filters.private)
 @adminsOnly("can_change_info")
 async def get_welcome_func(_, message):
-    chat_id = message.chat.id
-    welcome_message = await get_welcome(chat_id)
-    await message.reply_text(welcome_message)
+    chat = message.chat
+    welcome = await get_welcome(chat.id)
+    if not welcome:
+        return await message.reply_text("No welcome message set.")
+    if not message.from_user:
+        return await message.reply_text(
+            "You're anon, can't send welcome message."
+        )
+
+    await send_welcome_message(chat, message.from_user.id)
+
+    await message.reply_text(f'`{welcome.replace("`", "")}`')
