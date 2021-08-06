@@ -21,13 +21,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from re import findall
+
 from pyrogram import filters
 
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
+from wbb.core.keyboard import ikb
 from wbb.utils.dbfunctions import (delete_note, get_note,
                                    get_note_names, save_note)
+from wbb.utils.functions import extract_text_and_keyb
 
 __MODULE__ = "Notes"
 __HELP__ = """/notes To Get All The Notes In The Chat.
@@ -101,8 +105,16 @@ async def get_one_note(_, message):
     if not _note:
         return
     if _note["type"] == "text":
+        data = _note["data"]
+        keyb = None
+        if findall(r"\[.+\,.+\]", data):
+            keyboard = extract_text_and_keyb(ikb, data)
+            if keyboard:
+                data, keyb = keyboard
         await message.reply_text(
-            _note["data"], disable_web_page_preview=True
+            data,
+            reply_markup=keyb,
+            disable_web_page_preview=True,
         )
     else:
         await message.reply_sticker(_note["data"])

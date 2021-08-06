@@ -28,6 +28,7 @@ from math import atan2, cos, radians, sin, sqrt
 from os import execvp
 from random import randint
 from re import findall
+from re import sub as re_sub
 from sys import executable
 from time import time
 
@@ -344,7 +345,8 @@ async def get_file_id_from_message(message):
         file_id = message.video.thumbs[0].file_id
     return file_id
 
-def extract_text_and_keyb(ikb, text: str, row_width: int=2):
+
+def extract_text_and_keyb(ikb, text: str, row_width: int = 2):
     keyboard = {}
     try:
         text = text.strip()
@@ -353,15 +355,14 @@ def extract_text_and_keyb(ikb, text: str, row_width: int=2):
         if text.endswith("`"):
             text = text[:-1]
 
-        elements = text.split("~")
-        
-        text, keyb = elements[0].strip(), elements[1].strip().splitlines()
-        
+        text, keyb = text.split("~")
+
+        keyb = findall(r"\[.+\,.+\]", keyb)
         for btn_str in keyb:
-            btn_str = btn_str.strip().split("=")[1].strip()
-            btn_str = btn_str.replace("[", "").replace("]", "")
+            btn_str = re_sub(r"[\[\]]", "", btn_str)
             btn_str = btn_str.split(",")
-            btn_txt, btn_url = btn_str[0].strip(), btn_str[1].strip()
+            btn_txt, btn_url = btn_str[0], btn_str[1].strip()
+
             if not get_urls_from_text(btn_url):
                 continue
             keyboard[btn_txt] = btn_url

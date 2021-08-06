@@ -31,8 +31,9 @@ from pykeyboard import InlineKeyboard
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import (
     ChatAdminRequired, UserNotParticipant)
-from pyrogram.types import (ChatPermissions, InlineKeyboardButton,
-                            InlineKeyboardMarkup, Message, User, Chat)
+from pyrogram.types import (Chat, ChatPermissions,
+                            InlineKeyboardButton,
+                            InlineKeyboardMarkup, Message, User)
 
 from wbb import SUDOERS, WELCOME_DELAY_KICK_SEC, app
 from wbb.core.decorators.errors import capture_err
@@ -44,7 +45,8 @@ from wbb.utils.dbfunctions import (captcha_off, captcha_on,
                                    is_gbanned_user, set_welcome,
                                    update_captcha_cache)
 from wbb.utils.filter_groups import welcome_captcha_group
-from wbb.utils.functions import generate_captcha, extract_text_and_keyb
+from wbb.utils.functions import (extract_text_and_keyb,
+                                 generate_captcha)
 
 __MODULE__ = "Greetings"
 __HELP__ = """
@@ -189,10 +191,10 @@ async def welcome(_, message: Message):
 
 async def send_welcome_message(chat: Chat, user_id: int):
     raw_text = await get_welcome(chat.id)
-    
+
     if not raw_text:
         return
-    
+
     text, keyb = extract_text_and_keyb(ikb, raw_text)
 
     if "{chat}" in text:
@@ -276,7 +278,9 @@ async def callback_query_welcome_button(_, callback_query):
                     answers_dicc.remove(ii)
                     await update_captcha_cache(answers_dicc)
         """ send welcome message """
-        await send_welcome_message(callback_query.message.chat, pending_user_id)
+        await send_welcome_message(
+            callback_query.message.chat, pending_user_id
+        )
         return
     else:
         await callback_query.answer("This is not for you")
@@ -357,8 +361,8 @@ async def set_welcome_func(_, message):
     raw_text = message.reply_to_message.text.markdown
     if not (extract_text_and_keyb(ikb, raw_text)):
         return await message.reply_text(
-                "Wrong formating, check help section."
-                )
+            "Wrong formating, check help section."
+        )
     await set_welcome(chat_id, raw_text)
     await message.reply_text(
         "Welcome message has been successfully set."
@@ -381,8 +385,10 @@ async def get_welcome_func(_, message):
     if not welcome:
         return await message.reply_text("No welcome message set.")
     if not message.from_user:
-        return await message.reply_text("You're anon, can't send welcome message.")
-    
+        return await message.reply_text(
+            "You're anon, can't send welcome message."
+        )
+
     await send_welcome_message(chat, message.from_user.id)
 
     await message.reply_text(f'`{welcome.replace("`", "")}`')
