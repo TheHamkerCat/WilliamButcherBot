@@ -28,14 +28,14 @@ from asyncio import get_running_loop
 from functools import partial
 from random import randint
 from urllib.parse import urlparse
-
+from io import BytesIO
 import aiofiles
 import aiohttp
 import ffmpeg
 import youtube_dl
 from pyrogram import filters
 
-from wbb import app, arq
+from wbb import app, arq, aiohttpsession as session
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.pastebin import paste
 
@@ -139,15 +139,11 @@ async def music(_, message):
 
 # Funtion To Download Song
 async def download_song(url):
-    song_name = f"{randint(6969, 6999)}.mp3"
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as resp:
-            if resp.status != 200:
-                return
-            f = await aiofiles.open(song_name, mode="wb")
-            await f.write(await resp.read())
-            await f.close()
-    return song_name
+    async with session.get(url) as resp:
+        song = await resp.read()
+    song = BytesIO(song)
+    song.name = "a.mp3"
+    return song
 
 
 # Jiosaavn Music
@@ -187,13 +183,12 @@ async def jssong(_, message):
             performer=ssingers,
             duration=sduration,
         )
-        os.remove(song)
         await m.delete()
     except Exception as e:
         is_downloading = False
         return await m.edit(str(e))
     is_downloading = False
-
+    song.close()
 
 # Lyrics
 
