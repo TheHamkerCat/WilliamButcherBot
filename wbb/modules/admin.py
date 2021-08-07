@@ -30,7 +30,7 @@ from wbb import BOT_ID, SUDOERS, app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.keyboard import ikb
 from wbb.utils.dbfunctions import (add_warn, get_warn, int_to_alpha,
-                                   remove_warns)
+                                   remove_warns, save_filter)
 from wbb.utils.functions import (extract_user,
                                  extract_user_and_reason,
                                  time_converter)
@@ -385,7 +385,15 @@ async def pin(_, message: Message):
         return await message.reply_text(
             "Reply to a message to pin it."
         )
-    await message.reply_to_message.pin(disable_notification=True)
+    r = message.reply_to_message
+    await r.pin(disable_notification=True)
+    await message.reply(
+        f"**Pinned [this]({r.link}) message.**",
+        disable_web_page_preview=True,
+    )
+    msg = "Please check the pinned message: ~ " + f"[Check, {r.link}]"
+    filter = dict(type="text", data=msg)
+    await save_filter(message.chat.id, "~pinned", filter)
 
 
 # Mute members

@@ -66,6 +66,7 @@ async def change_profile(_, message: Message):
     await m.edit(f"[Anonymized.](tg://user?id={USERBOT_ID})")
     image.close()
 
+
 @app2.on_message(
     filters.command("impersonate", prefixes=USERBOT_PREFIX)
     & filters.user(SUDOERS)
