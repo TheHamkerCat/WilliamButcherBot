@@ -1,91 +1,114 @@
-# ✨ WilliamButcherBot ✨
-### Telegram Group Manager Bot + Userbot Written In Python Using Pyrogram.
+<h1 align="center"> 
+    ✨ WilliamButcherBot ✨ 
+</h1>
 
+<h3 align="center"> 
+    Telegram Group Manager Bot + Userbot Written In Python Using Pyrogram.
+</h3>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Python](http://forthebadge.com/images/badges/made-with-python.svg)](https://python.org)&nbsp;
-[![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)](https://GitHub.com/TheHamkerCat/)
+<p align="center">
+    <a href="https://python.org"> <img src="http://forthebadge.com/images/badges/made-with-python.svg" alt="made-with-python"></a>
+    <a href="https://GitHub.com/TheHamkerCat"> <img src="http://ForTheBadge.com/images/badges/built-with-love.svg" alt="built-with-love"></a>
+</p>
 
+<p align="center">
+    <img src="https://img.shields.io/github/license/thehamkercat/WilliamButcherBot?style=for-the-badge&logo=appveyor" alt="LICENSE">
+    <img src="https://img.shields.io/github/contributors/thehamkercat/WilliamButcherBot?style=for-the-badge&logo=appveyor" alt="Contributors">
+    <img src="https://img.shields.io/github/repo-size/thehamkercat/WilliamButcherBot?style=for-the-badge&logo=appveyor" alt="Repository Size">
+</p>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![LICENSE](https://img.shields.io/github/license/thehamkercat/WilliamButcherBot?style=for-the-badge&logo=appveyor)&nbsp;
-![Contributors](https://img.shields.io/github/contributors/thehamkercat/WilliamButcherBot?style=for-the-badge&logo=appveyor)&nbsp;
-![Repository Size](https://img.shields.io/github/repo-size/thehamkercat/WilliamButcherBot?style=for-the-badge&logo=appveyor)
+<p align="center">
+    <img src="https://img.shields.io/badge/python-3.9-green?style=for-the-badge&logo=appveyor" alt="Python Version">
+    <img src="https://img.shields.io/github/issues/thehamkercat/WilliamButcherBot?style=for-the-badge&logo=appveyor" alt="Issues">
+    <img src="https://img.shields.io/github/forks/thehamkercat/WilliamButcherBot?style=for-the-badge&logo=appveyor" alt="Forks">
+    <img src="https://img.shields.io/github/stars/thehamkercat/WilliamButcherBot?style=for-the-badge&logo=appveyor" alt="Stars">
+</p>
 
+<h3 align="center"> 
+    Ready to use method
+</h3>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Python Version](https://img.shields.io/badge/python-3.9-green?style=for-the-badge&logo=appveyor)&nbsp;
-![Issues](https://img.shields.io/github/issues/thehamkercat/WilliamButcherBot?style=for-the-badge&logo=appveyor)&nbsp;
-![Forks](https://img.shields.io/github/forks/thehamkercat/WilliamButcherBot?style=for-the-badge&logo=appveyor)&nbsp;
-![Stars](https://img.shields.io/github/stars/thehamkercat/WilliamButcherBot?style=for-the-badge&logo=appveyor)
+<p align="center">
+    A Support Group and ready-to-use running instance of this bot can be found on Telegram <br>
+    <a href="https://t.me/WilliamButcherBot"> WilliamButcherBot </a> | 
+    <a href="https://t.me/wbbsupport"> WbbSupport </a>
+</p>
 
+<h2 align="center"> 
+   ⇝ Requirements ⇜
+</h2>
 
+<p align="center">
+    <a href="https://www.python.org/downloads/release/python-390/"> Python3.9 </a> |
+    <a href="https://docs.pyrogram.org/intro/setup#api-keys"> Telegram API Key </a> |
+    <a href="https://t.me/botfather"> Telegram Bot Token </a> | 
+    <a href="https://telegra.ph/How-To-get-Mongodb-URI-04-06"> MongoDB URI </a>
+</p>
 
-<img src="https://static2.aniimg.com/upload/20170515/414/c/d/7/cd7EEF.jpg" width="300" align="right">
+<h2 align="center"> 
+   ⇝ Install Locally Or On A VPS ⇜
+</h2>
 
-## Ready to use method
-
-A ready-to-use running instance of this bot can be found on 
-telegram as [WilliamButcherBot](https://t.me/WilliamButcherBot)
-
-## Requirements
-
-- Python == 3.9
-- A [Telegram API key](https://docs.pyrogram.org/intro/setup#api-keys).
-- A [Telegram bot token](https://t.me/botfather).
-- A [MongoDB URI](https://telegra.ph/How-To-get-Mongodb-URI-04-06)
-
-
-## Install Locally Or On A VPS
-
-```sh
-$ git clone https://github.com/thehamkercat/WilliamButcherBot
-
-$ cd WilliamButcherBot
-
-$ pip3 install -U -r requirements.txt
-
-$ cp sample_config.py config.py
+```console
+thehamkercat@arch:~$ git clone https://github.com/thehamkercat/WilliamButcherBot
+thehamkercat@arch:~$ cd WilliamButcherBot
+thehamkercat@arch:~$ pip3 install -U -r requirements.txt
+thehamkercat@arch:~$ cp sample_config.py config.py
 ```
-Edit **config.py** with your own values
+ 
+<h3 align="center"> 
+    Edit <b>config.py</b> with your own values
+</h3>
 
-# Run Directly
-```sh
-$ python3 -m wbb
-```
+<h2 align="center"> 
+   ⇝ Run Directly ⇜
+</h2>
 
-# Run On Heroku
-
-## Generating Pyrogram Session For Heroku
-
-```
-$ git clone https://github.com/TheHamkerCat/WilliamButcherBot
-
-$ cd WilliamButcherBot
-
-$ pip3 install pyrogram TgCrypto
-
-$ python3 str_gen.py
-```
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/thehamkercat/WilliamButcherBot/)
-
-
-# Docker
-
-```sh
-$ git clone https://github.com/TheHamkerCat/WilliamButcherBot
-
-$ cd WilliamButcherBot
-
-$ cp sample_config.env config.env
-```
-Edit **config.env** with your own values
-
-```sh
-$ sudo docker build . -t wbb
-
-$ sudo docker run wbb
+```console
+thehamkercat@arch:~$ python3 -m wbb
 ```
 
-## Write new modules
+<h1 align="center"> 
+   ⇝ Run On Heroku ⇜
+</h1>
+
+<h3 align="center"> 
+   Generating Pyrogram Session For Heroku
+</h3>
+
+```console
+thehamkercat@arch:~$ git clone https://github.com/thehamkercat/WilliamButcherBot
+thehamkercat@arch:~$ cd WilliamButcherBot
+thehamkercat@arch:~$ pip3 install pyrogram TgCrypto
+thehamkercat@arch:~$ python3 str_gen.py
+```
+
+<p align="center">
+    <a href="https://heroku.com/deploy?template=https://github.com/thehamkercat/WilliamButcherBot"> <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy"></a>
+</p>
+
+<h1 align="center"> 
+   ⇝ Docker ⇜
+</h1>
+
+```console
+thehamkercat@arch:~$ git clone https://github.com/thehamkercat/WilliamButcherBot
+thehamkercat@arch:~$ cd WilliamButcherBot
+thehamkercat@arch:~$ cp sample_config.env config.env
+```
+
+<h3 align="center"> 
+    Edit <b> config.env </b> with your own values
+</h3>
+
+```console
+thehamkercat@arch:~$ sudo docker build . -t wbb
+thehamkercat@arch:~$ sudo docker run wbb
+```
+
+<h2 align="center"> 
+   ⇝ Write new modules ⇜
+</h2>
 
 ```py
 # Add license text here, get it from below
@@ -108,8 +131,6 @@ async def some_function(_, message):
 # Many useful functions are in, wbb/utils/, wbb, and wbb/core/
 ```
 
-And put that file in wbb/modules/, restart and test your bot.
-
-## Note
-
-1. Support Chat: [WbbSupport](https://t.me/wbbsupport)
+<h3 align="center"> 
+   And put that file in wbb/modules/, restart and test your bot.
+</h3>
