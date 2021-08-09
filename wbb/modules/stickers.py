@@ -137,8 +137,13 @@ async def kang(client, message):
     # Would be a good idea to cache the number instead of searching it every single time...
     packnum = 0
     packname = "f" + str(message.from_user.id) + "_by_" + BOT_USERNAME
+    limit = 0
     try:
         while True:
+            # Prevent infinite rules
+            if limit >= 50:
+                return await msg.delete()
+
             stickerset = await get_sticker_set_by_name(
                 client, packname
             )
@@ -160,6 +165,7 @@ async def kang(client, message):
                     + "_by_"
                     + BOT_USERNAME
                 )
+                limit += 1
                 continue
             else:
                 try:
@@ -170,6 +176,7 @@ async def kang(client, message):
                     return await msg.edit(
                         "[ERROR]: INVALID_EMOJI_IN_ARGUMENT"
                     )
+            limit += 1
             break
 
         await msg.edit(

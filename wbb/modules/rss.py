@@ -28,7 +28,6 @@ __HELP__ = f"""
 async def rss_worker():
     print("[INFO]: RSS WORKER STARTED")
     while True:
-        t1 = time()
         feeds = await get_rss_feeds()
         if not feeds:
             await sleep(RSS_DELAY)
@@ -48,10 +47,7 @@ async def rss_worker():
             except Exception as e:
                 print(str(e), f"RSS {chat}")
                 pass
-        t2 = time()
-        if (t2 - t1) >= RSS_DELAY:
-            continue
-        await sleep(RSS_DELAY - (t2 - t1))
+        await sleep(RSS_DELAY)
 
 
 loop = get_event_loop()
