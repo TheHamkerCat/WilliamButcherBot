@@ -63,7 +63,7 @@ async def chat_bot_toggle(db, message: Message):
         )
     else:
         await edit_or_reply(
-                message, text="**Usage:**\n/chatbot [ENABLE|DISABLE]"
+            message, text="**Usage:**\n/chatbot [ENABLE|DISABLE]"
         )
 
 
@@ -75,7 +75,7 @@ async def chat_bot_toggle(db, message: Message):
 async def chatbot_status(_, message: Message):
     if len(message.command) != 2:
         return await edit_or_reply(
-                message, text="**Usage:**\n/chatbot [ENABLE|DISABLE]"
+            message, text="**Usage:**\n/chatbot [ENABLE|DISABLE]"
         )
     await chat_bot_toggle(active_chats_bot, message)
 
@@ -128,7 +128,7 @@ async def chatbot_talk(_, message: Message):
 async def chatbot_status_ubot(_, message: Message):
     if len(message.text.split()) != 2:
         return await edit_or_reply(
-                message, text="**Usage:**\n.chatbot [ENABLE|DISABLE]"
+            message, text="**Usage:**\n.chatbot [ENABLE|DISABLE]"
         )
     await chat_bot_toggle(active_chats_ubot, message)
 
