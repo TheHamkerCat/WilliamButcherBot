@@ -370,3 +370,14 @@ def extract_text_and_keyb(ikb, text: str, row_width: int = 2):
     except Exception:
         return
     return text, keyboard
+
+
+async def get_user_id_and_usernames(client) -> dict:
+    with client.storage.lock, client.storage.conn:
+        users = client.storage.conn.execute(
+            'SELECT * FROM peers WHERE type in ("user", "bot") AND username NOT null'
+        ).fetchall()
+    users_ = {}
+    for user in users:
+        users_[user[0]] = user[3]
+    return users_
