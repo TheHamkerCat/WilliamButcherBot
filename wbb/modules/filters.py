@@ -83,12 +83,14 @@ async def save_filters(_, message):
 async def get_filterss(_, message):
     _filters = await get_filters_names(message.chat.id)
     if not _filters:
-        await message.reply_text("**No filters in this chat.**")
-    else:
-        msg = f"List of filters in {message.chat.title}\n"
-        for _filter in _filters:
-            msg += f"**-** `{_filter}`\n"
-        await message.reply_text(msg)
+        return await message.reply_text(
+            "**No filters in this chat.**"
+        )
+    _filters.sort()
+    msg = f"List of filters in {message.chat.title}\n"
+    for _filter in _filters:
+        msg += f"**-** `{_filter}`\n"
+    await message.reply_text(msg)
 
 
 @app.on_message(

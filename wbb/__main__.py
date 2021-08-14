@@ -104,6 +104,42 @@ async def start_bot():
     await aiohttpsession.close()
 
 
+home_keyboard_pm = InlineKeyboardMarkup(
+    [
+        [
+            InlineKeyboardButton(
+                text="Commands ❓", callback_data="bot_commands"
+            ),
+            InlineKeyboardButton(
+                text="Repo 🛠",
+                url="https://github.com/thehamkercat/WilliamButcherBot",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="System Stats 🖥",
+                callback_data="stats_callback",
+            ),
+            InlineKeyboardButton(
+                text="Support 👨", url="http://t.me/WBBSupport"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="Add Me To Your Group 🎉",
+                url=f"http://t.me/{BOT_USERNAME}?startgroup=new",
+            )
+        ],
+    ]
+)
+
+home_text_pm = (
+    f"Hey there! My name is {BOT_NAME}. I can manage your "
+    + "group with lots of useful features, feel free to "
+    + "add me to your group."
+)
+
+
 @app.on_message(filters.command(["help", "start"]))
 async def help_command(_, message):
     if message.chat.type != "private":
@@ -130,41 +166,12 @@ async def help_command(_, message):
                 ],
             ]
         )
-        await message.reply(
+        return await message.reply(
             "Pm Me For More Details.", reply_markup=keyboard
         )
-        return
-    keyboard = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton(
-                    text="Commands ❓", callback_data="bot_commands"
-                ),
-                InlineKeyboardButton(
-                    text="Repo 🛠",
-                    url="https://github.com/thehamkercat/WilliamButcherBot",
-                ),
-            ],
-            [
-                InlineKeyboardButton(
-                    text="System Stats 🖥",
-                    callback_data="stats_callback",
-                ),
-                InlineKeyboardButton(
-                    text="Support 👨", url="http://t.me/WBBSupport"
-                ),
-            ],
-            [
-                InlineKeyboardButton(
-                    text="Add Me To Your Group 🎉",
-                    url=f"http://t.me/{BOT_USERNAME}?startgroup=new",
-                )
-            ],
-        ]
-    )
     await message.reply(
-        f"Hey there! My name is {BOT_NAME}. I can manage your group with lots of useful features, feel free to add me to your group.",
-        reply_markup=keyboard,
+        home_text_pm,
+        reply_markup=home_keyboard_pm,
     )
 
 
@@ -210,6 +217,7 @@ async def stats_callbacc(_, CallbackQuery):
 
 @app.on_callback_query(filters.regex(r"help_(.*?)"))
 async def help_button(client, query):
+    home_match = re.match(r"help_home\((.+?)\)", query.data)
     mod_match = re.match(r"help_module\((.+?)\)", query.data)
     prev_match = re.match(r"help_prev\((.+?)\)", query.data)
     next_match = re.match(r"help_next\((.+?)\)", query.data)
@@ -247,7 +255,13 @@ General command are:
             ),
             disable_web_page_preview=True,
         )
-
+    elif home_match:
+        await app.send_message(
+            query.from_user.id,
+            text=home_text_pm,
+            reply_markup=home_keyboard_pm,
+        )
+        await query.message.delete()
     elif prev_match:
         curr_page = int(prev_match.group(1))
         await query.message.edit(

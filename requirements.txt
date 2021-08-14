@@ -23,3 +23,4 @@ wget
 python-dotenv
 feedparser
 pyromod
+fuzzysearch

@@ -27,7 +27,6 @@ import os
 from datetime import datetime
 from random import shuffle
 
-from pykeyboard import InlineKeyboard
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import (
     ChatAdminRequired, UserNotParticipant)

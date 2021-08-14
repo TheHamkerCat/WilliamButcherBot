@@ -14,7 +14,6 @@ from html import escape
 from inspect import getfullargspec
 from io import StringIO
 
-import aiofiles
 from pyrogram import filters
 from pyrogram.types import Message, ReplyKeyboardMarkup
 
@@ -214,88 +213,3 @@ def shell(cmd: list) -> tuple:
     stdout = stdout.decode() if stdout else None
     stderr = stderr.decode() if stderr else None
     return stdout, stderr
-
-
-""" C and CPP Eval """
-
-
-async def sendFile(message: Message, text: str):
-    file = "output.txt"
-    async with aiofiles.open(file, mode="w+") as f:
-        await f.write(text)
-    await message.reply_document(file)
-    os.remove(file)
-
-
-@app2.on_message(
-    filters.command(["c", "cpp"], prefixes=USERBOT_PREFIX)
-    & ~filters.edited
-    & ~filters.via_bot
-    & filters.user(SUDOERS)
-)
-async def c_cpp_eval(_, message: Message):
-    if len(message.command) < 2:
-        return await message.edit("Write Some Code..")
-
-    if message.reply_to_message:
-        r = message.reply_to_message
-        if r.reply_markup:
-            if isinstance(r.reply_markup, ReplyKeyboardMarkup):
-                return await message.edit("INSECURE!")
-
-    code = message.text.split(None, 1)[1]
-    file = "exec.c"
-    compiler = "g++"
-    out_file = "exec"
-    cmdCompile = [compiler, "-g", file, "-o", out_file]
-    cmdRun = [f"./{out_file}"]
-    async with aiofiles.open(file, mode="w+") as f:
-        await f.write(code)
-    out, err = shell(cmdCompile)
-    os.remove(file)
-    if err:
-        text = f"**INPUT:**\n```{escape(code)}```\n\n**COMPILE-TIME ERROR:**```{escape(err)}```"
-        if len(text) > 4090:
-            return await sendFile(message, text)
-        return await edit_or_reply(message, text=text)
-    out, err = shell(cmdRun)
-    os.remove(out_file)
-    err = f"**RUNTIME ERROR:**\n```{escape(err)}```" if err else None
-    out = f"**OUTPUT:**\n```{escape(out)}```" if out else None
-    text = (
-        f"**INPUT:**\n```{escape(code)}```\n\n{out if out else err}"
-    )
-    if len(text) > 4090:
-        return await sendFile(message, text)
-    await edit_or_reply(message, text=text)
-
-
-@app2.on_message(
-    filters.command("go", prefixes=USERBOT_PREFIX)
-    & ~filters.edited
-    & ~filters.via_bot
-    & filters.user(SUDOERS)
-)
-async def goval(_, message: Message):
-    if len(message.command) < 2:
-        return await message.edit("Write Some Code...")
-
-    if message.reply_to_message:
-        r = message.reply_to_message
-        if r.reply_markup:
-            if isinstance(r.reply_markup, ReplyKeyboardMarkup):
-                return await message.edit("INSECURE!")
-
-    code = message.text.split(None, 1)[1]
-    file = "main.go"
-    cmdRun = ["go", "run", file]
-    async with aiofiles.open(file, mode="w+") as f:
-        await f.write(code)
-    stdout, stderr = shell(cmdRun)
-    os.remove(file)
-    out = stdout or stderr or None
-    out = f"**OUTPUT:**\n```{escape(out)}```"
-    text = f"**INPUT:**\n```{escape(code)}```\n\n{out}"
-    if len(text) > 4090:
-        return await sendFile(message, text)
-    await edit_or_reply(message, text=text)

@@ -82,12 +82,12 @@ async def get_notes(_, message):
     _notes = await get_note_names(message.chat.id)
 
     if not _notes:
-        await message.reply_text("**No notes in this chat.**")
-    else:
-        msg = f"List of notes in {message.chat.title}\n"
-        for note in _notes:
-            msg += f"**-** `{note}`\n"
-        await message.reply_text(msg)
+        return await message.reply_text("**No notes in this chat.**")
+    _notes.sort()
+    msg = f"List of notes in {message.chat.title}\n"
+    for note in _notes:
+        msg += f"**-** `{note}`\n"
+    await message.reply_text(msg)
 
 
 @app.on_message(

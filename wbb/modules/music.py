@@ -27,11 +27,8 @@ import os
 from asyncio import get_running_loop
 from functools import partial
 from io import BytesIO
-from random import randint
 from urllib.parse import urlparse
 
-import aiofiles
-import aiohttp
 import ffmpeg
 import youtube_dl
 from pyrogram import filters
