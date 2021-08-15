@@ -26,72 +26,53 @@ import os
 import re
 
 import aiofiles
-from pykeyboard import InlineKeyboard
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardButton
 
-from wbb import aiohttpsession as session
 from wbb import app
 from wbb.core.decorators.errors import capture_err
+from wbb.core.keyboard import ikb
 from wbb.utils.pastebin import paste
 
 __MODULE__ = "Paste"
-__HELP__ = "/paste - To Paste Replied Text Or Document To Nekobin"
+__HELP__ = "/paste - To Paste Replied Text Or Document To A Pastebin"
 pattern = re.compile(
     r"^text/|json$|yaml$|xml$|toml$|x-sh$|x-shellscript$"
 )
-
-
-async def isPreviewUp(preview: str) -> bool:
-    for _ in range(7):
-        try:
-            async with session.head(preview, timeout=2) as resp:
-                status = resp.status
-                size = resp.content_length
-        except asyncio.exceptions.TimeoutError:
-            return False
-        if status == 404 or (status == 200 and size == 0):
-            await asyncio.sleep(0.4)
-        else:
-            return True if status == 200 else False
-    return False
 
 
 @app.on_message(filters.command("paste") & ~filters.edited)
 @capture_err
 async def paste_func(_, message):
     if not message.reply_to_message:
-        return await message.reply_text(
-            "Reply To A Message With /paste"
+        return await message.reply("Reply To A Message With /paste")
+    r = message.reply_to_message
+
+    if not r.text and not r.document:
+        return await message.reply(
+            "Only text and documents are supported."
         )
-    m = await message.reply_text("Pasting...")
-    if message.reply_to_message.text:
-        content = str(message.reply_to_message.text)
-    elif message.reply_to_message.document:
-        document = message.reply_to_message.document
-        if document.file_size > 1048576:
+
+    m = await message.reply("Pasting...")
+
+    if r.text:
+        content = str(r.text)
+    elif r.document:
+        if r.document.file_size > 40000:
             return await m.edit(
-                "You can only paste files smaller than 1MB."
+                "You can only paste files smaller than 40KB."
             )
-        if not pattern.search(document.mime_type):
+        if not pattern.search(r.document.mime_type):
             return await m.edit("Only text files can be pasted.")
         doc = await message.reply_to_message.download()
         async with aiofiles.open(doc, mode="r") as f:
             content = await f.read()
         os.remove(doc)
-    else:
-        return await message.reply("Reply to a text message or DOC.")
-    link = await paste(content)
-    preview = link + "/preview.png"
-    button = InlineKeyboard(row_width=1)
-    button.add(InlineKeyboardButton(text="Paste Link", url=link))
 
-    if await isPreviewUp(preview):
-        try:
-            await message.reply_photo(
-                photo=preview, quote=False, reply_markup=button
-            )
-            return await m.delete()
-        except Exception:
-            pass
-    return await m.edit(link)
+    link = await paste(content)
+    kb = ikb({"Paste Link": link})
+    try:
+        await message.reply_photo(
+            photo=link, quote=False, reply_markup=kb
+        )
+    except Exception:
+        await message.reply("Here's your paste", reply_markup=kb)
