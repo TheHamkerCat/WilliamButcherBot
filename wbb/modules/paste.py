@@ -76,3 +76,4 @@ async def paste_func(_, message):
         )
     except Exception:
         await message.reply("Here's your paste", reply_markup=kb)
+    await m.delete()
