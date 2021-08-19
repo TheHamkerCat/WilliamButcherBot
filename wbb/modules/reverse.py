@@ -32,7 +32,7 @@ async def reverse_image_search(_, message):
             "Reply to an image/document/sticker/animation to reverse search it."
         )
     m = await message.reply_text("Downloading")
-    file_id = await get_file_id_from_message(reply)
+    file_id = get_file_id_from_message(reply)
     if not file_id:
         return await m.edit("Can't reverse that")
     image = await app.download_media(
