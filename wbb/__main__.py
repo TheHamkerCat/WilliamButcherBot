@@ -87,18 +87,19 @@ async def start_bot():
     print(f"[INFO]: BOT STARTED AS {BOT_NAME}!")
     print(f"[INFO]: USERBOT STARTED AS {USERBOT_NAME}!")
     restart_data = await clean_restart_stage()
-    if restart_data:
-        print("[INFO]: SENDING RESTART STATUS")
-        try:
+    try:
+        print("[INFO]: SENDING ONLINE STATUS")
+        if restart_data:
             await app.edit_message_text(
                 restart_data["chat_id"],
                 restart_data["message_id"],
                 "**Restarted Successfully**",
             )
-        except Exception:
-            pass
-    else:
-        await app.send_message(LOG_GROUP_ID, "Bot started!")
+
+        else:
+            await app.send_message(LOG_GROUP_ID, "Bot started!")
+    except Exception:
+        pass
     await idle()
     print("[INFO]: STOPPING BOT AND CLOSING AIOHTTP SESSION")
     await aiohttpsession.close()

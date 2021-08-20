@@ -29,10 +29,16 @@ async def upload(m: Message, file: str = None, url: str = None):
         if file:
             remove(file)
         return
+
+    if file:
+        remove(file)
+
     if not resp:
         return await m.edit(err)
+
     if not resp.ok:
         return await m.edit(err)
+
     await m.edit(
         f"**Download Link:** {resp.result}",
         disable_web_page_preview=True,
@@ -51,7 +57,7 @@ async def arq_upload(_, message):
 
             file_id = get_file_id_from_message(r, 100000000, None)
             if not file_id:
-                return await message.reply("Media not supported.")
+                return await message.reply("Unsupported media.")
 
             m = await message.reply("Downloading...")
             file = await app.download_media(file_id)
