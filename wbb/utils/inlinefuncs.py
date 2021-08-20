@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import asyncio
-import json
 import os
 import sys
 from html import escape
@@ -43,13 +42,12 @@ from pyrogram.types import (InlineKeyboardButton,
 from search_engine_parser import GoogleSearch
 
 from wbb import (BOT_USERNAME, MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_ID,
-                 USERBOT_NAME, USERBOT_USERNAME, aiohttpsession, app,
+                 USERBOT_NAME, USERBOT_USERNAME, app,
                  app2, arq)
 from wbb.core.types import InlineQueryResultCachedDocument
 from wbb.modules.info import get_chat_info, get_user_info
 from wbb.modules.music import download_youtube_audio
 from wbb.utils.functions import test_speedtest
-from wbb.utils.http import get
 from wbb.utils.pastebin import paste
 
 keywords_list = [

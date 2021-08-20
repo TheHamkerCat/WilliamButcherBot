@@ -5,7 +5,6 @@ from io import BytesIO
 from random import randint
 
 import aiofiles
-import aiohttp
 import requests
 from bs4 import BeautifulSoup
 from pyrogram import filters

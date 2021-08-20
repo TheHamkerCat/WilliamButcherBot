@@ -30,7 +30,6 @@ from random import randint
 from re import findall
 from re import sub as re_sub
 from sys import executable
-from time import time
 
 import aiofiles
 import aiohttp
@@ -40,7 +39,6 @@ from pyrogram.types import Message
 from wget import download
 
 from wbb import aiohttpsession as aiosession
-from wbb import arq
 from wbb.utils import aiodownloader
 from wbb.utils.dbfunctions import start_restart_stage
 from wbb.utils.http import get
