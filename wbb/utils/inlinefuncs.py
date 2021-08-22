@@ -42,8 +42,7 @@ from pyrogram.types import (InlineKeyboardButton,
 from search_engine_parser import GoogleSearch
 
 from wbb import (BOT_USERNAME, MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_ID,
-                 USERBOT_NAME, USERBOT_USERNAME, app,
-                 app2, arq)
+                 USERBOT_NAME, USERBOT_USERNAME, app, app2, arq)
 from wbb.core.types import InlineQueryResultCachedDocument
 from wbb.modules.info import get_chat_info, get_user_info
 from wbb.modules.music import download_youtube_audio
