@@ -15,6 +15,7 @@ from inspect import getfullargspec
 from io import StringIO
 
 from pyrogram import filters
+from pyrogram.errors import MessageNotModified
 from pyrogram.types import Message, ReplyKeyboardMarkup
 
 from wbb import app  # don't remove
@@ -124,9 +125,13 @@ async def executor(client, message: Message):
 
                 if m.reply_to_message.message_id == mid:
                     if m.from_user.id == message.from_user.id:
+
                         if "→" in m.text:
-                            return await m.edit(final_output)
-        await message.reply(final_output)
+                            try:
+                                return await m.edit(final_output)
+                            except MessageNotModified:
+                                return
+        await message.reply(final_output, quote=True)
 
 
 @app2.on_message(
