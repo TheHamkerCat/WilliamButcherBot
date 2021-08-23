@@ -152,6 +152,7 @@ async def purgeFunc(client, message: Message):
             "Reply to a message to purge from."
         )
 
+    chat_id = message.chat.id
     message_ids = []
 
     for message_id in range(
