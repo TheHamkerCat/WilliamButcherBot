@@ -50,7 +50,6 @@ async def edit_or_reply(msg: Message, **kwargs):
     filters.user(SUDOERS)
     & ~filters.forwarded
     & ~filters.via_bot
-    & ~filters.edited
     & filters.command("py", prefixes=USERBOT_PREFIX)
 )
 async def executor(client, message: Message):
@@ -59,8 +58,14 @@ async def executor(client, message: Message):
         cmd = message.text.split(" ", maxsplit=1)[1]
     except IndexError:
         return await message.delete()
+
+    if message.chat.type == "channel":
+        return
+
     m = message
     p = print
+
+    # To prevent keyboard input attacks
     if m.reply_to_message:
         r = m.reply_to_message
         if r.reply_markup:
@@ -73,8 +78,8 @@ async def executor(client, message: Message):
     stdout, stderr, exc = None, None, None
     try:
         await aexec(cmd, client, message)
-    except Exception:
-        exc = traceback.format_exc()
+    except Exception as e:
+        exc = str(e)
     stdout = redirected_output.getvalue()
     stderr = redirected_error.getvalue()
     sys.stdout = old_stdout
@@ -88,20 +93,40 @@ async def executor(client, message: Message):
         evaluation = stdout
     else:
         evaluation = "Success"
-    final_output = f"**INPUT:**\n```{escape(cmd)}```\n\n**OUTPUT**:\n```{escape(evaluation.strip())}```"
+    final_output = f"**→**\n`{escape(evaluation.strip())}`"
     if len(final_output) > 4096:
         filename = "output.txt"
         with open(filename, "w+", encoding="utf8") as out_file:
             out_file.write(str(evaluation.strip()))
         await message.reply_document(
             document=filename,
-            caption=f"**INPUT:**\n`{escape(cmd[0:980])}`\n\n**OUTPUT:**\n`Attached Document`",
+            caption=f"`→`\n  **Attached Document**",
             quote=False,
         )
-        await message.delete()
         os.remove(filename)
     else:
-        await edit_or_reply(message, text=final_output)
+        mid = message.message_id
+
+        # Edit the output if input is edited
+        if message.edit_date:
+            async for m in app2.iter_history(message.chat.id):
+
+                # If no replies found, reply
+                if m.message_id == mid:
+                    break
+
+                if (
+                    not m.from_user
+                    or not m.text
+                    or not m.reply_to_message
+                ):
+                    continue
+
+                if m.reply_to_message.message_id == mid:
+                    if m.from_user.id == message.from_user.id:
+                        if "→" in m.text:
+                            return await m.edit(final_output)
+        await message.reply(final_output)
 
 
 @app2.on_message(
