@@ -1,3 +1,26 @@
+"""
+MIT License
+
+Copyright (c) 2021 TheHamkerCat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 import os
 from asyncio import gather, get_running_loop
 from base64 import b64decode
@@ -71,47 +94,55 @@ async def reverse_image_search(_, message: Message):
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:58.0) Gecko/20100101 Firefox/58.0"
     }
 
-    soup = await get_soup(location, headers=headers)
-    div = soup.find_all("div", {"class": "r5a77d"})[0]
-    text = div.find("a").text
+    try:
+        soup = await get_soup(location, headers=headers)
+        div = soup.find_all("div", {"class": "r5a77d"})[0]
+        text = div.find("a").text
+        text = f"**Result**: [{text}]({location})"
+    except Exception:
+        return await m.edit(f"**Result**: [Link]({location})")
 
-    url = "https://google.com" + soup.find_all(
-        "a", {"class": "ekf0x hSQtef"}
-    )[0].get("href")
+    # Pass if no images detected
+    try:
+        url = "https://google.com" + soup.find_all(
+            "a", {"class": "ekf0x hSQtef"}
+        )[0].get("href")
 
-    soup = await get_soup(url, headers=headers)
+        soup = await get_soup(url, headers=headers)
 
-    text = f"**Result**: [{text}]({location})"
+        media = []
+        for img in soup.find_all("img"):
+            if len(media) == 2:
+                break
 
-    media = []
-    for img in soup.find_all("img"):
-        if len(media) == 2:
-            break
+            if img.get("src"):
+                img = img.get("src")
+                if "image/gif" in img:
+                    continue
 
-        if img.get("src"):
-            img = img.get("src")
-            if "image/gif" in img:
-                continue
+                img = BytesIO(b64decode(img))
+                img.name = "img.png"
+                media.append(img)
+            elif img.get("data-src"):
+                img = img.get("data-src")
+                media.append(img)
 
-            img = BytesIO(b64decode(img))
-            img.name = "img.png"
-            media.append(img)
-        elif img.get("data-src"):
-            img = img.get("data-src")
-            media.append(img)
-
-    # Cache images, so we can use file_ids
-    tasks = [app.send_photo(MESSAGE_DUMP_CHAT, img) for img in media]
-    messages = await gather(*tasks)
-
-    await message.reply_media_group(
-        [
-            InputMediaPhoto(
-                i.photo.file_id,
-                caption=text,
-            )
-            for i in messages
+        # Cache images, so we can use file_ids
+        tasks = [
+            app.send_photo(MESSAGE_DUMP_CHAT, img) for img in media
         ]
-    )
+        messages = await gather(*tasks)
+
+        await message.reply_media_group(
+            [
+                InputMediaPhoto(
+                    i.photo.file_id,
+                    caption=text,
+                )
+                for i in messages
+            ]
+        )
+    except Exception:
+        pass
 
     await m.edit(text)
