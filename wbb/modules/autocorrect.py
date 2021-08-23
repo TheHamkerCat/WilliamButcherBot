@@ -4,15 +4,6 @@ from pyrogram.types import Message
 from wbb import SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2, arq
 from wbb.utils.filter_groups import autocorrect_group
 
-__MODULE__ = "Autocorrect"
-__HELP__ = """
-/autocorrect [Reply to a message] - Autocorrects the text in replied message.
-
-
-.autocorrect [ENABLE|DISABLE] - Enable or disable autocorrect in userbot [ONLY FOR DEVS]
-This will autocorrect your messages on the go.
-"""
-
 
 @app.on_message(filters.command("autocorrect"))
 async def autocorrect_bot(_, message: Message):

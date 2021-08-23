@@ -38,21 +38,55 @@ from wbb.utils.pastebin import paste
 
 __MODULE__ = "Misc"
 __HELP__ = """
-/asq - Ask a question
-/commit - Generate Funny Commit Messages
-/runs  - Idk Test Yourself
-/id - Get Chat_ID or User_ID
-/random [Length] - Generate Random Complex Passwords
-/encrypt - Encrypt Text [Can Only Be Decrypted By This Bot]
-/decrypt - Decrypt Text
-/cheat [Language] [Query] - Get Programming Related Help
-/tr [en] - Translate A Message
-/json [URL] - Get JSON Response From An API or Something.
-/arq - Statistics Of ARQ API.
-/webss [URL] - Take A Screenshot Of A Webpage
-/reverse - Reverse search an image.
-/carbon - Make Carbon from code.
-/tts - Convert Text To Speech.
+/asq
+    Ask a question
+
+/commit
+    Generate Funny Commit Messages
+
+/runs
+    Idk Test Yourself
+
+/id
+    Get Chat_ID or User_ID
+
+/random [Length]
+    Generate Random Complex Passwords
+
+/encrypt
+    Encrypt Text [Can Only Be Decrypted By This Bot]
+
+/decrypt
+    Decrypt Text
+
+/cheat [Language] [Query]
+    Get Programming Related Help
+
+/tr [LANGUAGE_CODE]
+    Translate A Message
+    Ex: /tr en
+
+/json [URL]
+    Get parsed JSON response from a rest API.
+
+/arq
+    Statistics Of ARQ API.
+
+/webss [URL]
+    Take A Screenshot Of A Webpage
+
+/reverse
+    Reverse search an image.
+
+/carbon
+    Make Carbon from code.
+
+/tts
+    Convert Text To Speech.
+
+/autocorrect [Reply to a message]
+    Autocorrects the text in replied message.
+
 #RTFM - Tell noobs to read the manual
 """
 

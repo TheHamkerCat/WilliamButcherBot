@@ -21,16 +21,6 @@ from wbb import app  # don't remove
 from wbb import SUDOERS, USERBOT_PREFIX, app2, arq
 from wbb.core.decorators.misc import exec_time
 
-__MODULE__ = "Userbot"
-__HELP__ = """
-.alive - Send Alive Message.
-.py - Execute Python Code.
-.sh - Execute Shell Code.
-.approve | .disapprove - Approve Or Disapprove A User To PM You.
-.block | .unblock - Block Or Unblock A User.
-.create (b|s|c) Name - create [basic|super]group & channel
-"""
-
 # Eval and Sh module from nana-remix
 
 m = None

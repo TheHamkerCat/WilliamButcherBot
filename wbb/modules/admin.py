@@ -145,29 +145,38 @@ async def list_members(group_id):
 )
 @adminsOnly("can_delete_messages")
 async def purgeFunc(client, message: Message):
-    chat_id = message.chat.id
-    message_ids = []
-    if message.chat.type not in ("supergroup", "channel"):
-        return
+    await message.delete()
+
     if not message.reply_to_message:
         return await message.reply_text(
-            "Reply to a message to delete from, don't make fun of yourself!"
+            "Reply to a message to purge from."
         )
-    await message.delete()
-    for a_s_message_id in range(
-        message.reply_to_message.message_id, message.message_id
+
+    message_ids = []
+
+    for message_id in range(
+        message.reply_to_message.message_id,
+        message.message_id,
     ):
-        message_ids.append(a_s_message_id)
+        message_ids.append(message_id)
+
+        # Max message deletion limit is 100
         if len(message_ids) == 100:
-            await client.delete_messages(
+            await app.delete_messages(
                 chat_id=chat_id,
                 message_ids=message_ids,
-                revoke=True,
+                revoke=True,  # For both sides
             )
+
+            # To delete more than 100 messages, start again
             message_ids = []
+
+    # Delete if any messages left
     if len(message_ids) > 0:
-        await client.delete_messages(
-            chat_id=chat_id, message_ids=message_ids, revoke=True
+        await app.delete_messages(
+            chat_id=chat_id,
+            message_ids=message_ids,
+            revoke=True,
         )
 
 

@@ -20,8 +20,7 @@ from pyrogram.types import (InlineKeyboardButton,
 
 from wbb import SUDOERS, app
 
-__MODULE__ = "Devs"
-__HELP__ = "/eval - Execute Python Code\n/sh - Execute Shell Code"
+# Module help for this is in sudoers.py
 
 
 async def aexec(code, client, message):
