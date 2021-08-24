@@ -19,7 +19,6 @@ TgCrypto
 uvloop
 youtube_dl
 bs4
-wget
 python-dotenv
 feedparser
 pyromod

@@ -10,7 +10,7 @@ import re
 import subprocess
 import sys
 import traceback
-from asyncio import get_event_loop
+from asyncio import Lock, create_task
 from html import escape
 from inspect import getfullargspec
 from io import StringIO
@@ -29,6 +29,7 @@ p = print
 r = None
 arq = arq
 arrow = lambda x: x.text + "\n`→`"
+TASKS_LOCK = Lock()
 tasks = {}
 
 
@@ -46,6 +47,27 @@ async def eor(msg: Message, **kwargs):
     return await func(
         **{k: v for k, v in kwargs.items() if k in spec}
     )
+
+
+async def add_task(taskFunc, task_id, *args, **kwargs):
+    global tasks
+    task = create_task(taskFunc(*args, **kwargs))
+    tasks[task_id] = task
+    return task
+
+
+async def rm_task(task_id=None):
+    global tasks
+    async with TASKS_LOCK:
+        for key, value in list(tasks.items()):
+            if value.done() or value.cancelled():
+                del tasks[key]
+
+        if task_id:
+            if task_id in tasks:
+                if not tasks[task_id].done():
+                    tasks[task_id].cancel()
+                del tasks[task_id]
 
 
 @app2.on_message(
@@ -70,8 +92,7 @@ async def task_cancel(_, message: Message):
     if mid not in tasks:
         return await m.delete()
 
-    tasks[mid].cancel()
-    del tasks[mid]
+    await rm_task(mid)
     await eor(message, text=f"{arrow(m)} Task cancelled")
 
 
@@ -82,11 +103,7 @@ async def task_cancel(_, message: Message):
     & filters.command("lsTasks", prefixes=USERBOT_PREFIX)
 )
 async def task_list(_, message: Message):
-    global tasks
-    for key, value in tasks.items():
-        if value.done():
-            del tasks[key]
-
+    await rm_task()
     if not tasks:
         return await eor(
             message,
@@ -115,11 +132,6 @@ async def executor(client, message: Message):
 
     m = message
     p = print
-    loop = get_event_loop()
-
-    for key, value in tasks.items():
-        if value.done():
-            del tasks[key]
 
     # To prevent keyboard input attacks
     if m.reply_to_message:
@@ -133,16 +145,18 @@ async def executor(client, message: Message):
     redirected_error = sys.stderr = StringIO()
     stdout, stderr, exc = None, None, None
     try:
-        task = loop.create_task(aexec(cmd, client, message))
-
-        # Save it in tasks, so we can cancel it with .cancelTask
-        tasks[m.message_id] = task
+        task = await add_task(
+            aexec,
+            m.message_id,
+            cmd,
+            client,
+            message,
+        )
         await task
     except Exception as e:
         exc = str(e)
 
-    if m.message_id in tasks:
-        del tasks[m.message_id]
+    await rm_task()
 
     stdout = redirected_output.getvalue()
     stderr = redirected_error.getvalue()
@@ -215,7 +229,7 @@ async def shellrunner(client, message: Message):
         r = message.reply_to_message
         if r.reply_markup:
             if isinstance(r.reply_markup, ReplyKeyboardMarkup):
-                return await message.edit("INSECURE!")
+                return await eor(message, text="INSECURE!")
 
     text = message.text.split(None, 1)[1]
     if "\n" in text:
