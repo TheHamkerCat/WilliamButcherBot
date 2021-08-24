@@ -5,7 +5,7 @@ from time import time
 import aiofiles
 
 from wbb import aiohttpsession as session
-from wbb.modules.userbot import add_task, rm_task, tasks
+from wbb.modules.userbot import add_task, rm_task
 
 
 def ensure_status(status_code: int):

@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import gather, get_running_loop
+from asyncio import gather
 from datetime import datetime, timedelta
 from io import BytesIO
 from math import atan2, cos, floor, radians, sin, sqrt
@@ -37,6 +37,7 @@ import aiohttp
 import speedtest
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from pyrogram.types import Message
+from pyrogram.errors import MessageNotModified
 
 from wbb import aiohttpsession as aiosession
 from wbb.modules.userbot import eor
@@ -56,8 +57,7 @@ async def progress(
     speed = (current / 1000000) / elapsed  # In MB/s
     eta = (100 / percentage * elapsed) / 60  # In Minutes
 
-    # Only edit at every 5 seconds
-    if round(elapsed % 5.00) != 0 and current != total:
+    if round(elapsed % 10.00) != 0 and current != total:
         return
 
     round_pct = floor(percentage / 10)
@@ -71,7 +71,11 @@ async def progress(
 **ETA:** {round(eta, 2)}m
 **Task ID:** {task_id}
 """
-    await eor(message, text=text)
+    try:
+        await eor(message, text=text)
+    except MessageNotModified:
+        print("MessageNotModified: progress func")
+        pass
 
 
 async def restart(m: Message):

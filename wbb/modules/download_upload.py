@@ -7,7 +7,7 @@ from pyrogram.types import Message
 
 from wbb import SUDOERS, USERBOT_PREFIX, app2
 from wbb.core.sections import section
-from wbb.modules.userbot import add_task, eor, rm_task, tasks
+from wbb.modules.userbot import add_task, eor, rm_task
 from wbb.utils.downloader import download
 from wbb.utils.functions import progress
 
@@ -18,8 +18,8 @@ from wbb.utils.functions import progress
 )
 async def download_func(_, message: Message):
     reply = message.reply_to_message
-    start = task_id = int(time())
-
+    start = time()
+    task_id = int(start)
     if reply:
         m = await eor(message, text="Downloading...")
 
@@ -86,8 +86,9 @@ async def upload_func(_, message: Message):
     url_or_path = message.text.split(None, 1)[1]
 
     m = await eor(message, text="Uploading..")
-    start = task_id = int(time())
-
+    start = time()
+    task_id = int(start)
+    
     async def upload_file(path):
         task = await add_task(
             message.reply_document,
