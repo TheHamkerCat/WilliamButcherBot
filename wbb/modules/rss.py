@@ -17,7 +17,7 @@ __HELP__ = f"""
 /add_feed [URL] - Add a feed to chat
 /rm_feed - Remove feed from chat
 
-**Note:** 
+**Note:**
     - This will check for updates every {RSS_DELAY//60} minutes.
     - You can only add one feed per chat.
     - Currently RSS and ATOM feeds are supported.

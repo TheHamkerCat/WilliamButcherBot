@@ -846,7 +846,7 @@ async def execute_code(query):
             )
 
             msg = f"""
-**{lang.capitalize()}:** 
+**{lang.capitalize()}:**
 ```{code}```
 
 **{out}:**

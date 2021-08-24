@@ -1,6 +1,6 @@
 """
     CREDITS:
-        EVAL AND SH FUNCTION IN THIS MODULE IS WRITTEN BY @Pokurt.
+        MOST OF THE CODE IN THIS FILE IS WRITTEN BY @Pokurt.
         SOURCE:
             https://github.com/pokurt/Nana-Remix/blob/master/nana/plugins/devs.py
 """
@@ -10,6 +10,7 @@ import re
 import subprocess
 import sys
 import traceback
+from asyncio import get_event_loop
 from html import escape
 from inspect import getfullargspec
 from io import StringIO
@@ -20,15 +21,15 @@ from pyrogram.types import Message, ReplyKeyboardMarkup
 
 from wbb import app  # don't remove
 from wbb import SUDOERS, USERBOT_PREFIX, app2, arq
-from wbb.core.decorators.misc import exec_time
 
 # Eval and Sh module from nana-remix
 
 m = None
 p = print
 r = None
-exec_time = exec_time
 arq = arq
+arrow = lambda x: x.text + "\n`→`"
+tasks = {}
 
 
 async def aexec(code, client, message):
@@ -39,7 +40,7 @@ async def aexec(code, client, message):
     return await locals()["__aexec"](client, message)
 
 
-async def edit_or_reply(msg: Message, **kwargs):
+async def eor(msg: Message, **kwargs):
     func = msg.edit_text if msg.from_user.is_self else msg.reply
     spec = getfullargspec(func.__wrapped__).args
     return await func(
@@ -51,10 +52,59 @@ async def edit_or_reply(msg: Message, **kwargs):
     filters.user(SUDOERS)
     & ~filters.forwarded
     & ~filters.via_bot
-    & filters.command("py", prefixes=USERBOT_PREFIX)
+    & filters.command("cancelTask", prefixes=USERBOT_PREFIX)
+)
+async def task_cancel(_, message: Message):
+    global tasks
+    m = message
+    r = m.reply_to_message
+
+    if len(m.text.split()) == 2:
+        mid = int(m.text.split(None, 1)[1])
+    else:
+        mid = r.message_id if r else None
+
+    if not mid or not tasks:
+        return await m.delete()
+
+    if mid not in tasks:
+        return await m.delete()
+
+    tasks[mid].cancel()
+    del tasks[mid]
+    await eor(message, text=f"{arrow(m)} Task cancelled")
+
+
+@app2.on_message(
+    filters.user(SUDOERS)
+    & ~filters.forwarded
+    & ~filters.via_bot
+    & filters.command("lsTasks", prefixes=USERBOT_PREFIX)
+)
+async def task_list(_, message: Message):
+    global tasks
+    for key, value in tasks.items():
+        if value.done():
+            del tasks[key]
+
+    if not tasks:
+        return await eor(
+            message,
+            text=f"{arrow(message)} No tasks pending",
+        )
+
+    ls = "\n    ".join([str(i) for i in tasks.keys()])
+    await eor(message, text=f"{arrow(message)}  {ls}")
+
+
+@app2.on_message(
+    filters.user(SUDOERS)
+    & ~filters.forwarded
+    & ~filters.via_bot
+    & filters.command("eval", prefixes=USERBOT_PREFIX)
 )
 async def executor(client, message: Message):
-    global m, p, r
+    global m, p, r, tasks
     try:
         cmd = message.text.split(" ", maxsplit=1)[1]
     except IndexError:
@@ -65,22 +115,35 @@ async def executor(client, message: Message):
 
     m = message
     p = print
+    loop = get_event_loop()
+
+    for key, value in tasks.items():
+        if value.done():
+            del tasks[key]
 
     # To prevent keyboard input attacks
     if m.reply_to_message:
         r = m.reply_to_message
         if r.reply_markup:
             if isinstance(r.reply_markup, ReplyKeyboardMarkup):
-                return await m.edit("INSECURE!")
+                return await eor(m, text="INSECURE!")
     old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = StringIO()
     redirected_error = sys.stderr = StringIO()
     stdout, stderr, exc = None, None, None
     try:
-        await aexec(cmd, client, message)
+        task = loop.create_task(aexec(cmd, client, message))
+
+        # Save it in tasks, so we can cancel it with .cancelTask
+        tasks[m.message_id] = task
+        await task
     except Exception as e:
         exc = str(e)
+
+    if m.message_id in tasks:
+        del tasks[m.message_id]
+
     stdout = redirected_output.getvalue()
     stderr = redirected_error.getvalue()
     sys.stdout = old_stdout
@@ -92,6 +155,9 @@ async def executor(client, message: Message):
         evaluation = stderr
     elif stdout:
         evaluation = stdout
+        # Save the last stdout in globals,
+        # Can use the it in next calls
+        globals()["lstdout"] = stdout
     else:
         evaluation = "Success"
     final_output = f"**→**\n`{escape(evaluation.strip())}`"
@@ -101,7 +167,7 @@ async def executor(client, message: Message):
             out_file.write(str(evaluation.strip()))
         await message.reply_document(
             document=filename,
-            caption=f"`→`\n  **Attached Document**",
+            caption="`→`\n  **Attached Document**",
             quote=False,
         )
         os.remove(filename)
@@ -143,9 +209,7 @@ async def executor(client, message: Message):
 )
 async def shellrunner(client, message: Message):
     if len(message.command) < 2:
-        return await edit_or_reply(
-            message, text="**Usage:**\n/sh git pull"
-        )
+        return await eor(message, text="**Usage:**\n/sh git pull")
 
     if message.reply_to_message:
         r = message.reply_to_message
@@ -169,7 +233,7 @@ async def shellrunner(client, message: Message):
                 )
             except Exception as err:
                 print(err)
-                await edit_or_reply(
+                await eor(
                     message,
                     text=f"**INPUT:**\n```{escape(text)}```\n\n**ERROR:**\n```{escape(err)}```",
                 )
@@ -194,7 +258,7 @@ async def shellrunner(client, message: Message):
                 value=exc_obj,
                 tb=exc_tb,
             )
-            return await edit_or_reply(
+            return await eor(
                 message,
                 text=f"**INPUT:**\n```{escape(text)}```\n\n**ERROR:**\n```{''.join(errors)}```",
             )
@@ -212,24 +276,12 @@ async def shellrunner(client, message: Message):
                 caption=escape(text),
             )
             return os.remove("output.txt")
-        await edit_or_reply(
+        await eor(
             message,
             text=f"**INPUT:**\n```{escape(text)}```\n\n**OUTPUT:**\n```{escape(output)}```",
         )
     else:
-        await edit_or_reply(
+        await eor(
             message,
             text=f"**INPUT:**\n```{escape(text)}```\n\n**OUTPUT: **\n`No output`",
         )
-
-
-def shell(cmd: list) -> tuple:
-    proc = subprocess.run(
-        cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    stdout, stderr = proc.stdout, proc.stderr
-    stdout = stdout.decode() if stdout else None
-    stderr = stderr.decode() if stderr else None
-    return stdout, stderr

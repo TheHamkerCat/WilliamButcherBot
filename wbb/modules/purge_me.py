@@ -44,11 +44,15 @@ __HELP__ = """
         This will autocorrect your messages on the go.
 
 `.purgeme [Number of messages to purge]`
-        Purge your own messages. 
+        Purge your own messages.
         Ex: .purgeme 10
 
-`.py [Lines of code]`
+`.eval [Lines of code]`
         Execute Python Code.
+`.lsTasks`
+        List running tasks (eval)
+`.cancelTask [ID] or Reply to .eval message`
+        Cancel a running task (eval)
 `.sh [Some shell code]`
         Execute Shell Code.
 
@@ -67,7 +71,7 @@ __HELP__ = """
         Clone profile of a user.
 
 `.useradd`
-        To add a user in sudoers. 
+        To add a user in sudoers.
         [Don't use it if you don't know what you're doing]
 `.userdel`
         To remove a user from sudoers.
@@ -81,28 +85,32 @@ __HELP__ = """
     & filters.user(USERBOT_ID)
 )
 async def purge_me_func(_, message: Message):
+    await message.delete()
+
     if len(message.command) != 2:
-        return await message.delete()
+        return
 
     n = message.text.split(None, 1)[1].strip()
     if not n.isnumeric():
-        return await message.delete()
+        return
 
     n = int(n)
     if n < 1:
-        return await message.delete()
+        return
 
     chat_id = message.chat.id
 
     message_ids = [
         m.message_id
         async for m in app2.search_messages(
-            chat_id, limit=n, from_user=USERBOT_ID
+            chat_id, from_user=USERBOT_ID
         )
-    ]
+    ][
+        :n
+    ]  # NOTE Don't use limit param here
 
     if len(message_ids) == 0:
-        return await message.delete()
+        return
 
     # A list containing lists of 100 message chunks
     # because we can't delete more than 100 messages at once,

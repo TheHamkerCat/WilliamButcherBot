@@ -27,7 +27,7 @@ from pyrogram.raw.functions.messages import DeleteHistory
 
 from wbb import BOT_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2
 from wbb.core.decorators.errors import capture_err
-from wbb.modules.userbot import edit_or_reply
+from wbb.modules.userbot import eor
 from wbb.utils.dbfunctions import (approve_pmpermit,
                                    disapprove_pmpermit,
                                    is_pmpermit_approved)
@@ -81,16 +81,16 @@ async def pmpermit_func(_, message):
 @capture_err
 async def pm_approve(_, message):
     if not message.reply_to_message:
-        return await edit_or_reply(
+        return await eor(
             message, text="Reply to a user's message to approve."
         )
     user_id = message.reply_to_message.from_user.id
     if await is_pmpermit_approved(user_id):
-        return await edit_or_reply(
+        return await eor(
             message, text="User is already approved to pm"
         )
     await approve_pmpermit(user_id)
-    await edit_or_reply(message, text="User is approved to pm")
+    await eor(message, text="User is approved to pm")
 
 
 @app2.on_message(
@@ -100,14 +100,12 @@ async def pm_approve(_, message):
 )
 async def pm_disapprove(_, message):
     if not message.reply_to_message:
-        return await edit_or_reply(
+        return await eor(
             message, text="Reply to a user's message to approve."
         )
     user_id = message.reply_to_message.from_user.id
     if not await is_pmpermit_approved(user_id):
-        await edit_or_reply(
-            message, text="User is already disapproved to pm"
-        )
+        await eor(message, text="User is already disapproved to pm")
         async for m in app2.iter_history(user_id, limit=6):
             if m.reply_markup:
                 try:
@@ -116,7 +114,7 @@ async def pm_disapprove(_, message):
                     pass
         return
     await disapprove_pmpermit(user_id)
-    await edit_or_reply(message, text="User is disapproved to pm")
+    await eor(message, text="User is disapproved to pm")
 
 
 @app2.on_message(
@@ -127,12 +125,12 @@ async def pm_disapprove(_, message):
 @capture_err
 async def block_user_func(_, message):
     if not message.reply_to_message:
-        return await edit_or_reply(
+        return await eor(
             message, text="Reply to a user's message to block."
         )
     user_id = message.reply_to_message.from_user.id
     # Blocking user after editing the message so that other person can get the update.
-    await edit_or_reply(message, text="Successfully blocked the user")
+    await eor(message, text="Successfully blocked the user")
     await app2.block_user(user_id)
 
 
@@ -143,14 +141,12 @@ async def block_user_func(_, message):
 )
 async def unblock_user_func(_, message):
     if not message.reply_to_message:
-        return await edit_or_reply(
+        return await eor(
             message, text="Reply to a user's message to unblock."
         )
     user_id = message.reply_to_message.from_user.id
     await app2.unblock_user(user_id)
-    await edit_or_reply(
-        message, text="Successfully Unblocked the user"
-    )
+    await eor(message, text="Successfully Unblocked the user")
 
 
 """ CALLBACK QUERY HANDLER """
