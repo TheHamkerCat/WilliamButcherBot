@@ -9,7 +9,6 @@ from wbb import SUDOERS, USERBOT_PREFIX, app2
 from wbb.core.sections import section
 from wbb.modules.userbot import add_task, eor, rm_task
 from wbb.utils.downloader import download
-from wbb.utils.functions import progress
 
 
 @app2.on_message(
@@ -20,23 +19,28 @@ async def download_func(_, message: Message):
     reply = message.reply_to_message
     start = time()
     task_id = int(start)
-    if reply:
-        m = await eor(message, text="Downloading...")
 
+    body = {
+        "Started": ctime(start),
+        "Task ID": task_id,
+    }
+    m = await eor(
+        message,
+        text=section("Downloading", body),
+    )
+
+    if reply:
         task = await add_task(
             reply.download,
             task_id=task_id,
-            progress=progress,
-            progress_args=(start, task_id, m),
+            task_name="Downloader",
         )
         await task
         await rm_task(task_id)
 
         elapsed = int(time() - start)
-        body = {
-            "Started": ctime(start),
-            "Time": f"{elapsed}s",
-        }
+        body["Took"] = f"{elapsed}s"
+
         return await eor(m, text=section("Downloaded", body))
 
     text = message.text
@@ -44,35 +48,19 @@ async def download_func(_, message: Message):
         return await eor(message, text="Invalid Arguments")
 
     url = text.split(None, 1)[1]
-    task_id = int(time())
-
-    body = {
-        "Started": ctime(start),
-        "Task ID": task_id,
-        "URL": url,
-    }
-    m = await eor(
-        message,
-        text=section("Downloading", body, underline=False),
-        disable_web_page_preview=True,
-    )
 
     try:
         await download(
             url,
-            progress_func=(progress, [start, task_id, m]),
             task_id=task_id,
         )
     except Exception as e:
         return await eor(m, text=f"**Error:** `{str(e)}`")
 
     elapsed = int(time() - start)
-    body = {
-        "Started": ctime(start),
-        "Took": f"{elapsed}s",
-        "Task ID": task_id,
-    }
-    await eor(m, text=section("Downloaded", body, underline=False))
+    body["Took"] = f"{elapsed}s"
+
+    await eor(m, text=section("Downloaded", body))
 
 
 @app2.on_message(
@@ -85,31 +73,41 @@ async def upload_func(_, message: Message):
 
     url_or_path = message.text.split(None, 1)[1]
 
-    m = await eor(message, text="Uploading..")
     start = time()
     task_id = int(start)
-    
-    async def upload_file(path):
+
+    body = {
+        "Started": ctime(start),
+        "Task ID": task_id,
+    }
+
+    m = await eor(message, text=section("Uploading", body))
+
+    async def upload_file(path: str):
         task = await add_task(
             message.reply_document,
             task_id,
+            "Uploader",
             path,
-            progress=progress,
-            progress_args=(start, task_id, m),
         )
+
         await task
         await rm_task(task_id)
+
         elapsed = int(time() - start)
-        return await eor(m, text=f"Uploaded in {elapsed}s")
+        body["Took"] = f"{elapsed}s"
+
+        return await eor(m, text=section("Uploaded", body))
 
     try:
         if isfile(url_or_path):
             return await upload_file(url_or_path)
+
         path = await download(
             url_or_path,
             task_id=task_id,
-            progress_func=(progress, [start, task_id, m]),
         )
+
         return await upload_file(path)
     except Exception as e:
         return await eor(m, text=f"**Error:** `{str(e)}`")

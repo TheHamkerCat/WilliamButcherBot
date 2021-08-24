@@ -36,7 +36,7 @@ def section(
     title: str,
     body: dict,
     indent: int = 2,
-    underline: bool = True,
+    underline: bool = False,
 ) -> str:
 
     text = (bold_ul(title) + n) if underline else bold(title) + n

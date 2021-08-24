@@ -24,7 +24,7 @@ SOFTWARE.
 from asyncio import gather
 from datetime import datetime, timedelta
 from io import BytesIO
-from math import atan2, cos, floor, radians, sin, sqrt
+from math import atan2, cos, radians, sin, sqrt
 from os import execvp
 from random import randint
 from re import findall
@@ -36,46 +36,13 @@ import aiofiles
 import aiohttp
 import speedtest
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
-from pyrogram.types import Message
 from pyrogram.errors import MessageNotModified
+from pyrogram.types import Message
 
 from wbb import aiohttpsession as aiosession
 from wbb.modules.userbot import eor
 from wbb.utils.dbfunctions import start_restart_stage
 from wbb.utils.http import get
-
-
-async def progress(
-    current: int,
-    total: int,
-    start: int,
-    task_id: int,
-    message: Message,
-):
-    percentage = current / total * 100
-    elapsed = time() - start
-    speed = (current / 1000000) / elapsed  # In MB/s
-    eta = (100 / percentage * elapsed) / 60  # In Minutes
-
-    if round(elapsed % 10.00) != 0 and current != total:
-        return
-
-    round_pct = floor(percentage / 10)
-
-    bar = ("▰" * round_pct) + ("▱" * (10 - round_pct))
-
-    text = f"""
-{bar}
-**Progress:** {int(percentage)}%
-**Speed:** {round(speed, 2)}MB/s
-**ETA:** {round(eta, 2)}m
-**Task ID:** {task_id}
-"""
-    try:
-        await eor(message, text=text)
-    except MessageNotModified:
-        print("MessageNotModified: progress func")
-        pass
 
 
 async def restart(m: Message):
