@@ -273,7 +273,7 @@ async def inline_query_handler(client, query):
 
         elif text.split()[0] == "exec":
             await execute_code(query)
-    
+
         elif text.strip() == "tasks":
             user_id = query.from_user.id
             answerss = await task_inline_func(user_id)

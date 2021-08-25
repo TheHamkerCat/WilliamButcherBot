@@ -51,8 +51,6 @@ __HELP__ = """
         Execute Python Code.
 `.lsTasks`
         List running tasks (eval)
-`.cancelTask [ID] or Reply to .eval message`
-        Cancel a running task (eval)
 `.sh [Some shell code]`
         Execute Shell Code.
 

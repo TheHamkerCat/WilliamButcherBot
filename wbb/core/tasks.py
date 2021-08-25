@@ -51,28 +51,6 @@ async def rm_task(task_id=None):
                 del tasks[task_id]
 
 
-@app2.on_message(
-    filters.user(SUDOERS)
-    & ~filters.forwarded
-    & ~filters.via_bot
-    & filters.command("cancelTask", prefixes=USERBOT_PREFIX)
-)
-async def task_cancel(_, message: Message):
-    m = message
-    if len(message.text.split()) != 2:
-        return await m.delete()
-
-    task_id = int(m.text.split(None, 1)[1])
-
-    tasks = all_tasks()
-
-    if task_id not in tasks:
-        return await m.delete()
-
-    await rm_task(task_id)
-    await eor(message, text=f"{arrow(m)} Task cancelled")
-
-
 async def _get_tasks_text():
     await rm_task()  # Clean completed tasks
     if not tasks:
@@ -113,8 +91,8 @@ async def task_list(_, message: Message):
         await message.delete()
 
     results = await app2.get_inline_bot_results(
-            BOT_ID,
-            f"tasks",
+        BOT_ID,
+        f"tasks",
     )
     await app2.send_inline_bot_result(
         message.chat.id,
