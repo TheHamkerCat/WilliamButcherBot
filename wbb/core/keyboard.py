@@ -37,9 +37,9 @@ def keyboard(buttons_list, row_width: int = 2):
     buttons = InlineKeyboard(row_width=row_width)
     data = [
         (
-            Ikb(text=i[0], callback_data=i[1])
+            Ikb(text=str(i[0]), callback_data=str(i[1]))
             if not is_url(i[1])
-            else Ikb(text=i[0], url=i[1])
+            else Ikb(text=str(i[0]), url=str(i[1]))
         )
         for i in buttons_list
     ]

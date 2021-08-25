@@ -122,9 +122,6 @@ async def executor(client, message: Message):
         evaluation = stderr
     elif stdout:
         evaluation = stdout
-        # Save the last stdout in globals,
-        # Can use the it in next calls
-        globals()["lstdout"] = stdout
     else:
         evaluation = "Success"
 

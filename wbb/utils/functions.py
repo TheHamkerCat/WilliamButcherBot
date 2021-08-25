@@ -168,7 +168,7 @@ def get_urls_from_text(text: str) -> bool:
                 [.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(
                 \([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\
                 ()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))""".strip()
-    return [x[0] for x in findall(regex, text)]
+    return [x[0] for x in findall(regex, str(text))]
 
 
 async def time_converter(message: Message, time_value: str) -> int:

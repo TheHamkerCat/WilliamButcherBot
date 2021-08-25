@@ -35,7 +35,7 @@ from pykeyboard import InlineKeyboard
 from pyrogram import __version__ as pyrover
 from pyrogram import filters
 from pyrogram.raw.functions import Ping
-from pyrogram.types import (InlineKeyboardButton,
+from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
                             InlineQueryResultArticle,
                             InlineQueryResultPhoto,
                             InputTextMessageContent)
@@ -43,6 +43,8 @@ from search_engine_parser import GoogleSearch
 
 from wbb import (BOT_USERNAME, MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_ID,
                  USERBOT_NAME, USERBOT_USERNAME, app, app2, arq)
+from wbb.core.keyboard import ikb
+from wbb.core.tasks import _get_tasks_text, all_tasks, rm_task
 from wbb.core.types import InlineQueryResultCachedDocument
 from wbb.modules.info import get_chat_info, get_user_info
 from wbb.modules.music import download_youtube_audio
@@ -862,3 +864,58 @@ async def execute_code(query):
                 )
             )
     await query.answer(results=answers, cache_time=1)
+
+
+async def task_inline_func(user_id):
+    if user_id not in SUDOERS:
+        return
+
+    tasks = all_tasks()
+    text = await _get_tasks_text()
+    keyb = None
+
+    if tasks:
+        keyb = ikb(
+            {i: f"cancel_task_{i}" for i in list(tasks.keys())}
+        )
+
+    return [
+        InlineQueryResultArticle(
+            title="Tasks",
+            reply_markup=keyb,
+            input_message_content=InputTextMessageContent(
+                text,
+            ),
+        )
+    ]
+
+
+@app.on_callback_query(filters.regex("^cancel_task_"))
+async def cancel_task_button(_, query: CallbackQuery):
+    user_id = query.from_user.id
+
+    if user_id not in SUDOERS:
+        return await query.answer("This is not for you.")
+
+    task_id = int(query.data.split("_")[-1])
+    await rm_task(task_id)
+
+    tasks = all_tasks()
+    text = await _get_tasks_text()
+    keyb = None
+
+    if tasks:
+        keyb = ikb(
+            {i: f"cancel_task_{i}" for i in list(tasks.keys())}
+        )
+
+    await app.edit_inline_text(
+        query.inline_message_id,
+        text,
+    )
+
+    if keyb:
+        await app.edit_inline_reply_markup(
+            query.inline_message_id,
+            keyb,
+        )

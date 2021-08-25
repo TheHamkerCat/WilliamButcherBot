@@ -4,12 +4,12 @@ from time import time
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import SUDOERS, USERBOT_PREFIX, app2, eor
+from wbb import BOT_ID, SUDOERS, USERBOT_PREFIX, app, app2, eor
 from wbb.core.sections import bold, section, w
 
 tasks = {}
 TASKS_LOCK = Lock()
-arrow = lambda x: x.text + "\n`→`"
+arrow = lambda x: (x.text if x else "") + "\n`→`"
 
 
 def all_tasks():
@@ -73,22 +73,10 @@ async def task_cancel(_, message: Message):
     await eor(message, text=f"{arrow(m)} Task cancelled")
 
 
-@app2.on_message(
-    filters.user(SUDOERS)
-    & ~filters.forwarded
-    & ~filters.via_bot
-    & filters.command("lsTasks", prefixes=USERBOT_PREFIX)
-)
-async def task_list(_, message: Message):
+async def _get_tasks_text():
     await rm_task()  # Clean completed tasks
-
-    tasks = all_tasks()
-
     if not tasks:
-        return await eor(
-            message,
-            text=f"{arrow(message)} No tasks pending",
-        )
+        return f"{arrow('')} No pending task"
 
     text = bold("Tasks") + "\n"
 
@@ -100,7 +88,6 @@ async def task_list(_, message: Message):
         info = t._repr_info()
 
         id = task[0]
-
         text += section(
             f"{indent}Task {i}",
             body={
@@ -110,7 +97,28 @@ async def task_list(_, message: Message):
                 "Origin": info[2].split("/")[-1].replace(">", ""),
                 "Running since": f"{elapsed}s",
             },
-            indent=6,
+            indent=8,
         )
+    return text
 
-    await eor(message, text=text)
+
+@app2.on_message(
+    filters.user(SUDOERS)
+    & ~filters.forwarded
+    & ~filters.via_bot
+    & filters.command("lsTasks", prefixes=USERBOT_PREFIX)
+)
+async def task_list(_, message: Message):
+    if message.from_user.is_self:
+        await message.delete()
+
+    results = await app2.get_inline_bot_results(
+            BOT_ID,
+            f"tasks",
+    )
+    await app2.send_inline_bot_result(
+        message.chat.id,
+        results.query_id,
+        results.results[0].id,
+        hide_via=True,
+    )
