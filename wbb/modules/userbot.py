@@ -17,8 +17,8 @@ from pyrogram import filters
 from pyrogram.errors import MessageNotModified
 from pyrogram.types import Message, ReplyKeyboardMarkup
 
-from wbb import (SUDOERS, USERBOT_PREFIX, app, app2,  # don't remove
-                 arq, eor)
+from wbb import app2  # don't remove
+from wbb import SUDOERS, USERBOT_PREFIX, app, arq, eor
 from wbb.core.sections import section
 from wbb.core.tasks import add_task, rm_task
 
@@ -140,13 +140,15 @@ async def executor(client, message: Message):
             quote=False,
         )
         os.remove(filename)
-        return await status.delete()
+        if status:
+            await status.delete()
+        return
 
     # Edit the output if input is edited
     if message.edit_date:
         status_ = await iter_edit(message, final_output)
         if status_ == 0:
-            pass
+            return await message.reply(final_output, quote=True)
         else:
             return
     await eor(status, text=final_output, quote=True)

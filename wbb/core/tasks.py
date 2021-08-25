@@ -44,7 +44,7 @@ async def rm_task(task_id=None):
             if value[0].done() or value[0].cancelled():
                 del tasks[key]
 
-        if task_id:
+        if task_id is not None:
             if task_id in tasks:
                 if not tasks[task_id][0].done():
                     tasks[task_id][0].cancel()
@@ -59,22 +59,17 @@ async def rm_task(task_id=None):
 )
 async def task_cancel(_, message: Message):
     m = message
-    r = m.reply_to_message
+    if len(message.text.split()) != 2:
+        return await m.delete()
 
-    if len(m.text.split()) == 2:
-        mid = int(m.text.split(None, 1)[1])
-    else:
-        mid = r.message_id if r else None
+    task_id = int(m.text.split(None, 1)[1])
 
     tasks = all_tasks()
 
-    if not mid or not tasks:
+    if task_id not in tasks:
         return await m.delete()
 
-    if mid not in tasks:
-        return await m.delete()
-
-    await rm_task(mid)
+    await rm_task(task_id)
     await eor(message, text=f"{arrow(m)} Task cancelled")
 
 
