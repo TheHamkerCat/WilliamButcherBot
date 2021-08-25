@@ -20,7 +20,6 @@ if HEROKU:
     LOG_GROUP_ID = int(environ.get("LOG_GROUP_ID", None))
     GBAN_LOG_GROUP_ID = int(environ.get("GBAN_LOG_GROUP_ID", None))
     MESSAGE_DUMP_CHAT = int(environ.get("MESSAGE_DUMP_CHAT", None))
-    FERNET_ENCRYPTION_KEY = environ.get("FERNET_ENCRYPTION_KEY", None)
     WELCOME_DELAY_KICK_SEC = int(
         environ.get("WELCOME_DELAY_KICK_SEC", None)
     )
@@ -43,7 +42,6 @@ else:
     LOG_GROUP_ID = -100125431255
     GBAN_LOG_GROUP_ID = -100125431255
     MESSAGE_DUMP_CHAT = -1001181696437
-    FERNET_ENCRYPTION_KEY = "iKMq0WZMnJKjMQxZWKtv-cplMuF_LoyshXj0XbTGGWM="  # Leave this as it is
     WELCOME_DELAY_KICK_SEC = 300
     MONGO_DB_URI = "mongodb+srv://username:password@cluster0.ksiis.mongodb.net/YourDataBaseName?retryWrites=true&w=majority"
     ARQ_API_KEY = "Get this from @ARQRobot"

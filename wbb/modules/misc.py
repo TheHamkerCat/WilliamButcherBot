@@ -26,10 +26,9 @@ import string
 from asyncio import Lock
 
 import aiohttp
-from cryptography.fernet import Fernet
 from pyrogram import filters
 
-from wbb import FERNET_ENCRYPTION_KEY, app, arq
+from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
 from wbb.utils import random_line
 from wbb.utils.http import get
@@ -52,12 +51,6 @@ __HELP__ = """
 
 /random [Length]
     Generate Random Complex Passwords
-
-/encrypt
-    Encrypt Text [Can Only Be Decrypted By This Bot]
-
-/decrypt
-    Decrypt Text
 
 /cheat [Language] [Query]
     Get Programming Related Help
@@ -86,6 +79,9 @@ __HELP__ = """
 
 /autocorrect [Reply to a message]
     Autocorrects the text in replied message.
+
+/pdf [Reply to an image (as document) or a group of images.]
+    Convert images to PDF, helpful for online classes.
 
 #RTFM - Tell noobs to read the manual
 """
@@ -184,76 +180,6 @@ async def random(_, message):
         await message.reply_text(
             "Strings Won't Work!, Pass A Positive Integer Less Than 1000"
         )
-
-
-# Encrypt
-@app.on_message(filters.command("encrypt") & ~filters.edited)
-@capture_err
-async def encrypt(_, message):
-    if not message.reply_to_message:
-        return await message.reply_text(
-            "Reply To A Message To Encrypt It."
-        )
-    text = message.reply_to_message.text
-    text_in_bytes = bytes(text, "utf-8")
-    cipher_suite = Fernet(FERNET_ENCRYPTION_KEY)
-    encrypted_text = cipher_suite.encrypt(text_in_bytes)
-    bytes_in_text = encrypted_text.decode("utf-8")
-    await message.reply_text(bytes_in_text)
-
-
-# Decrypt
-@app.on_message(filters.command("decrypt") & ~filters.edited)
-@capture_err
-async def decrypt(_, message):
-    if not message.reply_to_message:
-        return await message.reply_text(
-            "Reply To A Message To Decrypt It."
-        )
-    text = message.reply_to_message.text
-    text_in_bytes = bytes(text, "utf-8")
-    cipher_suite = Fernet(FERNET_ENCRYPTION_KEY)
-    try:
-        decoded_text = cipher_suite.decrypt(text_in_bytes)
-    except Exception:
-        return await message.reply_text("Incorrect token")
-    bytes_in_text = decoded_text.decode("utf-8")
-    await message.reply_text(bytes_in_text)
-
-
-async def fetch_text(url):
-    async with aiohttp.ClientSession(
-        headers={"user-agent": "curl"}
-    ) as session:
-        async with session.get(url) as resp:
-            data = await resp.text()
-    return data
-
-
-# Cheat.sh
-@app.on_message(filters.command("cheat") & ~filters.edited)
-@capture_err
-async def cheat(_, message):
-    if len(message.command) < 3:
-        return await message.reply_text("/cheat [language] [query]")
-    text = message.text.split(None, 2)
-    m = await message.reply_text("Searching")
-    try:
-        language = text[1]
-        query = text[2]
-        data = await fetch_text(
-            f"http://cht.sh/{language}/{query}?QT"
-        )
-        if not data:
-            return await m.edit("Found Literally Nothing!")
-        if len(data) > 4090:
-            with open("cheat.txt", "w") as f:
-                f.write(data)
-            return await message.reply_document(data)
-        await m.edit(f"`{data}`")
-    except Exception as e:
-        await m.edit(str(e))
-        print(str(e))
 
 
 # Translate

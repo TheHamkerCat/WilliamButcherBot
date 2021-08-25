@@ -42,11 +42,6 @@
             "description": "gban logs. ex: '-123456'",
             "required": true
         },
-        "FERNET_ENCRYPTION_KEY": {
-            "description": "Don't change this value",
-            "value": "iKMq0WZMnJKjMQxZWKtv-cplMuF_LoyshXj0XbTGGWM=",
-            "required": true
-        },
         "WELCOME_DELAY_KICK_SEC": {
             "value": "300",
             "required": true
