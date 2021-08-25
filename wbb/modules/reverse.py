@@ -100,7 +100,10 @@ async def reverse_image_search(_, message: Message):
         text = div.find("a").text
         text = f"**Result**: [{text}]({location})"
     except Exception:
-        return await m.edit(f"**Result**: [Link]({location})")
+        return await m.edit(
+            f"**Result**: [Link]({location})",
+            disable_web_page_preview=True,
+        )
 
     # Pass if no images detected
     try:
@@ -145,4 +148,7 @@ async def reverse_image_search(_, message: Message):
     except Exception:
         pass
 
-    await m.edit(text)
+    await m.edit(
+        f"**Result**: [{text}]({location})",
+        disable_web_page_preview=True,
+    )

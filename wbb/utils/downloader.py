@@ -5,7 +5,7 @@ from time import time
 import aiofiles
 
 from wbb import aiohttpsession as session
-from wbb.modules.userbot import add_task, rm_task
+from wbb.core.tasks import add_task, rm_task
 
 
 def ensure_status(status_code: int):
@@ -44,18 +44,20 @@ async def download(
     :url: url where the file is located
     :file_path: path/to/file
     :chunk_size: size of a single chunk
+
+    Returns:
+            (asyncio.Task, task_id), With which you can await
+            the task, track task progress or cancel it.
     """
     # Create a task and add it to main tasks dict
     # So we can cancel it using .cancelTask
 
-    task = await add_task(
+    task, task_id = await add_task(
         download_url,
-        task_id,
         "Downloader",
         url=url,
         file_path=file_path,
         chunk_size=chunk_size,
     )
-    await task
-    await rm_task(task_id)
-    return task.result()
+
+    return task, task_id

@@ -10,18 +10,17 @@ import re
 import subprocess
 import sys
 import traceback
-from asyncio import Lock, create_task
 from html import escape
-from inspect import getfullargspec
 from io import StringIO
 
 from pyrogram import filters
 from pyrogram.errors import MessageNotModified
 from pyrogram.types import Message, ReplyKeyboardMarkup
 
-from wbb import app  # don't remove
-from wbb import SUDOERS, USERBOT_PREFIX, app2, arq
+from wbb import (SUDOERS, USERBOT_PREFIX, app, app2,  # don't remove
+                 arq, eor)
 from wbb.core.sections import section
+from wbb.core.tasks import add_task, rm_task
 
 # Eval and Sh module from nana-remix
 
@@ -29,9 +28,7 @@ m = None
 p = print
 r = None
 arq = arq
-arrow = lambda x: x.text + "\n`→`"
-TASKS_LOCK = Lock()
-tasks = {}
+arrow = lambda x: (x.text if isinstance(x, Message) else "") + "\n`→`"
 
 
 async def aexec(code, client, message):
@@ -42,83 +39,24 @@ async def aexec(code, client, message):
     return await locals()["__aexec"](client, message)
 
 
-async def eor(msg: Message, **kwargs):
-    func = msg.edit_text if msg.from_user.is_self else msg.reply
-    spec = getfullargspec(func.__wrapped__).args
-    return await func(
-        **{k: v for k, v in kwargs.items() if k in spec}
-    )
+async def iter_edit(message: Message, text: str):
+    async for m in app2.iter_history(message.chat.id):
 
+        # If no replies found, reply
+        if m.message_id == message.message_id:
+            return 0
 
-async def add_task(taskFunc, task_id, task_name, *args, **kwargs):
-    global tasks
-    task = create_task(
-        taskFunc(*args, **kwargs),
-        name=task_name,
-    )
-    tasks[task_id] = task
-    return task
+        if not m.from_user or not m.text or not m.reply_to_message:
+            continue
 
+        if m.reply_to_message.message_id == message.message_id:
+            if m.from_user.id == message.from_user.id:
 
-async def rm_task(task_id=None):
-    global tasks
-    async with TASKS_LOCK:
-        for key, value in list(tasks.items()):
-            if value.done() or value.cancelled():
-                del tasks[key]
-
-        if task_id:
-            if task_id in tasks:
-                if not tasks[task_id].done():
-                    tasks[task_id].cancel()
-                del tasks[task_id]
-
-
-@app2.on_message(
-    filters.user(SUDOERS)
-    & ~filters.forwarded
-    & ~filters.via_bot
-    & filters.command("cancelTask", prefixes=USERBOT_PREFIX)
-)
-async def task_cancel(_, message: Message):
-    m = message
-    r = m.reply_to_message
-
-    if len(m.text.split()) == 2:
-        mid = int(m.text.split(None, 1)[1])
-    else:
-        mid = r.message_id if r else None
-
-    if not mid or not tasks:
-        return await m.delete()
-
-    if mid not in tasks:
-        return await m.delete()
-
-    await rm_task(mid)
-    await eor(message, text=f"{arrow(m)} Task cancelled")
-
-
-@app2.on_message(
-    filters.user(SUDOERS)
-    & ~filters.forwarded
-    & ~filters.via_bot
-    & filters.command("lsTasks", prefixes=USERBOT_PREFIX)
-)
-async def task_list(_, message: Message):
-    await rm_task()
-    if not tasks:
-        return await eor(
-            message,
-            text=f"{arrow(message)} No tasks pending",
-        )
-
-    body = {
-        str(key): value.get_name()
-        for key, value in list(tasks.items())
-    }
-
-    await eor(message, text=section("Pending Tasks", body))
+                if "→" in m.text:
+                    try:
+                        return await m.edit(text)
+                    except MessageNotModified:
+                        return
 
 
 @app2.on_message(
@@ -146,23 +84,30 @@ async def executor(client, message: Message):
         if r.reply_markup:
             if isinstance(r.reply_markup, ReplyKeyboardMarkup):
                 return await eor(m, text="INSECURE!")
+    status = None
     old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = StringIO()
     redirected_error = sys.stderr = StringIO()
     stdout, stderr, exc = None, None, None
     try:
-        task = await add_task(
+        task, task_id = await add_task(
             aexec,
-            m.message_id,
             "Eval",
             cmd,
             client,
-            message,
+            m,
         )
+
+        text = f"{arrow('')} Pending Task `{task_id}`"
+        if not message.edit_date:
+            status = await m.reply(text, quote=True)
+
         await task
     except Exception as e:
-        exc = str(e)
+        e = traceback.format_exc()
+        print(e)
+        exc = e.splitlines()[-1]
 
     await rm_task()
 
@@ -182,7 +127,9 @@ async def executor(client, message: Message):
         globals()["lstdout"] = stdout
     else:
         evaluation = "Success"
+
     final_output = f"**→**\n`{escape(evaluation.strip())}`"
+
     if len(final_output) > 4096:
         filename = "output.txt"
         with open(filename, "w+", encoding="utf8") as out_file:
@@ -193,33 +140,16 @@ async def executor(client, message: Message):
             quote=False,
         )
         os.remove(filename)
-    else:
-        mid = message.message_id
+        return await status.delete()
 
-        # Edit the output if input is edited
-        if message.edit_date:
-            async for m in app2.iter_history(message.chat.id):
-
-                # If no replies found, reply
-                if m.message_id == mid:
-                    break
-
-                if (
-                    not m.from_user
-                    or not m.text
-                    or not m.reply_to_message
-                ):
-                    continue
-
-                if m.reply_to_message.message_id == mid:
-                    if m.from_user.id == message.from_user.id:
-
-                        if "→" in m.text:
-                            try:
-                                return await m.edit(final_output)
-                            except MessageNotModified:
-                                return
-        await message.reply(final_output, quote=True)
+    # Edit the output if input is edited
+    if message.edit_date:
+        status_ = await iter_edit(message, final_output)
+        if status_ == 0:
+            pass
+        else:
+            return
+    await eor(status, text=final_output, quote=True)
 
 
 @app2.on_message(

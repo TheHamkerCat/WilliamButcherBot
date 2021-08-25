@@ -1,13 +1,39 @@
+"""
+MIT License
+
+Copyright (c) 2021 TheHamkerCat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 from os import remove
 from os.path import isfile
 from time import ctime, time
+from traceback import format_exc
 
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import SUDOERS, USERBOT_PREFIX, app2
+from wbb import SUDOERS, USERBOT_PREFIX, app2, eor
 from wbb.core.sections import section
-from wbb.modules.userbot import add_task, eor, rm_task
+from wbb.core.tasks import add_task, rm_task
+from wbb.modules.userbot import eor
 from wbb.utils.downloader import download
 
 
@@ -18,11 +44,9 @@ from wbb.utils.downloader import download
 async def download_func(_, message: Message):
     reply = message.reply_to_message
     start = time()
-    task_id = int(start)
 
     body = {
         "Started": ctime(start),
-        "Task ID": task_id,
     }
     m = await eor(
         message,
@@ -30,15 +54,24 @@ async def download_func(_, message: Message):
     )
 
     if reply:
-        task = await add_task(
+        task, task_id = await add_task(
             reply.download,
-            task_id=task_id,
             task_name="Downloader",
         )
+
+        body["Task ID"] = task_id
+        await eor(
+            m,
+            text=section("Downloading", body),
+        )
+
         await task
         await rm_task(task_id)
 
+        file = task.result()
+
         elapsed = int(time() - start)
+        body["File"] = file.split("/")[-1]
         body["Took"] = f"{elapsed}s"
 
         return await eor(m, text=section("Downloaded", body))
@@ -50,14 +83,25 @@ async def download_func(_, message: Message):
     url = text.split(None, 1)[1]
 
     try:
-        await download(
-            url,
-            task_id=task_id,
+        task, task_id = await download(url)
+
+        body["Task ID"] = task_id
+        await eor(
+            m,
+            text=section("Downloading", body),
         )
+
+        await task
+        file = task.result()
+        await rm_task(task_id)
+
     except Exception as e:
+        e = format_exc()
+        e = e.splitlines()[-1]
         return await eor(m, text=f"**Error:** `{str(e)}`")
 
     elapsed = int(time() - start)
+    body["File"] = file.split("/")[-1]
     body["Took"] = f"{elapsed}s"
 
     await eor(m, text=section("Downloaded", body))
@@ -74,21 +118,24 @@ async def upload_func(_, message: Message):
     url_or_path = message.text.split(None, 1)[1]
 
     start = time()
-    task_id = int(start)
 
     body = {
         "Started": ctime(start),
-        "Task ID": task_id,
     }
 
     m = await eor(message, text=section("Uploading", body))
 
     async def upload_file(path: str):
-        task = await add_task(
+        task, task_id = await add_task(
             message.reply_document,
-            task_id,
             "Uploader",
             path,
+        )
+
+        body["Task ID"] = task_id
+        await eor(
+            m,
+            text=section("Uploading", body),
         )
 
         await task
@@ -103,11 +150,20 @@ async def upload_func(_, message: Message):
         if isfile(url_or_path):
             return await upload_file(url_or_path)
 
-        path = await download(
-            url_or_path,
-            task_id=task_id,
-        )
+        task, task_id = await download(url_or_path)
 
-        return await upload_file(path)
+        body["Task ID"] = task_id
+        await eor(
+            m,
+            text=section("Downloading", body),
+        )
+        await task
+        file = task.result()
+        await rm_task(task_id)
+
+        await upload_file(file)
+        remove(file)
     except Exception as e:
+        e = format_exc()
+        e = e.splitlines()[-1]
         return await eor(m, text=f"**Error:** `{str(e)}`")

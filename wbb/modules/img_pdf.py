@@ -84,6 +84,7 @@ async def convert(
 
 
 @app.on_message(filters.command("pdf"))
+@capture_err
 async def img_to_pdf(_, message: Message):
     reply = message.reply_to_message
     if not reply:

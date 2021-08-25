@@ -26,11 +26,13 @@ print("[INFO]: INITIALIZING")
 import asyncio
 import logging
 import time
+from inspect import getfullargspec
 from os import path
 
 from aiohttp import ClientSession
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from pyrogram import Client
+from pyrogram.types import Message
 from pyromod import listen
 from Python_ARQ import ARQ
 
@@ -171,3 +173,11 @@ if USERBOT_ID not in SUDOERS:
     SUDOERS.append(USERBOT_ID)
 app.stop()
 app2.stop()
+
+
+async def eor(msg: Message, **kwargs):
+    func = msg.edit_text if msg.from_user.is_self else msg.reply
+    spec = getfullargspec(func.__wrapped__).args
+    return await func(
+        **{k: v for k, v in kwargs.items() if k in spec}
+    )
