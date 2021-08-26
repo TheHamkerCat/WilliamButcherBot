@@ -135,7 +135,7 @@ async def kang(client, message: Message):
             )
         elif doc:
             if doc.file_size > 10000000:
-                return await msg.edit("File too large")
+                return await msg.edit("File size too large.")
 
             temp_file_path = await app.download_media(doc)
             image_type = imghdr.what(temp_file_path)
