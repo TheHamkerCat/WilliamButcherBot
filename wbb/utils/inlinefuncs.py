@@ -876,7 +876,8 @@ async def task_inline_func(user_id):
 
     if tasks:
         keyb = ikb(
-            {i: f"cancel_task_{i}" for i in list(tasks.keys())}
+            {i: f"cancel_task_{i}" for i in list(tasks.keys())},
+            row_width=4,
         )
 
     return [

@@ -89,7 +89,7 @@ async def quotly_func(client, message: Message):
             if arg[1] < 2 or arg[1] > 10:
                 return await m.edit("Argument must be between 2-10.")
             count = arg[1]
-            messages = await client.get_messages(
+            messages = [i for i in await client.get_messages(
                 message.chat.id,
                 [
                     i
@@ -99,7 +99,7 @@ async def quotly_func(client, message: Message):
                     )
                 ],
                 replies=0,
-            )
+            ) if not i.empty]
         else:
             if getArg(message) != "r":
                 return await m.edit(
@@ -117,6 +117,9 @@ async def quotly_func(client, message: Message):
         )
         return
     try:
+        if not message:
+            return await m.edit("Something went wrong.")
+
         sticker = await quotify(messages)
         if not sticker[0]:
             await message.reply_text(sticker[1])
@@ -127,9 +130,10 @@ async def quotly_func(client, message: Message):
         sticker.close()
     except Exception as e:
         await m.edit(
-            "Something wrong happened while quoting messages,"
+            "Something went wrong while quoting messages,"
             + " This error usually happens when there's a "
-            + " message containing something other than text."
+            + " message containing something other than text,"
+            + " or one of the messages in-between are deleted."
         )
         e = format_exc()
         print(e)
