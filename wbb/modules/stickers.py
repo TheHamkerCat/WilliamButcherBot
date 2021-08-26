@@ -23,7 +23,7 @@ SOFTWARE.
 """
 import imghdr
 import os
-from asyncio import gather
+from asyncio import gather, sleep
 from traceback import format_exc
 
 from pyrogram import filters
@@ -34,8 +34,9 @@ from pyrogram.errors import (PeerIdInvalid, ShortnameOccupyFailed,
 from pyrogram.types import (InlineKeyboardButton,
                             InlineKeyboardMarkup, Message)
 
-from wbb import BOT_USERNAME, app
+from wbb import BOT_USERNAME, SUDOERS, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
+from wbb.core.tasks import add_task
 from wbb.utils.files import (get_document_from_file_id,
                              resize_file_to_sticker_size,
                              upload_document)
@@ -93,6 +94,49 @@ async def sticker_image(_, message: Message):
 
     await m.delete()
     os.remove(f)
+
+
+@app2.on_message(
+    filters.command("kang", prefixes=USERBOT_PREFIX)
+    & filters.user(SUDOERS),
+)
+async def userbot_kang(_, message: Message):
+    reply = message.reply_to_message
+
+    if not reply:
+        return await message.reply_text(
+            "Reply to a sticker/image to kang it."
+        )
+
+    sticker_m = await reply.forward(BOT_USERNAME)
+
+    # listen to bot's PM without blocking
+    task, _ = await add_task(
+        app2.listen,
+        "Sticker kang",
+        BOT_USERNAME,
+        filters=~filters.me,
+    )
+
+    kang_m_bot = await sticker_m.reply(
+        message.text.replace(USERBOT_PREFIX, "/")
+    )
+    await task
+
+    bot_reply = task.result()
+    ub_m = await eor(message, text=bot_reply.text.markdown)
+
+    # Wait for the bot to finish completing his task
+
+    await sleep(3)
+
+    bot_reply = [
+        i async for i in app2.iter_history(BOT_USERNAME, limit=1)
+    ][0]
+
+    await ub_m.edit(bot_reply.text.markdown)
+
+    [await m.delete() for m in [bot_reply, kang_m_bot, sticker_m]]
 
 
 @app.on_message(filters.command("kang") & ~filters.edited)

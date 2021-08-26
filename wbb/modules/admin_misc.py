@@ -84,13 +84,13 @@ async def set_chat_photo(_, message):
         return await message.reply_text(
             "Reply to a photo to set it as chat_photo"
         )
-    
+
     file = reply.document or reply.photo
     if not file:
         return await message.reply_text(
             "Reply to a photo or document to set it as chat_photo"
         )
-    
+
     if file.file_size > 5000000:
         return await message.reply("File size too large.")
 
