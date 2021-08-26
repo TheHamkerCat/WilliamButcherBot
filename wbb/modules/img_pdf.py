@@ -63,6 +63,9 @@ async def convert(
     pdf = BytesIO(img2pdf.convert(documents))
     pdf.name = "wbb.pdf"
 
+    if len(main_message.command) >= 2:
+        pdf.name = main_message.text.split(None, 1)[1]
+
     elapsed = round(time() - start_time, 2)
 
     await main_message.reply_document(

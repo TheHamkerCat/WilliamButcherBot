@@ -148,6 +148,8 @@ async def executor(client, message: Message):
             return await message.reply(final_output, quote=True)
         else:
             return
+    if not status.from_user:
+        status = await app2.get_messages(status.chat.id, status.message_id)
     await eor(status, text=final_output, quote=True)
 
 
