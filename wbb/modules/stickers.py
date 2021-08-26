@@ -134,6 +134,9 @@ async def kang(client, message: Message):
                 sticker_emoji,
             )
         elif doc:
+            if doc.file_size > 10000000:
+                return await msg.edit("File too large")
+
             temp_file_path = await app.download_media(doc)
             image_type = imghdr.what(temp_file_path)
             if image_type not in SUPPORTED_TYPES:
@@ -149,7 +152,6 @@ async def kang(client, message: Message):
                 raise Exception(
                     f"Something went wrong while resizing the sticker (at {temp_file_path}); {e}"
                 )
-                return False
             sticker = await create_sticker(
                 await upload_document(
                     client, temp_file_path, message.chat.id

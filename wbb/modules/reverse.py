@@ -149,6 +149,6 @@ async def reverse_image_search(_, message: Message):
         pass
 
     await m.edit(
-        f"**Result**: [{text}]({location})",
+        text,
         disable_web_page_preview=True,
     )
