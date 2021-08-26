@@ -110,32 +110,23 @@ async def userbot_kang(_, message: Message):
 
     sticker_m = await reply.forward(BOT_USERNAME)
 
-    # listen to bot's PM without blocking
-    task, _ = await add_task(
-        app2.listen,
-        "Sticker kang",
-        BOT_USERNAME,
-        filters=~filters.me,
+    # Send /kang message to bot and listen to his reply concurrently
+    bot_reply, kang_m_bot = await gather(
+        app2.listen(BOT_USERNAME, filters=~filters.me),
+        sticker_m.reply(message.text.replace(USERBOT_PREFIX, "/")),
     )
 
-    kang_m_bot = await sticker_m.reply(
-        message.text.replace(USERBOT_PREFIX, "/")
+    # Edit init message of ubot with the reply of
+    # bot we got in the previous block
+    bot_reply, ub_m = await gather(
+        app2.listen(BOT_USERNAME, filters=~filters.me),
+        eor(message, text=bot_reply.text.markdown),
     )
-    await task
 
-    bot_reply = task.result()
-    ub_m = await eor(message, text=bot_reply.text.markdown)
-
-    # Wait for the bot to finish completing his task
-
-    await sleep(3)
-
-    bot_reply = [
-        i async for i in app2.iter_history(BOT_USERNAME, limit=1)
-    ][0]
-
+    # Edit the main userbot message with bot's final edit
     await ub_m.edit(bot_reply.text.markdown)
 
+    # Delete all extra messages.
     [await m.delete() for m in [bot_reply, kang_m_bot, sticker_m]]
 
 
