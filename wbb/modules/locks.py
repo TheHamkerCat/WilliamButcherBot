@@ -71,11 +71,14 @@ async def tg_lock(message, permissions: list, perm: str, lock: bool):
     if lock:
         if perm not in permissions:
             return await message.reply_text("Already locked.")
+        permissions.remove(perm)
     else:
         if perm in permissions:
             return await message.reply_text("Already Unlocked.")
-    (permissions.remove(perm) if lock else permissions.append(perm))
+        permissions.append(perm)
+
     permissions = {perm: True for perm in list(set(permissions))}
+
     try:
         await app.set_chat_permissions(
             message.chat.id, ChatPermissions(**permissions)
@@ -84,6 +87,7 @@ async def tg_lock(message, permissions: list, perm: str, lock: bool):
         return await message.reply_text(
             "To unlock this, you have to unlock 'messages' first."
         )
+
     await message.reply_text(("Locked." if lock else "Unlocked."))
 
 
@@ -129,14 +133,12 @@ async def url_detector(_, message):
     user = message.from_user
     chat_id = message.chat.id
     text = message.text.lower().strip()
-    if not text:
+
+    if not text or not user:
         return
-    if not user:
+    if user.id in (SUDOERS + (await list_admins(chat_id))):
         return
-    if user.id in SUDOERS:
-        return
-    if user.id in await list_admins(chat_id):
-        return
+
     check = get_urls_from_text(text)
     if check:
         permissions = await current_chat_permissions(chat_id)

@@ -83,7 +83,9 @@ async def convert(
 
     await m.delete()
     pdf.close()
-    [remove(file) for file in documents if path.exists(file)]
+    for file in documents:
+        if path.exists(file):
+            remove(file)
 
 
 @app.on_message(filters.command("pdf"))
