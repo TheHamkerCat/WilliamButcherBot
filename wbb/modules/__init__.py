@@ -26,7 +26,7 @@ import importlib
 import sys
 from os.path import basename, dirname, isfile
 
-from wbb import MOD_LOAD, MOD_NOLOAD, log
+from wbb import MOD_LOAD, MOD_NOLOAD
 
 
 def __list_all_modules():
@@ -49,7 +49,6 @@ def __list_all_modules():
                 any(mod == module_name for module_name in all_modules)
                 for mod in to_load
             ):
-                log.error("Invalid Module name!")
                 sys.exit()
 
         else:

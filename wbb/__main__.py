@@ -42,10 +42,7 @@ HELPABLE = {}
 
 
 async def start_bot():
-    print("[INFO]: STARTING BOT CLIENT")
-    await app.start()
-    print("[INFO]: STARTING USERBOT CLIENT")
-    await app2.start()
+
     for module in ALL_MODULES:
         imported_module = importlib.import_module(
             "wbb.modules." + module
@@ -86,7 +83,9 @@ async def start_bot():
     )
     print(f"[INFO]: BOT STARTED AS {BOT_NAME}!")
     print(f"[INFO]: USERBOT STARTED AS {USERBOT_NAME}!")
+
     restart_data = await clean_restart_stage()
+
     try:
         print("[INFO]: SENDING ONLINE STATUS")
         if restart_data:
@@ -100,7 +99,9 @@ async def start_bot():
             await app.send_message(LOG_GROUP_ID, "Bot started!")
     except Exception:
         pass
+
     await idle()
+
     print("[INFO]: STOPPING BOT AND CLOSING AIOHTTP SESSION")
     await aiohttpsession.close()
 
