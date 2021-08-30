@@ -1,5 +1,3 @@
-# Implement By - @Jusidama18 from (https://t.me/JusidamaBot)
-
 from pyrogram import filters
 
 from wbb.core.decorators.errors import capture_err
@@ -14,7 +12,7 @@ __HELP__ = '''
 
 @app.on_message(filters.command('crypto'))
 @capture_err
-async def crypto(client, message):
+async def crypto(_, message):
     if len(message.command) < 2:
         await message.reply_text("/crypto [currency]")
         return
