@@ -282,7 +282,6 @@ async def callback_query_welcome_button(_, callback_query):
                 answers_dicc.remove(ii)
                 await update_captcha_cache(answers_dicc)
 
-    """ send welcome message """
     return await send_welcome_message(
         callback_query.message.chat, pending_user_id
     )
