@@ -146,8 +146,7 @@ async def executor(client, message: Message):
         status_ = await iter_edit(message, final_output)
         if status_ == 0:
             return await message.reply(final_output, quote=True)
-        else:
-            return
+        return
     if not status.from_user:
         status = await app2.get_messages(
             status.chat.id, status.message_id
@@ -162,7 +161,7 @@ async def executor(client, message: Message):
     & ~filters.edited
     & filters.command("sh", prefixes=USERBOT_PREFIX),
 )
-async def shellrunner(client, message: Message):
+async def shellrunner(_, message: Message):
     if len(message.command) < 2:
         return await eor(message, text="**Usage:**\n/sh git pull")
 
@@ -197,7 +196,7 @@ async def shellrunner(client, message: Message):
             output += "\n"
     else:
         shell = re.split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", text)
-        for a in range(len(shell)):
+        for a, _ in enumerate(shell):
             shell[a] = shell[a].replace('"', "")
         try:
             process = subprocess.Popen(

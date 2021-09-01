@@ -34,7 +34,7 @@ from pyrogram.types import Chat, Message
 from wbb import LOG_GROUP_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX
 from wbb import aiohttpsession as session
 from wbb import app, app2
-from wbb.modules.userbot import eor as eor
+from wbb.modules.userbot import eor
 from wbb.utils.functions import extract_user
 
 

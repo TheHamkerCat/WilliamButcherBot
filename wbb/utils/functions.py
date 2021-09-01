@@ -240,8 +240,9 @@ async def extract_user_and_reason(message):
     if len(args) == 2:
         user = text.split(None, 1)[1]
         return await extract_userid(message, user), None
+
     # if reason is given
-    elif len(args) > 2:
+    if len(args) > 2:
         user, reason = text.split(None, 2)[1:]
         return await extract_userid(message, user), reason
 
@@ -261,10 +262,11 @@ def get_file_id_from_message(
     if message.document:
         if int(message.document.file_size) > max_file_size:
             return
+
         mime_type = message.document.mime_type
-        if mime_types:
-            if mime_type not in mime_types:
-                return
+
+        if mime_type not in mime_types:
+            return
         file_id = message.document.file_id
 
     if message.sticker:

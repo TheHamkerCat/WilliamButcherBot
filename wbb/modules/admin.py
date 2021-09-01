@@ -144,7 +144,7 @@ async def list_members(group_id):
     filters.command("purge") & ~filters.edited & ~filters.private
 )
 @adminsOnly("can_delete_messages")
-async def purgeFunc(client, message: Message):
+async def purgeFunc(_, message: Message):
     await message.delete()
 
     if not message.reply_to_message:
@@ -402,8 +402,8 @@ async def pin(_, message: Message):
         disable_web_page_preview=True,
     )
     msg = "Please check the pinned message: ~ " + f"[Check, {r.link}]"
-    filter = dict(type="text", data=msg)
-    await save_filter(message.chat.id, "~pinned", filter)
+    filter_ = dict(type="text", data=msg)
+    await save_filter(message.chat.id, "~pinned", filter_)
 
 
 # Mute members

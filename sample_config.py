@@ -14,9 +14,9 @@ if HEROKU:
     )
     SESSION_STRING = environ.get("SESSION_STRING", None)
     USERBOT_PREFIX = environ.get("USERBOT_PREFIX", ".")
-    SUDO_USERS_ID = list(
+    SUDO_USERS_ID = [
         int(x) for x in environ.get("SUDO_USERS_ID", "").split()
-    )
+    ]
     LOG_GROUP_ID = int(environ.get("LOG_GROUP_ID", None))
     GBAN_LOG_GROUP_ID = int(environ.get("GBAN_LOG_GROUP_ID", None))
     MESSAGE_DUMP_CHAT = int(environ.get("MESSAGE_DUMP_CHAT", None))

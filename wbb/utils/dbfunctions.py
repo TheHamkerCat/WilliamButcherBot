@@ -56,16 +56,16 @@ flood_toggle_db = db.flood_toggle
 rssdb = db.rss
 
 
-def obj_to_str(object):
-    if not object:
+def obj_to_str(obj):
+    if not obj:
         return False
-    string = codecs.encode(pickle.dumps(object), "base64").decode()
+    string = codecs.encode(pickle.dumps(obj), "base64").decode()
     return string
 
 
 def str_to_obj(string: str):
-    object = pickle.loads(codecs.decode(string.encode(), "base64"))
-    return object
+    obj = pickle.loads(codecs.decode(string.encode(), "base64"))
+    return obj
 
 
 """ Notes functions """
@@ -103,8 +103,7 @@ async def get_note(chat_id: int, name: str) -> Union[bool, dict]:
     _notes = await _get_notes(chat_id)
     if name in _notes:
         return _notes[name]
-    else:
-        return False
+    return False
 
 
 async def save_note(chat_id: int, name: str, note: dict):
@@ -169,8 +168,7 @@ async def get_filter(chat_id: int, name: str) -> Union[bool, dict]:
     _filters = await _get_filters(chat_id)
     if name in _filters:
         return _filters[name]
-    else:
-        return False
+    return False
 
 
 async def save_filter(chat_id: int, name: str, _filter: dict):
@@ -453,8 +451,7 @@ async def get_couple(chat_id: int, date: str):
     lovers = await _get_lovers(chat_id)
     if date in lovers:
         return lovers[date]
-    else:
-        return False
+    return False
 
 
 async def save_couple(chat_id: int, date: str, couple: dict):

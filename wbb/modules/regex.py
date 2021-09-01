@@ -80,10 +80,7 @@ def infinite_checker(repl):
     ]
     for match in regex:
         status = re.search(match, repl)
-        if status:
-            return True
-        else:
-            return False
+        return bool(status)
 
 
 def separate_sed(sed_string):

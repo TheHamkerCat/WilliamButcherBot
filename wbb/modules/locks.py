@@ -98,18 +98,22 @@ async def tg_lock(message, permissions: list, perm: str, lock: bool):
 async def locks_func(_, message):
     if len(message.command) != 2:
         return await message.reply_text(incorrect_parameters)
+
     chat_id = message.chat.id
     parameter = message.text.strip().split(None, 1)[1].lower()
     state = message.command[0].lower()
+
     if parameter not in data and parameter != "all":
         return await message.reply_text(incorrect_parameters)
+
     permissions = await current_chat_permissions(chat_id)
+
     if parameter in data:
-        return await tg_lock(
+        await tg_lock(
             message,
             permissions,
             data[parameter],
-            True if state == "lock" else False,
+            bool(state == "lock"),
         )
     elif parameter == "all" and state == "lock":
         await app.set_chat_permissions(chat_id, ChatPermissions())
@@ -120,11 +124,14 @@ async def locks_func(_, message):
 @capture_err
 async def locktypes(_, message):
     permissions = await current_chat_permissions(message.chat.id)
+
     if not permissions:
         return await message.reply_text("No Permissions.")
+
     perms = ""
     for i in permissions:
         perms += f"__**{i}**__\n"
+
     await message.reply_text(perms)
 
 

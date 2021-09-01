@@ -38,7 +38,7 @@ async def aexec(code, client, message):
     & ~filters.edited
     & filters.command("eval")
 )
-async def executor(client, message):
+async def executor(client, message: Message):
     try:
         cmd = message.text.split(" ", maxsplit=1)[1]
     except IndexError:
@@ -118,7 +118,7 @@ async def runtime_func_cq(_, cq):
     & ~filters.edited
     & filters.command("sh"),
 )
-async def shellrunner(client, message):
+async def shellrunner(_, message: Message):
     if len(message.command) < 2:
         return await eor(message, text="**Usage:**\n/sh git pull")
     text = message.text.split(None, 1)[1]
@@ -143,7 +143,7 @@ async def shellrunner(client, message):
             output += "\n"
     else:
         shell = re.split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", text)
-        for a in range(len(shell)):
+        for a, _ in enumerate(shell):
             shell[a] = shell[a].replace('"', "")
         try:
             process = subprocess.Popen(
