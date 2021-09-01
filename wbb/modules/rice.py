@@ -29,7 +29,7 @@ from pyrogram.types import (InlineKeyboardButton,
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 
-""" THIS MODULE IS SPECIFICALLY FOR @DE_WM GROUP, YOU CAN REMOVE IT IN YOUR FORK IF YOU WANT TO """
+# NOTE: THIS MODULE IS SPECIFICALLY FOR @DE_WM GROUP, YOU CAN REMOVE IT IN YOUR FORK IF YOU WANT TO
 
 RICE_GROUP = "DE_WM"
 RICE_CHANNEL = "RiceGallery"

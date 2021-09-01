@@ -553,7 +553,7 @@ async def speedtest_init(query):
     return answers
 
 
-""" callback query for the function above """
+# CallbackQuery for the function above
 
 
 @app.on_callback_query(filters.regex("test_speedtest"))

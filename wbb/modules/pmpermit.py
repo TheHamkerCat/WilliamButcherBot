@@ -149,7 +149,7 @@ async def unblock_user_func(_, message):
     await eor(message, text="Successfully Unblocked the user")
 
 
-""" CALLBACK QUERY HANDLER """
+# CALLBACK QUERY HANDLER
 
 flood2 = {}
 

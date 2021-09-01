@@ -95,11 +95,14 @@ loop.create_task(get_initial_captcha_cache())
 @capture_err
 async def welcome(_, message: Message):
     global answers_dicc
-    """ Get cached answers from mongodb in case of bot's been restarted or crashed. """
+    
+    # Get cached answers from mongodb in case of bot's been restarted or crashed.
     answers_dicc = await get_captcha_cache()
-    """Mute new member and send message with button"""
+    
+    # Mute new member and send message with button
     if not await is_captcha_on(message.chat.id):
         return
+    
     for member in message.new_chat_members:
         try:
             if member.id in SUDOERS:
@@ -178,8 +181,10 @@ async def welcome(_, message: Message):
             quote=True,
         )
         os.remove(captcha_image)
-        """ Save captcha answers etc in mongodb in case bot gets crashed or restarted. """
+        
+        # Save captcha answers etc in mongodb in case bot gets crashed or restarted.
         await update_captcha_cache(answers_dicc)
+
         asyncio.create_task(
             kick_restricted_after_delay(
                 WELCOME_DELAY_KICK_SEC, button_message, member
@@ -344,7 +349,7 @@ async def captcha_state(_, message):
         await message.reply_text(usage)
 
 
-""" WELCOME MESSAGE """
+# WELCOME MESSAGE
 
 
 @app.on_message(filters.command("set_welcome") & ~filters.private)
