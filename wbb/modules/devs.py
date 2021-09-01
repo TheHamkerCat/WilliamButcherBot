@@ -10,7 +10,6 @@ import re
 import subprocess
 import sys
 import traceback
-from inspect import getfullargspec
 from io import StringIO
 from time import time
 

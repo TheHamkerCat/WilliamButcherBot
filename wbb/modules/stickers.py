@@ -23,7 +23,7 @@ SOFTWARE.
 """
 import imghdr
 import os
-from asyncio import gather, sleep
+from asyncio import gather
 from traceback import format_exc
 
 from pyrogram import filters
@@ -36,7 +36,6 @@ from pyrogram.types import (InlineKeyboardButton,
 
 from wbb import BOT_USERNAME, SUDOERS, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
-from wbb.core.tasks import add_task
 from wbb.utils.files import (get_document_from_file_id,
                              resize_file_to_sticker_size,
                              upload_document)
@@ -127,7 +126,8 @@ async def userbot_kang(_, message: Message):
     await ub_m.edit(bot_reply.text.markdown)
 
     # Delete all extra messages.
-    [await m.delete() for m in [bot_reply, kang_m_bot, sticker_m]]
+    for m in [bot_reply, kang_m_bot, sticker_m]:
+        await m.delete()
 
 
 @app.on_message(filters.command("kang") & ~filters.edited)

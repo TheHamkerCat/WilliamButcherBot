@@ -68,9 +68,6 @@ def str_to_obj(string: str):
     return obj
 
 
-""" Notes functions """
-
-
 async def get_notes_count() -> dict:
     chats = notesdb.find({"chat_id": {"$lt": 0}})
     if not chats:
@@ -128,9 +125,6 @@ async def delete_note(chat_id: int, name: str) -> bool:
         )
         return True
     return False
-
-
-""" Filters funcions """
 
 
 async def get_filters_count() -> dict:
@@ -194,9 +188,6 @@ async def delete_filter(chat_id: int, name: str) -> bool:
         )
         return True
     return False
-
-
-""" Warn functions """
 
 
 async def int_to_alpha(user_id: int) -> str:
@@ -269,9 +260,6 @@ async def remove_warns(chat_id: int, name: str) -> bool:
     return False
 
 
-""" Karma functions """
-
-
 async def get_karmas_count() -> dict:
     chats = karmadb.find({"chat_id": {"$lt": 0}})
     if not chats:
@@ -296,9 +284,8 @@ async def user_global_karma(user_id) -> int:
         karma = await get_karma(
             chat["chat_id"], await int_to_alpha(user_id)
         )
-        if karma:
-            if int(karma["karma"]) > 0:
-                total_karma += int(karma["karma"])
+        if karma and (int(karma["karma"]) > 0):
+            total_karma += int(karma["karma"])
     return total_karma
 
 
@@ -346,9 +333,6 @@ async def karma_off(chat_id: int):
     return await karmadb.insert_one({"chat_id_toggle": chat_id})
 
 
-""" Chats log functions """
-
-
 async def is_served_chat(chat_id: int) -> bool:
     chat = await chatsdb.find_one({"chat_id": chat_id})
     if not chat:
@@ -380,9 +364,6 @@ async def remove_served_chat(chat_id: int):
     return await chatsdb.delete_one({"chat_id": chat_id})
 
 
-""" USER LOG FUNCTIONS """
-
-
 async def is_served_user(user_id: int) -> bool:
     user = await usersdb.find_one({"user_id": user_id})
     if not user:
@@ -405,9 +386,6 @@ async def add_served_user(user_id: int):
     if is_served:
         return
     return await usersdb.insert_one({"user_id": user_id})
-
-
-""" Gban functions """
 
 
 async def get_gbans_count() -> int:
@@ -437,9 +415,6 @@ async def remove_gban_user(user_id: int):
     return await gbansdb.delete_one({"user_id": user_id})
 
 
-# Couple Chooser
-
-
 async def _get_lovers(chat_id: int):
     lovers = await coupledb.find_one({"chat_id": chat_id})
     if not lovers:
@@ -464,9 +439,6 @@ async def save_couple(chat_id: int, date: str, couple: dict):
     )
 
 
-# Captcha
-
-
 async def is_captcha_on(chat_id: int) -> bool:
     chat = await captchadb.find_one({"chat_id": chat_id})
     if not chat:
@@ -486,9 +458,6 @@ async def captcha_off(chat_id: int):
     if not is_captcha:
         return
     return await captchadb.insert_one({"chat_id": chat_id})
-
-
-"""Anti Service System"""
 
 
 async def is_antiservice_on(chat_id: int) -> bool:
@@ -512,9 +481,6 @@ async def antiservice_off(chat_id: int):
     return await antiservicedb.insert_one({"chat_id": chat_id})
 
 
-""" PM PERMIT """
-
-
 async def is_pmpermit_approved(user_id: int) -> bool:
     user = await pmpermitdb.find_one({"user_id": user_id})
     if not user:
@@ -536,9 +502,6 @@ async def disapprove_pmpermit(user_id: int):
     return await pmpermitdb.delete_one({"user_id": user_id})
 
 
-""" WELCOME FUNCTIONS """
-
-
 async def get_welcome(chat_id: int) -> str:
     text = await welcomedb.find_one({"chat_id": chat_id})
     if not text:
@@ -554,9 +517,6 @@ async def set_welcome(chat_id: int, text: str):
 
 async def del_welcome(chat_id: int):
     return await welcomedb.delete_one({"chat_id": chat_id})
-
-
-""" CAPTCHA CACHE SYSTEM """
 
 
 async def update_captcha_cache(captcha_dict):
@@ -576,9 +536,6 @@ async def get_captcha_cache():
     if not cache:
         return []
     return str_to_obj(cache["pickled"])
-
-
-""" BLACKLIST FILTERS SYSTEM """
 
 
 async def get_blacklist_filters_count() -> dict:
@@ -631,9 +588,6 @@ async def delete_blacklist_filter(chat_id: int, word: str) -> bool:
     return False
 
 
-""" PIPES SYSTEM """
-
-
 async def activate_pipe(
     from_chat_id: int, to_chat_id: int, fetcher: str
 ):
@@ -680,9 +634,6 @@ async def show_pipes() -> list:
     return pipes["pipes"]
 
 
-""" SUDOERS FUNCTIONS """
-
-
 async def get_sudoers() -> list:
     sudoers = await sudoersdb.find_one({"sudo": "sudo"})
     if not sudoers:
@@ -708,9 +659,6 @@ async def remove_sudo(user_id: int) -> bool:
     return True
 
 
-""" BLACKLISTED CHATS """
-
-
 async def blacklisted_chats() -> list:
     chats = blacklist_chatdb.find({"chat_id": {"$lt": 0}})
     return [
@@ -731,9 +679,6 @@ async def whitelist_chat(chat_id: int) -> bool:
         await blacklist_chatdb.delete_one({"chat_id": chat_id})
         return True
     return False
-
-
-""" Restart stage """
 
 
 async def start_restart_stage(chat_id: int, message_id: int):
@@ -760,9 +705,6 @@ async def clean_restart_stage() -> dict:
     }
 
 
-"""FLOOD System"""
-
-
 async def is_flood_on(chat_id: int) -> bool:
     chat = await flood_toggle_db.find_one({"chat_id": chat_id})
     if not chat:
@@ -782,9 +724,6 @@ async def flood_off(chat_id: int):
     if not is_flood:
         return
     return await flood_toggle_db.insert_one({"chat_id": chat_id})
-
-
-""" RSS DB """
 
 
 async def add_rss_feed(chat_id: int, url: str, last_title: str):
