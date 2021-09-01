@@ -25,7 +25,6 @@ import secrets
 import string
 from asyncio import Lock
 
-import aiohttp
 from pyrogram import filters
 
 from wbb import app, arq

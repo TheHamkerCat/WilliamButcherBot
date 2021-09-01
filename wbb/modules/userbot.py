@@ -10,8 +10,10 @@ import re
 import subprocess
 import sys
 import traceback
+from asyncio import sleep
 from html import escape
 from io import StringIO
+from time import time
 
 from pyrogram import filters
 from pyrogram.errors import MessageNotModified
@@ -19,7 +21,6 @@ from pyrogram.types import Message, ReplyKeyboardMarkup
 
 from wbb import app2  # don't remove
 from wbb import SUDOERS, USERBOT_PREFIX, app, arq, eor
-from wbb.core.sections import section
 from wbb.core.tasks import add_task, rm_task
 
 # Eval and Sh module from nana-remix
@@ -27,7 +28,6 @@ from wbb.core.tasks import add_task, rm_task
 m = None
 p = print
 r = None
-arq = arq
 arrow = lambda x: (x.text if isinstance(x, Message) else "") + "\n`→`"
 
 
@@ -49,14 +49,15 @@ async def iter_edit(message: Message, text: str):
         if not m.from_user or not m.text or not m.reply_to_message:
             continue
 
-        if m.reply_to_message.message_id == message.message_id:
-            if m.from_user.id == message.from_user.id:
-
-                if "→" in m.text:
-                    try:
-                        return await m.edit(text)
-                    except MessageNotModified:
-                        return
+        if (
+            (m.reply_to_message.message_id == message.message_id)
+            and (m.from_user.id == message.from_user.id)
+            and ("→" in m.text)
+        ):
+            try:
+                return await m.edit(text)
+            except MessageNotModified:
+                return
 
 
 @app2.on_message(
@@ -81,9 +82,10 @@ async def executor(client, message: Message):
     # To prevent keyboard input attacks
     if m.reply_to_message:
         r = m.reply_to_message
-        if r.reply_markup:
-            if isinstance(r.reply_markup, ReplyKeyboardMarkup):
-                return await eor(m, text="INSECURE!")
+        if r.reply_markup and isinstance(
+            r.reply_markup, ReplyKeyboardMarkup
+        ):
+            return await eor(m, text="INSECURE!")
     status = None
     old_stderr = sys.stderr
     old_stdout = sys.stdout
@@ -167,9 +169,11 @@ async def shellrunner(_, message: Message):
 
     if message.reply_to_message:
         r = message.reply_to_message
-        if r.reply_markup:
-            if isinstance(r.reply_markup, ReplyKeyboardMarkup):
-                return await eor(message, text="INSECURE!")
+        if r.reply_markup and isinstance(
+            r.reply_markup,
+            ReplyKeyboardMarkup,
+        ):
+            return await eor(message, text="INSECURE!")
 
     text = message.text.split(None, 1)[1]
     if "\n" in text:

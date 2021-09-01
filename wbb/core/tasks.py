@@ -4,7 +4,7 @@ from time import time
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import BOT_ID, SUDOERS, USERBOT_PREFIX, app, app2, eor
+from wbb import BOT_ID, SUDOERS, USERBOT_PREFIX, app2
 from wbb.core.sections import bold, section, w
 
 tasks = {}
@@ -44,11 +44,13 @@ async def rm_task(task_id=None):
             if value[0].done() or value[0].cancelled():
                 del tasks[key]
 
-        if task_id is not None:
-            if task_id in tasks:
-                if not tasks[task_id][0].done():
-                    tasks[task_id][0].cancel()
-                del tasks[task_id]
+        if (task_id is not None) and (task_id in tasks):
+            task = tasks[task_id][0]
+
+            if not task.done():
+                task.cancel()
+
+            del tasks[task_id]
 
 
 async def _get_tasks_text():
@@ -92,7 +94,7 @@ async def task_list(_, message: Message):
 
     results = await app2.get_inline_bot_results(
         BOT_ID,
-        f"tasks",
+        "tasks",
     )
     await app2.send_inline_bot_result(
         message.chat.id,

@@ -27,6 +27,7 @@ from pyrogram.types import InlineKeyboardButton, Message
 
 from wbb import (BOT_ID, LOG_GROUP_ID, LOG_MENTIONS, USERBOT_ID,
                  USERBOT_NAME, USERBOT_USERNAME, app, app2)
+from wbb.core.decorators.errors import capture_err
 from wbb.utils.filter_groups import taglog_group
 
 IS_USERBOT_ONLINE = False
@@ -69,29 +70,28 @@ async def sendLog(message: Message):
     & ~filters.edited,
     group=taglog_group,
 )
+@capture_err
 async def tagLoggerFunc(_, message: Message):
-    try:
-        if not LOG_MENTIONS:
-            return
-        if IS_USERBOT_ONLINE:
-            return
-        if message.reply_to_message:
-            reply_message = message.reply_to_message
-            if reply_message.from_user:
-                if reply_message.from_user.id == USERBOT_ID:
-                    return await sendLog(message)
-
-        if message.text:
-            text = message.text
-        elif message.caption:
-            text = message.caption
-        else:
-            return
-        if (
-            str(USERBOT_ID) in text
-            or str(USERBOT_USERNAME) in text
-            or USERBOT_NAME in text
+    if not LOG_MENTIONS:
+        return
+    if IS_USERBOT_ONLINE:
+        return
+    if message.reply_to_message:
+        reply_message = message.reply_to_message
+        if reply_message.from_user and (
+            reply_message.from_user.id == USERBOT_ID
         ):
-            await sendLog(message)
-    except Exception:
-        pass  # lol
+            return await sendLog(message)
+
+    if message.text:
+        text = message.text
+    elif message.caption:
+        text = message.caption
+    else:
+        return
+    if (
+        str(USERBOT_ID) in text
+        or str(USERBOT_USERNAME) in text
+        or USERBOT_NAME in text
+    ):
+        await sendLog(message)

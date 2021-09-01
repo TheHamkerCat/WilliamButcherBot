@@ -30,19 +30,15 @@ from random import randint
 from re import findall
 from re import sub as re_sub
 from sys import executable
-from time import time
 
 import aiofiles
-import aiohttp
 import speedtest
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
-from pyrogram.errors import MessageNotModified
 from pyrogram.types import Message
 
 from wbb import aiohttpsession as aiosession
-from wbb.modules.userbot import eor
 from wbb.utils.dbfunctions import start_restart_stage
-from wbb.utils.http import get
+from wbb.utils.http import get, post
 
 
 async def restart(m: Message):
@@ -134,12 +130,9 @@ async def transfer_sh(file_or_message):
     file = file_or_message
     async with aiofiles.open(file, "rb") as f:
         params = {file: await f.read()}
-    async with aiohttp.ClientSession() as session:
-        async with session.post(
-            "https://transfer.sh/", data=params
-        ) as resp:
-            download_link = str(await resp.text()).strip()
-    return download_link
+        resp = await post("https://transfer.sh/", data=params)
+        url = resp.strip()
+    return url
 
 
 async def calc_distance_from_ip(ip1: str, ip2: str) -> float:

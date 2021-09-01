@@ -1,11 +1,10 @@
-from inspect import iscoroutinefunction
 from os.path import abspath as absolute_path
 from time import time
 
 import aiofiles
 
 from wbb import aiohttpsession as session
-from wbb.core.tasks import add_task, rm_task
+from wbb.core.tasks import add_task
 
 
 def ensure_status(status_code: int):
