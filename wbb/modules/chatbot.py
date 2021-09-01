@@ -111,7 +111,7 @@ async def chatbot_talk(_, message: Message):
     await type_and_send(message)
 
 
-""" FOR USERBOT """
+# FOR USERBOT
 
 
 @app2.on_message(
