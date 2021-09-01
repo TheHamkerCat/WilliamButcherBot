@@ -149,18 +149,20 @@ async def filters_re(_, message):
                         reply_markup=keyb,
                         disable_web_page_preview=True,
                     )
+
                     if text.startswith("~"):
-                        return await message.delete()
+                        await message.delete()
                     return
+
                 return await message.reply_text(
                     data,
                     reply_markup=keyb,
                     disable_web_page_preview=True,
                 )
-            else:
-                if message.reply_to_message:
-                    await message.reply_to_message.reply_sticker(data)
-                    if text.startswith("~"):
-                        return await message.delete()
-                    return
-                return await message.reply_sticker(data)
+            if message.reply_to_message:
+                await message.reply_to_message.reply_sticker(data)
+
+                if text.startswith("~"):
+                    await message.delete()
+                return
+            return await message.reply_sticker(data)

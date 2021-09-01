@@ -231,59 +231,60 @@ async def callback_query_welcome_button(_, callback_query):
             ):
                 correct_answer = i["answer"]
                 keyboard = i["keyboard"]
-    if pending_user_id == pressed_user_id:
-        if answer != correct_answer:
-            await callback_query.answer("Yeah, It's Wrong.")
-            for iii in answers_dicc:
-                if (
-                    iii["user_id"] == pending_user_id
-                    and iii["chat_id"] == button_message.chat.id
-                ):
-                    attempts = iii["attempts"]
-                    if attempts >= 3:
-                        answers_dicc.remove(iii)
-                        await button_message.chat.kick_member(
-                            pending_user_id
-                        )
-                        await asyncio.sleep(1)
-                        await button_message.chat.unban_member(
-                            pending_user_id
-                        )
-                        await button_message.delete()
-                        await update_captcha_cache(answers_dicc)
-                        return
-                    else:
-                        iii["attempts"] += 1
-                        break
-            shuffle(keyboard[0])
-            shuffle(keyboard[1])
-            shuffle(keyboard[2])
-            shuffle(keyboard)
-            keyboard = InlineKeyboardMarkup(keyboard)
-            await button_message.edit(
-                text=button_message.caption.markdown,
-                reply_markup=keyboard,
-            )
-            return
-        await callback_query.answer("Captcha passed successfully!")
-        await button_message.chat.unban_member(pending_user_id)
-        await button_message.delete()
-        if len(answers_dicc) != 0:
-            for ii in answers_dicc:
-                if (
-                    ii["user_id"] == pending_user_id
-                    and ii["chat_id"] == button_message.chat.id
-                ):
-                    answers_dicc.remove(ii)
+
+    if pending_user_id != pressed_user_id:
+        return await callback_query.answer("This is not for you")
+
+    if answer != correct_answer:
+        await callback_query.answer("Yeah, It's Wrong.")
+        for iii in answers_dicc:
+            if (
+                iii["user_id"] == pending_user_id
+                and iii["chat_id"] == button_message.chat.id
+            ):
+                attempts = iii["attempts"]
+                if attempts >= 3:
+                    answers_dicc.remove(iii)
+                    await button_message.chat.kick_member(
+                        pending_user_id
+                    )
+                    await asyncio.sleep(1)
+                    await button_message.chat.unban_member(
+                        pending_user_id
+                    )
+                    await button_message.delete()
                     await update_captcha_cache(answers_dicc)
-        """ send welcome message """
-        await send_welcome_message(
-            callback_query.message.chat, pending_user_id
+                    return
+
+                iii["attempts"] += 1
+                break
+
+        shuffle(keyboard[0])
+        shuffle(keyboard[1])
+        shuffle(keyboard[2])
+        shuffle(keyboard)
+        keyboard = InlineKeyboardMarkup(keyboard)
+        return await button_message.edit(
+            text=button_message.caption.markdown,
+            reply_markup=keyboard,
         )
-        return
-    else:
-        await callback_query.answer("This is not for you")
-        return
+
+    await callback_query.answer("Captcha passed successfully!")
+    await button_message.chat.unban_member(pending_user_id)
+    await button_message.delete()
+
+    if len(answers_dicc) != 0:
+        for ii in answers_dicc:
+            if (
+                ii["user_id"] == pending_user_id
+                and ii["chat_id"] == button_message.chat.id
+            ):
+                answers_dicc.remove(ii)
+                await update_captcha_cache(answers_dicc)
+
+    return await send_welcome_message(
+        callback_query.message.chat, pending_user_id
+    )
 
 
 async def kick_restricted_after_delay(

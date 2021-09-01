@@ -28,10 +28,9 @@ class Feed:
             text += f"**Published:** `{self.published}`\n"
         if self.updated:
             text += f"**Last Updated:** `{self.updated}`\n"
-        if self.summary:
-            if "<div" not in self.summary:
-                text += f"**Summary:** {self.summary.strip()}\n"
+
+        if self.summary and "<div" not in self.summary:
+            text += f"**Summary:** {self.summary.strip()}\n"
 
         if text:
-            text = "\n".join([i.strip() for i in text.splitlines()])
-        return text
+            return "\n".join([i.strip() for i in text.splitlines()])

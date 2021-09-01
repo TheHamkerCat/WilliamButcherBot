@@ -33,7 +33,6 @@ from pyrogram.types import Message
 from wbb import SUDOERS, USERBOT_PREFIX, app2, eor
 from wbb.core.sections import section
 from wbb.core.tasks import add_task, rm_task
-from wbb.modules.userbot import eor
 from wbb.utils.downloader import download
 
 

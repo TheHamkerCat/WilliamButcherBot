@@ -119,12 +119,12 @@ async def purge_me_func(_, message: Message):
     # because we can't delete more than 100 messages at once,
     # we have to do it in chunks of 100, i'll choose 99 just
     # to be safe.
-    to_delete = list(
+    to_delete = [
         (
             message_ids[i : i + 99]
             for i in range(0, len(message_ids), 99)
         )
-    )
+    ]
 
     for hundred_messages_or_less in to_delete:
         await app2.delete_messages(

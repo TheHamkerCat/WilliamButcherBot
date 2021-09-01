@@ -54,7 +54,7 @@ def get_file_extension_from_url(url):
     return basename.split(".")[-1]
 
 
-def download_youtube_audio(url: str, m=0):
+def download_youtube_audio(url: str):
     global is_downloading
     with youtube_dl.YoutubeDL(
         {
@@ -109,7 +109,7 @@ async def music(_, message):
     try:
         loop = get_running_loop()
         music = await loop.run_in_executor(
-            None, partial(download_youtube_audio, url, message)
+            None, partial(download_youtube_audio, url)
         )
         if not music:
             await m.edit("Too Long, Can't Download.")
