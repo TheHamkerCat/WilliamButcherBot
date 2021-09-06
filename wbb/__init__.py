@@ -53,7 +53,7 @@ bot_start_time = time.time()
 
 # MongoDB client
 print("[INFO]: INITIALIZING DATABASE")
-mongo_client = MongoClient(MONGO_DB_URI)
+mongo_client = MongoClient(MONGO_URL)
 db = mongo_client.wbb
 
 
