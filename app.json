@@ -46,7 +46,7 @@
             "value": "300",
             "required": true
         },
-        "MONGO_DB_URI": {
+        "MONGO_URL": {
             "description": "Get From Here. https://telegra.ph/How-To-get-Mongodb-URI-04-06",
             "required": true
         },

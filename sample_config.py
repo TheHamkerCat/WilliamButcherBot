@@ -23,7 +23,7 @@ if HEROKU:
     WELCOME_DELAY_KICK_SEC = int(
         environ.get("WELCOME_DELAY_KICK_SEC", None)
     )
-    MONGO_DB_URI = environ.get("MONGO_DB_URI", None)
+    MONGO_URL = environ.get("MONGO_URL", None)
     ARQ_API_URL = environ.get("ARQ_API_URL", None)
     ARQ_API_KEY = environ.get("ARQ_API_KEY", None)
     LOG_MENTIONS = bool(int(environ.get("LOG_MENTIONS", None)))
@@ -43,7 +43,7 @@ else:
     GBAN_LOG_GROUP_ID = -100125431255
     MESSAGE_DUMP_CHAT = -1001181696437
     WELCOME_DELAY_KICK_SEC = 300
-    MONGO_DB_URI = "mongodb+srv://username:password@cluster0.ksiis.mongodb.net/YourDataBaseName?retryWrites=true&w=majority"
+    MONGO_URL = "mongodb+srv://username:password@cluster0.ksiis.mongodb.net/YourDataBaseName?retryWrites=true&w=majority"
     ARQ_API_KEY = "Get this from @ARQRobot"
     ARQ_API_URL = "https://thearq.tech"
     LOG_MENTIONS = True
