@@ -50,6 +50,7 @@ __HELP__ = """/ban - Ban A User
 /purge - Purge Messages
 /del - Delete Replied Message
 /promote - Promote A Member
+/fullpromote - Promote A Member With All Rights
 /demote - Demote A Member
 /pin - Pin A Message
 /mute - Mute A User
@@ -320,7 +321,7 @@ async def deleteFunc(_, message: Message):
 
 
 @app.on_message(
-    filters.command("promote") & ~filters.edited & ~filters.private
+    filters.command(["promote", "fullpromote"]) & ~filters.edited & ~filters.private
 )
 @adminsOnly("can_promote_members")
 async def promoteFunc(_, message: Message):
@@ -334,6 +335,20 @@ async def promoteFunc(_, message: Message):
         return await message.reply_text(
             "I don't have enough permissions"
         )
+    if message.command[0][0] == "f":
+        await message.chat.promote_member(
+        user_id=user_id,
+        can_change_info=bot.can_change_info,
+        can_invite_users=bot.can_invite_users,
+        can_delete_messages=bot.can_delete_messages,
+        can_restrict_members=bot.can_restrict_members,
+        can_pin_messages=bot.can_pin_messages,
+        can_promote_members=bot.can_promote_members,  
+        can_manage_chat=bot.can_manage_chat,
+        can_manage_voice_chats=bot.can_manage_voice_chats,
+    )
+        await message.reply_text("Promoted! with all rights")
+        return
     await message.chat.promote_member(
         user_id=user_id,
         can_change_info=bot.can_change_info,
