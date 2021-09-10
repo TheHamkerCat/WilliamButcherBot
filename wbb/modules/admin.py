@@ -347,8 +347,8 @@ async def promoteFunc(_, message: Message):
         can_manage_chat=bot.can_manage_chat,
         can_manage_voice_chats=bot.can_manage_voice_chats,
     )
-        await message.reply_text("Promoted! With All Rights")
-        return
+        return await message.reply_text("Promoted! With All Rights")
+
     await message.chat.promote_member(
         user_id=user_id,
         can_change_info=bot.can_change_info,
