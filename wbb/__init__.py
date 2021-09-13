@@ -92,9 +92,7 @@ aiohttpsession = ClientSession()
 
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
 
-app = Client(
-    "wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH
-)
+app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
 
 print("[INFO]: STARTING BOT CLIENT")
 app.start()
@@ -124,6 +122,4 @@ if USERBOT_ID not in SUDOERS:
 async def eor(msg: Message, **kwargs):
     func = msg.edit_text if msg.from_user.is_self else msg.reply
     spec = getfullargspec(func.__wrapped__).args
-    return await func(
-        **{k: v for k, v in kwargs.items() if k in spec}
-    )
+    return await func(**{k: v for k, v in kwargs.items() if k in spec})

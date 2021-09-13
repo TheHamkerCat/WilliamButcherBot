@@ -40,9 +40,7 @@ __HELP__ = """
 @adminsOnly("can_change_info")
 async def set_chat_title(_, message):
     if len(message.command) < 2:
-        return await message.reply_text(
-            "**Usage:**\n/set_chat_title NEW NAME"
-        )
+        return await message.reply_text("**Usage:**\n/set_chat_title NEW NAME")
     old_title = message.chat.title
     new_title = message.text.split(None, 1)[1]
     await message.chat.set_title(new_title)

@@ -46,8 +46,7 @@ can even delete your account.
 
 
 @app2.on_message(
-    filters.command("useradd", prefixes=USERBOT_PREFIX)
-    & filters.user(SUDOERS)
+    filters.command("useradd", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
 )
 @capture_err
 async def useradd(_, message: Message):
@@ -75,8 +74,7 @@ async def useradd(_, message: Message):
 
 
 @app2.on_message(
-    filters.command("userdel", prefixes=USERBOT_PREFIX)
-    & filters.user(SUDOERS)
+    filters.command("userdel", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
 )
 @capture_err
 async def userdel(_, message: Message):
@@ -99,8 +97,7 @@ async def userdel(_, message: Message):
 
 
 @app2.on_message(
-    filters.command("sudoers", prefixes=USERBOT_PREFIX)
-    & filters.user(SUDOERS)
+    filters.command("sudoers", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
 )
 @capture_err
 async def sudoers_list(_, message: Message):

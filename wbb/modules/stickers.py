@@ -28,20 +28,16 @@ from traceback import format_exc
 
 from pyrogram import filters
 from pyrogram.errors import (PeerIdInvalid, ShortnameOccupyFailed,
-                             StickerEmojiInvalid,
-                             StickerPngDimensions, StickerPngNopng,
-                             UserIsBlocked)
-from pyrogram.types import (InlineKeyboardButton,
-                            InlineKeyboardMarkup, Message)
+                             StickerEmojiInvalid, StickerPngDimensions,
+                             StickerPngNopng, UserIsBlocked)
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from wbb import BOT_USERNAME, SUDOERS, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.files import (get_document_from_file_id,
-                             resize_file_to_sticker_size,
-                             upload_document)
+                             resize_file_to_sticker_size, upload_document)
 from wbb.utils.stickerset import (add_sticker_to_set, create_sticker,
-                                  create_sticker_set,
-                                  get_sticker_set_by_name)
+                                  create_sticker_set, get_sticker_set_by_name)
 
 __MODULE__ = "Stickers"
 __HELP__ = """
@@ -52,7 +48,9 @@ __HELP__ = """
 /kang
     To kang a Sticker or an Image."""
 
-MAX_STICKERS = 120  # would be better if we could fetch this limit directly from telegram
+MAX_STICKERS = (
+    120  # would be better if we could fetch this limit directly from telegram
+)
 SUPPORTED_TYPES = ["jpeg", "png", "webp"]
 
 
@@ -96,16 +94,13 @@ async def sticker_image(_, message: Message):
 
 
 @app2.on_message(
-    filters.command("kang", prefixes=USERBOT_PREFIX)
-    & filters.user(SUDOERS),
+    filters.command("kang", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS),
 )
 async def userbot_kang(_, message: Message):
     reply = message.reply_to_message
 
     if not reply:
-        return await message.reply_text(
-            "Reply to a sticker/image to kang it."
-        )
+        return await message.reply_text("Reply to a sticker/image to kang it.")
 
     sticker_m = await reply.forward(BOT_USERNAME)
 
@@ -134,9 +129,7 @@ async def userbot_kang(_, message: Message):
 @capture_err
 async def kang(client, message: Message):
     if not message.reply_to_message:
-        return await message.reply_text(
-            "Reply to a sticker/image to kang it."
-        )
+        return await message.reply_text("Reply to a sticker/image to kang it.")
     if not message.from_user:
         return await message.reply_text(
             "You are anon admin, kang stickers in my pm."
@@ -156,10 +149,7 @@ async def kang(client, message: Message):
         sticker_emoji = "🤔"
 
     # Get the corresponding fileid, resize the file if necessary
-    doc = (
-        message.reply_to_message.photo
-        or message.reply_to_message.document
-    )
+    doc = message.reply_to_message.photo or message.reply_to_message.document
     try:
         if message.reply_to_message.sticker:
             sticker = await create_sticker(
@@ -188,9 +178,7 @@ async def kang(client, message: Message):
                     f"Something went wrong while resizing the sticker (at {temp_file_path}); {e}"
                 )
             sticker = await create_sticker(
-                await upload_document(
-                    client, temp_file_path, message.chat.id
-                ),
+                await upload_document(client, temp_file_path, message.chat.id),
                 sticker_emoji,
             )
             if os.path.isfile(temp_file_path):
@@ -217,9 +205,7 @@ async def kang(client, message: Message):
             if limit >= 50:
                 return await msg.delete()
 
-            stickerset = await get_sticker_set_by_name(
-                client, packname
-            )
+            stickerset = await get_sticker_set_by_name(client, packname)
             if not stickerset:
                 stickerset = await create_sticker_set(
                     client,
@@ -242,13 +228,9 @@ async def kang(client, message: Message):
                 continue
             else:
                 try:
-                    await add_sticker_to_set(
-                        client, stickerset, sticker
-                    )
+                    await add_sticker_to_set(client, stickerset, sticker)
                 except StickerEmojiInvalid:
-                    return await msg.edit(
-                        "[ERROR]: INVALID_EMOJI_IN_ARGUMENT"
-                    )
+                    return await msg.edit("[ERROR]: INVALID_EMOJI_IN_ARGUMENT")
             limit += 1
             break
 
@@ -259,13 +241,7 @@ async def kang(client, message: Message):
         )
     except (PeerIdInvalid, UserIsBlocked):
         keyboard = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text="Start", url=f"t.me/{BOT_USERNAME}"
-                    )
-                ]
-            ]
+            [[InlineKeyboardButton(text="Start", url=f"t.me/{BOT_USERNAME}")]]
         )
         await msg.edit(
             "You Need To Start A Private Chat With Me.",
@@ -276,6 +252,4 @@ async def kang(client, message: Message):
             "Stickers must be png files but the provided image was not a png"
         )
     except StickerPngDimensions:
-        await message.reply_text(
-            "The sticker png dimensions are invalid."
-        )
+        await message.reply_text("The sticker png dimensions are invalid.")

@@ -45,10 +45,6 @@ def section(
         text += (
             indent * w
             + bold(key)
-            + (
-                (value[0] + n)
-                if isinstance(value, list)
-                else mono(value)
-            )
+            + ((value[0] + n) if isinstance(value, list) else mono(value))
         )
     return text

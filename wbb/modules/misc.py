@@ -107,9 +107,7 @@ async def asq(_, message):
 
 @app.on_message(filters.command("commit") & ~filters.edited)
 async def commit(_, message):
-    await message.reply_text(
-        await get("http://whatthecommit.com/index.txt")
-    )
+    await message.reply_text(await get("http://whatthecommit.com/index.txt"))
 
 
 @app.on_message(filters.command("RTFM", "#"))
@@ -124,9 +122,7 @@ async def rtfm(_, message):
 
 @app.on_message(filters.command("runs") & ~filters.edited)
 async def runs(_, message):
-    await message.reply_text(
-        (await random_line("wbb/utils/runs.txt"))
-    )
+    await message.reply_text((await random_line("wbb/utils/runs.txt")))
 
 
 @app.on_message(filters.command("id"))
@@ -143,12 +139,12 @@ async def getid(_, message):
             user_id = (await app.get_users(split)).id
             text += f"**[User ID:](tg://user?id={user_id})** `{user_id}`\n"
         except Exception:
-            return await message.reply_text(
-                "This user doesn't exist."
-            )
+            return await message.reply_text("This user doesn't exist.")
     text += f"**[Chat ID:](https://t.me/{chat.username})** `{chat.id}`\n\n"
     if not getattr(reply, "empty", True):
-        text += f"**[Replied Message ID:]({reply.link})** `{reply.message_id}`\n"
+        text += (
+            f"**[Replied Message ID:]({reply.link})** `{reply.message_id}`\n"
+        )
         text += f"**[Replied User ID:](tg://user?id={reply.from_user.id})** `{reply.from_user.id}`"
     await message.reply_text(
         text, disable_web_page_preview=True, parse_mode="md"
@@ -172,9 +168,7 @@ async def random(_, message):
             )
             await message.reply_text(f"`{password}`")
         else:
-            await message.reply_text(
-                "Specify A Length Between 1-1000"
-            )
+            await message.reply_text("Specify A Length Between 1-1000")
     except ValueError:
         await message.reply_text(
             "Strings Won't Work!, Pass A Positive Integer Less Than 1000"
@@ -198,9 +192,7 @@ async def tr(_, message):
     reply = message.reply_to_message
     text = reply.text or reply.caption
     if not text:
-        return await message.reply_text(
-            "Reply to a text to translate it"
-        )
+        return await message.reply_text("Reply to a text to translate it")
     result = await arq.translate(text, lang)
     if not result.ok:
         return await message.reply_text(result.result)
@@ -233,9 +225,7 @@ async def json_fetch(_, message):
 @capture_err
 async def take_ss(_, message):
     if len(message.command) != 2:
-        return await message.reply_text(
-            "Give A Url To Fetch Screenshot."
-        )
+        return await message.reply_text("Give A Url To Fetch Screenshot.")
     url = message.text.split(None, 1)[1]
     m = await message.reply_text("**Uploading**")
     try:

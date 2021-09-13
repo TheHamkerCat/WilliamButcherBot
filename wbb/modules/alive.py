@@ -28,8 +28,7 @@ from wbb import BOT_ID, SUDOERS, USERBOT_PREFIX, app2
 
 
 @app2.on_message(
-    filters.command("alive", prefixes=USERBOT_PREFIX)
-    & filters.user(SUDOERS)
+    filters.command("alive", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
 )
 async def alive_command_func(_, message):
     await message.delete()

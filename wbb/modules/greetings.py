@@ -28,24 +28,22 @@ from datetime import datetime
 from random import shuffle
 
 from pyrogram import filters
-from pyrogram.errors.exceptions.bad_request_400 import (
-    ChatAdminRequired, UserNotParticipant)
-from pyrogram.types import (Chat, ChatPermissions,
-                            InlineKeyboardButton,
+from pyrogram.errors.exceptions.bad_request_400 import (ChatAdminRequired,
+                                                        UserNotParticipant)
+from pyrogram.types import (Chat, ChatPermissions, InlineKeyboardButton,
                             InlineKeyboardMarkup, Message, User)
 
 from wbb import SUDOERS, WELCOME_DELAY_KICK_SEC, app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.keyboard import ikb
-from wbb.utils.dbfunctions import (captcha_off, captcha_on,
-                                   del_welcome, get_captcha_cache,
-                                   get_welcome, is_captcha_on,
-                                   is_gbanned_user, set_welcome,
-                                   update_captcha_cache)
+from wbb.utils.dbfunctions import (captcha_off, captcha_on, del_welcome,
+                                   get_captcha_cache, get_welcome,
+                                   has_solved_captcha_once, is_captcha_on,
+                                   is_gbanned_user, save_captcha_solved,
+                                   set_welcome, update_captcha_cache)
 from wbb.utils.filter_groups import welcome_captcha_group
-from wbb.utils.functions import (extract_text_and_keyb,
-                                 generate_captcha)
+from wbb.utils.functions import extract_text_and_keyb, generate_captcha
 
 __MODULE__ = "Greetings"
 __HELP__ = """
@@ -95,18 +93,20 @@ loop.create_task(get_initial_captcha_cache())
 @capture_err
 async def welcome(_, message: Message):
     global answers_dicc
-    
+
     # Get cached answers from mongodb in case of bot's been restarted or crashed.
     answers_dicc = await get_captcha_cache()
-    
+
     # Mute new member and send message with button
     if not await is_captcha_on(message.chat.id):
         return
-    
+
     for member in message.new_chat_members:
         try:
+
             if member.id in SUDOERS:
-                continue  # ignore sudos
+                continue  # ignore sudo users
+
             if await is_gbanned_user(member.id):
                 await message.chat.kick_member(member.id)
                 await message.reply_text(
@@ -115,14 +115,20 @@ async def welcome(_, message: Message):
                     + " for this ban in support chat."
                 )
                 continue
+
             if member.is_bot:
                 continue  # ignore bots
-            await message.chat.restrict_member(
-                member.id, ChatPermissions()
-            )
+
+            # Ignore user if he has already solved captcha in this group
+            # someday
+            if await has_solved_captcha_once(message.chat.id, member.id):
+                continue
+
+            await message.chat.restrict_member(member.id, ChatPermissions())
             text = (
                 f"{(member.mention())} Are you human?\n"
-                f"Solve this captcha in {WELCOME_DELAY_KICK_SEC} seconds and 4 attempts or you'll be kicked."
+                f"Solve this captcha in {WELCOME_DELAY_KICK_SEC} "
+                "seconds and 4 attempts or you'll be kicked."
             )
         except ChatAdminRequired:
             return
@@ -181,7 +187,7 @@ async def welcome(_, message: Message):
             quote=True,
         )
         os.remove(captcha_image)
-        
+
         # Save captcha answers etc in mongodb in case bot gets crashed or restarted.
         await update_captcha_cache(answers_dicc)
 
@@ -204,9 +210,7 @@ async def send_welcome_message(chat: Chat, user_id: int):
     if "{chat}" in text:
         text = text.replace("{chat}", chat.title)
     if "{name}" in text:
-        text = text.replace(
-            "{name}", (await app.get_users(user_id)).mention
-        )
+        text = text.replace("{name}", (await app.get_users(user_id)).mention)
 
     await app.send_message(
         chat.id,
@@ -250,13 +254,9 @@ async def callback_query_welcome_button(_, callback_query):
                 attempts = iii["attempts"]
                 if attempts >= 3:
                     answers_dicc.remove(iii)
-                    await button_message.chat.kick_member(
-                        pending_user_id
-                    )
+                    await button_message.chat.kick_member(pending_user_id)
                     await asyncio.sleep(1)
-                    await button_message.chat.unban_member(
-                        pending_user_id
-                    )
+                    await button_message.chat.unban_member(pending_user_id)
                     await button_message.delete()
                     await update_captcha_cache(answers_dicc)
                     return
@@ -287,9 +287,13 @@ async def callback_query_welcome_button(_, callback_query):
                 answers_dicc.remove(ii)
                 await update_captcha_cache(answers_dicc)
 
-    return await send_welcome_message(
-        callback_query.message.chat, pending_user_id
-    )
+    chat = callback_query.message.chat
+
+    # Save this verification in db, so we don't have to
+    # send captcha to this user when he joins again.
+    await save_captcha_solved(chat.id, pending_user_id)
+
+    return await send_welcome_message(chat, pending_user_id)
 
 
 async def kick_restricted_after_delay(
@@ -310,9 +314,7 @@ async def kick_restricted_after_delay(
             if i["user_id"] == user_id:
                 answers_dicc.remove(i)
                 await update_captcha_cache(answers_dicc)
-    await _ban_restricted_user_until_date(
-        group_chat, user_id, duration=delay
-    )
+    await _ban_restricted_user_until_date(group_chat, user_id, duration=delay)
 
 
 async def _ban_restricted_user_until_date(
@@ -322,9 +324,7 @@ async def _ban_restricted_user_until_date(
         member = await group_chat.get_member(user_id)
         if member.status == "restricted":
             until_date = int(datetime.utcnow().timestamp() + duration)
-            await group_chat.kick_member(
-                user_id, until_date=until_date
-            )
+            await group_chat.kick_member(user_id, until_date=until_date)
     except UserNotParticipant:
         pass
 
@@ -365,13 +365,9 @@ async def set_welcome_func(_, message):
     chat_id = message.chat.id
     raw_text = message.reply_to_message.text.markdown
     if not (extract_text_and_keyb(ikb, raw_text)):
-        return await message.reply_text(
-            "Wrong formating, check help section."
-        )
+        return await message.reply_text("Wrong formating, check help section.")
     await set_welcome(chat_id, raw_text)
-    await message.reply_text(
-        "Welcome message has been successfully set."
-    )
+    await message.reply_text("Welcome message has been successfully set.")
 
 
 @app.on_message(filters.command("del_welcome") & ~filters.private)

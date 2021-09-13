@@ -75,9 +75,7 @@ async def impersonate(_, message: Message):
     user_id = await extract_user(message)
 
     if not user_id:
-        return await eor(
-            message, text="Can't impersonate an anonymous user."
-        )
+        return await eor(message, text="Can't impersonate an anonymous user.")
     if user_id == USERBOT_ID:
         return eor(message, text="Can't impersonate myself.")
 

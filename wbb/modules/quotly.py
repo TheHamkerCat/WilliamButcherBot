@@ -55,7 +55,7 @@ def getArg(message: Message) -> str:
     return arg
 
 
-def isArgInt(message: Message) -> bool:
+def isArgInt(message: Message) -> list:
     count = getArg(message)
     try:
         count = int(count)
@@ -65,16 +65,13 @@ def isArgInt(message: Message) -> bool:
 
 
 @app2.on_message(
-    filters.command("q", prefixes=USERBOT_PREFIX)
-    & filters.user(SUDOERS)
+    filters.command("q", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
 )
 @app.on_message(filters.command("q") & ~filters.private)
 @capture_err
 async def quotly_func(client, message: Message):
     if not message.reply_to_message:
-        return await message.reply_text(
-            "Reply to a message to quote it."
-        )
+        return await message.reply_text("Reply to a message to quote it.")
     if not message.reply_to_message.text:
         return await message.reply_text(
             "Replied message has no text, can't quote it."
@@ -91,18 +88,21 @@ async def quotly_func(client, message: Message):
 
             count = arg[1]
 
+            # Fetching 5 extra messages so tha twe can ignore media
+            # messages and still end up with correct offset
             messages = [
                 i
                 for i in await client.get_messages(
                     message.chat.id,
                     range(
                         message.reply_to_message.message_id,
-                        message.reply_to_message.message_id + count,
+                        message.reply_to_message.message_id + (count + 5),
                     ),
                     replies=0,
                 )
-                if not i.empty
+                if not i.empty and not i.media
             ]
+            messages = messages[:count]
         else:
             if getArg(message) != "r":
                 return await m.edit(
@@ -115,10 +115,9 @@ async def quotly_func(client, message: Message):
             )
             messages = [reply_message]
     else:
-        await m.edit(
+        return await m.edit(
             "Incorrect argument, check quotly module in help section."
         )
-        return
     try:
         if not message:
             return await m.edit("Something went wrong.")

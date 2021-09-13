@@ -66,9 +66,7 @@ async def reverse_image_search(_, message: Message):
     file_id = get_file_id_from_message(reply)
     if not file_id:
         return await m.edit("Can't reverse that")
-    image = await app.download_media(
-        file_id, f"{randint(1000, 10000)}.jpg"
-    )
+    image = await app.download_media(file_id, f"{randint(1000, 10000)}.jpg")
     async with aiofiles.open(image, "rb") as f:
         if image:
             search_url = "http://www.google.com/searchbyimage/upload"
@@ -83,9 +81,7 @@ async def reverse_image_search(_, message: Message):
                 )
 
             loop = get_running_loop()
-            response = await loop.run_in_executor(
-                None, post_non_blocking
-            )
+            response = await loop.run_in_executor(None, post_non_blocking)
             location = response.headers.get("Location")
             os.remove(image)
         else:
@@ -131,9 +127,7 @@ async def reverse_image_search(_, message: Message):
                 media.append(img)
 
         # Cache images, so we can use file_ids
-        tasks = [
-            app.send_photo(MESSAGE_DUMP_CHAT, img) for img in media
-        ]
+        tasks = [app.send_photo(MESSAGE_DUMP_CHAT, img) for img in media]
         messages = await gather(*tasks)
 
         await message.reply_media_group(

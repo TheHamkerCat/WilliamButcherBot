@@ -36,8 +36,7 @@ from pyrogram import __version__ as pyrover
 from pyrogram import filters
 from pyrogram.raw.functions import Ping
 from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
-                            InlineQueryResultArticle,
-                            InlineQueryResultPhoto,
+                            InlineQueryResultArticle, InlineQueryResultPhoto,
                             InputTextMessageContent)
 from search_engine_parser import GoogleSearch
 
@@ -76,11 +75,7 @@ async def inline_help_func(__HELP__):
     buttons = InlineKeyboard(row_width=4)
     buttons.add(
         *[
-            (
-                InlineKeyboardButton(
-                    text=i, switch_inline_query_current_chat=i
-                )
-            )
+            (InlineKeyboardButton(text=i, switch_inline_query_current_chat=i))
             for i in keywords_list
         ]
     )
@@ -149,9 +144,7 @@ async def translate_func(answers, lang, tex):
             InlineQueryResultArticle(
                 title="Error",
                 description=result.result,
-                input_message_content=InputTextMessageContent(
-                    result.result
-                ),
+                input_message_content=InputTextMessageContent(result.result),
             )
         )
         return answers
@@ -189,9 +182,7 @@ async def urban_func(answers, text):
             InlineQueryResultArticle(
                 title="Error",
                 description=results.result,
-                input_message_content=InputTextMessageContent(
-                    results.result
-                ),
+                input_message_content=InputTextMessageContent(results.result),
             )
         )
         return answers
@@ -249,9 +240,7 @@ async def wall_func(answers, text):
             InlineQueryResultArticle(
                 title="Error",
                 description=results.result,
-                input_message_content=InputTextMessageContent(
-                    results.result
-                ),
+                input_message_content=InputTextMessageContent(results.result),
             )
         )
         return answers
@@ -274,9 +263,7 @@ async def torrent_func(answers, text):
             InlineQueryResultArticle(
                 title="Error",
                 description=results.result,
-                input_message_content=InputTextMessageContent(
-                    results.result
-                ),
+                input_message_content=InputTextMessageContent(results.result),
             )
         )
         return answers
@@ -317,9 +304,7 @@ async def youtube_func(answers, text):
             InlineQueryResultArticle(
                 title="Error",
                 description=results.result,
-                input_message_content=InputTextMessageContent(
-                    results.result
-                ),
+                input_message_content=InputTextMessageContent(results.result),
             )
         )
         return answers
@@ -335,7 +320,9 @@ async def youtube_func(answers, text):
 **Duration:** {i.duration}
 **Uploaded:** {i.publish_time}
 **Description:** {i.long_desc}"""
-        description = f"{i.views} | {i.channel} | {i.duration} | {i.publish_time}"
+        description = (
+            f"{i.views} | {i.channel} | {i.duration} | {i.publish_time}"
+        )
         answers.append(
             InlineQueryResultArticle(
                 title=i.title,
@@ -357,9 +344,7 @@ async def lyrics_func(answers, text):
             InlineQueryResultArticle(
                 title="Error",
                 description=song.result,
-                input_message_content=InputTextMessageContent(
-                    song.result
-                ),
+                input_message_content=InputTextMessageContent(song.result),
             )
         )
         return answers
@@ -411,9 +396,7 @@ async def tg_search_func(answers, text, user_id):
         buttons.add(
             InlineKeyboardButton(
                 text="Origin",
-                url=message.link
-                if message.link
-                else "https://t.me/telegram",
+                url=message.link if message.link else "https://t.me/telegram",
             ),
             InlineKeyboardButton(
                 text="Search again",
@@ -474,9 +457,7 @@ async def music_inline_func(answers, query):
         messages_ids_and_duration.append(
             {
                 "message_id": f_.message_id,
-                "duration": f_.audio.duration
-                if f_.audio.duration
-                else 0,
+                "duration": f_.audio.duration if f_.audio.duration else 0,
             }
         )
     messages = list(
@@ -500,9 +481,7 @@ async def wiki_func(answers, text):
             InlineQueryResultArticle(
                 title="Error",
                 description=data.result,
-                input_message_content=InputTextMessageContent(
-                    data.result
-                ),
+                input_message_content=InputTextMessageContent(data.result),
             )
         )
         return answers
@@ -539,9 +518,7 @@ async def speedtest_init(query):
     msg = "**Click The Button Below To Perform A Speedtest**"
     button = InlineKeyboard(row_width=1)
     button.add(
-        InlineKeyboardButton(
-            text="Test", callback_data="test_speedtest"
-        )
+        InlineKeyboardButton(text="Test", callback_data="test_speedtest")
     )
     answers.append(
         InlineQueryResultArticle(
@@ -563,9 +540,7 @@ async def test_speedtest_cq(_, cq):
     inline_message_id = cq.inline_message_id
     await app.edit_inline_text(inline_message_id, "**Testing**")
     loop = asyncio.get_running_loop()
-    download, upload, info = await loop.run_in_executor(
-        None, test_speedtest
-    )
+    download, upload, info = await loop.run_in_executor(None, test_speedtest)
     msg = f"""
 **Download:** `{download}`
 **Upload:** `{upload}`
@@ -620,9 +595,7 @@ async def ping_func(answers):
     answers.append(
         InlineQueryResultArticle(
             title=ping,
-            input_message_content=InputTextMessageContent(
-                f"__**{ping}**__"
-            ),
+            input_message_content=InputTextMessageContent(f"__**{ping}**__"),
         )
     )
     return answers
@@ -633,9 +606,7 @@ async def yt_music_func(answers, url):
         url = (await arq.youtube(url)).result[0]
         url = f"https://youtube.com{url.url_suffix}"
     loop = asyncio.get_running_loop()
-    music = await loop.run_in_executor(
-        None, download_youtube_audio, url
-    )
+    music = await loop.run_in_executor(None, download_youtube_audio, url)
     if not music:
         msg = "**ERROR**\n__MUSIC TOO LONG__"
         answers.append(
@@ -664,9 +635,7 @@ async def yt_music_func(answers, url):
     os.remove(audio)
     os.remove(thumbnail)
     answers.append(
-        InlineQueryResultCachedDocument(
-            title=title, file_id=m.audio.file_id
-        )
+        InlineQueryResultCachedDocument(title=title, file_id=m.audio.file_id)
     )
     return answers
 
@@ -674,9 +643,7 @@ async def yt_music_func(answers, url):
 async def info_inline_func(answers, peer):
     not_found = InlineQueryResultArticle(
         title="PEER NOT FOUND",
-        input_message_content=InputTextMessageContent(
-            "PEER NOT FOUND"
-        ),
+        input_message_content=InputTextMessageContent("PEER NOT FOUND"),
     )
     try:
         user = await app.get_users(peer)
@@ -708,9 +675,7 @@ async def tmdb_func(answers, query):
             InlineQueryResultArticle(
                 title="Error",
                 description=response.result,
-                input_message_content=InputTextMessageContent(
-                    response.result
-                ),
+                input_message_content=InputTextMessageContent(response.result),
             )
         )
         return answers
@@ -722,9 +687,7 @@ async def tmdb_func(answers, query):
             genre = None
         else:
             genre = " | ".join(result.genre)
-        description = (
-            result.overview[0:900] if result.overview else "None"
-        )
+        description = result.overview[0:900] if result.overview else "None"
         caption = f"""
 **{result.title}**
 **Type:** {result.type}
@@ -761,9 +724,7 @@ async def image_func(answers, query):
             InlineQueryResultArticle(
                 title="Error",
                 description=results.result,
-                input_message_content=InputTextMessageContent(
-                    results.result
-                ),
+                input_message_content=InputTextMessageContent(results.result),
             )
         )
         return answers
@@ -817,9 +778,7 @@ async def execute_code(query):
             [
                 InlineQueryResultArticle(
                     title=lang,
-                    input_message_content=InputTextMessageContent(
-                        lang
-                    ),
+                    input_message_content=InputTextMessageContent(lang),
                 )
                 for lang in languages
             ][:49]
@@ -841,11 +800,7 @@ async def execute_code(query):
             res = response.result
             stdout, stderr = escape(res.stdout), escape(res.stderr)
             output = stdout or stderr
-            out = (
-                "STDOUT"
-                if stdout
-                else ("STDERR" if stderr else "No output")
-            )
+            out = "STDOUT" if stdout else ("STDERR" if stderr else "No output")
 
             msg = f"""
 **{lang.capitalize()}:**
@@ -858,9 +813,7 @@ async def execute_code(query):
                 InlineQueryResultArticle(
                     title="Executed",
                     description=output[:20],
-                    input_message_content=InputTextMessageContent(
-                        msg
-                    ),
+                    input_message_content=InputTextMessageContent(msg),
                 )
             )
     await query.answer(results=answers, cache_time=1)
@@ -906,9 +859,7 @@ async def cancel_task_button(_, query: CallbackQuery):
     keyb = None
 
     if tasks:
-        keyb = ikb(
-            {i: f"cancel_task_{i}" for i in list(tasks.keys())}
-        )
+        keyb = ikb({i: f"cancel_task_{i}" for i in list(tasks.keys())})
 
     await app.edit_inline_text(
         query.inline_message_id,

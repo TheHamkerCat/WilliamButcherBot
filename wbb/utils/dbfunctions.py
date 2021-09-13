@@ -27,10 +27,10 @@ from typing import Dict, List, Union
 
 from wbb import db
 
-
 # SOME THINGS ARE FUCKED UP HERE, LIKE TOGGLEABLES HAVE THEIR OWN COLLECTION
-# (SHOULD FIX IT WITH SOMETHING LIKE TOGGLEDB, BUT I WON'T, AS IT WILL TAKE
-# TOO MUCH TIME AND WILL BE BAD FOR ALREADY STORED DATA)
+# (SHOULD FIX IT WITH SOMETHING LIKE TOGGLEDB), MOST OF THE CODE IS BAD AF
+# AND NEEDS TO BE REWRITTEN, BUT I WON'T, AS IT WILL TAKE
+# TOO MUCH TIME AND WILL BE BAD FOR ALREADY STORED DATA
 
 
 notesdb = db.notes
@@ -42,10 +42,11 @@ usersdb = db.users
 gbansdb = db.gban
 coupledb = db.couple
 captchadb = db.captcha
+solved_captcha_db = db.solved_captcha
+captcha_cachedb = db.captcha_cache
 antiservicedb = db.antiservice
 pmpermitdb = db.pmpermit
 welcomedb = db.welcome_text
-captcha_cachedb = db.captcha_cache
 blacklist_filtersdb = db.blacklistFilters
 pipesdb = db.pipes
 sudoersdb = db.sudoers
@@ -280,9 +281,7 @@ async def user_global_karma(user_id) -> int:
         return 0
     total_karma = 0
     for chat in await chats.to_list(length=1000000):
-        karma = await get_karma(
-            chat["chat_id"], await int_to_alpha(user_id)
-        )
+        karma = await get_karma(chat["chat_id"], await int_to_alpha(user_id))
         if karma and (int(karma["karma"]) > 0):
             total_karma += int(karma["karma"])
     return total_karma
@@ -459,6 +458,21 @@ async def captcha_off(chat_id: int):
     return await captchadb.insert_one({"chat_id": chat_id})
 
 
+async def has_solved_captcha_once(chat_id: int, user_id: int):
+    has_solved = await solved_captcha_db.find_one(
+        {"chat_id": chat_id, "user_id": user_id}
+    )
+    return bool(has_solved)
+
+
+async def save_captcha_solved(chat_id: int, user_id: int):
+    return await solved_captcha_db.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"user_id": user_id}},
+        upsert=True,
+    )
+
+
 async def is_antiservice_on(chat_id: int) -> bool:
     chat = await antiservicedb.find_one({"chat_id": chat_id})
     if not chat:
@@ -554,9 +568,7 @@ async def get_blacklist_filters_count() -> dict:
 
 
 async def get_blacklisted_words(chat_id: int) -> List[str]:
-    _filters = await blacklist_filtersdb.find_one(
-        {"chat_id": chat_id}
-    )
+    _filters = await blacklist_filtersdb.find_one({"chat_id": chat_id})
     if not _filters:
         return []
     return _filters["filters"]
@@ -587,9 +599,7 @@ async def delete_blacklist_filter(chat_id: int, word: str) -> bool:
     return False
 
 
-async def activate_pipe(
-    from_chat_id: int, to_chat_id: int, fetcher: str
-):
+async def activate_pipe(from_chat_id: int, to_chat_id: int, fetcher: str):
     pipes = await show_pipes()
     pipe = {
         "from_chat_id": from_chat_id,
@@ -660,10 +670,7 @@ async def remove_sudo(user_id: int) -> bool:
 
 async def blacklisted_chats() -> list:
     chats = blacklist_chatdb.find({"chat_id": {"$lt": 0}})
-    return [
-        chat["chat_id"]
-        for chat in await chats.to_list(length=1000000000)
-    ]
+    return [chat["chat_id"] for chat in await chats.to_list(length=1000000000)]
 
 
 async def blacklist_chat(chat_id: int) -> bool:

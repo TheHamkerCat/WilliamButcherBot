@@ -21,6 +21,7 @@ from pyrogram.types import Message, ReplyKeyboardMarkup
 
 from wbb import app2  # don't remove
 from wbb import SUDOERS, USERBOT_PREFIX, app, arq, eor
+from wbb.core.keyboard import ikb
 from wbb.core.tasks import add_task, rm_task
 
 # Eval and Sh module from nana-remix
@@ -82,9 +83,7 @@ async def executor(client, message: Message):
     # To prevent keyboard input attacks
     if m.reply_to_message:
         r = m.reply_to_message
-        if r.reply_markup and isinstance(
-            r.reply_markup, ReplyKeyboardMarkup
-        ):
+        if r.reply_markup and isinstance(r.reply_markup, ReplyKeyboardMarkup):
             return await eor(m, text="INSECURE!")
     status = None
     old_stderr = sys.stderr
@@ -150,9 +149,7 @@ async def executor(client, message: Message):
             return await message.reply(final_output, quote=True)
         return
     if not status.from_user:
-        status = await app2.get_messages(
-            status.chat.id, status.message_id
-        )
+        status = await app2.get_messages(status.chat.id, status.message_id)
     await eor(status, text=final_output, quote=True)
 
 
@@ -180,9 +177,7 @@ async def shellrunner(_, message: Message):
         code = text.split("\n")
         output = ""
         for x in code:
-            shell = re.split(
-                """ (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x
-            )
+            shell = re.split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x)
             try:
                 process = subprocess.Popen(
                     shell,

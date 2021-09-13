@@ -26,8 +26,8 @@ from asyncio import gather, sleep
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import (BOT_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX,
-                 USERBOT_USERNAME, app, app2, arq, eor)
+from wbb import (BOT_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX, USERBOT_USERNAME,
+                 app, app2, arq, eor)
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.filter_groups import chatbot_group
 
@@ -57,9 +57,7 @@ async def chat_bot_toggle(db, message: Message):
             return await eor(message, text="Chatbot Disabled!")
         await eor(message, text="ChatBot Is Already Disabled.")
     else:
-        await eor(
-            message, text="**Usage:**\n/chatbot [ENABLE|DISABLE]"
-        )
+        await eor(message, text="**Usage:**\n/chatbot [ENABLE|DISABLE]")
 
 
 # Enabled | Disable Chatbot
@@ -69,9 +67,7 @@ async def chat_bot_toggle(db, message: Message):
 @capture_err
 async def chatbot_status(_, message: Message):
     if len(message.command) != 2:
-        return await eor(
-            message, text="**Usage:**\n/chatbot [ENABLE|DISABLE]"
-        )
+        return await eor(message, text="**Usage:**\n/chatbot [ENABLE|DISABLE]")
     await chat_bot_toggle(active_chats_bot, message)
 
 
@@ -122,9 +118,7 @@ async def chatbot_talk(_, message: Message):
 @capture_err
 async def chatbot_status_ubot(_, message: Message):
     if len(message.text.split()) != 2:
-        return await eor(
-            message, text="**Usage:**\n.chatbot [ENABLE|DISABLE]"
-        )
+        return await eor(message, text="**Usage:**\n.chatbot [ENABLE|DISABLE]")
     await chat_bot_toggle(active_chats_ubot, message)
 
 

@@ -14,8 +14,7 @@ from io import StringIO
 from time import time
 
 from pyrogram import filters
-from pyrogram.types import (InlineKeyboardButton,
-                            InlineKeyboardMarkup, Message)
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from wbb import SUDOERS, app, eor
 
@@ -125,9 +124,7 @@ async def shellrunner(_, message: Message):
         code = text.split("\n")
         output = ""
         for x in code:
-            shell = re.split(
-                """ (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x
-            )
+            shell = re.split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x)
             try:
                 process = subprocess.Popen(
                     shell,

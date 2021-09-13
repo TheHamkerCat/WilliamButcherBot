@@ -55,9 +55,7 @@ def __list_all_modules():
             to_load = all_modules
 
         if MOD_NOLOAD:
-            return [
-                item for item in to_load if item not in MOD_NOLOAD
-            ]
+            return [item for item in to_load if item not in MOD_NOLOAD]
 
         return to_load
 

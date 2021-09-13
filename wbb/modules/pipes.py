@@ -81,11 +81,7 @@ async def pipes_worker_userbot(_, message: Message):
             m, temp = await asyncio.gather(
                 app.listen(USERBOT_ID), message.copy(BOT_ID)
             )
-            caption = (
-                f"{temp.caption}{caption}"
-                if temp.caption
-                else caption
-            )
+            caption = f"{temp.caption}{caption}" if temp.caption else caption
 
             await app.copy_message(
                 to_chat_id,
@@ -96,14 +92,10 @@ async def pipes_worker_userbot(_, message: Message):
             await asyncio.sleep(2)
             return await temp.delete()
 
-        await app.send_message(
-            to_chat_id, text=message.text + caption
-        )
+        await app.send_message(to_chat_id, text=message.text + caption)
 
 
-@app.on_message(
-    filters.command("activate_pipe") & filters.user(SUDOERS)
-)
+@app.on_message(filters.command("activate_pipe") & filters.user(SUDOERS))
 @capture_err
 async def activate_pipe_func(_, message: Message):
     global pipes_list_bot, pipes_list_userbot
@@ -123,9 +115,7 @@ async def activate_pipe_func(_, message: Message):
         return await message.reply("Wrong fetcher, see help menu.")
 
     if from_chat in pipes_list_bot or from_chat in pipes_list_userbot:
-        return await message.reply_text(
-            "This pipe is already active."
-        )
+        return await message.reply_text("This pipe is already active.")
 
     dict_ = pipes_list_bot
     if fetcher == "userbot":
@@ -135,25 +125,18 @@ async def activate_pipe_func(_, message: Message):
     await message.reply_text("Activated pipe.")
 
 
-@app.on_message(
-    filters.command("deactivate_pipe") & filters.user(SUDOERS)
-)
+@app.on_message(filters.command("deactivate_pipe") & filters.user(SUDOERS))
 @capture_err
 async def deactivate_pipe_func(_, message: Message):
     global pipes_list_bot, pipes_list_userbot
 
     if len(message.command) != 2:
-        await message.reply_text(
-            "**Usage:**\n/deactivate_pipe [FROM_CHAT_ID]"
-        )
+        await message.reply_text("**Usage:**\n/deactivate_pipe [FROM_CHAT_ID]")
         return
     text = message.text.strip().split()
     from_chat = int(text[1])
 
-    if (
-        from_chat not in pipes_list_bot
-        and from_chat not in pipes_list_userbot
-    ):
+    if from_chat not in pipes_list_bot and from_chat not in pipes_list_userbot:
         await message.reply_text("This pipe is already inactive.")
 
     dict_ = pipes_list_bot

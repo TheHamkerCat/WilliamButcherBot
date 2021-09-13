@@ -55,7 +55,7 @@ async def get_user_info(user, already=False):
         "ID": user_id,
         "DC": dc_id,
         "Name": [first_name],
-        "Username": [("@" + username) if username else None],
+        "Username": [("@" + username) if username else "Null"],
         "Mention": [mention],
         "Sudo": is_sudo,
         "Karma": karma,
@@ -76,7 +76,7 @@ async def get_chat_info(chat, already=False):
     description = chat.description
     members = chat.members_count
     is_restricted = chat.is_restricted
-    link = f"[Link](t.me/{username})" if username else None
+    link = f"[Link](t.me/{username})" if username else "Null"
     dc_id = chat.dc_id
     photo_id = chat.photo.big_file_id if chat.photo else None
     body = {
@@ -84,7 +84,7 @@ async def get_chat_info(chat, already=False):
         "DC": dc_id,
         "Type": type_,
         "Name": [title],
-        "Username": [("@" + username) if username else None],
+        "Username": [("@" + username) if username else "Null"],
         "Mention": [link],
         "Members": members,
         "Scam": is_scam,
@@ -112,14 +112,10 @@ async def info_func(_, message: Message):
         return await m.edit(str(e))
 
     if not photo_id:
-        return await m.edit(
-            info_caption, disable_web_page_preview=True
-        )
+        return await m.edit(info_caption, disable_web_page_preview=True)
     photo = await app.download_media(photo_id)
 
-    await message.reply_photo(
-        photo, caption=info_caption, quote=False
-    )
+    await message.reply_photo(photo, caption=info_caption, quote=False)
     await m.delete()
     os.remove(photo)
 
@@ -141,14 +137,10 @@ async def chat_info_func(_, message: Message):
 
         info_caption, photo_id = await get_chat_info(chat)
         if not photo_id:
-            return await m.edit(
-                info_caption, disable_web_page_preview=True
-            )
+            return await m.edit(info_caption, disable_web_page_preview=True)
 
         photo = await app.download_media(photo_id)
-        await message.reply_photo(
-            photo, caption=info_caption, quote=False
-        )
+        await message.reply_photo(photo, caption=info_caption, quote=False)
 
         await m.delete()
         os.remove(photo)

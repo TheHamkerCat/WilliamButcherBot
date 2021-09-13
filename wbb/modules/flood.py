@@ -26,8 +26,8 @@ from time import time
 
 from pyrogram import filters
 from pyrogram.types import (CallbackQuery, ChatPermissions,
-                            InlineKeyboardButton,
-                            InlineKeyboardMarkup, Message)
+                            InlineKeyboardButton, InlineKeyboardMarkup,
+                            Message)
 
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
@@ -132,9 +132,7 @@ async def flood_control_func(_, message: Message):
 @app.on_callback_query(filters.regex("unmute_"))
 async def flood_callback_func(_, cq: CallbackQuery):
     from_user = cq.from_user
-    permissions = await member_permissions(
-        cq.message.chat.id, from_user.id
-    )
+    permissions = await member_permissions(cq.message.chat.id, from_user.id)
     permission = "can_restrict_members"
     if permission not in permissions:
         return await cq.answer(
@@ -154,9 +152,7 @@ async def flood_callback_func(_, cq: CallbackQuery):
 @adminsOnly("can_change_info")
 async def flood_toggle(_, message: Message):
     if len(message.command) != 2:
-        return await message.reply_text(
-            "Usage: /flood [ENABLE|DISABLE]"
-        )
+        return await message.reply_text("Usage: /flood [ENABLE|DISABLE]")
     status = message.text.split(None, 1)[1].strip()
     status = status.lower()
     chat_id = message.chat.id
@@ -167,6 +163,4 @@ async def flood_toggle(_, message: Message):
         await flood_off(chat_id)
         await message.reply_text("Disabled Flood Checker.")
     else:
-        await message.reply_text(
-            "Unknown Suffix, Use /flood [ENABLE|DISABLE]"
-        )
+        await message.reply_text("Unknown Suffix, Use /flood [ENABLE|DISABLE]")

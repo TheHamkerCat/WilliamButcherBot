@@ -32,24 +32,19 @@ from wbb.modules import ALL_MODULES
 from wbb.utils.dbfunctions import (get_blacklist_filters_count,
                                    get_filters_count, get_gbans_count,
                                    get_karmas_count, get_notes_count,
-                                   get_rss_feeds_count,
-                                   get_served_chats, get_served_users,
-                                   get_warns_count,
+                                   get_rss_feeds_count, get_served_chats,
+                                   get_served_users, get_warns_count,
                                    remove_served_chat)
 from wbb.utils.http import get
 from wbb.utils.inlinefuncs import keywords_list
 
 
 @app.on_message(
-    filters.command("clean_db")
-    & filters.user(SUDOERS)
-    & ~filters.edited
+    filters.command("clean_db") & filters.user(SUDOERS) & ~filters.edited
 )
 @capture_err
 async def clean_db(_, message):
-    served_chats = [
-        int(i["chat_id"]) for i in (await get_served_chats())
-    ]
+    served_chats = [int(i["chat_id"]) for i in (await get_served_chats())]
     m = await message.reply(
         f"__**Cleaning database, Might take around {len(served_chats)*2} seconds.**__",
     )
@@ -68,9 +63,7 @@ async def clean_db(_, message):
 
 
 @app.on_message(
-    filters.command("gstats")
-    & filters.user(SUDOERS)
-    & ~filters.edited
+    filters.command("gstats") & filters.user(SUDOERS) & ~filters.edited
 )
 @capture_err
 async def global_stats(_, message):

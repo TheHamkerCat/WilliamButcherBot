@@ -5,11 +5,9 @@ from pyrogram.types import Message
 
 from wbb import RSS_DELAY, app
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.dbfunctions import (add_rss_feed, get_rss_feeds,
-                                   is_rss_active, remove_rss_feed,
-                                   update_rss_feed)
-from wbb.utils.functions import (get_http_status_code,
-                                 get_urls_from_text)
+from wbb.utils.dbfunctions import (add_rss_feed, get_rss_feeds, is_rss_active,
+                                   remove_rss_feed, update_rss_feed)
+from wbb.utils.functions import get_http_status_code, get_urls_from_text
 from wbb.utils.rss import Feed
 
 __MODULE__ = "RSS"
@@ -82,9 +80,7 @@ async def add_feed_func(_, m: Message):
 
     chat_id = m.chat.id
     if await is_rss_active(chat_id):
-        return await m.reply(
-            "[ERROR]: You already have an RSS feed enabled."
-        )
+        return await m.reply("[ERROR]: You already have an RSS feed enabled.")
     try:
         await m.reply(feed.parsed(), disable_web_page_preview=True)
     except Exception:

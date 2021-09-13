@@ -44,9 +44,7 @@ HELPABLE = {}
 async def start_bot():
 
     for module in ALL_MODULES:
-        imported_module = importlib.import_module(
-            "wbb.modules." + module
-        )
+        imported_module = importlib.import_module("wbb.modules." + module)
         if (
             hasattr(imported_module, "__MODULE__")
             and imported_module.__MODULE__
@@ -56,9 +54,7 @@ async def start_bot():
                 hasattr(imported_module, "__HELP__")
                 and imported_module.__HELP__
             ):
-                HELPABLE[
-                    imported_module.__MODULE__.lower()
-                ] = imported_module
+                HELPABLE[imported_module.__MODULE__.lower()] = imported_module
     bot_modules = ""
     j = 1
     for i in ALL_MODULES:
@@ -68,19 +64,11 @@ async def start_bot():
         else:
             bot_modules += "|{:<15}".format(i)
         j += 1
-    print(
-        "+===============================================================+"
-    )
-    print(
-        "|                              WBB                              |"
-    )
-    print(
-        "+===============+===============+===============+===============+"
-    )
+    print("+===============================================================+")
+    print("|                              WBB                              |")
+    print("+===============+===============+===============+===============+")
     print(bot_modules)
-    print(
-        "+===============+===============+===============+===============+"
-    )
+    print("+===============+===============+===============+===============+")
     print(f"[INFO]: BOT STARTED AS {BOT_NAME}!")
     print(f"[INFO]: USERBOT STARTED AS {USERBOT_NAME}!")
 
@@ -179,9 +167,7 @@ async def help_command(_, message):
 
 async def help_parser(name, keyboard=None):
     if not keyboard:
-        keyboard = InlineKeyboardMarkup(
-            paginate_modules(0, HELPABLE, "help")
-        )
+        keyboard = InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help"))
     return (
         """Hello {first_name}, My name is {bot_name}.
 I'm a group management bot with some useful features.
@@ -197,9 +183,7 @@ Also you can ask anything in Support Group.
 
 @app.on_callback_query(filters.regex("bot_commands"))
 async def commands_callbacc(_, CallbackQuery):
-    text, keyboard = await help_parser(
-        CallbackQuery.from_user.mention
-    )
+    text, keyboard = await help_parser(CallbackQuery.from_user.mention)
     await app.send_message(
         CallbackQuery.message.chat.id,
         text=text,
@@ -212,9 +196,7 @@ async def commands_callbacc(_, CallbackQuery):
 @app.on_callback_query(filters.regex("stats_callback"))
 async def stats_callbacc(_, CallbackQuery):
     text = await bot_sys_stats()
-    await app.answer_callback_query(
-        CallbackQuery.id, text, show_alert=True
-    )
+    await app.answer_callback_query(CallbackQuery.id, text, show_alert=True)
 
 
 @app.on_callback_query(filters.regex(r"help_(.*?)"))
@@ -247,13 +229,7 @@ General command are:
         await query.message.edit(
             text=text,
             reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            "back", callback_data="help_back"
-                        )
-                    ]
-                ]
+                [[InlineKeyboardButton("back", callback_data="help_back")]]
             ),
             disable_web_page_preview=True,
         )

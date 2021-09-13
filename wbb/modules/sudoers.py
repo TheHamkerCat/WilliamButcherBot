@@ -30,14 +30,13 @@ import psutil
 from pyrogram import filters
 from pyrogram.errors import FloodWait
 
-from wbb import (BOT_ID, GBAN_LOG_GROUP_ID, SUDOERS, USERBOT_USERNAME,
-                 app, bot_start_time)
+from wbb import (BOT_ID, GBAN_LOG_GROUP_ID, SUDOERS, USERBOT_USERNAME, app,
+                 bot_start_time)
 from wbb.core.decorators.errors import capture_err
 from wbb.utils import formatter
 from wbb.utils.dbfunctions import (add_gban_user, get_served_chats,
                                    is_gbanned_user, remove_gban_user)
-from wbb.utils.functions import (extract_user,
-                                 extract_user_and_reason, restart)
+from wbb.utils.functions import extract_user, extract_user_and_reason, restart
 
 __MODULE__ = "Sudoers"
 __HELP__ = """
@@ -106,9 +105,7 @@ async def ban_globally(_, message):
     number_of_chats = 0
     for served_chat in served_chats:
         try:
-            await app.kick_chat_member(
-                served_chat["chat_id"], user.id
-            )
+            await app.kick_chat_member(served_chat["chat_id"], user.id)
             number_of_chats += 1
             await asyncio.sleep(1)
         except FloodWait as e:
@@ -164,25 +161,19 @@ async def unban_globally(_, message):
         await message.reply_text("I don't remember Gbanning him.")
     else:
         await remove_gban_user(user.id)
-        await message.reply_text(
-            f"Lifted {user.mention}'s Global Ban.'"
-        )
+        await message.reply_text(f"Lifted {user.mention}'s Global Ban.'")
 
 
 # Broadcast
 
 
 @app.on_message(
-    filters.command("broadcast")
-    & filters.user(SUDOERS)
-    & ~filters.edited
+    filters.command("broadcast") & filters.user(SUDOERS) & ~filters.edited
 )
 @capture_err
 async def broadcast_message(_, message):
     if len(message.command) < 2:
-        return await message.reply_text(
-            "**Usage**:\n/broadcast [MESSAGE]"
-        )
+        return await message.reply_text("**Usage**:\n/broadcast [MESSAGE]")
     sleep_time = 0.1
     text = message.text.split(None, 1)[1]
     sent = 0

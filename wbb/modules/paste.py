@@ -34,9 +34,7 @@ from wbb.utils.pastebin import paste
 
 __MODULE__ = "Paste"
 __HELP__ = "/paste - To Paste Replied Text Or Document To A Pastebin"
-pattern = re.compile(
-    r"^text/|json$|yaml$|xml$|toml$|x-sh$|x-shellscript$"
-)
+pattern = re.compile(r"^text/|json$|yaml$|xml$|toml$|x-sh$|x-shellscript$")
 
 
 @app.on_message(filters.command("paste") & ~filters.edited)
@@ -47,9 +45,7 @@ async def paste_func(_, message):
     r = message.reply_to_message
 
     if not r.text and not r.document:
-        return await message.reply(
-            "Only text and documents are supported."
-        )
+        return await message.reply("Only text and documents are supported.")
 
     m = await message.reply("Pasting...")
 
@@ -57,9 +53,7 @@ async def paste_func(_, message):
         content = str(r.text)
     elif r.document:
         if r.document.file_size > 40000:
-            return await m.edit(
-                "You can only paste files smaller than 40KB."
-            )
+            return await m.edit("You can only paste files smaller than 40KB.")
         if not pattern.search(r.document.mime_type):
             return await m.edit("Only text files can be pasted.")
         doc = await message.reply_to_message.download()
@@ -70,9 +64,7 @@ async def paste_func(_, message):
     link = await paste(content)
     kb = ikb({"Paste Link": link})
     try:
-        await message.reply_photo(
-            photo=link, quote=False, reply_markup=kb
-        )
+        await message.reply_photo(photo=link, quote=False, reply_markup=kb)
     except Exception:
         await message.reply("Here's your paste", reply_markup=kb)
     await m.delete()

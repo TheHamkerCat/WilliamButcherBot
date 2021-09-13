@@ -107,8 +107,7 @@ async def download_func(_, message: Message):
 
 
 @app2.on_message(
-    filters.user(SUDOERS)
-    & filters.command("upload", prefixes=USERBOT_PREFIX)
+    filters.user(SUDOERS) & filters.command("upload", prefixes=USERBOT_PREFIX)
 )
 async def upload_func(_, message: Message):
     if len(message.text.split()) != 2:

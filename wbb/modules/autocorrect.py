@@ -17,9 +17,7 @@ async def autocorrect_bot(_, message: Message):
     if not data.ok:
         return await message.reply_text("Something wrong happened.")
     result = data.result
-    await message.reply_text(
-        result.corrected if result.corrected else "Empty"
-    )
+    await message.reply_text(result.corrected if result.corrected else "Empty")
 
 
 IS_ENABLED = False
@@ -41,9 +39,7 @@ async def autocorrect_ubot_toggle(_, message: Message):
         IS_ENABLED = False
         await message.edit("Disabled!")
     else:
-        return await message.edit(
-            "Wrong argument, Pass (ENABLE|DISABLE)."
-        )
+        return await message.edit("Wrong argument, Pass (ENABLE|DISABLE).")
 
 
 @app2.on_message(

@@ -25,9 +25,7 @@ async def download_url(
         async with aiofiles.open(file_path, "wb") as f:
 
             # Save content in file using aiohttp streamReader.
-            async for chunk in response.content.iter_chunked(
-                chunk_size
-            ):
+            async for chunk in response.content.iter_chunked(chunk_size):
                 await f.write(chunk)
 
     return absolute_path(file_path)

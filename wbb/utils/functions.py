@@ -86,9 +86,7 @@ def generate_captcha():
     for t in range(4):
         letter = gen_letter()
         correct_answer += letter
-        draw.text(
-            (60 * t + 50, 15), letter, font=font, fill=rndColor2()
-        )
+        draw.text((60 * t + 50, 15), letter, font=font, fill=rndColor2())
     image = image.filter(ImageFilter.BLUR)
     image.save(file, "jpeg")
     return [file, correct_answer, wrong_answers]
@@ -147,10 +145,7 @@ async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
     lat2, lon2 = radians(float(lat2)), radians(float(lon2))
     dlon = lon2 - lon1
     dlat = lat2 - lat1
-    a = (
-        sin(dlat / 2) ** 2
-        + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-    )
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     distance = Radius_Earth * c
     return distance
@@ -166,9 +161,7 @@ def get_urls_from_text(text: str) -> bool:
 
 async def time_converter(message: Message, time_value: str) -> int:
     unit = ["m", "h", "d"]  # m == minutes | h == hours | d == days
-    check_unit = "".join(
-        list(filter(time_value[-1].lower().endswith, unit))
-    )
+    check_unit = "".join(list(filter(time_value[-1].lower().endswith, unit)))
     currunt_time = datetime.now()
     time_digit = time_value[:-1]
     if not time_digit.isdigit():
