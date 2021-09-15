@@ -40,7 +40,8 @@ __HELP__ = """/filters To Get All The Filters In The Chat.
 /stop [FILTER_NAME] To Stop A Filter.
 
 
-You can use markdown or html to save text too."""
+You can use markdown or html to save text too.
+Checkout /markdownhelp to know more about formattings and other syntax."""
 
 
 @app.on_message(filters.command("filter") & ~filters.edited & ~filters.private)

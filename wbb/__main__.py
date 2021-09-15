@@ -30,7 +30,7 @@ from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from wbb import (BOT_NAME, BOT_USERNAME, LOG_GROUP_ID, USERBOT_NAME,
-                 aiohttpsession, app)
+                 aiohttpsession, app, MARKDOWN)
 from wbb.modules import ALL_MODULES
 from wbb.modules.sudoers import bot_sys_stats
 from wbb.utils import paginate_modules
@@ -159,7 +159,11 @@ async def help_command(_, message):
         return await message.reply(
             "Pm Me For More Details.", reply_markup=keyboard
         )
-    await message.reply(
+    if len(message.text.split()) > 1:
+        start_what = (message.text.split(None, 1)[1]).lower()
+        if start_what == "mkdwn_help":
+            return await message.reply(MARKDOWN, parse_mode="html")
+    return await message.reply(
         home_text_pm,
         reply_markup=home_keyboard_pm,
     )
