@@ -26,8 +26,9 @@ import string
 from asyncio import Lock
 
 from pyrogram import filters
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
-from wbb import app, arq
+from wbb import app, arq, BOT_USERNAME, MARKDOWN
 from wbb.core.decorators.errors import capture_err
 from wbb.utils import random_line
 from wbb.utils.http import get
@@ -72,6 +73,9 @@ __HELP__ = """
 
 /carbon
     Make Carbon from code.
+    
+/markdownhelp
+    Sends mark down and formatting help.
 
 /tts
     Convert Text To Speech.
@@ -86,6 +90,25 @@ __HELP__ = """
 """
 
 ASQ_LOCK = Lock()
+
+
+@app.on_message(filters.command("markdownhelp") & ~filters.edited)
+async def mkdwnhelp(_, m: Message):
+    keyb = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        text="Click Here!",
+                        url=f"http://t.me/{BOT_USERNAME}?start=mkdwn_help",
+                    )
+                ]
+            ]
+        )
+    if m.chat.type != "private":
+        await m.reply("Check /markdownhelp to get markdown usage syntax in pm!", reply_markup=keyb)
+    else:
+        await m.reply(MARKDOWN, parse_mode="html")
+    return
 
 
 @app.on_message(filters.command("asq") & ~filters.edited)

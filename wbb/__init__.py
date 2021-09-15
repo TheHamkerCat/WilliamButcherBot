@@ -56,6 +56,35 @@ print("[INFO]: INITIALIZING DATABASE")
 mongo_client = MongoClient(MONGO_URL)
 db = mongo_client.wbb
 
+MARKDOWN = """
+Read the below text carefully to find out how formatting works!
+
+<u>Supported Fillings:</u>
+
+<code>{name}</code> - This will mention the user with thier name.
+<code>{chat}</code> - This will fill with the current chat name.
+
+* will be more soon!
+
+<u>Supported formattings:</u>
+
+<code>**Bold**</code> : Creates <b>bold</b> text.
+<code>--strike--</code>: Creates <strike>striked</strike> text.
+<code>__italic__</code>: Creates <i>italic</i> text.
+<code>--underline--</code>: Creates <u>underline</u> text.
+<code>`code words`</code>: Creates <code>code words</code> text.
+<code>[hyperlink](google.com)</code>: Creates Creates <a href='https://www.google.com'>hyperlink</a> text.
+
+<b>Note:</b> You can use both markdown & html tags for formatting and can use\
+ telegram's native formatter to format a text and can do a lot of experimental stuffs!
+
+<u>Button formatting:</u>
+-> text ~ [button text, button link]
+<b>Example:</b>
+
+<b>Example:</b> <i>button with markdown</i> <code>formatting</code> ~ [button text, https://google.com]
+"""
+
 
 async def load_sudoers():
     global SUDOERS
