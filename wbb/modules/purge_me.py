@@ -80,6 +80,9 @@ __HELP__ = """
         Download a file from TG or URL
 `.upload [URL or File Path]`
         Upload a file from local or URL
+
+`.parse_preview [REPLY TO A MESSAGE]`
+        Parse a web_page(link) preview
 """
 
 
