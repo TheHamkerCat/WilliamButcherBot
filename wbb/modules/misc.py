@@ -82,6 +82,9 @@ __HELP__ = """
 /pdf [Reply to an image (as document) or a group of images.]
     Convert images to PDF, helpful for online classes.
 
+/markdownhelp
+    Sends mark down and formatting help.
+
 #RTFM - Tell noobs to read the manual
 """
 
