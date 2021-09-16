@@ -73,6 +73,8 @@ button2=[Github, https://github.com]
 for /rules, you can do /filter rules to a message
 containing rules of your groups whenever a user
 sends /rules, he'll get the message
+
+Checkout /markdownhelp to know more about formattings and other syntax.
 """
 
 
