@@ -26,11 +26,14 @@ NOTE: Fillings only works in greetings module.
 <code>`code words`</code>: Creates <code>code words</code> text.
 <code>[hyperlink](google.com)</code>: Creates <a href='https://www.google.com'>hyperlink</a> text.
 <b>Note:</b> You can use both markdown & html tags.
+
+
 <u>Button formatting:</u>
 
 -> text ~ [button text, button link]
 
-<b>Example:</b>
+
+<u>Example:</u>
 
 <b>example</b> <i>button with markdown</i> <code>formatting</code> ~ [button text, https://google.com]
 """
