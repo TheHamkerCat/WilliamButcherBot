@@ -33,7 +33,7 @@ def url(_, __, message: Message) -> bool:
     # Can't use entities to check for url because
     # monospace removes url entity
 
-    # TODO Fix undetection of those urls which
+    # TODO Fix detection of those urls which
     # doesn't have schema, ex-facebook.com
 
     text = message.text or message.caption
@@ -50,8 +50,7 @@ async def admin(_, __, message: Message) -> bool:
             return False
         return True
     # Calling iter_chat_members again and again
-    # doesn't causes floodwaits, idk why, maybe it's
-    # cached or something, that's why using it.
+    # doesn't cause floodwait, that's why i'm using it here.
     return message.from_user.id in [
         member.user.id
         async for member in message._client.iter_chat_members(

@@ -27,7 +27,7 @@ from asyncio import Lock
 
 from pyrogram import filters
 
-from wbb import app, arq
+from wbb import SUDOERS, USERBOT_PREFIX, app, app2, arq, eor
 from wbb.core.decorators.errors import capture_err
 from wbb.utils import random_line
 from wbb.utils.http import get
@@ -128,29 +128,42 @@ async def runs(_, message):
     await message.reply_text((await random_line("wbb/utils/runs.txt")))
 
 
+@app2.on_message(
+    filters.command("id", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
+)
 @app.on_message(filters.command("id"))
-async def getid(_, message):
+async def getid(client, message):
     chat = message.chat
     your_id = message.from_user.id
     message_id = message.message_id
     reply = message.reply_to_message
+
     text = f"**[Message ID:]({message.link})** `{message_id}`\n"
     text += f"**[Your ID:](tg://user?id={your_id})** `{your_id}`\n"
+
+    if not message.command:
+        message.command = message.text.split()
+
     if len(message.command) == 2:
         try:
             split = message.text.split(None, 1)[1].strip()
-            user_id = (await app.get_users(split)).id
+            user_id = (await client.get_users(split)).id
             text += f"**[User ID:](tg://user?id={user_id})** `{user_id}`\n"
         except Exception:
-            return await message.reply_text("This user doesn't exist.")
+            return await eor(message, text="This user doesn't exist.")
+
     text += f"**[Chat ID:](https://t.me/{chat.username})** `{chat.id}`\n\n"
     if not getattr(reply, "empty", True):
         text += (
             f"**[Replied Message ID:]({reply.link})** `{reply.message_id}`\n"
         )
         text += f"**[Replied User ID:](tg://user?id={reply.from_user.id})** `{reply.from_user.id}`"
-    await message.reply_text(
-        text, disable_web_page_preview=True, parse_mode="md"
+
+    await eor(
+        message,
+        text=text,
+        disable_web_page_preview=True,
+        parse_mode="md",
     )
 
 

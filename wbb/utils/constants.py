@@ -1,10 +1,9 @@
 # New file
 
-from wbb import app, BOT_USERNAME
-
 from pyrogram.filters import command, edited
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
+from wbb import BOT_USERNAME, app
 
 MARKDOWN = """
 Read the below text carefully to find out how formatting works!
@@ -42,17 +41,20 @@ NOTE: Fillings only works in greetings module.
 @app.on_message(command("markdownhelp") & ~edited)
 async def mkdwnhelp(_, m: Message):
     keyb = InlineKeyboardMarkup(
+        [
             [
-                [
-                    InlineKeyboardButton(
-                        text="Click Here!",
-                        url=f"http://t.me/{BOT_USERNAME}?start=mkdwn_help",
-                    )
-                ]
+                InlineKeyboardButton(
+                    text="Click Here!",
+                    url=f"http://t.me/{BOT_USERNAME}?start=mkdwn_help",
+                )
             ]
-        )
+        ]
+    )
     if m.chat.type != "private":
-        await m.reply("Click on the below button to get markdown usage syntax in pm!", reply_markup=keyb)
+        await m.reply(
+            "Click on the below button to get markdown usage syntax in pm!",
+            reply_markup=keyb,
+        )
     else:
         await m.reply(MARKDOWN, parse_mode="html")
     return
