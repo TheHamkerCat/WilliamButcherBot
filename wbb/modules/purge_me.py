@@ -27,7 +27,6 @@ from pyrogram.types import Message
 
 from wbb import USERBOT_ID, USERBOT_PREFIX, app2, eor, telegraph
 
-
 __MODULE__ = "Userbot"
 TEXT = """
 <code>alive</code>  →  Send Alive Message.<br>
@@ -89,15 +88,14 @@ print("[INFO]: Done pasting userbot commands on telegraph")
 
 
 @app2.on_message(
-    filters.command("help", prefixes=USERBOT_PREFIX)
-    & filters.user(USERBOT_ID)
+    filters.command("help", prefixes=USERBOT_PREFIX) & filters.user(USERBOT_ID)
 )
 async def get_help(_, message: Message):
     await eor(
-            message,
-            text=__HELP__,
-            disable_web_page_preview=True,
-        )
+        message,
+        text=__HELP__,
+        disable_web_page_preview=True,
+    )
 
 
 @app2.on_message(

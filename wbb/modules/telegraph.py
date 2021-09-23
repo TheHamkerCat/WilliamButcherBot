@@ -1,6 +1,7 @@
-from wbb import telegraph, app
 from pyrogram import filters
 from pyrogram.types import Message
+
+from wbb import app, telegraph
 from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "Telegraph"
@@ -21,6 +22,6 @@ async def paste(_, message: Message):
     page_name = message.text.split(None, 1)[1]
     page = telegraph.create_page(page_name, html_content=reply.text.html)
     return await message.reply(
-            f"**Posted:** {page['url']}",
-            disable_web_page_preview=True,
-        )
+        f"**Posted:** {page['url']}",
+        disable_web_page_preview=True,
+    )

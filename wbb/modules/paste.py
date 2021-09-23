@@ -28,7 +28,7 @@ import aiofiles
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import app, app2, eor, USERBOT_PREFIX, SUDOERS
+from wbb import SUDOERS, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
 from wbb.core.keyboard import ikb
 from wbb.utils.pastebin import paste
@@ -38,10 +38,9 @@ __HELP__ = "/paste - To Paste Replied Text Or Document To A Pastebin"
 pattern = re.compile(r"^text/|json$|yaml$|xml$|toml$|x-sh$|x-shellscript$")
 
 
-@app2.on_message( 
-        filters.command("paste", prefixes=USERBOT_PREFIX)
-        & filters.user(SUDOERS)
-        )
+@app2.on_message(
+    filters.command("paste", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
+)
 @app.on_message(filters.command("paste") & ~filters.edited)
 @capture_err
 async def paste_func(_, message: Message):
@@ -50,7 +49,9 @@ async def paste_func(_, message: Message):
     r = message.reply_to_message
 
     if not r.text and not r.document:
-        return await eor(message, text="Only text and documents are supported.")
+        return await eor(
+            message, text="Only text and documents are supported."
+        )
 
     m = await eor(message, text="Pasting...")
 
@@ -69,7 +70,7 @@ async def paste_func(_, message: Message):
             content = await f.read()
 
         os.remove(doc)
-    
+
     link = await paste(content)
     kb = ikb({"Paste Link": link})
     try:
@@ -81,10 +82,10 @@ async def paste_func(_, message: Message):
             )
         else:
             await message.reply_photo(
-                    photo=link,
-                    quote=False,
-                    caption=f"**Paste Link:** [Here]({link})"
-                    )
+                photo=link,
+                quote=False,
+                caption=f"**Paste Link:** [Here]({link})",
+            )
         await m.delete()
     except Exception:
         await m.edit("Here's your paste", reply_markup=kb)

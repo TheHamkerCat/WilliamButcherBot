@@ -122,6 +122,7 @@ if USERBOT_ID not in SUDOERS:
 telegraph = Telegraph()
 telegraph.create_account(short_name=BOT_USERNAME)
 
+
 async def eor(msg: Message, **kwargs):
     func = msg.edit_text if msg.from_user.is_self else msg.reply
     spec = getfullargspec(func.__wrapped__).args

@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import re
+from time import time
 
 from pyrogram import filters
 from pyrogram.types import ChatPermissions
-from time import time
 
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
@@ -113,10 +113,10 @@ async def blacklist_filters_re(_, message):
                 return
             try:
                 await message.chat.restrict_member(
-                        user.id,
-                        ChatPermissions(),
-                        until_date=(time() + 3600),
-                    )
+                    user.id,
+                    ChatPermissions(),
+                    until_date=(time() + 3600),
+                )
             except Exception:
                 return
             return await app.send_message(
