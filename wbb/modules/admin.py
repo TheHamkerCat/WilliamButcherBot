@@ -416,7 +416,6 @@ async def mute(_, message: Message):
         return await message.reply_text(
             "I can't mute an admin, You know the rules, so do i."
         )
-    await message.chat.restrict_member(user_id, permissions=ChatPermissions())
     mention = (await app.get_users(user_id)).mention
     keyboard = ikb({"🚨   Unmute   🚨": f"unmute_{user_id}"})
     msg = (
