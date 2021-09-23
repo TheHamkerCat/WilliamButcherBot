@@ -23,3 +23,4 @@ feedparser
 pyromod
 fuzzysearch
 img2pdf
+telegraph

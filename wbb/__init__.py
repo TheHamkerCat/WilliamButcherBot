@@ -33,6 +33,7 @@ from pyrogram import Client
 from pyrogram.types import Message
 from pyromod import listen
 from Python_ARQ import ARQ
+from telegraph import Telegraph
 
 is_config = path.exists("config.py")
 
@@ -117,6 +118,9 @@ USERBOT_DC_ID = y.dc_id
 
 if USERBOT_ID not in SUDOERS:
     SUDOERS.append(USERBOT_ID)
+
+telegraph = Telegraph()
+telegraph.create_account(short_name=BOT_USERNAME)
 
 
 async def eor(msg: Message, **kwargs):

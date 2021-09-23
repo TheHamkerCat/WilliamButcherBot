@@ -159,7 +159,7 @@ async def command_karma(_, message):
             if int(user_idd) not in list(userdb.keys()):
                 continue
             username = userdb[int(user_idd)]
-            karma[karma_count] = ["@" + username]
+            karma["@" + username] = ["**" + str(karma_count) + "**"]
             limit += 1
         await m.edit(section(msg, karma))
     else:
