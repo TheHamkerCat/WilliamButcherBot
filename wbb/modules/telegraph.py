@@ -43,8 +43,8 @@ async def telegraph(_, message):
                     link = f"https://telegra.ph{media_url}"
                     msg = f"**[Here Your Telegra.ph Link!]({link})\n\nUpload by {uname}**"
                     buttons = ikb({"Open Link": link, "Share Link": f"https://telegram.me/share/url?url={link}"}, 2)
-                    await message.reply_text(msg, quote=True, disable_web_page_preview=True, reply_markup=buttons)
                     os.remove(file)
+                    return await message.reply_text(msg, quote=True, disable_web_page_preview=True, reply_markup=buttons)
                 else:
                     return await message.reply_text("**You can only upload files smaller than 5MB.**", quote=True)
             elif reply.text:
@@ -72,8 +72,8 @@ async def telegraph(_, message):
                 page = tele_graph.create_page(page_name, html_content=text)['url']
                 msg = f"**[Here Your Telegra.ph Link!]({page})\n\nPaste by {uname}**"
                 buttons = ikb({"Open Link": page, "Share Link": f"https://telegram.me/share/url?url={page}"}, 2)
-                return await message.reply_text(msg, quote=True, disable_web_page_preview=True, reply_markup=buttons)
                 os.remove(file)
+                return await message.reply_text(msg, quote=True, disable_web_page_preview=True, reply_markup=buttons)
         elif not reply and len(message.command) != 1:
             data = message.text.html.split(None, 1)[1]
             msg = data.split(" ~ ")
