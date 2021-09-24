@@ -119,8 +119,8 @@ USERBOT_DC_ID = y.dc_id
 if USERBOT_ID not in SUDOERS:
     SUDOERS.append(USERBOT_ID)
 
-telegraph = Telegraph()
-telegraph.create_account(short_name=BOT_USERNAME)
+tele_graph = Telegraph()
+tele_graph.create_account(short_name=BOT_USERNAME)
 
 
 async def eor(msg: Message, **kwargs):
