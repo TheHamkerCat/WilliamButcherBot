@@ -33,7 +33,7 @@ from bs4 import BeautifulSoup
 from pyrogram import filters
 from pyrogram.types import InputMediaPhoto, Message
 
-from wbb import MESSAGE_DUMP_CHAT, app
+from wbb import MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.functions import get_file_id_from_message
 from wbb.utils.http import get
@@ -44,12 +44,15 @@ async def get_soup(url: str, headers):
     return BeautifulSoup(html, "html.parser")
 
 
+@app2.on_message(
+    filters.command("reverse", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
+)
 @app.on_message(filters.command("reverse"))
 @capture_err
-async def reverse_image_search(_, message: Message):
+async def reverse_image_search(client, message: Message):
     if not message.reply_to_message:
-        return await message.reply_text(
-            "Reply to a message to reverse search it."
+        return await eor(
+            message, text="Reply to a message to reverse search it."
         )
     reply = message.reply_to_message
     if (
@@ -59,14 +62,15 @@ async def reverse_image_search(_, message: Message):
         and not reply.animation
         and not reply.video
     ):
-        return await message.reply_text(
-            "Reply to an image/document/sticker/animation to reverse search it."
+        return await eor(
+            message,
+            text="Reply to an image/document/sticker/animation to reverse search it.",
         )
-    m = await message.reply_text("Searching...")
+    m = await eor(message, text="Searching...")
     file_id = get_file_id_from_message(reply)
     if not file_id:
         return await m.edit("Can't reverse that")
-    image = await app.download_media(file_id, f"{randint(1000, 10000)}.jpg")
+    image = await client.download_media(file_id, f"{randint(1000, 10000)}.jpg")
     async with aiofiles.open(image, "rb") as f:
         if image:
             search_url = "http://www.google.com/searchbyimage/upload"
@@ -127,7 +131,7 @@ async def reverse_image_search(_, message: Message):
                 media.append(img)
 
         # Cache images, so we can use file_ids
-        tasks = [app.send_photo(MESSAGE_DUMP_CHAT, img) for img in media]
+        tasks = [client.send_photo(MESSAGE_DUMP_CHAT, img) for img in media]
         messages = await gather(*tasks)
 
         await message.reply_media_group(
