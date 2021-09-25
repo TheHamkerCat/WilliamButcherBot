@@ -41,7 +41,6 @@ __HELP__ = """/ban - Ban A User
 /unban - Unban A User
 /warn - Warn A User
 /dwarn - Delete the replied message warning its sender
-/rmwarn - Remove 1 Warning Of A User
 /rmwarns - Remove All Warning of A User
 /warns - Show Warning Of A User
 /kick - Kick A User
