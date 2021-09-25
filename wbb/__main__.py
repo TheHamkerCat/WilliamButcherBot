@@ -43,6 +43,7 @@ HELPABLE = {}
 
 
 async def start_bot():
+    global HELPABLE
 
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
@@ -161,9 +162,23 @@ async def help_command(_, message):
             "Pm Me For More Details.", reply_markup=keyboard
         )
     if len(message.text.split()) > 1:
-        start_what = (message.text.split(None, 1)[1]).lower()
-        if start_what == "mkdwn_help":
-            return await message.reply(MARKDOWN, parse_mode="html")
+        name = (message.text.split(None, 1)[1]).lower()
+        if name == "mkdwn_help":
+            return await message.reply(
+                MARKDOWN,
+                parse_mode="html",
+                disable_web_page_preview=True,
+            )
+        else:
+            if name in HELPABLE:
+                text = (
+                    f"Here is the help for **{HELPABLE[name].__MODULE__}**:\n"
+                    + HELPABLE[name].__HELP__
+                )
+                return await message.reply(
+                    text,
+                    disable_web_page_preview=True,
+                )
     return await message.reply(
         home_text_pm,
         reply_markup=home_keyboard_pm,
