@@ -169,16 +169,15 @@ async def help_command(_, message):
                 parse_mode="html",
                 disable_web_page_preview=True,
             )
-        else:
-            if name in HELPABLE:
-                text = (
-                    f"Here is the help for **{HELPABLE[name].__MODULE__}**:\n"
-                    + HELPABLE[name].__HELP__
-                )
-                return await message.reply(
-                    text,
-                    disable_web_page_preview=True,
-                )
+        if name in HELPABLE:
+            text = (
+                f"Here is the help for **{HELPABLE[name].__MODULE__}**:\n"
+                + HELPABLE[name].__HELP__
+            )
+            return await message.reply(
+                text,
+                disable_web_page_preview=True,
+            )
     return await message.reply(
         home_text_pm,
         reply_markup=home_keyboard_pm,
