@@ -73,9 +73,11 @@ TEXT = """
 
 <code>paste</code> → Paste shit on batbin.<br>
 
-<code>help</code> → Get link to this page.
+<code>help</code> → Get link to this page.<br>
 
-<code>kang</code> → Kang stickers.
+<code>kang</code> → Kang stickers.<br>
+
+<code>dice</code> → Roll a dice.<br>
 """
 print("[INFO]: Pasting userbot commands on telegraph")
 
