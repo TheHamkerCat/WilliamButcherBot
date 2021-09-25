@@ -69,7 +69,7 @@ def str_to_obj(string: str):
 
 
 async def get_notes_count() -> dict:
-    chats = notesdb.find({"chat_id": {"$lt": 0}})
+    chats = notesdb.find({"chat_id": {"$exists": 1}})
     if not chats:
         return {}
     chats_count = 0
