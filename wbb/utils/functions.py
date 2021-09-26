@@ -251,7 +251,7 @@ def get_file_id_from_message(
 
         mime_type = message.document.mime_type
 
-        if mime_type not in mime_types:
+        if mime_types and mime_type not in mime_types:
             return
         file_id = message.document.file_id
 

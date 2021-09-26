@@ -80,7 +80,7 @@ async def arq_upload(_, message):
         async with UPLOAD_LOCK:
             r = message.reply_to_message
 
-            file_id = get_file_id_from_message(r, 100000000, [])
+            file_id = get_file_id_from_message(r, 100000000, None)
             if not file_id:
                 return await message.reply("Unsupported media.")
 
