@@ -171,25 +171,27 @@ async def start(_, message):
     if len(message.text.split()) > 1:
         name = (message.text.split(None, 1)[1]).lower()
         if name == "mkdwn_help":
-            return await message.reply(MARKDOWN,
-                                       parse_mode="html",
-                                       disable_web_page_preview=True)
+            await message.reply(MARKDOWN,
+                                parse_mode="html",
+                                disable_web_page_preview=True)
         elif "_" in name:
             module = name.split("_", 1)[1]
             text = (
                 f"Here is the help for **{HELPABLE[module].__MODULE__}**:\n" +
                 HELPABLE[module].__HELP__)
-            return await message.reply(text, disable_web_page_preview=True)
+            await message.reply(text, disable_web_page_preview=True)
         elif name == "help":
             text, keyb = await help_parser(message.from_user.first_name)
-            return await message.reply(
+            await message.reply(
                 text,
                 reply_markup=keyb,
             )
-    return await message.reply(
-        home_text_pm,
-        reply_markup=home_keyboard_pm,
-    )
+    else:
+        await message.reply(
+            home_text_pm,
+            reply_markup=home_keyboard_pm,
+        )
+    return
 
 
 @app.on_message(filters.command("help"))
@@ -206,16 +208,16 @@ async def help_command(_, message):
                         )
                     ],
                 ])
-                return await message.reply(
+                await message.reply(
                     f"Click on the below button to get help about {name}",
                     reply_markup=key,
                 )
             else:
-                return await message.reply("PM Me For More Details.",
-                                           reply_markup=keyboard)
+                await message.reply("PM Me For More Details.",
+                                    reply_markup=keyboard)
         else:
-            return await message.reply("Pm Me For More Details.",
-                                       reply_markup=keyboard)
+            await message.reply("Pm Me For More Details.",
+                                reply_markup=keyboard)
     else:
         if len(message.command) >= 2:
             name = (message.text.split(None, 1)[1]).lower()
@@ -223,17 +225,18 @@ async def help_command(_, message):
                 text = (
                     f"Here is the help for **{HELPABLE[name].__MODULE__}**:\n"
                     + HELPABLE[name].__HELP__)
-                return await message.reply(text, disable_web_page_preview=True)
+                await message.reply(text, disable_web_page_preview=True)
             else:
                 text, help_keyboard = await help_parser(message.from_user.first_name)
-                return await message.reply(text,
+                await message.reply(text,
                                            reply_markup=help_keyboard,
                                            disable_web_page_preview=True)
         else:
             text, help_keyboard = await help_parser(message.from_user.first_name)
-            return await message.reply(text,
+            await message.reply(text,
                                        reply_markup=help_keyboard,
                                        disable_web_page_preview=True)
+    return
 
 
 async def help_parser(name, keyboard=None):
