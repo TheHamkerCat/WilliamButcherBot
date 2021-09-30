@@ -92,8 +92,13 @@ async def start_bot():
 
     await idle()
 
-    print("[INFO]: STOPPING BOT AND CLOSING AIOHTTP SESSION")
     await aiohttpsession.close()
+    print("[INFO]: CLOSING AIOHTTP SESSION AND STOPPING BOT")
+    await app.stop()
+    print("[INFO]: Bye!")
+    for task in asyncio.all_tasks():
+        task.cancel()
+    print("[INFO]: Turned off!")
 
 
 home_keyboard_pm = InlineKeyboardMarkup(
@@ -132,10 +137,7 @@ home_text_pm = (
 )
 
 
-@app.on_message(filters.command(["help", "start"]))
-async def help_command(_, message):
-    if message.chat.type != "private":
-        keyboard = InlineKeyboardMarkup(
+keyboard = InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton(
@@ -157,31 +159,84 @@ async def help_command(_, message):
                     ),
                 ],
             ]
-        )
+)
+
+
+@app.on_message(filters.command("start"))
+async def start(_, message):
+    if message.chat.type != "private":
         return await message.reply(
             "Pm Me For More Details.", reply_markup=keyboard
         )
     if len(message.text.split()) > 1:
         name = (message.text.split(None, 1)[1]).lower()
         if name == "mkdwn_help":
-            return await message.reply(
-                MARKDOWN,
-                parse_mode="html",
-                disable_web_page_preview=True,
-            )
-        if name in HELPABLE:
+            await message.reply(MARKDOWN,
+                                parse_mode="html",
+                                disable_web_page_preview=True)
+        elif "_" in name:
+            module = name.split("_", 1)[1]
             text = (
-                f"Here is the help for **{HELPABLE[name].__MODULE__}**:\n"
-                + HELPABLE[name].__HELP__
-            )
-            return await message.reply(
+                f"Here is the help for **{HELPABLE[module].__MODULE__}**:\n" +
+                HELPABLE[module].__HELP__)
+            await message.reply(text, disable_web_page_preview=True)
+        elif name == "help":
+            text, keyb = await help_parser(message.from_user.first_name)
+            await message.reply(
                 text,
-                disable_web_page_preview=True,
+                reply_markup=keyb,
             )
-    return await message.reply(
-        home_text_pm,
-        reply_markup=home_keyboard_pm,
-    )
+    else:
+        await message.reply(
+            home_text_pm,
+            reply_markup=home_keyboard_pm,
+        )
+    return
+
+
+@app.on_message(filters.command("help"))
+async def help_command(_, message):
+    if message.chat.type != "private":
+        if len(message.command) >= 2:
+            name = (message.text.split(None, 1)[1]).lower()
+            if str(name) in HELPABLE:
+                key = InlineKeyboardMarkup([
+                    [
+                        InlineKeyboardButton(
+                            text="Click here",
+                            url=f"t.me/{BOT_USERNAME}?start=help_{name}",
+                        )
+                    ],
+                ])
+                await message.reply(
+                    f"Click on the below button to get help about {name}",
+                    reply_markup=key,
+                )
+            else:
+                await message.reply("PM Me For More Details.",
+                                    reply_markup=keyboard)
+        else:
+            await message.reply("Pm Me For More Details.",
+                                reply_markup=keyboard)
+    else:
+        if len(message.command) >= 2:
+            name = (message.text.split(None, 1)[1]).lower()
+            if str(name) in HELPABLE:
+                text = (
+                    f"Here is the help for **{HELPABLE[name].__MODULE__}**:\n"
+                    + HELPABLE[name].__HELP__)
+                await message.reply(text, disable_web_page_preview=True)
+            else:
+                text, help_keyboard = await help_parser(message.from_user.first_name)
+                await message.reply(text,
+                                           reply_markup=help_keyboard,
+                                           disable_web_page_preview=True)
+        else:
+            text, help_keyboard = await help_parser(message.from_user.first_name)
+            await message.reply(text,
+                                       reply_markup=help_keyboard,
+                                       disable_web_page_preview=True)
+    return
 
 
 async def help_parser(name, keyboard=None):
@@ -301,4 +356,11 @@ General command are:
 
 if __name__ == "__main__":
     uvloop.install()
-    loop.run_until_complete(start_bot())
+    try:
+        try:
+            loop.run_until_complete(start_bot())
+        except asyncio.exceptions.CancelledError:
+            pass
+        loop.run_until_complete(asyncio.sleep(3.0)) # task cancel wait
+    finally:
+        loop.close()
