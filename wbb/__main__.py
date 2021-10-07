@@ -138,27 +138,25 @@ home_text_pm = (
 
 
 keyboard = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text="Help ❓",
-                        url=f"t.me/{BOT_USERNAME}?start=help",
-                    ),
-                    InlineKeyboardButton(
-                        text="Repo 🛠",
-                        url="https://github.com/thehamkercat/WilliamButcherBot",
-                    ),
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="System Stats 💻",
-                        callback_data="stats_callback",
-                    ),
-                    InlineKeyboardButton(
-                        text="Support 👨", url="t.me/WBBSupport"
-                    ),
-                ],
-            ]
+    [
+        [
+            InlineKeyboardButton(
+                text="Help ❓",
+                url=f"t.me/{BOT_USERNAME}?start=help",
+            ),
+            InlineKeyboardButton(
+                text="Repo 🛠",
+                url="https://github.com/thehamkercat/WilliamButcherBot",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="System Stats 💻",
+                callback_data="stats_callback",
+            ),
+            InlineKeyboardButton(text="Support 👨", url="t.me/WBBSupport"),
+        ],
+    ]
 )
 
 
@@ -171,14 +169,15 @@ async def start(_, message):
     if len(message.text.split()) > 1:
         name = (message.text.split(None, 1)[1]).lower()
         if name == "mkdwn_help":
-            await message.reply(MARKDOWN,
-                                parse_mode="html",
-                                disable_web_page_preview=True)
+            await message.reply(
+                MARKDOWN, parse_mode="html", disable_web_page_preview=True
+            )
         elif "_" in name:
             module = name.split("_", 1)[1]
             text = (
-                f"Here is the help for **{HELPABLE[module].__MODULE__}**:\n" +
-                HELPABLE[module].__HELP__)
+                f"Here is the help for **{HELPABLE[module].__MODULE__}**:\n"
+                + HELPABLE[module].__HELP__
+            )
             await message.reply(text, disable_web_page_preview=True)
         elif name == "help":
             text, keyb = await help_parser(message.from_user.first_name)
@@ -200,42 +199,53 @@ async def help_command(_, message):
         if len(message.command) >= 2:
             name = (message.text.split(None, 1)[1]).lower()
             if str(name) in HELPABLE:
-                key = InlineKeyboardMarkup([
+                key = InlineKeyboardMarkup(
                     [
-                        InlineKeyboardButton(
-                            text="Click here",
-                            url=f"t.me/{BOT_USERNAME}?start=help_{name}",
-                        )
-                    ],
-                ])
+                        [
+                            InlineKeyboardButton(
+                                text="Click here",
+                                url=f"t.me/{BOT_USERNAME}?start=help_{name}",
+                            )
+                        ],
+                    ]
+                )
                 await message.reply(
                     f"Click on the below button to get help about {name}",
                     reply_markup=key,
                 )
             else:
-                await message.reply("PM Me For More Details.",
-                                    reply_markup=keyboard)
+                await message.reply(
+                    "PM Me For More Details.", reply_markup=keyboard
+                )
         else:
-            await message.reply("Pm Me For More Details.",
-                                reply_markup=keyboard)
+            await message.reply(
+                "Pm Me For More Details.", reply_markup=keyboard
+            )
     else:
         if len(message.command) >= 2:
             name = (message.text.split(None, 1)[1]).lower()
             if str(name) in HELPABLE:
                 text = (
                     f"Here is the help for **{HELPABLE[name].__MODULE__}**:\n"
-                    + HELPABLE[name].__HELP__)
+                    + HELPABLE[name].__HELP__
+                )
                 await message.reply(text, disable_web_page_preview=True)
             else:
-                text, help_keyboard = await help_parser(message.from_user.first_name)
-                await message.reply(text,
-                                           reply_markup=help_keyboard,
-                                           disable_web_page_preview=True)
+                text, help_keyboard = await help_parser(
+                    message.from_user.first_name
+                )
+                await message.reply(
+                    text,
+                    reply_markup=help_keyboard,
+                    disable_web_page_preview=True,
+                )
         else:
-            text, help_keyboard = await help_parser(message.from_user.first_name)
-            await message.reply(text,
-                                       reply_markup=help_keyboard,
-                                       disable_web_page_preview=True)
+            text, help_keyboard = await help_parser(
+                message.from_user.first_name
+            )
+            await message.reply(
+                text, reply_markup=help_keyboard, disable_web_page_preview=True
+            )
     return
 
 
@@ -361,6 +371,6 @@ if __name__ == "__main__":
             loop.run_until_complete(start_bot())
         except asyncio.exceptions.CancelledError:
             pass
-        loop.run_until_complete(asyncio.sleep(3.0)) # task cancel wait
+        loop.run_until_complete(asyncio.sleep(3.0))  # task cancel wait
     finally:
         loop.close()
