@@ -371,7 +371,7 @@ async def demote(_, message: Message):
         can_manage_voice_chats=False,
     )
     umention = (await app.get_users(user_id)).mention
-    await message.reply_text("Demoted! f{umention}")
+    await message.reply_text(f"Demoted! {umention}")
 
 
 # Pin Messages
