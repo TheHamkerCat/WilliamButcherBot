@@ -358,10 +358,6 @@ async def demote(_, message: Message):
         return await message.reply_text(
             "You wanna demote the elevated one?, RECONSIDER!"
         )
-    if user_id in (await list_admins(message.chat.id)):
-        return await message.reply_text(
-            "I can't demote an admin, You know the rules, so do i."
-        )
     await message.chat.promote_member(
         user_id=user_id,
         can_change_info=False,
