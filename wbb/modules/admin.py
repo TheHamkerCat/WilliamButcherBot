@@ -457,8 +457,8 @@ async def unmute(_, message: Message):
     if not user_id:
         return await message.reply_text("I can't find that user.")
     await message.chat.unban_member(user_id)
-    umention = (await app.get_users(user_id).mention
-    await message.reply_text(f"Unmuted!{umention}")
+    umention = (await app.get_users(user_id)).mention
+    await message.reply_text(f"Unmuted! {umention}")
 
 
 # Ban deleted accounts
