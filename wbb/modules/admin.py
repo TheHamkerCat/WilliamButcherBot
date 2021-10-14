@@ -607,21 +607,28 @@ async def check_warns(_, message: Message):
 
 
 @app.on_message(
-    (filters.command("report") | filters.command(["admins", "admin"], prefixes="@"))
+    filters.command(["admins", "admin", "report"], prefixes="@")
     & ~filters.edited
     & ~filters.private
 )
 @capture_err
 async def report_user(_, message):
     if not message.reply_to_message:
-        return await message.reply_text("Reply to a message to report that user.")
+        return await message.reply_text(
+          "Reply to a message to report that user."
+        )
+ 
     if message.reply_to_message.from_user.id == message.from_user.id:
         return await message.reply_text("Why are you reporting yourself ?")
+
     list_of_admins = await list_admins(message.chat.id)
     if message.reply_to_message.from_user.id in list_of_admins:
-        return await message.reply_text("Do you know that the user you are replying is an admin ?")
+        return await message.reply_text(
+          "Do you know that the user you are replying is an admin ?"
+        )
+ 
     user_mention = message.reply_to_message.from_user.mention
     text = f"Reported {user_mention} to admins!"
     for admin in list_of_admins:
         text += f"[\u2063](tg://user?id={admin})"
-    return await message.reply_to_message.reply_text(text)
+    await message.reply_to_message.reply_text(text)
