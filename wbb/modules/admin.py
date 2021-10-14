@@ -281,7 +281,8 @@ async def unbanFunc(_, message: Message):
             "Provide a username or reply to a user's message to unban."
         )
     await message.chat.unban_member(user)
-    await message.reply_text("Unbanned!")
+    umention = (await app.get_users(user)).mention
+    await message.reply_text(f"Unbanned! {umention}")
 
 
 # Delete messages
@@ -369,7 +370,8 @@ async def demote(_, message: Message):
         can_manage_chat=False,
         can_manage_voice_chats=False,
     )
-    await message.reply_text("Demoted!")
+    umention = (await app.get_users(user_id)).mention
+    await message.reply_text("Demoted! f{umention}")
 
 
 # Pin Messages
@@ -455,7 +457,8 @@ async def unmute(_, message: Message):
     if not user_id:
         return await message.reply_text("I can't find that user.")
     await message.chat.unban_member(user_id)
-    await message.reply_text("Unmuted!")
+    umention = (await app.get_users(user_id).mention
+    await message.reply_text(f"Unmuted!{umention}")
 
 
 # Ban deleted accounts
