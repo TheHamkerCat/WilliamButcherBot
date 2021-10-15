@@ -56,9 +56,10 @@ async def useradd(_, message: Message):
             text="Reply to someone's message to add him to sudoers.",
         )
     user_id = message.reply_to_message.from_user.id
+    umention = (await app2.get_users(user_id)).mention
     sudoers = await get_sudoers()
     if user_id in sudoers:
-        return await eor(message, text="User is already in sudoers.")
+        return await eor(message, text=f"{umention} is already in sudoers.")
     if user_id == BOT_ID:
         return await eor(
             message, text="You can't add assistant bot in sudoers."
@@ -67,7 +68,7 @@ async def useradd(_, message: Message):
     if added:
         await eor(
             message,
-            text="Successfully added user in sudoers, Bot will be restarted now.",
+            text=f"Successfully added {umention} in sudoers, Bot will be restarted now.",
         )
         return await restart(None)
     await eor(message, text="Something wrong happened, check logs.")
@@ -84,13 +85,14 @@ async def userdel(_, message: Message):
             text="Reply to someone's message to remove him to sudoers.",
         )
     user_id = message.reply_to_message.from_user.id
+    umention = (await app2.get_users(user_id)).mention
     if user_id not in await get_sudoers():
-        return await eor(message, text="User is not in sudoers.")
+        return await eor(message, text=f"{umention} is not in sudoers.")
     removed = await remove_sudo(user_id)
     if removed:
         await eor(
             message,
-            text="Successfully removed user from sudoers, Bot will be restarted now.",
+            text=f"Successfully removed {umention} from sudoers, Bot will be restarted now.",
         )
         return await restart(None)
     await eor(message, text="Something wrong happened, check logs.")
