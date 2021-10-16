@@ -122,7 +122,7 @@ async def locks_func(_, message):
             can_send_messages=True,
             can_send_media_messages=True,
             can_send_stickers=True,
-            can_send_animations=Tru
+            can_send_animations=True,
             can_invite_users=True,
             can_send_games=True,
             can_use_inline_bots=True,
