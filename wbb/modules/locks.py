@@ -115,7 +115,17 @@ async def locks_func(_, message):
         await app.set_chat_permissions(chat_id, ChatPermissions())
         await message.reply_text("Locked Everything.")
 
-
+    elif parameter == "all" and state == "unlock":
+        await app.set_chat_permissions(
+         chat_id,
+         ChatPermissions(
+            can_send_messages=True,
+            can_send_media_messages=True,
+            can_send_stickers=True,
+            can_send_animations=True,
+            can_invite_users=True
+                        )
+                                 )
 @app.on_message(filters.command("locks") & ~filters.private)
 @capture_err
 async def locktypes(_, message):
