@@ -10,7 +10,7 @@ import re
 import subprocess
 import sys
 import traceback
-from asyncio import sleep
+import asyncio
 from html import escape
 from io import StringIO
 from time import time
