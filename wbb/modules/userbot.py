@@ -175,47 +175,23 @@ async def shellrunner(_, message: Message):
     text = message.text.split(None, 1)[1]
     if "\n" in text:
         code = text.split("\n")
-        output = ""
-        for x in code:
-            shell = re.split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x)
-            try:
-                process = subprocess.Popen(
-                    shell,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                )
-            except Exception as err:
-                print(err)
-                await eor(
-                    message,
-                    text=f"**INPUT:**\n```{escape(text)}```\n\n**ERROR:**\n```{escape(err)}```",
-                )
-            output += f"**{code}**\n"
-            output += process.stdout.read()[:-1].decode("utf-8")
-            output += "\n"
+        shell = " ".join(code)
     else:
-        shell = re.split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", text)
-        for a, _ in enumerate(shell):
-            shell[a] = shell[a].replace('"', "")
-        try:
-            process = subprocess.Popen(
-                shell,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-        except Exception as err:
-            print(err)
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            errors = traceback.format_exception(
-                etype=exc_type,
-                value=exc_obj,
-                tb=exc_tb,
-            )
-            return await eor(
+        shell = text
+    process = await asyncio.create_subprocess_shell(
+              shell,
+              stdout=asyncio.subprocess.PIPE,
+              stderr=asyncio.subprocess.PIPE,
+             )
+    out, errorz = await process.communicate()
+    if errorz:            
+        error=f"**INPUT:**\n```{escape(text)}```\n\n**ERROR:**\n```{errorz.decode('utf-8')}```")
+        return await eor(
                 message,
-                text=f"**INPUT:**\n```{escape(text)}```\n\n**ERROR:**\n```{''.join(errors)}```",
+                text=error
             )
-        output = process.stdout.read()[:-1].decode("utf-8")
+    output += out.decode("utf-8")
+    output += "\n"
     if str(output) == "\n":
         output = None
     if output:
@@ -231,7 +207,7 @@ async def shellrunner(_, message: Message):
             return os.remove("output.txt")
         await eor(
             message,
-            text=f"**INPUT:**\n```{escape(text)}```\n\n**OUTPUT:**\n```{escape(output)}```",
+            text=f"**INPUT:**\n```{escape(text)}```\n\n**OUTPUT:**\n```{(output)}```",
         )
     else:
         await eor(
