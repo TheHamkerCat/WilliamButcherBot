@@ -198,11 +198,11 @@ async def shellrunner(_, message: Message):
             await message.reply_document("output.txt",caption=f"{escape(text)}")
             return os.remove("output.txt")
         await eor(
-            message,
-            text=f"**INPUT:**\n```{escape(text)}```\n\n**OUTPUT:**\n```{(output)}```",
+        message,
+        text=f"**INPUT:**\n```{escape(text)}```\n\n**OUTPUT:**\n```{(output)}```",
         )
     else:
         return await eor(
-            message,
-            text=f"**INPUT:**\n```{escape(text)}```\n\n**OUTPUT: **\n`No output`",
-            )
+        message,
+        text=f"**INPUT:**\n```{escape(text)}```\n\n**OUTPUT: **\n`No output`",
+        )
