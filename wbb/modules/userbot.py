@@ -10,7 +10,7 @@ import re
 import subprocess
 import sys
 import traceback
-from asyncio import sleep
+import asyncio
 from html import escape
 from io import StringIO
 from time import time
@@ -185,7 +185,7 @@ async def shellrunner(_, message: Message):
              )
     out, errorz = await process.communicate()
     if errorz:            
-        error=f"**INPUT:**\n```{escape(text)}```\n\n**ERROR:**\n```{errorz.decode('utf-8')}```")
+        error=f"**INPUT:**\n```{escape(text)}```\n\n**ERROR:**\n```{errorz.decode('utf-8')}```"
         return await eor(message, text=error)
     output += out.decode("utf-8")
     output += "\n"
