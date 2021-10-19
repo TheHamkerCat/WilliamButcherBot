@@ -187,8 +187,8 @@ async def shellrunner(_, message: Message):
     if errorz:            
         error=f"**INPUT:**\n```{escape(text)}```\n\n**ERROR:**\n```{errorz.decode('utf-8')}```")
         return await eor(
-                message,
-                text=error
+             message,
+             text=error
             )
     output += out.decode("utf-8")
     output += "\n"
