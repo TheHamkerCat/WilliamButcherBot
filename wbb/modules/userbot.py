@@ -171,7 +171,7 @@ async def shellrunner(_, message: Message):
             ReplyKeyboardMarkup,
         ):
             return await eor(message, text="INSECURE!")
-
+    output = ""
     text = message.text.split(None, 1)[1]
     if "\n" in text:
         code = text.split("\n")
