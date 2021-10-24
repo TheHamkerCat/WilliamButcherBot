@@ -82,7 +82,10 @@ def download_youtube_audio(url: str):
             basename + "." + get_file_extension_from_url(thumbnail_url)
         )
         title = info_dict["title"]
-        performer = info_dict["uploader"]
+        try:
+            performer = info_dict["artist"]
+        except:
+            performer = info_dict["uploader"]
         duration = int(float(info_dict["duration"]))
     return [title, performer, duration, audio_file, thumbnail_file]
 
