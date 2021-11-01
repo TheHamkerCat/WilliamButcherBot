@@ -108,7 +108,7 @@ home_keyboard_pm = InlineKeyboardMarkup(
                 text="Commands ❓", callback_data="bot_commands"
             ),
             InlineKeyboardButton(
-                text="Support 🛠",
+                text="Repo 🛠",
                 url="https://telegra.ph/file/d81e76bb758db593f4365.mp4",
             ),
         ],
@@ -145,7 +145,7 @@ keyboard = InlineKeyboardMarkup(
                 url=f"t.me/{BOT_USERNAME}?start=help",
             ),
             InlineKeyboardButton(
-                text="Support 🛠",
+                text="Repo 🛠",
                 url="https://telegra.ph/file/090c5b8ae795074b9e9ff.mp4",
             ),
         ],
