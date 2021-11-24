@@ -56,7 +56,7 @@ async def start_bot():
                 hasattr(imported_module, "__HELP__")
                 and imported_module.__HELP__
             ):
-                HELPABLE[imported_module.__MODULE__.lower()] = imported_module
+                HELPABLE[imported_module.__MODULE__.replace(' ', '_').lower()] = imported_module
     bot_modules = ""
     j = 1
     for i in ALL_MODULES:
@@ -197,7 +197,7 @@ async def start(_, message):
 async def help_command(_, message):
     if message.chat.type != "private":
         if len(message.command) >= 2:
-            name = (message.text.split(None, 1)[1]).lower()
+            name = (message.text.split(None, 1)[1]).replace(' ', '_').lower()
             if str(name) in HELPABLE:
                 key = InlineKeyboardMarkup(
                     [
