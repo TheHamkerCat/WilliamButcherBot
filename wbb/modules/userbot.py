@@ -10,7 +10,7 @@ import re
 import subprocess
 import sys
 import traceback
-import asyncio
+from asyncio import sleep, create_subprocess_shell, subprocess
 from html import escape
 from io import StringIO
 from time import time
@@ -178,10 +178,10 @@ async def shellrunner(_, message: Message):
         shell = " ".join(code)
     else:
         shell = text
-    process = await asyncio.create_subprocess_shell(
+    process = await create_subprocess_shell(
               shell,
-              stdout=asyncio.subprocess.PIPE,
-              stderr=asyncio.subprocess.PIPE,
+              stdout=subprocess.PIPE,
+              stderr=subprocess.PIPE,
              )
     out, errorz = await process.communicate()
     if errorz:            
