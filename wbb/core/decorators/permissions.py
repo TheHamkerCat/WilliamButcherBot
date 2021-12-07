@@ -67,15 +67,16 @@ def adminsOnly(permission):
             chatID = message.chat.id
             if not message.from_user:
                 # For anonymous admins
-                if message.sender_chat:
-                    return await authorised(
-                        func,
-                        subFunc2,
-                        client,
-                        message,
-                        *args,
-                        **kwargs,
-                    )
+                #### It's a big security risk, Removing for a while
+                #if message.sender_chat:
+                #    return await authorised(
+                #        func,
+                #        subFunc2,
+                #        client,
+                #        message,
+                #        *args,
+                #        **kwargs,
+                #    )
                 return await unauthorised(message, permission, subFunc2)
             # For admins and sudo users
             userID = message.from_user.id
