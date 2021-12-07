@@ -90,7 +90,7 @@ async def pm_approve(_, message):
 )
 async def pm_disapprove(_, message):
     if not message.reply_to_message:
-        return await eor(message, text="Reply to a user's message to approve.")
+        return await eor(message, text="Reply to a user's message to disapprove.")
     user_id = message.reply_to_message.from_user.id
     if not await is_pmpermit_approved(user_id):
         await eor(message, text="User is already disapproved to pm")
