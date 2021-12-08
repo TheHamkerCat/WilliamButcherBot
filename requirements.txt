@@ -9,7 +9,7 @@ motor
 pillow
 psutil
 pykeyboard
-pyrogram
+pyrogram==1.2.19
 python-arq
 requests
 search_engine_parser
