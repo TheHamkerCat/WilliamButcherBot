@@ -223,7 +223,7 @@ async def help_command(_, message):
             )
     else:
         if len(message.command) >= 2:
-            name = (message.text.split(None, 1)[1]).lower()
+            name = (message.text.split(None, 1)[1]).replace(' ', '_').lower()
             if str(name) in HELPABLE:
                 text = (
                     f"Here is the help for **{HELPABLE[name].__MODULE__}**:\n"
@@ -302,7 +302,7 @@ General command are:
  - /help: Give this message
  """
     if mod_match:
-        module = mod_match.group(1)
+        module = (mod_match.group(1)).replace(' ', '_')
         text = (
             "{} **{}**:\n".format(
                 "Here is the help for", HELPABLE[module].__MODULE__
