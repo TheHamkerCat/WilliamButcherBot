@@ -20,7 +20,9 @@ async def paste(_, message: Message):
         return await message.reply("**Usage:**\n /telegraph [Page name]")
 
     page_name = message.text.split(None, 1)[1]
-    page = telegraph.create_page(page_name, html_content=(reply.text.html).replace("\n", "<br>"))
+    page = telegraph.create_page(
+        page_name, html_content=(reply.text.html).replace("\n", "<br>")
+    )
     return await message.reply(
         f"**Posted:** {page['url']}",
         disable_web_page_preview=True,

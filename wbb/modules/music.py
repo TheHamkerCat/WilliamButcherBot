@@ -21,17 +21,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from __future__ import unicode_literals
 
+import datetime
 import os
 from asyncio import get_running_loop
 from functools import partial
 from io import BytesIO
-from urllib.parse import urlparse
 
-import ffmpeg
-import youtube_dl
 from pyrogram import filters
+from pytube import YouTube
+from requests import get
 
 from wbb import aiohttpsession as session
 from wbb import app, arq
@@ -48,42 +47,34 @@ __HELP__ = """
 is_downloading = False
 
 
-def get_file_extension_from_url(url):
-    url_path = urlparse(url).path
-    basename = os.path.basename(url_path)
-    return basename.split(".")[-1]
-
-
-def download_youtube_audio(url: str):
+def download_youtube_audio(arq_resp):
     global is_downloading
-    with youtube_dl.YoutubeDL(
-        {
-            "format": "bestaudio",
-            "writethumbnail": True,
-            "quiet": True,
-        }
-    ) as ydl:
-        info_dict = ydl.extract_info(url, download=False)
-        if int(float(info_dict["duration"])) > 600:
-            is_downloading = False
-            return []
-        ydl.process_info(info_dict)
-        audio_file = ydl.prepare_filename(info_dict)
-        basename = audio_file.rsplit(".", 1)[-2]
-        if info_dict["ext"] == "webm":
-            audio_file_opus = basename + ".opus"
-            ffmpeg.input(audio_file).output(
-                audio_file_opus, codec="copy", loglevel="error"
-            ).overwrite_output().run()
-            os.remove(audio_file)
-            audio_file = audio_file_opus
-        thumbnail_url = info_dict["thumbnail"]
-        thumbnail_file = (
-            basename + "." + get_file_extension_from_url(thumbnail_url)
-        )
-        title = info_dict["title"]
-        performer = info_dict["uploader"]
-        duration = int(float(info_dict["duration"]))
+    r = arq_resp.result[0]
+
+    title = r.title
+    performer = r.channel
+
+    m, s = r.duration.split(":")
+    duration = int(
+        datetime.timedelta(minutes=int(m), seconds=int(s)).total_seconds()
+    )
+
+    if duration > 1800:
+        return
+    thumb = get(r.thumbnails[0]).content
+    with open("thumbnail.png", "wb") as f:
+        f.write(thumb)
+    thumbnail_file = "thumbnail.png"
+
+    url = f"https://youtube.com{r.url_suffix}"
+    yt = YouTube(url)
+    audio = yt.streams.filter(only_audio=True).get_audio_only()
+
+    out_file = audio.download()
+    base, ext = os.path.splitext(out_file)
+    audio_file = base + ".mp3"
+    os.rename(out_file, audio_file)
+
     return [title, performer, duration, audio_file, thumbnail_file]
 
 
@@ -91,8 +82,9 @@ def download_youtube_audio(url: str):
 @capture_err
 async def music(_, message):
     global is_downloading
-    if len(message.command) != 2:
-        return await message.reply_text("/ytmusic needs a link as argument")
+    if len(message.command) < 2:
+        return await message.reply_text("/ytmusic needs a query as argument")
+
     url = message.text.split(None, 1)[1]
     if is_downloading:
         return await message.reply_text(
@@ -104,11 +96,13 @@ async def music(_, message):
     )
     try:
         loop = get_running_loop()
+        arq_resp = await arq.youtube(url)
         music = await loop.run_in_executor(
-            None, partial(download_youtube_audio, url)
+            None, partial(download_youtube_audio, arq_resp)
         )
+
         if not music:
-            await m.edit("Too Long, Can't Download.")
+            return await message.reply_text("[ERROR]: MUSIC TOO LONG")
         (
             title,
             performer,

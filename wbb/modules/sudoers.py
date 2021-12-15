@@ -196,6 +196,7 @@ async def broadcast_message(_, message):
 
 # Update
 
+
 @app.on_message(filters.command("update") & filters.user(SUDOERS))
 async def update_restart(_, message):
     try:
@@ -206,5 +207,6 @@ async def update_restart(_, message):
     except Exception as e:
         return await message.reply_text(str(e))
     m = await message.reply_text(
-        "**Updated with default branch, restarting now.**")
+        "**Updated with default branch, restarting now.**"
+    )
     await restart(m)

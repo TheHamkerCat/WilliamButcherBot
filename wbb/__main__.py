@@ -56,7 +56,9 @@ async def start_bot():
                 hasattr(imported_module, "__HELP__")
                 and imported_module.__HELP__
             ):
-                HELPABLE[imported_module.__MODULE__.replace(' ', '_').lower()] = imported_module
+                HELPABLE[
+                    imported_module.__MODULE__.replace(" ", "_").lower()
+                ] = imported_module
     bot_modules = ""
     j = 1
     for i in ALL_MODULES:
@@ -197,7 +199,7 @@ async def start(_, message):
 async def help_command(_, message):
     if message.chat.type != "private":
         if len(message.command) >= 2:
-            name = (message.text.split(None, 1)[1]).replace(' ', '_').lower()
+            name = (message.text.split(None, 1)[1]).replace(" ", "_").lower()
             if str(name) in HELPABLE:
                 key = InlineKeyboardMarkup(
                     [
@@ -223,7 +225,7 @@ async def help_command(_, message):
             )
     else:
         if len(message.command) >= 2:
-            name = (message.text.split(None, 1)[1]).replace(' ', '_').lower()
+            name = (message.text.split(None, 1)[1]).replace(" ", "_").lower()
             if str(name) in HELPABLE:
                 text = (
                     f"Here is the help for **{HELPABLE[name].__MODULE__}**:\n"
@@ -302,7 +304,7 @@ General command are:
  - /help: Give this message
  """
     if mod_match:
-        module = (mod_match.group(1)).replace(' ', '_')
+        module = (mod_match.group(1)).replace(" ", "_")
         text = (
             "{} **{}**:\n".format(
                 "Here is the help for", HELPABLE[module].__MODULE__

@@ -68,7 +68,7 @@ def adminsOnly(permission):
             if not message.from_user:
                 # For anonymous admins
                 #### It's a big security risk, Removing for a while
-                #if message.sender_chat:
+                # if message.sender_chat:
                 #    return await authorised(
                 #        func,
                 #        subFunc2,

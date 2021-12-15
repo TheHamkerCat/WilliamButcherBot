@@ -602,11 +602,9 @@ async def ping_func(answers):
 
 
 async def yt_music_func(answers, url):
-    if "http" not in url:
-        url = (await arq.youtube(url)).result[0]
-        url = f"https://youtube.com{url.url_suffix}"
+    arq_resp = await arq.youtube(url)
     loop = asyncio.get_running_loop()
-    music = await loop.run_in_executor(None, download_youtube_audio, url)
+    music = await loop.run_in_executor(None, download_youtube_audio, arq_resp)
     if not music:
         msg = "**ERROR**\n__MUSIC TOO LONG__"
         answers.append(

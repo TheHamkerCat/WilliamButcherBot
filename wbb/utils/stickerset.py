@@ -32,7 +32,8 @@ async def get_sticker_set_by_name(
     try:
         return await client.send(
             raw.functions.messages.GetStickerSet(
-                stickerset=raw.types.InputStickerSetShortName(short_name=name), hash=0,
+                stickerset=raw.types.InputStickerSetShortName(short_name=name),
+                hash=0,
             )
         )
     except errors.exceptions.not_acceptable_406.StickersetInvalid:
