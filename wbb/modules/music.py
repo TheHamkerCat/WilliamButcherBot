@@ -48,7 +48,6 @@ is_downloading = False
 
 
 def download_youtube_audio(arq_resp):
-    global is_downloading
     r = arq_resp.result[0]
 
     title = r.title
@@ -61,6 +60,7 @@ def download_youtube_audio(arq_resp):
 
     if duration > 1800:
         return
+
     thumb = get(r.thumbnails[0]).content
     with open("thumbnail.png", "wb") as f:
         f.write(thumb)
@@ -71,7 +71,7 @@ def download_youtube_audio(arq_resp):
     audio = yt.streams.filter(only_audio=True).get_audio_only()
 
     out_file = audio.download()
-    base, ext = os.path.splitext(out_file)
+    base, _ = os.path.splitext(out_file)
     audio_file = base + ".mp3"
     os.rename(out_file, audio_file)
 

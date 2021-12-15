@@ -205,12 +205,7 @@ async def shellrunner(_, message: Message):
             )
         except Exception as err:
             print(err)
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            errors = traceback.format_exception(
-                etype=exc_type,
-                value=exc_obj,
-                tb=exc_tb,
-            )
+            errors = traceback.format_exc()
             return await eor(
                 message,
                 text=f"**INPUT:**\n```{escape(text)}```\n\n**ERROR:**\n```{''.join(errors)}```",
