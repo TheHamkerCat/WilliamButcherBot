@@ -85,6 +85,9 @@ __HELP__ = """
 /markdownhelp
     Sends mark down and formatting help.
 
+/backup
+    Backup database
+
 #RTFM - Tell noobs to read the manual
 """
 
