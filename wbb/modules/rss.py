@@ -1,5 +1,6 @@
 from asyncio import get_event_loop, sleep
 
+from feedparser import parse
 from pyrogram import filters
 from pyrogram.types import Message
 
@@ -29,14 +30,21 @@ async def rss_worker():
         if not feeds:
             await sleep(RSS_DELAY)
             continue
+
+        loop = get_event_loop()
+
         for _feed in feeds:
             try:
                 chat = _feed["chat_id"]
                 url = _feed["url"]
                 last_title = _feed.get("last_title")
-                feed = Feed(url)
+
+                parsed = await loop.run_in_executor(None, parse, url)
+                feed = Feed(parsed)
+
                 if feed.title == last_title:
                     continue
+
                 await app.send_message(
                     chat, feed.parsed(), disable_web_page_preview=True
                 )
@@ -72,7 +80,9 @@ async def add_feed_func(_, m: Message):
 
     ns = "[ERROR]: This feed isn't supported."
     try:
-        feed = Feed(url)
+        loop = get_event_loop()
+        parsed = await loop.run_in_executor(None, parse, url)
+        feed = Feed(parsed)
     except Exception:
         return await m.reply(ns)
     if not feed:

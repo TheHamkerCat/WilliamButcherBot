@@ -1,10 +1,5 @@
-from feedparser import parse
-
-
 class Feed:
-    def __init__(self, url: str):
-        self.url = url
-        feed = parse(url)
+    def __init__(self, feed):
         if not feed.get("entries"):
             return
         entry = feed["entries"][0]
