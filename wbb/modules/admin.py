@@ -237,7 +237,11 @@ async def banFunc(_, message: Message):
     try:
         mention = (await app.get_users(user_id)).mention
     except IndexError:
-        mention = message.reply_to_message.sender_chat.title
+        mention = (
+            message.reply_to_message.sender_chat.title
+            if message.reply_to_message
+            else "Anon"
+        )
 
     msg = (
         f"**Banned User:** {mention}\n"
@@ -338,12 +342,12 @@ async def promoteFunc(_, message: Message):
 
     await message.chat.promote_member(
         user_id=user_id,
-        can_change_info=bot.can_change_info,
+        can_change_info=False,
         can_invite_users=bot.can_invite_users,
         can_delete_messages=bot.can_delete_messages,
         can_restrict_members=False,
-        can_pin_messages=bot.can_pin_messages,
-        can_promote_members=bot.can_promote_members,
+        can_pin_messages=False,
+        can_promote_members=False,
         can_manage_chat=bot.can_manage_chat,
         can_manage_voice_chats=bot.can_manage_voice_chats,
     )
