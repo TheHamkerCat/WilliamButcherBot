@@ -206,7 +206,7 @@ async def extract_userid(message, text: str):
     return None
 
 
-async def extract_user_and_reason(message):
+async def extract_user_and_reason(message, sender_chat=False):
     args = message.text.strip().split()
     text = message.text
     user = None
@@ -215,12 +215,22 @@ async def extract_user_and_reason(message):
         reply = message.reply_to_message
         # if reply to a message and no reason is given
         if not reply.from_user:
-            return None, None
+            if (
+                reply.sender_chat
+                and reply.sender_chat != message.chat.id
+                and sender_chat
+            ):
+                id_ = reply.sender_chat.id
+            else:
+                return None, None
+        else:
+            id_ = reply.from_user.id
+
         if len(args) < 2:
             reason = None
         else:
             reason = text.split(None, 1)[1]
-        return reply.from_user.id, reason
+        return id_, reason
 
     # if not reply to a message and no reason is given
     if len(args) == 2:

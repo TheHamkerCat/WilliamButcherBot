@@ -217,7 +217,8 @@ async def kickFunc(_, message: Message):
 )
 @adminsOnly("can_restrict_members")
 async def banFunc(_, message: Message):
-    user_id, reason = await extract_user_and_reason(message)
+    user_id, reason = await extract_user_and_reason(message, sender_chat=True)
+
     if not user_id:
         return await message.reply_text("I can't find that user.")
     if user_id == BOT_ID:
@@ -232,7 +233,12 @@ async def banFunc(_, message: Message):
         return await message.reply_text(
             "I can't ban an admin, You know the rules, so do i."
         )
-    mention = (await app.get_users(user_id)).mention
+
+    try:
+        mention = (await app.get_users(user_id)).mention
+    except IndexError:
+        mention = message.reply_to_message.sender_chat.title
+
     msg = (
         f"**Banned User:** {mention}\n"
         f"**Banned By:** {message.from_user.mention if message.from_user else 'Anon'}\n"
