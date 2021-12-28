@@ -1,13 +1,13 @@
 from dotenv import load_dotenv
+from os import environ
 
 load_dotenv("config.env")
 
 HEROKU = (
-    True  # NOTE Make it false if you're not deploying on heroku or docker.
+    bool(environ.get("DYNO"))  # NOTE Make it false if you're not deploying on heroku or docker.
 )
 
 if HEROKU:
-    from os import environ
 
     BOT_TOKEN = environ.get("BOT_TOKEN", None)
     API_ID = int(environ.get("API_ID", 6))
