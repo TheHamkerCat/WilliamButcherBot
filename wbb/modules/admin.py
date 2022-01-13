@@ -201,7 +201,7 @@ async def kickFunc(_, message: Message):
 **Reason:** {reason or 'No Reason Provided.'}"""
     if message.command[0][0] == "d":
         await message.reply_to_message.delete()
-    await message.chat.kick_member(user_id)
+    await message.chat.ban_member(user_id)
     await message.reply_text(msg)
     await asyncio.sleep(1)
     await message.chat.unban_member(user_id)
@@ -259,7 +259,7 @@ async def banFunc(_, message: Message):
             msg += f"**Reason:** {temp_reason}"
         try:
             if len(time_value[:-1]) < 3:
-                await message.chat.kick_member(user_id, until_date=temp_ban)
+                await message.chat.ban_member(user_id, until_date=temp_ban)
                 await message.reply_text(msg)
             else:
                 await message.reply_text("You can't use more than 99")
@@ -268,7 +268,7 @@ async def banFunc(_, message: Message):
         return
     if reason:
         msg += f"**Reason:** {reason}"
-    await message.chat.kick_member(user_id)
+    await message.chat.ban_member(user_id)
     await message.reply_text(msg)
 
 
