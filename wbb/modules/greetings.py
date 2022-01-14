@@ -110,7 +110,7 @@ async def welcome(_, message: Message):
                 continue  # ignore sudo users
 
             if await is_gbanned_user(member.id):
-                await message.chat.kick_member(member.id)
+                await message.chat.ban_member(member.id)
                 await message.reply_text(
                     f"{member.mention} was globally banned, and got removed,"
                     + " if you think this is a false gban, you can appeal"
@@ -326,7 +326,7 @@ async def _ban_restricted_user_until_date(
         member = await group_chat.get_member(user_id)
         if member.status == "restricted":
             until_date = int(datetime.utcnow().timestamp() + duration)
-            await group_chat.kick_member(user_id, until_date=until_date)
+            await group_chat.ban_member(user_id, until_date=until_date)
     except UserNotParticipant:
         pass
 
