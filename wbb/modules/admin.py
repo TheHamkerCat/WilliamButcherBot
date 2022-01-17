@@ -389,9 +389,7 @@ async def pin(_, message: Message):
     r = message.reply_to_message
     if message.command[0][0] == "u":
         await r.unpin()
-        return await message.reply_text(f"**Unpinned 
-            [this]({r.link}) message successfully!**",
-            disable_web_page_preview=True)
+        return await message.reply_text(f"**Unpinned [this]({r.link}) message successfully!**",disable_web_page_preview=True,)
     await r.pin(disable_notification=True)
     await message.reply(
         f"**Pinned [this]({r.link}) message.**",
