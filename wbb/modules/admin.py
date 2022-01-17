@@ -381,12 +381,17 @@ async def demote(_, message: Message):
 # Pin Messages
 
 
-@app.on_message(filters.command("pin") & ~filters.edited & ~filters.private)
+@app.on_message(filters.command(["pin", "unpin"]) & ~filters.edited & ~filters.private)
 @adminsOnly("can_pin_messages")
 async def pin(_, message: Message):
     if not message.reply_to_message:
         return await message.reply_text("Reply to a message to pin it.")
     r = message.reply_to_message
+    if message.command[0][0] == "u":
+        await r.unpin()
+        return await message.reply_text(f"**Unpinned 
+            [this]({r.link}) message successfully!**",
+            disable_web_page_preview=True)
     await r.pin(disable_notification=True)
     await message.reply(
         f"**Pinned [this]({r.link}) message.**",
