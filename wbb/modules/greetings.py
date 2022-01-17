@@ -256,7 +256,7 @@ async def callback_query_welcome_button(_, callback_query):
                 attempts = iii["attempts"]
                 if attempts >= 3:
                     answers_dicc.remove(iii)
-                    await button_message.chat.kick_member(pending_user_id)
+                    await button_message.chat.ban_member(pending_user_id)
                     await asyncio.sleep(1)
                     await button_message.chat.unban_member(pending_user_id)
                     await button_message.delete()

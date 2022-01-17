@@ -104,14 +104,8 @@ async def current_chat_permissions(chat_id):
         perms.append("can_send_messages")
     if perm.can_send_media_messages:
         perms.append("can_send_media_messages")
-    if perm.can_send_stickers:
-        perms.append("can_send_stickers")
-    if perm.can_send_animations:
-        perms.append("can_send_animations")
-    if perm.can_send_games:
-        perms.append("can_send_games")
-    if perm.can_use_inline_bots:
-        perms.append("can_use_inline_bots")
+    if perm.can_send_other_messages:
+        perms.append("can_send_other_messages")
     if perm.can_add_web_page_previews:
         perms.append("can_add_web_page_previews")
     if perm.can_send_polls:

@@ -18,12 +18,13 @@ NOTE: Fillings only works in greetings module.
 
 <u>Supported formatting:</u>
 
-<code>**Bold**</code> : Creates <b>bold</b> text.
-<code>~~strike~~</code>: Creates <strike>striked</strike> text.
-<code>__italic__</code>: Creates <i>italic</i> text.
-<code>--underline--</code>: Creates <u>underline</u> text.
-<code>`code words`</code>: Creates <code>code words</code> text.
-<code>[hyperlink](google.com)</code>: Creates <a href='https://www.google.com'>hyperlink</a> text.
+<code>**Bold**</code> : This will show as <b>bold</b> text.
+<code>~~strike~~</code>: This will show as <strike>strike</strike> text.
+<code>__italic__</code>: This will show as <i>italic</i> text.
+<code>--underline--</code>: This will show as <u>underline</u> text.
+<code>`code words`</code>: This will show as <code>code</code> text.
+<code>||spoiler||</code>: This will show as <spoiler>Spoiler</spoiler> text.
+<code>[hyperlink](google.com)</code>: This will create a <a href='https://www.google.com'>hyperlink</a> text.
 <b>Note:</b> You can use both markdown & html tags.
 
 
