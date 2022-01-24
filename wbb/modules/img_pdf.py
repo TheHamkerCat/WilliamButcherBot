@@ -64,7 +64,11 @@ async def convert(
     pdf.name = "wbb.pdf"
 
     if len(main_message.command) >= 2:
-        pdf.name = main_message.text.split(None, 1)[1]
+        names = main_message.text.split(None, 1)[1]
+        if not names.endswith('.pdf'):
+            pdf.name = names + '.pdf'
+        else:
+            pdf.name = names
 
     elapsed = round(time() - start_time, 2)
 
