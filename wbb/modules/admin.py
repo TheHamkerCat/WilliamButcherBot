@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import asyncio
+from time import time
 
 from pyrogram import filters
 from pyrogram.types import CallbackQuery, ChatPermissions, Message
@@ -87,14 +88,26 @@ async def member_permissions(chat_id: int, user_id: int):
 
 from wbb.core.decorators.permissions import adminsOnly
 
+admins_in_chat = {}
+
 
 async def list_admins(chat_id: int):
-    return [
-        member.user.id
-        async for member in app.iter_chat_members(
-            chat_id, filter="administrators"
-        )
-    ]
+    global admins_in_chat
+    if chat_id in admins_in_chat:
+        interval = time() - admins_in_chat[chat_id]["last_updated_at"]
+        if interval < 3600:
+            return admins_in_chat[chat_id]["data"]
+
+    admins_in_chat[chat_id] = {
+        "last_updated_at": time(),
+        "data": [
+            member.user.id
+            async for member in app.iter_chat_members(
+                chat_id, filter="administrators"
+            )
+        ],
+    }
+    return admins_in_chat[chat_id]["data"]
 
 
 async def current_chat_permissions(chat_id):
@@ -118,13 +131,6 @@ async def current_chat_permissions(chat_id):
         perms.append("can_pin_messages")
 
     return perms
-
-
-# Get List Of Members In A Chat
-
-
-async def list_members(group_id):
-    return [member.user.id async for member in app.iter_chat_members(group_id)]
 
 
 # Purge Messages
@@ -381,7 +387,9 @@ async def demote(_, message: Message):
 # Pin Messages
 
 
-@app.on_message(filters.command(["pin", "unpin"]) & ~filters.edited & ~filters.private)
+@app.on_message(
+    filters.command(["pin", "unpin"]) & ~filters.edited & ~filters.private
+)
 @adminsOnly("can_pin_messages")
 async def pin(_, message: Message):
     if not message.reply_to_message:
@@ -390,8 +398,8 @@ async def pin(_, message: Message):
     if message.command[0][0] == "u":
         await r.unpin()
         return await message.reply_text(
-                       f"**Unpinned [this]({r.link}) message.**",
-                       disable_web_page_preview=True,
+            f"**Unpinned [this]({r.link}) message.**",
+            disable_web_page_preview=True,
         )
     await r.pin(disable_notification=True)
     await message.reply(
@@ -480,6 +488,8 @@ async def ban_deleted_accounts(_, message: Message):
     chat_id = message.chat.id
     deleted_users = []
     banned_users = 0
+    m = await message.reply("Finding ghosts...")
+
     async for i in app.iter_chat_members(chat_id):
         if i.user.is_deleted:
             deleted_users.append(i.user.id)
@@ -490,9 +500,9 @@ async def ban_deleted_accounts(_, message: Message):
             except Exception:
                 pass
             banned_users += 1
-        await message.reply_text(f"Banned {banned_users} Deleted Accounts")
+        await m.edit(f"Banned {banned_users} Deleted Accounts")
     else:
-        await message.reply_text("There are no deleted accounts in this chat")
+        await m.edit("There are no deleted accounts in this chat")
 
 
 @app.on_message(
@@ -516,8 +526,6 @@ async def warn_user(_, message: Message):
         return await message.reply_text(
             "I can't warn an admin, You know the rules, so do i."
         )
-    if user_id not in (await list_members(chat_id)):
-        return await message.reply_text("This user isn't here.")
     user, warns = await asyncio.gather(
         app.get_users(user_id),
         get_warn(chat_id, await int_to_alpha(user_id)),

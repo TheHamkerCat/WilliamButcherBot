@@ -65,8 +65,8 @@ async def convert(
 
     if len(main_message.command) >= 2:
         names = main_message.text.split(None, 1)[1]
-        if not names.endswith('.pdf'):
-            pdf.name = names + '.pdf'
+        if not names.endswith(".pdf"):
+            pdf.name = names + ".pdf"
         else:
             pdf.name = names
 

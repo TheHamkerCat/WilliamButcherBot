@@ -42,23 +42,6 @@ def url(_, __, message: Message) -> bool:
     return bool(get_urls_from_text(text))
 
 
-async def admin(_, __, message: Message) -> bool:
-    if message.chat.type not in ["group", "supergroup"]:
-        return False
-    if not message.from_user:
-        if not message.sender_chat:
-            return False
-        return True
-    # Calling iter_chat_members again and again
-    # doesn't cause floodwait, that's why i'm using it here.
-    return message.from_user.id in [
-        member.user.id
-        async for member in message._client.iter_chat_members(
-            message.chat.id, filter="administrators"
-        )
-    ]
-
-
 def entities(_, __, message: Message) -> bool:
     return bool(message.entities)
 
@@ -85,7 +68,6 @@ class Filters:
 
 filters = Filters
 filters.url = filters_.create(url)
-filters.admin = filters_.create(admin)
 filters.entities = filters_.create(entities)
 filters.anonymous = filters_.create(anonymous)
 filters.sudoers = filters_.create(sudoers)

@@ -1,11 +1,12 @@
-from dotenv import load_dotenv
 from os import environ
+
+from dotenv import load_dotenv
 
 load_dotenv("config.env")
 
-HEROKU = (
-    bool(environ.get("DYNO"))  # NOTE Make it false if you're not deploying on heroku or docker.
-)
+HEROKU = bool(
+    environ.get("DYNO")
+)  # NOTE Make it false if you're not deploying on heroku or docker.
 
 if HEROKU:
 
