@@ -33,6 +33,8 @@ async def arq_stats(_, message):
     if not data.ok:
         return await message.reply_text(data.result)
     server = data.result
+    nlp = server.spam_protection
+
     body = {
         "Uptime": server.uptime,
         "Requests Since Uptime": server.requests,
@@ -40,6 +42,7 @@ async def arq_stats(_, message):
         "Memory": server.memory.server,
         "Platform": server.platform,
         "Python": server.python,
+        "Spam/Ham Ratio": f"{nlp.ham_messages}/{nlp.spam_messages}",
         "Users": server.users,
         "Bot": [server.bot],
     }
