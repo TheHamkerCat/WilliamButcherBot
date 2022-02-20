@@ -42,7 +42,7 @@ async def arq_stats(_, message):
         "Memory": server.memory.server,
         "Platform": server.platform,
         "Python": server.python,
-        "Spam/Ham Ratio": f"{nlp.ham_messages}/{nlp.spam_messages}",
+        "Spam/Ham Ratio": f"{nlp.spam_messages}/{nlp.ham_messages}",
         "Users": server.users,
         "Bot": [server.bot],
     }
