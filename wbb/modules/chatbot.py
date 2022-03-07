@@ -113,7 +113,7 @@ async def chatbot_talk(_, message: Message):
 @app2.on_message(
     filters.command("chatbot", prefixes=USERBOT_PREFIX)
     & ~filters.edited
-    & filters.user(SUDOERS)
+    & SUDOERS
 )
 @capture_err
 async def chatbot_status_ubot(_, message: Message):

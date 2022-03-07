@@ -132,7 +132,7 @@ async def runs(_, message):
 
 
 @app2.on_message(
-    filters.command("id", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
+    filters.command("id", prefixes=USERBOT_PREFIX) & SUDOERS
 )
 @app.on_message(filters.command("id"))
 async def getid(client, message):

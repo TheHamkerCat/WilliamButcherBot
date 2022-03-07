@@ -56,7 +56,8 @@ __HELP__ = """/ban - Ban A User
 /tmute - Mute A User For Specific Time
 /unmute - Unmute A User
 /ban_ghosts - Ban Deleted Accounts
-/report | @admins | @admin - Report A Message To Admins."""
+/report | @admins | @admin - Report A Message To Admins.
+/admincache - Reload admin list"""
 
 
 async def member_permissions(chat_id: int, user_id: int):
@@ -131,6 +132,22 @@ async def current_chat_permissions(chat_id):
         perms.append("can_pin_messages")
 
     return perms
+
+
+# Admin cache reload
+
+@app.on_message(filters.command("admincache") & ~filters.edited & ~filters.private)
+async def admincacheFunc(_, message: Message):
+    admins_in_chat[message.chat.id] = {
+        "last_updated_at": time(),
+        "data": [
+            member.user.id
+            async for member in app.iter_chat_members(
+                message.chat.id, filter="administrators"
+            )
+        ],
+    }
+    return await message.reply_text("Admin list updated.")
 
 
 # Purge Messages

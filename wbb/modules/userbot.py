@@ -62,7 +62,7 @@ async def iter_edit(message: Message, text: str):
 
 
 @app2.on_message(
-    filters.user(SUDOERS)
+    SUDOERS
     & ~filters.forwarded
     & ~filters.via_bot
     & filters.command("eval", prefixes=USERBOT_PREFIX)
@@ -154,7 +154,7 @@ async def executor(client, message: Message):
 
 
 @app2.on_message(
-    filters.user(SUDOERS)
+    SUDOERS
     & ~filters.forwarded
     & ~filters.via_bot
     & ~filters.edited

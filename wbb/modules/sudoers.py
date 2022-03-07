@@ -81,7 +81,7 @@ DISK: {disk}%
 # Gban
 
 
-@app.on_message(filters.command("gban") & filters.user(SUDOERS))
+@app.on_message(filters.command("gban") & SUDOERS)
 @capture_err
 async def ban_globally(_, message):
     user_id, reason = await extract_user_and_reason(message)
@@ -93,7 +93,7 @@ async def ban_globally(_, message):
     if not reason:
         return await message.reply("No reason provided.")
 
-    if user_id in ([from_user.id, BOT_ID] + SUDOERS):
+    if user_id in ([from_user.id, BOT_ID]) or user_id in SUDOERS:
         return await message.reply_text("No")
 
     served_chats = await get_served_chats()
@@ -148,7 +148,7 @@ __**New Global Ban**__
 # Ungban
 
 
-@app.on_message(filters.command("ungban") & filters.user(SUDOERS))
+@app.on_message(filters.command("ungban") & SUDOERS)
 @capture_err
 async def unban_globally(_, message):
     user_id = await extract_user(message)
@@ -168,7 +168,7 @@ async def unban_globally(_, message):
 
 
 @app.on_message(
-    filters.command("broadcast") & filters.user(SUDOERS) & ~filters.edited
+    filters.command("broadcast") & SUDOERS & ~filters.edited
 )
 @capture_err
 async def broadcast_message(_, message):
@@ -197,7 +197,7 @@ async def broadcast_message(_, message):
 # Update
 
 
-@app.on_message(filters.command("update") & filters.user(SUDOERS))
+@app.on_message(filters.command("update") & SUDOERS)
 async def update_restart(_, message):
     try:
         out = subprocess.check_output(["git", "pull"]).decode("UTF-8")

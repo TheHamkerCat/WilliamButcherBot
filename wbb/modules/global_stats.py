@@ -40,7 +40,7 @@ from wbb.utils.inlinefuncs import keywords_list
 
 
 @app.on_message(
-    filters.command("clean_db") & filters.user(SUDOERS) & ~filters.edited
+    filters.command("clean_db") & ~filters.edited & SUDOERS
 )
 @capture_err
 async def clean_db(_, message):
@@ -62,7 +62,7 @@ async def clean_db(_, message):
 
 
 @app.on_message(
-    filters.command("gstats") & filters.user(SUDOERS) & ~filters.edited
+    filters.command("gstats") & ~filters.edited & SUDOERS
 )
 @capture_err
 async def global_stats(_, message):
