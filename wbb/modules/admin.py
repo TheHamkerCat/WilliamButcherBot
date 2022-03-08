@@ -25,9 +25,9 @@ import asyncio
 from time import time
 
 from pyrogram import filters
-from pyrogram.types import CallbackQuery, ChatPermissions, Message
+from pyrogram.types import CallbackQuery, ChatPermissions, Message, ChatMemberUpdated
 
-from wbb import BOT_ID, SUDOERS, app
+from wbb import BOT_ID, SUDOERS, app, log
 from wbb.core.decorators.errors import capture_err
 from wbb.core.keyboard import ikb
 from wbb.utils.dbfunctions import (add_warn, get_warn, int_to_alpha,
@@ -136,19 +136,20 @@ async def current_chat_permissions(chat_id):
 
 # Admin cache reload
 
-@app.on_message(filters.command("admincache") & ~filters.edited & ~filters.private)
-async def admincacheFunc(_, message: Message):
-    admins_in_chat[message.chat.id] = {
-        "last_updated_at": time(),
-        "data": [
-            member.user.id
-            async for member in app.iter_chat_members(
-                message.chat.id, filter="administrators"
-            )
-        ],
-    }
-    return await message.reply_text("Admin list updated.")
-
+@app.old_chat_member(~filters.private)
+async def admincacheFunc(_, cmu: ChatMemberUpdated):
+    if cmu.old_chat_member and cmu.old_chat_member.promoted_by:
+        admins_in_chat[cmu.chat.id] = {
+            "last_updated_at": time(),
+            "data": [
+                member.user.id
+                async for member in app.iter_chat_members(
+                    cmu.chat.id, filter="administrators"
+                )
+            ],
+        }
+        log.info(f"Updated admin cache for {cmu.chat.id} [{cmu.chat.title}]")
+      
 
 # Purge Messages
 
