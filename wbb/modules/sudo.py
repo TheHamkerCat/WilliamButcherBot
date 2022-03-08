@@ -111,7 +111,6 @@ async def userdel(_, message: Message):
 async def sudoers_list(_, message: Message):
     sudoers = await get_sudoers()
     text = ""
-    j = 0
     for index, user_id in enumerate(sudoers, start=1):
         try:
             user = await app2.get_users(user_id)
