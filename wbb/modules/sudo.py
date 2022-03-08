@@ -112,14 +112,13 @@ async def sudoers_list(_, message: Message):
     sudoers = await get_sudoers()
     text = ""
     j = 0
-    for user_id in sudoers:
+    for index, user_id in enumerate(sudoers, start=1):
         try:
             user = await app2.get_users(user_id)
             user = user.first_name if not user.mention else user.mention
-            j += 1
         except Exception:
             continue
-        text += f"{j}. {user}\n"
+        text += f"{index}. {user}\n"
     if text == "":
         return await eor(message, text="No sudoers found.")
     await eor(message, text=text)
