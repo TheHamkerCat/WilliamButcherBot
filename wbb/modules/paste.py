@@ -39,7 +39,7 @@ pattern = re.compile(r"^text/|json$|yaml$|xml$|toml$|x-sh$|x-shellscript$")
 
 
 @app2.on_message(
-    filters.command("paste", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
+    filters.command("paste", prefixes=USERBOT_PREFIX) & SUDOERS
 )
 @app.on_message(filters.command("paste") & ~filters.edited)
 @capture_err

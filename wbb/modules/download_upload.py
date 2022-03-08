@@ -37,7 +37,7 @@ from wbb.utils.downloader import download
 
 
 @app2.on_message(
-    filters.user(SUDOERS)
+    SUDOERS
     & filters.command("download", prefixes=USERBOT_PREFIX)
 )
 async def download_func(_, message: Message):
@@ -77,7 +77,7 @@ async def download_func(_, message: Message):
 
     text = message.text
     if len(text.split()) < 2:
-        return await eor(message, text="Invalid Arguments")
+        return await eor(m, text="Invalid Arguments")
 
     url = text.split(None, 1)[1]
 
@@ -107,7 +107,7 @@ async def download_func(_, message: Message):
 
 
 @app2.on_message(
-    filters.user(SUDOERS) & filters.command("upload", prefixes=USERBOT_PREFIX)
+    SUDOERS & filters.command("upload", prefixes=USERBOT_PREFIX)
 )
 async def upload_func(_, message: Message):
     if len(message.text.split()) != 2:

@@ -29,7 +29,7 @@ from wbb.modules.userbot import eor
 
 
 @app2.on_message(
-    filters.user(SUDOERS)
+    SUDOERS
     & ~filters.forwarded
     & ~filters.via_bot
     & ~filters.edited

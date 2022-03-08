@@ -65,7 +65,7 @@ def isArgInt(message: Message) -> list:
 
 
 @app2.on_message(
-    filters.command("q", prefixes=USERBOT_PREFIX) & filters.user(SUDOERS)
+    filters.command("q", prefixes=USERBOT_PREFIX) & SUDOERS
 )
 @app.on_message(filters.command("q") & ~filters.private)
 @capture_err

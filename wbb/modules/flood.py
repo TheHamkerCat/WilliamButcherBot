@@ -87,8 +87,8 @@ async def flood_control_func(_, message: Message):
     reset_flood(chat_id, user_id)
 
     # Ignore devs and admins
-    mods = (await list_admins(chat_id)) + SUDOERS
-    if user_id in mods:
+    mods = (await list_admins(chat_id))
+    if user_id in mods or user_id in SUDOERS:
         return
 
     # Mute if user sends more than 10 messages in a row
