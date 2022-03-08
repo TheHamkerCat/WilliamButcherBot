@@ -1,4 +1,3 @@
-# flake8: noqa F405
 """
 MIT License
 
@@ -134,3 +133,23 @@ async def eor(msg: Message, **kwargs):
     )
     spec = getfullargspec(func.__wrapped__).args
     return await func(**{k: v for k, v in kwargs.items() if k in spec})
+
+
+class Log:
+    def __init__(self, save_to_file=False, file_name="wbb.log"):
+        self.save_to_file = save_to_file
+        self.file_name = file_name
+
+    def info(self, msg):
+        print(f"[+]: {msg}")
+        if self.save_to_file:
+            with open(self.file_name, "a") as f:
+                f.write(f"[INFO]({ctime(time())}): {msg}\n")
+
+    def error(self, msg):
+        print(f"[-]: {msg}")
+        if self.save_to_file:
+            with open(self.file_name, "a") as f:
+                f.write(f"[ERROR]({ctime(time())}): {msg}\n")
+
+log = Log(True, "bot.log")
