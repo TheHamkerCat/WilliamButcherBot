@@ -53,10 +53,10 @@ def generate_captcha():
         return chr(randint(65, 90))
 
     def rndColor():
-        return (randint(64, 255), randint(64, 255), randint(64, 255))
+        return randint(64, 255), randint(64, 255), randint(64, 255)
 
     def rndColor2():
-        return (randint(32, 127), randint(32, 127), randint(32, 127))
+        return randint(32, 127), randint(32, 127), randint(32, 127)
 
     # Generate a 4 letter word
     def gen_wrong_answer():

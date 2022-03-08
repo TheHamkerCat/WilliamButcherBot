@@ -144,12 +144,13 @@ class Log:
         print(f"[+]: {msg}")
         if self.save_to_file:
             with open(self.file_name, "a") as f:
-                f.write(f"[INFO]({ctime(time())}): {msg}\n")
+                f.write(f"[INFO]({time.ctime(time.time())}): {msg}\n")
 
     def error(self, msg):
         print(f"[-]: {msg}")
         if self.save_to_file:
             with open(self.file_name, "a") as f:
-                f.write(f"[ERROR]({ctime(time())}): {msg}\n")
+                f.write(f"[ERROR]({time.ctime(time.time())}): {msg}\n")
+
 
 log = Log(True, "bot.log")

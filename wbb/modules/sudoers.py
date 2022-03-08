@@ -30,12 +30,22 @@ import psutil
 from pyrogram import filters
 from pyrogram.errors import FloodWait
 
-from wbb import (BOT_ID, GBAN_LOG_GROUP_ID, SUDOERS, USERBOT_USERNAME, app,
-                 bot_start_time)
+from wbb import (
+    BOT_ID,
+    GBAN_LOG_GROUP_ID,
+    SUDOERS,
+    USERBOT_USERNAME,
+    app,
+    bot_start_time,
+)
 from wbb.core.decorators.errors import capture_err
 from wbb.utils import formatter
-from wbb.utils.dbfunctions import (add_gban_user, get_served_chats,
-                                   is_gbanned_user, remove_gban_user)
+from wbb.utils.dbfunctions import (
+    add_gban_user,
+    get_served_chats,
+    is_gbanned_user,
+    remove_gban_user,
+)
 from wbb.utils.functions import extract_user, extract_user_and_reason, restart
 
 __MODULE__ = "Sudoers"
@@ -69,7 +79,7 @@ async def bot_sys_stats():
     stats = f"""
 {USERBOT_USERNAME}@William
 ------------------
-UPTIME: {formatter.get_readable_time((bot_uptime))}
+UPTIME: {formatter.get_readable_time(bot_uptime)}
 BOT: {round(process.memory_info()[0] / 1024 ** 2)} MB
 CPU: {cpu}%
 RAM: {mem}%
@@ -167,9 +177,7 @@ async def unban_globally(_, message):
 # Broadcast
 
 
-@app.on_message(
-    filters.command("broadcast") & SUDOERS & ~filters.edited
-)
+@app.on_message(filters.command("broadcast") & SUDOERS & ~filters.edited)
 @capture_err
 async def broadcast_message(_, message):
     if len(message.command) < 2:

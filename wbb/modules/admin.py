@@ -25,15 +25,28 @@ import asyncio
 from time import time
 
 from pyrogram import filters
-from pyrogram.types import CallbackQuery, ChatPermissions, Message, ChatMemberUpdated
+from pyrogram.types import (
+    CallbackQuery,
+    ChatPermissions,
+    Message,
+    ChatMemberUpdated,
+)
 
 from wbb import BOT_ID, SUDOERS, app, log
 from wbb.core.decorators.errors import capture_err
 from wbb.core.keyboard import ikb
-from wbb.utils.dbfunctions import (add_warn, get_warn, int_to_alpha,
-                                   remove_warns, save_filter)
-from wbb.utils.functions import (extract_user, extract_user_and_reason,
-                                 time_converter)
+from wbb.utils.dbfunctions import (
+    add_warn,
+    get_warn,
+    int_to_alpha,
+    remove_warns,
+    save_filter,
+)
+from wbb.utils.functions import (
+    extract_user,
+    extract_user_and_reason,
+    time_converter,
+)
 
 __MODULE__ = "Admin"
 __HELP__ = """/ban - Ban A User
@@ -136,8 +149,9 @@ async def current_chat_permissions(chat_id):
 
 # Admin cache reload
 
-@app.old_chat_member(~filters.private)
-async def admincacheFunc(_, cmu: ChatMemberUpdated):
+
+@app.on_chat_member_updated()
+async def admin_cache_func(_, cmu: ChatMemberUpdated):
     if cmu.old_chat_member and cmu.old_chat_member.promoted_by:
         admins_in_chat[cmu.chat.id] = {
             "last_updated_at": time(),
@@ -149,7 +163,7 @@ async def admincacheFunc(_, cmu: ChatMemberUpdated):
             ],
         }
         log.info(f"Updated admin cache for {cmu.chat.id} [{cmu.chat.title}]")
-      
+
 
 # Purge Messages
 
@@ -295,10 +309,10 @@ async def banFunc(_, message: Message):
 
 @app.on_message(filters.command("unban") & ~filters.edited & ~filters.private)
 @adminsOnly("can_restrict_members")
-async def unbanFunc(_, message: Message):
+async def unban_func(_, message: Message):
     # we don't need reasons for unban, also, we
     # don't need to get "text_mention" entity, because
-    # normal users won't get text_mention if the the user
+    # normal users won't get text_mention if the user
     # they want to unban is not in the group.
     if len(message.command) == 2:
         user = message.text.split(None, 1)[1]
