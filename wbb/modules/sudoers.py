@@ -93,8 +93,8 @@ async def ban_globally(_, message):
     if not reason:
         return await message.reply("No reason provided.")
 
-    if user_id in ([from_user.id, BOT_ID]) or user_id in SUDOERS:
-        return await message.reply_text("No")
+    if user_id in [from_user.id, BOT_ID] or user_id in SUDOERS:
+        return await message.reply_text("I can't ban that user.")
 
     served_chats = await get_served_chats()
     m = await message.reply_text(
