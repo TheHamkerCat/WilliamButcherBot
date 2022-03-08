@@ -58,15 +58,19 @@ async def useradd(_, message: Message):
     user_id = message.reply_to_message.from_user.id
     umention = (await app2.get_users(user_id)).mention
     sudoers = await get_sudoers()
+    
     if user_id in sudoers:
         return await eor(message, text=f"{umention} is already in sudoers.")
     if user_id == BOT_ID:
         return await eor(
             message, text="You can't add assistant bot in sudoers."
         )
-    added = await add_sudo(user_id)
+    
+    await add_sudo(user_id)
+    
     if user_id not in SUDOERS:
         SUDOERS.add(user_id)
+    
     await eor(
         message,
         text=f"Successfully added {umention} in sudoers.",
@@ -85,11 +89,15 @@ async def userdel(_, message: Message):
         )
     user_id = message.reply_to_message.from_user.id
     umention = (await app2.get_users(user_id)).mention
+    
     if user_id not in await get_sudoers():
         return await eor(message, text=f"{umention} is not in sudoers.")
-    removed = await remove_sudo(user_id)
+    
+    await remove_sudo(user_id)
+    
     if user_id in SUDOERS:
         SUDOERS.remove(user_id)
+    
     await eor(
         message,
         text=f"Successfully removed {umention} from sudoers.",
@@ -104,7 +112,7 @@ async def sudoers_list(_, message: Message):
     sudoers = await get_sudoers()
     text = ""
     j = 0
-    for count, user_id in enumerate(sudoers, 1):
+    for user_id in sudoers:
         try:
             user = await app2.get_users(user_id)
             user = user.first_name if not user.mention else user.mention
