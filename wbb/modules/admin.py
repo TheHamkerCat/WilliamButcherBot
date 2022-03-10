@@ -314,9 +314,13 @@ async def unban_func(_, message: Message):
     # don't need to get "text_mention" entity, because
     # normal users won't get text_mention if the user
     # they want to unban is not in the group.
+    reply = message.reply_to_message
+    if (reply.sender_chat
+       and reply.sender_chat != message.chat.id):
+        return await message.reply_text("Unbanning a Channel?,we dont do it here")
     if len(message.command) == 2:
         user = message.text.split(None, 1)[1]
-    elif len(message.command) == 1 and message.reply_to_message:
+    elif len(message.command) == 1 and reply:
         user = message.reply_to_message.from_user.id
     else:
         return await message.reply_text(
