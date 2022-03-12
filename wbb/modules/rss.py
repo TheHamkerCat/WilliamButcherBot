@@ -95,7 +95,7 @@ async def add_feed_func(_, m: Message):
         await m.reply(feed.parsed(), disable_web_page_preview=True)
     except Exception:
         return await m.reply(ns)
-    await add_rss_feed(chat_id, feed.url, feed.title)
+    await add_rss_feed(chat_id, parsed.url, feed.title)
 
 
 @app.on_message(filters.command("rm_feed"))
