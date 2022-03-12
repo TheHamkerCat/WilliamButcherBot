@@ -366,10 +366,7 @@ async def add_served_user(user_id: int):
 
 
 async def get_gbans_count() -> int:
-    total_banned = 0
-    async for user in gbansdb.find({"user_id": {"$gt": 0}}):
-        total_banned += 1
-    return total_banned
+    return len([i async for i in gbansdb.find({"user_id": {"$gt": 0}})])
 
 
 async def is_gbanned_user(user_id: int) -> bool:
@@ -748,7 +745,4 @@ async def get_rss_feeds() -> list:
 
 
 async def get_rss_feeds_count() -> int:
-    total_feeds = 0
-    async for feeds in rssdb.find({"chat_id": {"$exists": 1}}):
-        total_feeds += 1
-    return total_feeds
+    return len([i async for i in rssdb.find({"chat_id": {"$exists": 1}})])
