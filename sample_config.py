@@ -42,7 +42,7 @@ else:
     WELCOME_DELAY_KICK_SEC = 300
     MONGO_URL = "mongodb+srv://username:password@cluster0.ksiis.mongodb.net/YourDataBaseName?retryWrites=true&w=majority"
     ARQ_API_KEY = "Get this from @ARQRobot"
-    ARQ_API_URL = "https://thearq.tech"
+    ARQ_API_URL = "https://arq.hamker.in"
     LOG_MENTIONS = True
     RSS_DELAY = 300  # In seconds
     PM_PERMIT = True

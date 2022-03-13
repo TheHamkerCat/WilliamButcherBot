@@ -52,7 +52,7 @@
         },
         "ARQ_API_URL": {
             "description": "For Music Downloading And Many More Things... Don't change this value",
-            "value": "https://thearq.tech",
+            "value": "https://arq.hamker.in",
             "required": true
         },
         "MESSAGE_DUMP_CHAT": {
