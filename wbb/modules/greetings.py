@@ -201,7 +201,9 @@ async def welcome(_, message: Message):
         await asyncio.sleep(0.5)
 
 
-async def send_welcome_message(chat: Chat, user_id: int):
+async def send_welcome_message(
+        chat: Chat, user_id: int, delete: bool = False
+        ):
     raw_text = await get_welcome(chat.id)
 
     if not raw_text:
@@ -214,12 +216,16 @@ async def send_welcome_message(chat: Chat, user_id: int):
     if "{name}" in text:
         text = text.replace("{name}", (await app.get_users(user_id)).mention)
 
-    await app.send_message(
-        chat.id,
-        text=text,
-        reply_markup=keyb,
-        disable_web_page_preview=True,
-    )
+    async def _send_wait_delete():
+        m = await app.send_message(
+            chat.id,
+            text=text,
+            reply_markup=keyb,
+            disable_web_page_preview=True,
+        )
+        await asyncio.sleep(300)
+        await m.delete()
+    asyncio.create_task(_send_wait_delete())
 
 
 @app.on_callback_query(filters.regex("pressed_button"))
@@ -295,7 +301,7 @@ async def callback_query_welcome_button(_, callback_query):
     # send captcha to this user when he joins again.
     await save_captcha_solved(chat.id, pending_user_id)
 
-    return await send_welcome_message(chat, pending_user_id)
+    return await send_welcome_message(chat, pending_user_id, True)
 
 
 async def kick_restricted_after_delay(
