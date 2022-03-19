@@ -21,6 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from re import MULTILINE as RE_MULTILINE
+
 from pyrogram import filters
 from pyrogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                             InputMediaPhoto, InputMediaVideo, Message)
@@ -37,7 +39,7 @@ RICE_CHANNEL = "RiceGallery"
 @app.on_message(
     filters.chat(RICE_GROUP)
     & (filters.photo | filters.video | filters.document)
-    & filters.regex(r"^\[RICE\] ")
+    & filters.regex(r"^\[RICE\]", RE_MULTILINE)
     & ~filters.forwarded
     & ~filters.edited
 )
