@@ -2,9 +2,10 @@ from asyncio import get_event_loop, sleep
 
 from feedparser import parse
 from pyrogram import filters
+from pyrogram.errors import ChannelInvalid, ChannelPrivate
 from pyrogram.types import Message
 
-from wbb import RSS_DELAY, app
+from wbb import RSS_DELAY, app, log
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.dbfunctions import (add_rss_feed, get_rss_feeds, is_rss_active,
                                    remove_rss_feed, update_rss_feed)
@@ -34,8 +35,8 @@ async def rss_worker():
         loop = get_event_loop()
 
         for _feed in feeds:
+            chat = _feed["chat_id"]
             try:
-                chat = _feed["chat_id"]
                 url = _feed["url"]
                 last_title = _feed.get("last_title")
 
@@ -49,8 +50,11 @@ async def rss_worker():
                     chat, feed.parsed(), disable_web_page_preview=True
                 )
                 await update_rss_feed(chat, feed.title)
+            except (ChannelInvalid, ChannelPrivate):
+                await remove_rss_feed(chat)
+                log.info(f"Removed RSS Feed from {chat} (Invalid Chat)")
             except Exception as e:
-                print(str(e), f"RSS {chat}")
+                log.info(f"RSS in {chat}: {str(e)}")
                 pass
         await sleep(RSS_DELAY)
 
