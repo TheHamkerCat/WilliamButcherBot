@@ -77,7 +77,6 @@ sends /rules, he'll get the message
 Checkout /markdownhelp to know more about formattings and other syntax.
 """
 
-
 answers_dicc = []
 loop = asyncio.get_running_loop()
 
@@ -239,14 +238,22 @@ async def callback_query_welcome_button(_, callback_query):
     pending_user_id = int(data.split(None, 2)[2])
     button_message = callback_query.message
     answer = data.split(None, 2)[1]
+
+    correct_answer = None
+    keyboard = None
+
     if len(answers_dicc) != 0:
         for i in answers_dicc:
             if (
-                i["user_id"] == pending_user_id
-                and i["chat_id"] == button_message.chat.id
+                    i["user_id"] == pending_user_id
+                    and i["chat_id"] == button_message.chat.id
             ):
                 correct_answer = i["answer"]
                 keyboard = i["keyboard"]
+
+    if not (correct_answer and keyboard):
+        return await callback_query.answer("Something went wrong, Rejoin the "
+                                           "chat!")
 
     if pending_user_id != pressed_user_id:
         return await callback_query.answer("This is not for you")
@@ -255,8 +262,8 @@ async def callback_query_welcome_button(_, callback_query):
         await callback_query.answer("Yeah, It's Wrong.")
         for iii in answers_dicc:
             if (
-                iii["user_id"] == pending_user_id
-                and iii["chat_id"] == button_message.chat.id
+                    iii["user_id"] == pending_user_id
+                    and iii["chat_id"] == button_message.chat.id
             ):
                 attempts = iii["attempts"]
                 if attempts >= 3:
@@ -288,8 +295,8 @@ async def callback_query_welcome_button(_, callback_query):
     if len(answers_dicc) != 0:
         for ii in answers_dicc:
             if (
-                ii["user_id"] == pending_user_id
-                and ii["chat_id"] == button_message.chat.id
+                    ii["user_id"] == pending_user_id
+                    and ii["chat_id"] == button_message.chat.id
             ):
                 answers_dicc.remove(ii)
                 await update_captcha_cache(answers_dicc)
@@ -304,7 +311,7 @@ async def callback_query_welcome_button(_, callback_query):
 
 
 async def kick_restricted_after_delay(
-    delay, button_message: Message, user: User
+        delay, button_message: Message, user: User
 ):
     """If the new member is still restricted after the delay, delete
     button message and join message and then kick him
@@ -325,7 +332,7 @@ async def kick_restricted_after_delay(
 
 
 async def _ban_restricted_user_until_date(
-    group_chat, user_id: int, duration: int
+        group_chat, user_id: int, duration: int
 ):
     try:
         member = await group_chat.get_member(user_id)
