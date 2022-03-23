@@ -30,9 +30,9 @@ from pyrogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 
-# NOTE: THIS MODULE IS SPECIFICALLY FOR @DE_WM GROUP, YOU CAN REMOVE IT IN YOUR FORK IF YOU WANT TO
+# NOTE: THIS MODULE IS SPECIFICALLY FOR @PatheticRice GROUP, YOU CAN REMOVE IT IN YOUR FORK IF YOU WANT TO
 
-RICE_GROUP = "DE_WM"
+RICE_GROUP = "PatheticRice"
 RICE_CHANNEL = "RiceGallery"
 
 
