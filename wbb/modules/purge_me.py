@@ -25,7 +25,7 @@ SOFTWARE.
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import USERBOT_ID, USERBOT_PREFIX, app2, eor, telegraph
+from wbb import USERBOT_ID, USERBOT_PREFIX, app2, eor, telegraph, log
 
 __MODULE__ = "Userbot"
 TEXT = """
@@ -79,14 +79,14 @@ TEXT = """
 
 <code>dice</code> → Roll a dice.<br>
 """
-print("[INFO]: Pasting userbot commands on telegraph")
+log.info("Pasting userbot commands on telegraph")
 
 __HELP__ = f"""**Commands:** {telegraph.create_page(
-        "Userbot Commands",
-        html_content=TEXT,
-    )['url']}"""
+    "Userbot Commands",
+    html_content=TEXT,
+)['url']}"""
 
-print("[INFO]: Done pasting userbot commands on telegraph")
+log.info("Done pasting userbot commands on telegraph")
 
 
 @app2.on_message(
@@ -101,7 +101,7 @@ async def get_help(_, message: Message):
 
 
 @app2.on_message(
-    filters.command("purgeme", prefixes=USERBOT_PREFIX)
+    filters.command(["purgeme", "purge_me"], prefixes=USERBOT_PREFIX)
     & filters.user(USERBOT_ID)
 )
 async def purge_me_func(_, message: Message):
@@ -136,7 +136,7 @@ async def purge_me_func(_, message: Message):
     # we have to do it in chunks of 100, i'll choose 99 just
     # to be safe.
     to_delete = [
-        message_ids[i : i + 99] for i in range(0, len(message_ids), 99)
+        message_ids[i: i + 99] for i in range(0, len(message_ids), 99)
     ]
 
     for hundred_messages_or_less in to_delete:

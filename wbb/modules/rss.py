@@ -18,14 +18,14 @@ __HELP__ = f"""
 /rm_feed - Remove feed from chat
 
 **Note:**
-    - This will check for updates every {RSS_DELAY//60} minutes.
+    - This will check for updates every {RSS_DELAY // 60} minutes.
     - You can only add one feed per chat.
     - Currently RSS and ATOM feeds are supported.
 """
 
 
 async def rss_worker():
-    print("[INFO]: RSS WORKER STARTED")
+    log.info("RSS Worker started")
     while True:
         feeds = await get_rss_feeds()
         if not feeds:

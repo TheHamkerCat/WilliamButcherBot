@@ -51,15 +51,36 @@ MOD_NOLOAD = []
 SUDOERS = filters.user()
 bot_start_time = time.time()
 
+
+class Log:
+    def __init__(self, save_to_file=False, file_name="wbb.log"):
+        self.save_to_file = save_to_file
+        self.file_name = file_name
+
+    def info(self, msg):
+        print(f"[+]: {msg}")
+        if self.save_to_file:
+            with open(self.file_name, "a") as f:
+                f.write(f"[INFO]({time.ctime(time.time())}): {msg}\n")
+
+    def error(self, msg):
+        print(f"[-]: {msg}")
+        if self.save_to_file:
+            with open(self.file_name, "a") as f:
+                f.write(f"[ERROR]({time.ctime(time.time())}): {msg}\n")
+
+
+log = Log(True, "bot.log")
+
 # MongoDB client
-print("[INFO]: INITIALIZING DATABASE")
+log.info("Initializing MongoDB client")
 mongo_client = MongoClient(MONGO_URL)
 db = mongo_client.wbb
 
 
 async def load_sudoers():
     global SUDOERS
-    print("[INFO]: LOADING SUDOERS")
+    log.info("Loading sudoers")
     sudoersdb = db.sudoers
     sudoers = await sudoersdb.find_one({"sudo": "sudo"})
     sudoers = [] if not sudoers else sudoers["sudoers"]
@@ -75,7 +96,6 @@ async def load_sudoers():
     if sudoers:
         for user_id in sudoers:
             SUDOERS.add(user_id)
-    print("[INFO]: LOADED SUDOERS")
 
 
 loop = asyncio.get_event_loop()
@@ -97,12 +117,12 @@ arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
 
 app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
 
-print("[INFO]: STARTING BOT CLIENT")
+log.info("Starting bot client")
 app.start()
-print("[INFO]: STARTING USERBOT CLIENT")
+log.info("Starting userbot client")
 app2.start()
 
-print("[INFO]: GATHERING PROFILE INFO")
+log.info("Gathering profile info")
 x = app.get_me()
 y = app2.get_me()
 
@@ -121,6 +141,7 @@ USERBOT_DC_ID = y.dc_id
 if USERBOT_ID not in SUDOERS:
     SUDOERS.add(USERBOT_ID)
 
+log.info("Initializing Telegraph client")
 telegraph = Telegraph()
 telegraph.create_account(short_name=BOT_USERNAME)
 
@@ -133,24 +154,3 @@ async def eor(msg: Message, **kwargs):
     )
     spec = getfullargspec(func.__wrapped__).args
     return await func(**{k: v for k, v in kwargs.items() if k in spec})
-
-
-class Log:
-    def __init__(self, save_to_file=False, file_name="wbb.log"):
-        self.save_to_file = save_to_file
-        self.file_name = file_name
-
-    def info(self, msg):
-        print(f"[+]: {msg}")
-        if self.save_to_file:
-            with open(self.file_name, "a") as f:
-                f.write(f"[INFO]({time.ctime(time.time())}): {msg}\n")
-
-    def error(self, msg):
-        print(f"[-]: {msg}")
-        if self.save_to_file:
-            with open(self.file_name, "a") as f:
-                f.write(f"[ERROR]({time.ctime(time.time())}): {msg}\n")
-
-
-log = Log(True, "bot.log")
