@@ -25,7 +25,7 @@ SOFTWARE.
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import USERBOT_ID, USERBOT_PREFIX, app2, eor, telegraph, log
+from wbb import USERBOT_ID, USERBOT_PREFIX, app2, eor, log, telegraph
 
 __MODULE__ = "Userbot"
 TEXT = """
@@ -136,7 +136,7 @@ async def purge_me_func(_, message: Message):
     # we have to do it in chunks of 100, i'll choose 99 just
     # to be safe.
     to_delete = [
-        message_ids[i: i + 99] for i in range(0, len(message_ids), 99)
+        message_ids[i : i + 99] for i in range(0, len(message_ids), 99)
     ]
 
     for hundred_messages_or_less in to_delete:

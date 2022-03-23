@@ -201,9 +201,7 @@ async def welcome(_, message: Message):
         await asyncio.sleep(0.5)
 
 
-async def send_welcome_message(
-        chat: Chat, user_id: int, delete: bool = False
-        ):
+async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
     raw_text = await get_welcome(chat.id)
 
     if not raw_text:
@@ -225,6 +223,7 @@ async def send_welcome_message(
         )
         await asyncio.sleep(300)
         await m.delete()
+
     asyncio.create_task(_send_wait_delete())
 
 

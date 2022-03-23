@@ -45,9 +45,7 @@ can even delete your account.
 """
 
 
-@app2.on_message(
-    filters.command("useradd", prefixes=USERBOT_PREFIX) & SUDOERS
-)
+@app2.on_message(filters.command("useradd", prefixes=USERBOT_PREFIX) & SUDOERS)
 @capture_err
 async def useradd(_, message: Message):
     if not message.reply_to_message:
@@ -58,28 +56,26 @@ async def useradd(_, message: Message):
     user_id = message.reply_to_message.from_user.id
     umention = (await app2.get_users(user_id)).mention
     sudoers = await get_sudoers()
-    
+
     if user_id in sudoers:
         return await eor(message, text=f"{umention} is already in sudoers.")
     if user_id == BOT_ID:
         return await eor(
             message, text="You can't add assistant bot in sudoers."
         )
-    
+
     await add_sudo(user_id)
-    
+
     if user_id not in SUDOERS:
         SUDOERS.add(user_id)
-    
+
     await eor(
         message,
         text=f"Successfully added {umention} in sudoers.",
     )
 
 
-@app2.on_message(
-    filters.command("userdel", prefixes=USERBOT_PREFIX) & SUDOERS
-)
+@app2.on_message(filters.command("userdel", prefixes=USERBOT_PREFIX) & SUDOERS)
 @capture_err
 async def userdel(_, message: Message):
     if not message.reply_to_message:
@@ -89,24 +85,22 @@ async def userdel(_, message: Message):
         )
     user_id = message.reply_to_message.from_user.id
     umention = (await app2.get_users(user_id)).mention
-    
+
     if user_id not in await get_sudoers():
         return await eor(message, text=f"{umention} is not in sudoers.")
-    
+
     await remove_sudo(user_id)
-    
+
     if user_id in SUDOERS:
         SUDOERS.remove(user_id)
-    
+
     await eor(
         message,
         text=f"Successfully removed {umention} from sudoers.",
     )
 
 
-@app2.on_message(
-    filters.command("sudoers", prefixes=USERBOT_PREFIX) & SUDOERS
-)
+@app2.on_message(filters.command("sudoers", prefixes=USERBOT_PREFIX) & SUDOERS)
 @capture_err
 async def sudoers_list(_, message: Message):
     sudoers = await get_sudoers()

@@ -25,28 +25,16 @@ import asyncio
 from time import time
 
 from pyrogram import filters
-from pyrogram.types import (
-    CallbackQuery,
-    ChatPermissions,
-    Message,
-    ChatMemberUpdated,
-)
+from pyrogram.types import (CallbackQuery, ChatMemberUpdated, ChatPermissions,
+                            Message)
 
 from wbb import BOT_ID, SUDOERS, app, log
 from wbb.core.decorators.errors import capture_err
 from wbb.core.keyboard import ikb
-from wbb.utils.dbfunctions import (
-    add_warn,
-    get_warn,
-    int_to_alpha,
-    remove_warns,
-    save_filter,
-)
-from wbb.utils.functions import (
-    extract_user,
-    extract_user_and_reason,
-    time_converter,
-)
+from wbb.utils.dbfunctions import (add_warn, get_warn, int_to_alpha,
+                                   remove_warns, save_filter)
+from wbb.utils.functions import (extract_user, extract_user_and_reason,
+                                 time_converter)
 
 __MODULE__ = "Admin"
 __HELP__ = """/ban - Ban A User
@@ -315,11 +303,10 @@ async def unban_func(_, message: Message):
     # normal users won't get text_mention if the user
     # they want to unban is not in the group.
     reply = message.reply_to_message
-    
-    if (reply and reply.sender_chat 
-        and reply.sender_chat != message.chat.id):
+
+    if reply and reply.sender_chat and reply.sender_chat != message.chat.id:
         return await message.reply_text("You cannot unban a channel")
-        
+
     if len(message.command) == 2:
         user = message.text.split(None, 1)[1]
     elif len(message.command) == 1 and reply:

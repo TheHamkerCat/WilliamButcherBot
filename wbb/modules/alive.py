@@ -27,9 +27,7 @@ from pyrogram import filters
 from wbb import BOT_ID, SUDOERS, USERBOT_PREFIX, app2
 
 
-@app2.on_message(
-    filters.command("alive", prefixes=USERBOT_PREFIX) & SUDOERS
-)
+@app2.on_message(filters.command("alive", prefixes=USERBOT_PREFIX) & SUDOERS)
 async def alive_command_func(_, message):
     await message.delete()
     results = await app2.get_inline_bot_results(BOT_ID, "alive")

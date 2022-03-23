@@ -8,8 +8,7 @@ from wbb.core.sections import section
 
 
 @app2.on_message(
-    filters.command("parse_preview", prefixes=USERBOT_PREFIX)
-    & SUDOERS
+    filters.command("parse_preview", prefixes=USERBOT_PREFIX) & SUDOERS
 )
 async def parse(_, message: Message):
     r = message.reply_to_message
@@ -18,7 +17,7 @@ async def parse(_, message: Message):
         return await eor(message, text="Reply to a message with a webpage")
 
     m_ = await eor(message, text="Parsing...")
-    
+
     if not r.web_page:
         text = r.text or r.caption
         if text:

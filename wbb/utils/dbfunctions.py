@@ -648,6 +648,7 @@ async def blacklisted_chats() -> list:
         blacklist_chat.append(chat["chat_id"])
     return blacklist_chat
 
+
 async def blacklist_chat(chat_id: int) -> bool:
     if not await blacklist_chatdb.find_one({"chat_id": chat_id}):
         await blacklist_chatdb.insert_one({"chat_id": chat_id})

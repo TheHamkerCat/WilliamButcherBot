@@ -155,7 +155,7 @@ async def url_detector(_, message):
 
     if not text or not user:
         return
-    mods = (await list_admins(chat_id))
+    mods = await list_admins(chat_id)
     if user.id in mods or user.id in SUDOERS:
         return
 

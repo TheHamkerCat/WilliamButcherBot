@@ -39,9 +39,7 @@ from wbb.utils.http import get
 from wbb.utils.inlinefuncs import keywords_list
 
 
-@app.on_message(
-    filters.command("clean_db") & ~filters.edited & SUDOERS
-)
+@app.on_message(filters.command("clean_db") & ~filters.edited & SUDOERS)
 @capture_err
 async def clean_db(_, message):
     served_chats = [int(i["chat_id"]) for i in (await get_served_chats())]
@@ -61,9 +59,7 @@ async def clean_db(_, message):
     await m.edit("**Database Cleaned.**")
 
 
-@app.on_message(
-    filters.command("gstats") & ~filters.edited & SUDOERS
-)
+@app.on_message(filters.command("gstats") & ~filters.edited & SUDOERS)
 @capture_err
 async def global_stats(_, message):
     m = await app.send_message(
