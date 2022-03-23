@@ -33,13 +33,13 @@ from wbb.core.decorators.errors import capture_err
 from wbb.utils.http import post
 
 
-async def take_screenshot(url: str, full: bool = False) -> BytesIO:
+async def take_screenshot(url: str, full: bool = False):
     url = "https://" + url if not url.startswith("http") else url
     payload = {
         "url": url,
         "width": 1920,
         "height": 1080,
-        "scale": 2,
+        "scale": 1,
         "format": "jpeg",
     }
     if full:
