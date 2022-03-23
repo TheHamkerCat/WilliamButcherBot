@@ -27,17 +27,29 @@ from asyncio import gather
 from traceback import format_exc
 
 from pyrogram import filters
-from pyrogram.errors import (PeerIdInvalid, ShortnameOccupyFailed,
-                             StickerEmojiInvalid, StickerPngDimensions,
-                             StickerPngNopng, UserIsBlocked)
+from pyrogram.errors import (
+    PeerIdInvalid,
+    ShortnameOccupyFailed,
+    StickerEmojiInvalid,
+    StickerPngDimensions,
+    StickerPngNopng,
+    UserIsBlocked,
+)
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from wbb import BOT_USERNAME, SUDOERS, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.files import (get_document_from_file_id,
-                             resize_file_to_sticker_size, upload_document)
-from wbb.utils.stickerset import (add_sticker_to_set, create_sticker,
-                                  create_sticker_set, get_sticker_set_by_name)
+from wbb.utils.files import (
+    get_document_from_file_id,
+    resize_file_to_sticker_size,
+    upload_document,
+)
+from wbb.utils.stickerset import (
+    add_sticker_to_set,
+    create_sticker,
+    create_sticker_set,
+    get_sticker_set_by_name,
+)
 
 __MODULE__ = "Stickers"
 __HELP__ = """
@@ -141,8 +153,8 @@ async def kang(client, message: Message):
     if len(args) > 1:
         sticker_emoji = str(args[1])
     elif (
-        message.reply_to_message.sticker
-        and message.reply_to_message.sticker.emoji
+            message.reply_to_message.sticker
+            and message.reply_to_message.sticker.emoji
     ):
         sticker_emoji = message.reply_to_message.sticker.emoji
     else:
@@ -217,12 +229,12 @@ async def kang(client, message: Message):
             elif stickerset.set.count >= MAX_STICKERS:
                 packnum += 1
                 packname = (
-                    "f"
-                    + str(packnum)
-                    + "_"
-                    + str(message.from_user.id)
-                    + "_by_"
-                    + BOT_USERNAME
+                        "f"
+                        + str(packnum)
+                        + "_"
+                        + str(message.from_user.id)
+                        + "_by_"
+                        + BOT_USERNAME
                 )
                 limit += 1
                 continue

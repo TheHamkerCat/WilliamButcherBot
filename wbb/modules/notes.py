@@ -29,8 +29,12 @@ from wbb import SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.keyboard import ikb
-from wbb.utils.dbfunctions import (delete_note, get_note, get_note_names,
-                                   save_note)
+from wbb.utils.dbfunctions import (
+    delete_note,
+    get_note,
+    get_note_names,
+    save_note,
+)
 from wbb.utils.functions import extract_text_and_keyb
 
 __MODULE__ = "Notes"
@@ -57,8 +61,8 @@ async def save_notee(_, message):
         )
 
     elif (
-        not message.reply_to_message.text
-        and not message.reply_to_message.sticker
+            not message.reply_to_message.text
+            and not message.reply_to_message.sticker
     ):
         await eor(
             message,

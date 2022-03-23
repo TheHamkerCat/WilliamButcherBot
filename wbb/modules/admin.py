@@ -25,16 +25,28 @@ import asyncio
 from time import time
 
 from pyrogram import filters
-from pyrogram.types import (CallbackQuery, ChatMemberUpdated, ChatPermissions,
-                            Message)
+from pyrogram.types import (
+    CallbackQuery,
+    ChatMemberUpdated,
+    ChatPermissions,
+    Message,
+)
 
 from wbb import BOT_ID, SUDOERS, app, log
 from wbb.core.decorators.errors import capture_err
 from wbb.core.keyboard import ikb
-from wbb.utils.dbfunctions import (add_warn, get_warn, int_to_alpha,
-                                   remove_warns, save_filter)
-from wbb.utils.functions import (extract_user, extract_user_and_reason,
-                                 time_converter)
+from wbb.utils.dbfunctions import (
+    add_warn,
+    get_warn,
+    int_to_alpha,
+    remove_warns,
+    save_filter,
+)
+from wbb.utils.functions import (
+    extract_user,
+    extract_user_and_reason,
+    time_converter,
+)
 
 __MODULE__ = "Admin"
 __HELP__ = """/ban - Ban A User
@@ -168,8 +180,8 @@ async def purgeFunc(_, message: Message):
     message_ids = []
 
     for message_id in range(
-        message.reply_to_message.message_id,
-        message.message_id,
+            message.reply_to_message.message_id,
+            message.message_id,
     ):
         message_ids.append(message_id)
 
@@ -654,8 +666,8 @@ async def check_warns(_, message: Message):
 
 @app.on_message(
     (
-        filters.command("report")
-        | filters.command(["admins", "admin"], prefixes="@")
+            filters.command("report")
+            | filters.command(["admins", "admin"], prefixes="@")
     )
     & ~filters.edited
     & ~filters.private

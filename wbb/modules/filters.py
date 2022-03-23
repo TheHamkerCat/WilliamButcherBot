@@ -29,8 +29,12 @@ from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.keyboard import ikb
-from wbb.utils.dbfunctions import (delete_filter, get_filter,
-                                   get_filters_names, save_filter)
+from wbb.utils.dbfunctions import (
+    delete_filter,
+    get_filter,
+    get_filters_names,
+    save_filter,
+)
 from wbb.utils.filter_groups import chat_filters_group
 from wbb.utils.functions import extract_text_and_keyb
 
@@ -54,8 +58,8 @@ async def save_filters(_, message):
             "**Usage:**\nReply to a text or sticker with /filter [FILTER_NAME] to save it."
         )
     if (
-        not message.reply_to_message.text
-        and not message.reply_to_message.sticker
+            not message.reply_to_message.text
+            and not message.reply_to_message.sticker
     ):
         return await message.reply_text(
             "__**You can only save text or stickers in filters.**__"

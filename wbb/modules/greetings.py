@@ -28,20 +28,36 @@ from datetime import datetime
 from random import shuffle
 
 from pyrogram import filters
-from pyrogram.errors.exceptions.bad_request_400 import (ChatAdminRequired,
-                                                        UserNotParticipant)
-from pyrogram.types import (Chat, ChatPermissions, InlineKeyboardButton,
-                            InlineKeyboardMarkup, Message, User)
+from pyrogram.errors.exceptions.bad_request_400 import (
+    ChatAdminRequired,
+    UserNotParticipant,
+)
+from pyrogram.types import (
+    Chat,
+    ChatPermissions,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+    User,
+)
 
 from wbb import SUDOERS, WELCOME_DELAY_KICK_SEC, app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.keyboard import ikb
-from wbb.utils.dbfunctions import (captcha_off, captcha_on, del_welcome,
-                                   get_captcha_cache, get_welcome,
-                                   has_solved_captcha_once, is_captcha_on,
-                                   is_gbanned_user, save_captcha_solved,
-                                   set_welcome, update_captcha_cache)
+from wbb.utils.dbfunctions import (
+    captcha_off,
+    captcha_on,
+    del_welcome,
+    get_captcha_cache,
+    get_welcome,
+    has_solved_captcha_once,
+    is_captcha_on,
+    is_gbanned_user,
+    save_captcha_solved,
+    set_welcome,
+    update_captcha_cache,
+)
 from wbb.utils.filter_groups import welcome_captcha_group
 from wbb.utils.functions import extract_text_and_keyb, generate_captcha
 
@@ -252,8 +268,9 @@ async def callback_query_welcome_button(_, callback_query):
                 keyboard = i["keyboard"]
 
     if not (correct_answer and keyboard):
-        return await callback_query.answer("Something went wrong, Rejoin the "
-                                           "chat!")
+        return await callback_query.answer(
+            "Something went wrong, Rejoin the " "chat!"
+        )
 
     if pending_user_id != pressed_user_id:
         return await callback_query.answer("This is not for you")

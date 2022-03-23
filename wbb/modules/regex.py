@@ -10,7 +10,6 @@ from wbb.utils.filter_groups import regex_group
 __MODULE__ = "Sed"
 __HELP__ = "**Usage:**\ns/foo/bar"
 
-
 DELIMITERS = ("/", ":", "|", "_")
 
 
@@ -80,9 +79,9 @@ def infinite_checker(repl):
 
 def separate_sed(sed_string):
     if (
-        len(sed_string) >= 3
-        and sed_string[1] in DELIMITERS
-        and sed_string.count(sed_string[1]) >= 2
+            len(sed_string) >= 3
+            and sed_string[1] in DELIMITERS
+            and sed_string.count(sed_string[1]) >= 2
     ):
         delim = sed_string[1]
         start = counter = 2
@@ -102,11 +101,11 @@ def separate_sed(sed_string):
             return None
         while counter < len(sed_string):
             if (
-                sed_string[counter] == "\\"
-                and counter + 1 < len(sed_string)
-                and sed_string[counter + 1] == delim
+                    sed_string[counter] == "\\"
+                    and counter + 1 < len(sed_string)
+                    and sed_string[counter + 1] == delim
             ):
-                sed_string = sed_string[:counter] + sed_string[counter + 1 :]
+                sed_string = sed_string[:counter] + sed_string[counter + 1:]
 
             elif sed_string[counter] == delim:
                 replace_with = sed_string[start:counter]

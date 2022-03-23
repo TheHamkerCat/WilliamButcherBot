@@ -592,8 +592,8 @@ async def deactivate_pipe(from_chat_id: int, to_chat_id: int):
         return
     for pipe in pipes:
         if (
-            pipe["from_chat_id"] == from_chat_id
-            and pipe["to_chat_id"] == to_chat_id
+                pipe["from_chat_id"] == from_chat_id
+                and pipe["to_chat_id"] == to_chat_id
         ):
             pipes.remove(pipe)
     return await pipesdb.update_one(
@@ -604,8 +604,8 @@ async def deactivate_pipe(from_chat_id: int, to_chat_id: int):
 async def is_pipe_active(from_chat_id: int, to_chat_id: int) -> bool:
     for pipe in await show_pipes():
         if (
-            pipe["from_chat_id"] == from_chat_id
-            and pipe["to_chat_id"] == to_chat_id
+                pipe["from_chat_id"] == from_chat_id
+                and pipe["to_chat_id"] == to_chat_id
         ):
             return True
 

@@ -37,17 +37,17 @@ def __list_all_modules():
         basename(f)[:-3]
         for f in mod_paths
         if isfile(f)
-        and f.endswith(".py")
-        and not f.endswith("__init__.py")
-        and not f.endswith("__main__.py")
+           and f.endswith(".py")
+           and not f.endswith("__init__.py")
+           and not f.endswith("__main__.py")
     ]
 
     if MOD_LOAD or MOD_NOLOAD:
         to_load = MOD_LOAD
         if to_load:
             if not all(
-                any(mod == module_name for module_name in all_modules)
-                for mod in to_load
+                    any(mod == module_name for module_name in all_modules)
+                    for mod in to_load
             ):
                 sys.exit()
 

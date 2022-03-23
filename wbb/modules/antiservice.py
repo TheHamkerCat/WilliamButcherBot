@@ -5,8 +5,11 @@ from pyrogram import filters
 
 from wbb import app
 from wbb.core.decorators.permissions import adminsOnly
-from wbb.utils.dbfunctions import (antiservice_off, antiservice_on,
-                                   is_antiservice_on)
+from wbb.utils.dbfunctions import (
+    antiservice_off,
+    antiservice_on,
+    is_antiservice_on,
+)
 
 __MODULE__ = "AntiService"
 __HELP__ = """

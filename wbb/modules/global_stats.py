@@ -29,12 +29,18 @@ from pyrogram.errors import FloodWait
 from wbb import BOT_ID, BOT_NAME, SUDOERS, USERBOT_NAME, app, app2
 from wbb.core.decorators.errors import capture_err
 from wbb.modules import ALL_MODULES
-from wbb.utils.dbfunctions import (get_blacklist_filters_count,
-                                   get_filters_count, get_gbans_count,
-                                   get_karmas_count, get_notes_count,
-                                   get_rss_feeds_count, get_served_chats,
-                                   get_served_users, get_warns_count,
-                                   remove_served_chat)
+from wbb.utils.dbfunctions import (
+    get_blacklist_filters_count,
+    get_filters_count,
+    get_gbans_count,
+    get_karmas_count,
+    get_notes_count,
+    get_rss_feeds_count,
+    get_served_chats,
+    get_served_users,
+    get_warns_count,
+    remove_served_chat,
+)
 from wbb.utils.http import get
 from wbb.utils.inlinefuncs import keywords_list
 
@@ -44,7 +50,7 @@ from wbb.utils.inlinefuncs import keywords_list
 async def clean_db(_, message):
     served_chats = [int(i["chat_id"]) for i in (await get_served_chats())]
     m = await message.reply(
-        f"__**Cleaning database, Might take around {len(served_chats)*2} seconds.**__",
+        f"__**Cleaning database, Might take around {len(served_chats) * 2} seconds.**__",
     )
     for served_chat in served_chats:
         try:

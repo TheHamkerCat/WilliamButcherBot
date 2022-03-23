@@ -35,13 +35,26 @@ from pykeyboard import InlineKeyboard
 from pyrogram import __version__ as pyrover
 from pyrogram import filters
 from pyrogram.raw.functions import Ping
-from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
-                            InlineQueryResultArticle, InlineQueryResultPhoto,
-                            InputTextMessageContent)
+from pyrogram.types import (
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineQueryResultArticle,
+    InlineQueryResultPhoto,
+    InputTextMessageContent,
+)
 from search_engine_parser import GoogleSearch
 
-from wbb import (BOT_USERNAME, MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_ID,
-                 USERBOT_NAME, USERBOT_USERNAME, app, app2, arq)
+from wbb import (
+    BOT_USERNAME,
+    MESSAGE_DUMP_CHAT,
+    SUDOERS,
+    USERBOT_ID,
+    USERBOT_NAME,
+    USERBOT_USERNAME,
+    app,
+    app2,
+    arq,
+)
 from wbb.core.keyboard import ikb
 from wbb.core.tasks import _get_tasks_text, all_tasks, rm_task
 from wbb.core.types import InlineQueryResultCachedDocument
@@ -753,12 +766,12 @@ async def execute_code(query):
     languages = (await arq.execute()).result
     if len(text.split()) == 1:
         answers = [
-            InlineQueryResultArticle(
-                title=lang,
-                input_message_content=InputTextMessageContent(lang),
-            )
-            for lang in languages
-        ][offset : offset + 25]
+                      InlineQueryResultArticle(
+                          title=lang,
+                          input_message_content=InputTextMessageContent(lang),
+                      )
+                      for lang in languages
+                  ][offset: offset + 25]
         await query.answer(
             next_offset=str(offset + 25),
             results=answers,

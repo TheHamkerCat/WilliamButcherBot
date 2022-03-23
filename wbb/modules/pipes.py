@@ -157,7 +157,7 @@ async def show_pipes_func(_, message: Message):
     text = ""
     for count, pipe in enumerate(pipes_list_bot.items(), 1):
         text += (
-            f"**Pipe:** `{count}`\n**From:** `{pipe[0]}`\n"
-            + f"**To:** `{pipe[1]}`\n\n"
+                f"**Pipe:** `{count}`\n**From:** `{pipe[0]}`\n"
+                + f"**To:** `{pipe[1]}`\n\n"
         )
     await message.reply_text(text)

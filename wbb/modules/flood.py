@@ -25,9 +25,13 @@ from asyncio import get_running_loop, sleep
 from time import time
 
 from pyrogram import filters
-from pyrogram.types import (CallbackQuery, ChatPermissions,
-                            InlineKeyboardButton, InlineKeyboardMarkup,
-                            Message)
+from pyrogram.types import (
+    CallbackQuery,
+    ChatPermissions,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+)
 
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
@@ -42,7 +46,6 @@ Anti-Flood system, the one who sends more than 10 messages in a row, gets muted 
 
 /flood [ENABLE|DISABLE] - Turn flood detection on or off
 """
-
 
 DB = {}  # TODO Use mongodb instead of a fucking dict.
 

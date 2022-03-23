@@ -64,7 +64,7 @@ __HELP__ = """
 /arq
     Statistics Of ARQ API.
 
-/webss [URL]
+/webss | .webss [URL] [FULL_SIZE?, use (y|yes|true) to get full size image. (optional)]
     Take A Screenshot Of A Webpage
 
 /reverse
@@ -237,23 +237,6 @@ async def json_fetch(_, message):
             )
     except Exception as e:
         await m.edit(str(e))
-
-
-@app.on_message(filters.command("webss"))
-@capture_err
-async def take_ss(_, message):
-    if len(message.command) != 2:
-        return await message.reply_text("Give A Url To Fetch Screenshot.")
-    url = message.text.split(None, 1)[1]
-    m = await message.reply_text("**Uploading**")
-    try:
-        await app.send_photo(
-            message.chat.id,
-            photo=f"https://webshot.amanoteam.com/print?q={url}",
-        )
-    except Exception:
-        return await m.edit("No Such Website.")
-    await m.delete()
 
 
 @app.on_message(filters.command(["kickme", "banme"]))

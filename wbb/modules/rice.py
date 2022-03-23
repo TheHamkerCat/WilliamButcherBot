@@ -24,8 +24,13 @@ SOFTWARE.
 from re import MULTILINE as RE_MULTILINE
 
 from pyrogram import filters
-from pyrogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
-                            InputMediaPhoto, InputMediaVideo, Message)
+from pyrogram.types import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    InputMediaPhoto,
+    InputMediaVideo,
+    Message,
+)
 
 from wbb import app
 from wbb.core.decorators.errors import capture_err

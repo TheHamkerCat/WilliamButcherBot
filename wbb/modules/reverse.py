@@ -54,11 +54,11 @@ async def reverse_image_search(client, message: Message):
         )
     reply = message.reply_to_message
     if (
-        not reply.document
-        and not reply.photo
-        and not reply.sticker
-        and not reply.animation
-        and not reply.video
+            not reply.document
+            and not reply.photo
+            and not reply.sticker
+            and not reply.animation
+            and not reply.video
     ):
         return await eor(
             message,

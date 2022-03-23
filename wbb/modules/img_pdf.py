@@ -36,10 +36,10 @@ from wbb.core.sections import section
 
 
 async def convert(
-    main_message: Message,
-    reply_messages,
-    status_message: Message,
-    start_time: float,
+        main_message: Message,
+        reply_messages,
+        status_message: Message,
+        start_time: float,
 ):
     m = status_message
 
@@ -78,7 +78,7 @@ async def convert(
             "IMG2PDF",
             body={
                 "Title": pdf.name,
-                "Size": f"{pdf.__sizeof__() / (10**6)}MB",
+                "Size": f"{pdf.__sizeof__() / (10 ** 6)}MB",
                 "Pages": len(documents),
                 "Took": f"{elapsed}s",
             },

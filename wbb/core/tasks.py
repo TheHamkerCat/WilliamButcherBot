@@ -17,12 +17,11 @@ def all_tasks():
 
 
 async def add_task(
-    taskFunc,
-    task_name,
-    *args,
-    **kwargs,
+        taskFunc,
+        task_name,
+        *args,
+        **kwargs,
 ):
-
     async with TASKS_LOCK:
         global tasks
 

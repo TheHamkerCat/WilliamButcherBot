@@ -27,7 +27,7 @@ from pyrogram import Client, errors, raw
 
 
 async def get_sticker_set_by_name(
-    client: Client, name: str
+        client: Client, name: str
 ) -> raw.base.messages.StickerSet:
     try:
         return await client.send(
@@ -46,11 +46,11 @@ async def get_sticker_set_by_name(
 
 
 async def create_sticker_set(
-    client: Client,
-    owner: int,
-    title: str,
-    short_name: str,
-    stickers: List[raw.base.InputStickerSetItem],
+        client: Client,
+        owner: int,
+        title: str,
+        short_name: str,
+        stickers: List[raw.base.InputStickerSetItem],
 ) -> raw.base.messages.StickerSet:
     return await client.send(
         raw.functions.stickers.CreateStickerSet(
@@ -63,9 +63,9 @@ async def create_sticker_set(
 
 
 async def add_sticker_to_set(
-    client: Client,
-    stickerset: raw.base.messages.StickerSet,
-    sticker: raw.base.InputStickerSetItem,
+        client: Client,
+        stickerset: raw.base.messages.StickerSet,
+        sticker: raw.base.InputStickerSetItem,
 ) -> raw.base.messages.StickerSet:
     return await client.send(
         raw.functions.stickers.AddStickerToSet(
@@ -78,6 +78,6 @@ async def add_sticker_to_set(
 
 
 async def create_sticker(
-    sticker: raw.base.InputDocument, emoji: str
+        sticker: raw.base.InputDocument, emoji: str
 ) -> raw.base.InputStickerSetItem:
     return raw.types.InputStickerSetItem(document=sticker, emoji=emoji)

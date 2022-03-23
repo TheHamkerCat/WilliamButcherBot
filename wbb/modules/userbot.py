@@ -51,9 +51,9 @@ async def iter_edit(message: Message, text: str):
             continue
 
         if (
-            (m.reply_to_message.message_id == message.message_id)
-            and (m.from_user.id == message.from_user.id)
-            and ("→" in m.text)
+                (m.reply_to_message.message_id == message.message_id)
+                and (m.from_user.id == message.from_user.id)
+                and ("→" in m.text)
         ):
             try:
                 return await m.edit(text)
@@ -167,8 +167,8 @@ async def shellrunner(_, message: Message):
     if message.reply_to_message:
         r = message.reply_to_message
         if r.reply_markup and isinstance(
-            r.reply_markup,
-            ReplyKeyboardMarkup,
+                r.reply_markup,
+                ReplyKeyboardMarkup,
         ):
             return await eor(message, text="INSECURE!")
 

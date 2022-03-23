@@ -25,8 +25,16 @@ from pykeyboard import InlineKeyboard
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, Message
 
-from wbb import (BOT_ID, LOG_GROUP_ID, LOG_MENTIONS, USERBOT_ID, USERBOT_NAME,
-                 USERBOT_USERNAME, app, app2)
+from wbb import (
+    BOT_ID,
+    LOG_GROUP_ID,
+    LOG_MENTIONS,
+    USERBOT_ID,
+    USERBOT_NAME,
+    USERBOT_USERNAME,
+    app,
+    app2,
+)
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.filter_groups import taglog_group
 
@@ -77,7 +85,7 @@ async def tagLoggerFunc(_, message: Message):
     if message.reply_to_message:
         reply_message = message.reply_to_message
         if reply_message.from_user and (
-            reply_message.from_user.id == USERBOT_ID
+                reply_message.from_user.id == USERBOT_ID
         ):
             return await sendLog(message)
 
@@ -88,8 +96,8 @@ async def tagLoggerFunc(_, message: Message):
     else:
         return
     if (
-        str(USERBOT_ID) in text
-        or str(USERBOT_USERNAME) in text
-        or USERBOT_NAME in text
+            str(USERBOT_ID) in text
+            or str(USERBOT_USERNAME) in text
+            or USERBOT_NAME in text
     ):
         await sendLog(message)
