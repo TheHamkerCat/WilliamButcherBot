@@ -12,7 +12,7 @@ pykeyboard
 pyrogram
 python-arq
 requests
-search_engine_parser
+search-engine-parser
 speedtest-cli
 TgCrypto
 uvloop
