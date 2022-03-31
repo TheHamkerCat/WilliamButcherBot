@@ -16,6 +16,7 @@ __HELP__ = """
 Plugin to delete service messages in a chat!
 
 /antiservice [enable|disable]
+/captcha [enable|disable] - Enable/Disable captcha.
 """
 
 

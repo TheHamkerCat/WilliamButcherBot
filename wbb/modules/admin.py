@@ -49,7 +49,8 @@ from wbb.utils.functions import (
 )
 
 __MODULE__ = "Admin"
-__HELP__ = """/ban - Ban A User
+__HELP__ = """
+/ban - Ban A User
 /dban - Delete the replied message banning its sender
 /tban - Ban A User For Specific Time
 /unban - Unban A User
