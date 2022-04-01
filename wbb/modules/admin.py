@@ -174,18 +174,29 @@ async def admin_cache_func(_, cmu: ChatMemberUpdated):
 async def purgeFunc(_, message: Message):
     repliedmsg = message.reply_to_message
     await message.delete()
+
     if not repliedmsg:
         return await message.reply_text("Reply to a message to purge from.")
-    splitted = message.text.split(" ")
-    try:count = int(splitted[1]) if len(splitted) > 1 and int(splitted[1]) \
-        + repliedmsg.message_id <= message.message_id else None
-    except ValueError:count = None
+
+    cmd = message.command
+    try:
+
+        if len(cmd) > 1:
+            purge_to = repliedmsg.message_id + int(cmd[1])
+            if purge_to > message.message_id:
+                purge_to = message.message_id
+        else:
+            purge_to = message.message_id
+
+    except ValueError:
+        purge_to = message.message_id
+
     chat_id = message.chat.id
     message_ids = []
 
     for message_id in range(
             repliedmsg.message_id,
-            repliedmsg.message_id + count if count else message.message_id,
+            purge_to,
     ):
         message_ids.append(message_id)
 
