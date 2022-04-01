@@ -179,17 +179,12 @@ async def purgeFunc(_, message: Message):
         return await message.reply_text("Reply to a message to purge from.")
 
     cmd = message.command
-    try:
-
-        if len(cmd) > 1:
-            purge_to = repliedmsg.message_id + int(cmd[1])
-            if purge_to > message.message_id:
-                purge_to = message.message_id
-        else:
+    if len(cmd) > 1 and cmd[1].isdigit():
+        purge_to = repliedmsg.message_id + int(cmd[1])
+        if purge_to > message.message_id:
             purge_to = message.message_id
-
-    except ValueError:
-        purge_to = message.message_id
+    else:
+        purge_to = message.message_id   
 
     chat_id = message.chat.id
     message_ids = []
