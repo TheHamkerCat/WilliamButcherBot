@@ -57,7 +57,7 @@ async def take_screenshot(url: str, full: bool = False):
 
 
 @app2.on_message(filters.command("webss", USERBOT_PREFIX) & SUDOERS)
-@app.on_message(filters.command("webss"))
+@app.on_message(filters.command("webss") & ~filters.edited)
 @capture_err
 async def take_ss(_, message: Message):
     if len(message.command) < 2:

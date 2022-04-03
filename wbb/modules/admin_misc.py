@@ -36,7 +36,11 @@ __HELP__ = """
 """
 
 
-@app.on_message(filters.command("set_chat_title") & ~filters.private)
+@app.on_message(
+    filters.command("set_chat_title")
+    & ~filters.private
+    & ~filters.edited
+)
 @adminsOnly("can_change_info")
 async def set_chat_title(_, message):
     if len(message.command) < 2:
@@ -49,7 +53,11 @@ async def set_chat_title(_, message):
     )
 
 
-@app.on_message(filters.command("set_user_title") & ~filters.private)
+@app.on_message(
+    filters.command("set_user_title")
+    & ~filters.private
+    & ~filters.edited
+)
 @adminsOnly("can_change_info")
 async def set_user_title(_, message):
     if not message.reply_to_message:
@@ -73,7 +81,11 @@ async def set_user_title(_, message):
     )
 
 
-@app.on_message(filters.command("set_chat_photo") & ~filters.private)
+@app.on_message(
+    filters.command("set_chat_photo")
+    & ~filters.private
+    & ~filters.edited
+)
 @adminsOnly("can_change_info")
 async def set_chat_photo(_, message):
     reply = message.reply_to_message

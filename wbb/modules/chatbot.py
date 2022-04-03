@@ -100,7 +100,8 @@ async def type_and_send(message: Message):
     & filters.reply
     & ~filters.bot
     & ~filters.via_bot
-    & ~filters.forwarded,
+    & ~filters.forwarded
+    & ~filters.edited,
     group=chatbot_group,
 )
 @capture_err

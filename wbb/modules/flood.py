@@ -151,7 +151,7 @@ async def flood_callback_func(_, cq: CallbackQuery):
     await cq.message.edit(text)
 
 
-@app.on_message(filters.command("flood") & ~filters.private)
+@app.on_message(filters.command("flood") & ~filters.private & ~filters.edited)
 @adminsOnly("can_change_info")
 async def flood_toggle(_, message: Message):
     if len(message.command) != 2:

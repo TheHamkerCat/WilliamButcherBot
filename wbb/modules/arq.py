@@ -27,7 +27,10 @@ from wbb import app, arq
 from wbb.core.sections import section
 
 
-@app.on_message(filters.command("arq"))
+@app.on_message(
+    filters.command("arq")
+    & ~filters.edited
+)
 async def arq_stats(_, message):
     data = await arq.stats()
     if not data.ok:

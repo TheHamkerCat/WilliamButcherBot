@@ -160,7 +160,7 @@ async def commit(_, message):
     await message.reply_text(await get("http://whatthecommit.com/index.txt"))
 
 
-@app.on_message(filters.command("RTFM", "#"))
+@app.on_message(filters.command("RTFM", "#") & ~filters.edited)
 async def rtfm(_, message):
     await message.delete()
     if not message.reply_to_message:

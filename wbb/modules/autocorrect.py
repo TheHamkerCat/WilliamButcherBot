@@ -6,7 +6,10 @@ from wbb.modules.userbot import eor
 from wbb.utils.filter_groups import autocorrect_group
 
 
-@app.on_message(filters.command("autocorrect"))
+@app.on_message(
+    filters.command("autocorrect")
+    & ~filters.edited
+)
 async def autocorrect_bot(_, message: Message):
     if not message.reply_to_message:
         return await message.reply_text("Reply to a text message.")

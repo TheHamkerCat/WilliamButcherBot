@@ -43,7 +43,7 @@ def convert(text):
     return audio
 
 
-@app.on_message(filters.command("tts"))
+@app.on_message(filters.command("tts") & ~filters.edited)
 async def text_to_speech(_, message: Message):
     if not message.reply_to_message:
         return await message.reply_text("Reply to some text ffs.")

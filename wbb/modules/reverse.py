@@ -45,7 +45,7 @@ async def get_soup(url: str, headers):
 
 
 @app2.on_message(filters.command("reverse", prefixes=USERBOT_PREFIX) & SUDOERS)
-@app.on_message(filters.command("reverse"))
+@app.on_message(filters.command("reverse") & ~filters.edited)
 @capture_err
 async def reverse_image_search(client, message: Message):
     if not message.reply_to_message:

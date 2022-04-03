@@ -70,7 +70,7 @@ loop = get_event_loop()
 loop.create_task(rss_worker())
 
 
-@app.on_message(filters.command("add_feed"))
+@app.on_message(filters.command("add_feed") & ~filters.edited)
 @capture_err
 async def add_feed_func(_, m: Message):
     if len(m.command) != 2:
@@ -109,7 +109,7 @@ async def add_feed_func(_, m: Message):
     await add_rss_feed(chat_id, parsed.url, feed.title)
 
 
-@app.on_message(filters.command("rm_feed"))
+@app.on_message(filters.command("rm_feed") & ~filters.edited)
 async def rm_feed_func(_, m: Message):
     if await is_rss_active(m.chat.id):
         await remove_rss_feed(m.chat.id)

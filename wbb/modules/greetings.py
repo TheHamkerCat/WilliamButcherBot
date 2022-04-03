@@ -360,7 +360,8 @@ async def _ban_restricted_user_until_date(
         pass
 
 
-@app.on_message(filters.command("captcha") & ~filters.private)
+@app.on_message(
+    filters.command("captcha") & ~filters.private & ~filters.edited)
 @adminsOnly("can_restrict_members")
 async def captcha_state(_, message):
     usage = "**Usage:**\n/captcha [ENABLE|DISABLE]"
@@ -383,7 +384,8 @@ async def captcha_state(_, message):
 # WELCOME MESSAGE
 
 
-@app.on_message(filters.command("set_welcome") & ~filters.private)
+@app.on_message(
+    filters.command("set_welcome") & ~filters.private & ~filters.edited)
 @adminsOnly("can_change_info")
 async def set_welcome_func(_, message):
     usage = "You need to reply to a text, check the Greetings module in /help"
@@ -401,7 +403,8 @@ async def set_welcome_func(_, message):
     await message.reply_text("Welcome message has been successfully set.")
 
 
-@app.on_message(filters.command("del_welcome") & ~filters.private)
+@app.on_message(
+    filters.command("del_welcome") & ~filters.private & ~filters.edited)
 @adminsOnly("can_change_info")
 async def del_welcome_func(_, message):
     chat_id = message.chat.id
@@ -409,7 +412,8 @@ async def del_welcome_func(_, message):
     await message.reply_text("Welcome message has been deleted.")
 
 
-@app.on_message(filters.command("get_welcome") & ~filters.private)
+@app.on_message(
+    filters.command("get_welcome") & ~filters.private & ~filters.edited)
 @adminsOnly("can_change_info")
 async def get_welcome_func(_, message):
     chat = message.chat

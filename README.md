@@ -122,7 +122,7 @@ __MODULE__ = "Module Name"
 __HELP__ = "Module help message"
 
 
-@app.on_message(filters.command("start"))
+@app.on_message(~filters.edited & filters.command("start"))
 async def some_function(_, message):
     await message.reply_text("I'm already up!!")
 
