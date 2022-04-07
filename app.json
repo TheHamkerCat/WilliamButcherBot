@@ -27,8 +27,8 @@
             "required": true
         },
         "SESSION_STRING": {
-            "description": "Need for Userbot Module So u can execute .sh & .l cmd",
-            "required": false
+            "description": "Need for Userbot Module So u can execute .sh & .l cmd. Get it from https://replit.com/@herokumirror/generatestringsession?v=1",
+            "required": true
         },
         "SUDO_USERS_ID": {
             "description": "Sudo users have full access to everythin, don't trust anyone... ex:- 123456 654311 123456",
