@@ -28,7 +28,7 @@
         },
         "SESSION_STRING": {
             "description": "Need for Userbot Module So u can execute .sh & .l cmd",
-            "required": false
+            "required": true
         },
         "SUDO_USERS_ID": {
             "description": "Sudo users have full access to everythin, don't trust anyone... ex:- 123456 654311 123456",
