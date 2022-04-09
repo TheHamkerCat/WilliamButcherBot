@@ -102,7 +102,8 @@ PING_LOCK = Lock()
 
 
 @app2.on_message(
-    filters.command("ping", prefixes=USERBOT_PREFIX)
+    SUDOERS
+    & filters.command("ping", prefixes=USERBOT_PREFIX)
     & ~filters.edited
 )
 @app.on_message(filters.command("ping") & ~filters.edited)
