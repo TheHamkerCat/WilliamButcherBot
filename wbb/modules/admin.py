@@ -712,7 +712,7 @@ async def report_user(_, message):
                 "Do you know that the user you are replying is an admin ?"
             )
 
-    user_mention = message.reply_to_message.from_user.mention
+    user_mention = reply.from_user.mention if reply.from_user else reply.sender_chat.title
     text = f"Reported {user_mention} to admins!"
     admin_data = await app.get_chat_members(
         chat_id=message.chat.id, filter="administrators"
