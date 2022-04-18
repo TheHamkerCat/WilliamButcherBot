@@ -693,14 +693,24 @@ async def report_user(_, message):
             "Reply to a message to report that user."
         )
 
-    if message.reply_to_message.from_user.id == message.from_user.id:
+    reply = message.reply_to_message
+    reply_id = reply.from_user.id if reply.from_user else reply.sender_chat.id
+    user_id = message.from_user.id if message.from_user else message.sender_chat.id
+    if reply_id == user_id:
         return await message.reply_text("Why are you reporting yourself ?")
 
     list_of_admins = await list_admins(message.chat.id)
-    if message.reply_to_message.from_user.id in list_of_admins:
-        return await message.reply_text(
-            "Do you know that the user you are replying is an admin ?"
-        )
+    linked_chat = (await app.get_chat(message.chat.id)).linked_chat
+    if linked_chat is not None:
+        if reply_id in list_of_admins or reply_id == message.chat.id or reply_id == linked_chat.id:
+            return await message.reply_text(
+                "Do you know that the user you are replying is an admin ?"
+            )
+    else:
+        if reply_id in list_of_admins or reply_id == message.chat.id:
+            return await message.reply_text(
+                "Do you know that the user you are replying is an admin ?"
+            )
 
     user_mention = message.reply_to_message.from_user.mention
     text = f"Reported {user_mention} to admins!"
