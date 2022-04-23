@@ -66,7 +66,6 @@ async def pmpermit_func(_, message):
         user_id,
         results.query_id,
         results.results[0].id,
-        hide_via=True,
     )
 
 
