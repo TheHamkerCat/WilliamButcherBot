@@ -37,7 +37,7 @@ from wbb.core.decorators.errors import capture_err
 
 # NOTE: THIS MODULE IS SPECIFICALLY FOR @PatheticRice GROUP, YOU CAN REMOVE IT IN YOUR FORK IF YOU WANT TO
 
-RICE_GROUP = "PatheticRice"
+RICE_GROUP = "PatheticRicers"
 RICE_CHANNEL = "RiceGallery"
 
 
