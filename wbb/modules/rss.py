@@ -3,7 +3,8 @@ from asyncio import get_event_loop, sleep
 from feedparser import parse
 from pyrogram import filters
 from pyrogram.errors import (
-    ChannelInvalid, ChannelPrivate, InputUserDeactivated
+    ChannelInvalid, ChannelPrivate, InputUserDeactivated,
+    UserIsBlocked
 )
 from pyrogram.types import Message
 
@@ -57,7 +58,9 @@ async def rss_worker():
                     chat, feed.parsed(), disable_web_page_preview=True
                 )
                 await update_rss_feed(chat, feed.title)
-            except (ChannelInvalid, ChannelPrivate, InputUserDeactivated):
+            except (
+                    ChannelInvalid, ChannelPrivate, InputUserDeactivated,
+                    UserIsBlocked):
                 await remove_rss_feed(chat)
                 log.info(f"Removed RSS Feed from {chat} (Invalid Chat)")
             except Exception as e:
