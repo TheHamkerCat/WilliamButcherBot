@@ -53,8 +53,12 @@ def dt_tom():
     return a
 
 
-today = str(dt()[0])
-tomorrow = str(dt_tom())
+def today():
+    return str(dt()[0])
+
+
+def tomorrow():
+    return str(dt_tom())
 
 
 @app.on_message(filters.command("detect_gay") & ~filters.edited)
@@ -67,7 +71,7 @@ async def couple(_, message):
 
     try:
         chat_id = message.chat.id
-        is_selected = await get_couple(chat_id, today)
+        is_selected = await get_couple(chat_id, today())
         if not is_selected:
             list_of_users = []
             async for i in app.iter_chat_members(message.chat.id):
@@ -85,10 +89,10 @@ async def couple(_, message):
             couple_selection_message = f"""**Couple of the day:**
 {c1_mention} + {c2_mention} = ❤️
 
-__New couple of the day may be chosen at 12AM {tomorrow}__"""
+__New couple of the day may be chosen at 12AM {tomorrow()}__"""
             await m.edit(couple_selection_message)
             couple = {"c1_id": c1_id, "c2_id": c2_id}
-            await save_couple(chat_id, today, couple)
+            await save_couple(chat_id, today(), couple)
 
         elif is_selected:
             c1_id = int(is_selected["c1_id"])
@@ -98,7 +102,7 @@ __New couple of the day may be chosen at 12AM {tomorrow}__"""
             couple_selection_message = f"""Couple of the day:
 [{c1_name}](tg://openmessage?user_id={c1_id}) + [{c2_name}](tg://openmessage?user_id={c2_id}) = ❤️
 
-__New couple of the day may be chosen at 12AM {tomorrow}__"""
+__New couple of the day may be chosen at 12AM {tomorrow()}__"""
             await m.edit(couple_selection_message)
     except Exception as e:
         print(e)
