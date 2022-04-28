@@ -187,9 +187,19 @@ async def lyrics_func(_, message):
         return await message.reply_text("**Usage:**\n/lyrics [QUERY]")
     m = await message.reply_text("**Searching**")
     query = message.text.strip().split(None, 1)[1]
-    song = await arq.lyrics(query)
-    lyrics = song.result
-    if len(lyrics) < 4095:
-        return await m.edit(f"__{lyrics}__")
-    lyrics = await paste(lyrics)
-    await m.edit(f"**LYRICS_TOO_LONG:** [URL]({lyrics})")
+
+    resp = await arq.lyrics(query)
+
+    if not (resp.ok and resp.result):
+        return await m.edit("No lyrics found.")
+
+    song = resp.result[0]
+    song_name = song['song']
+    artist = song['artist']
+    lyrics = song['lyrics']
+    msg = f"**{song_name}** | **{artist}**\n\n__{lyrics}__"
+          
+    if len(msg) > 4095:
+        msg = await paste(msg)
+        msg = f"**LYRICS_TOO_LONG:** [URL]({msg})"
+    return await m.edit(msg)

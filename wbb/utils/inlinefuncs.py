@@ -351,33 +351,34 @@ async def youtube_func(answers, text):
 
 
 async def lyrics_func(answers, text):
-    song = await arq.lyrics(text)
-    if not song.ok:
+    resp = await arq.lyrics(text)                                    
+    if not resp.ok:                                     
+        answers.append(
+            InlineQueryResultArticle(                                         
+                title="Error",                 
+                description=resp.result,
+                input_message_content=InputTextMessageContent(resp.result),
+            )                                                           
+        )                                                                  
+        return answers                                                
+    songs = resp.result                                                      
+    for song in songs:                                                       
+        song_name = song['song']
+        artist = song['artist']
+        lyrics = song['lyrics']
+        msg = f"**{song_name}** | **{artist}**\n\n__{lyrics}__"
+          
+        if len(msg) > 4095:
+            msg = await paste(msg)
+            msg = f"**LYRICS_TOO_LONG:** [URL]({msg})"
+                            
         answers.append(
             InlineQueryResultArticle(
-                title="Error",
-                description=song.result,
-                input_message_content=InputTextMessageContent(song.result),
+                title=song_name,
+                description=artist,
+                input_message_content=InputTextMessageContent(msg),
             )
         )
-        return answers
-    lyrics = song.result
-    song = lyrics.splitlines()
-    song_name = song[0]
-    artist = song[1]
-    if len(lyrics) > 4095:
-        lyrics = await paste(lyrics)
-        lyrics = f"**LYRICS_TOO_LONG:** [URL]({lyrics})"
-
-    msg = f"__{lyrics}__"
-
-    answers.append(
-        InlineQueryResultArticle(
-            title=song_name,
-            description=artist,
-            input_message_content=InputTextMessageContent(msg),
-        )
-    )
     return answers
 
 
