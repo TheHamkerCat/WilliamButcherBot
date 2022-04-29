@@ -39,6 +39,7 @@ from wbb import (
 )
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.filter_groups import chatbot_group
+from wbb.utils.dbfunctions import check_chatbot, add_chatbot, rm_chatbot
 
 __MODULE__ = "ChatBot"
 __HELP__ = """
@@ -47,22 +48,20 @@ __HELP__ = """
 There's one module of this available for userbot also
 check userbot module help."""
 
-active_chats_bot = []
-active_chats_ubot = []
-
-
-async def chat_bot_toggle(db, message: Message):
+async def chat_bot_toggle(message: Message, is_userbot: bool):
     status = message.text.split(None, 1)[1].lower()
     chat_id = message.chat.id
+    db = await check_chatbot()
+    db = db["userbot"] if is_userbot else db["bot"]
     if status == "enable":
         if chat_id not in db:
-            db.append(chat_id)
+            await add_chatbot(chat_id, is_userbot=is_userbot)
             text = "Chatbot Enabled!"
             return await eor(message, text=text)
         await eor(message, text="ChatBot Is Already Enabled.")
     elif status == "disable":
         if chat_id in db:
-            db.remove(chat_id)
+            await rm_chatbot(chat_id, is_userbot=is_userbot)
             return await eor(message, text="Chatbot Disabled!")
         await eor(message, text="ChatBot Is Already Disabled.")
     else:
@@ -77,7 +76,7 @@ async def chat_bot_toggle(db, message: Message):
 async def chatbot_status(_, message: Message):
     if len(message.command) != 2:
         return await eor(message, text="**Usage:**\n/chatbot [ENABLE|DISABLE]")
-    await chat_bot_toggle(active_chats_bot, message)
+    await chat_bot_toggle(message, is_userbot=False)
 
 
 async def lunaQuery(query: str, user_id: int):
@@ -106,7 +105,8 @@ async def type_and_send(message: Message):
 )
 @capture_err
 async def chatbot_talk(_, message: Message):
-    if message.chat.id not in active_chats_bot:
+    db = await check_chatbot()
+    if message.chat.id not in db["bot"]:
         return
     if not message.reply_to_message:
         return
@@ -129,7 +129,7 @@ async def chatbot_talk(_, message: Message):
 async def chatbot_status_ubot(_, message: Message):
     if len(message.text.split()) != 2:
         return await eor(message, text="**Usage:**\n.chatbot [ENABLE|DISABLE]")
-    await chat_bot_toggle(active_chats_ubot, message)
+    await chat_bot_toggle(message, is_userbot=True)
 
 
 @app2.on_message(
@@ -138,7 +138,8 @@ async def chatbot_status_ubot(_, message: Message):
 )
 @capture_err
 async def chatbot_talk_ubot(_, message: Message):
-    if message.chat.id not in active_chats_ubot:
+    db = await check_chatbot()
+    if message.chat.id not in db["userbot"]:
         return
     username = "@" + str(USERBOT_USERNAME)
     if message.reply_to_message:
@@ -161,6 +162,7 @@ async def chatbot_talk_ubot(_, message: Message):
 )
 @capture_err
 async def chatbot_talk_ubot_pm(_, message: Message):
-    if message.chat.id not in active_chats_ubot:
+    db = await check_chatbot()
+    if message.chat.id not in db["userbot"]:
         return
     await type_and_send(message)
