@@ -89,7 +89,7 @@ async def couple(_, message):
             couple_selection_message = f"""**Couple of the day:**
 {c1_mention} + {c2_mention} = ❤️
 
-__New couple of the day may be chosen at 12AM {tomorrow()}__"""
+__New couple of the day may be chosen at 2:30AM {tomorrow()} (IST)__"""
             await m.edit(couple_selection_message)
             couple = {"c1_id": c1_id, "c2_id": c2_id}
             await save_couple(chat_id, today(), couple)
@@ -102,7 +102,7 @@ __New couple of the day may be chosen at 12AM {tomorrow()}__"""
             couple_selection_message = f"""Couple of the day:
 [{c1_name}](tg://openmessage?user_id={c1_id}) + [{c2_name}](tg://openmessage?user_id={c2_id}) = ❤️
 
-__New couple of the day may be chosen at 12AM {tomorrow()}__"""
+__New couple of the day may be chosen at 2:30AM {tomorrow()} (IST)__"""
             await m.edit(couple_selection_message)
     except Exception as e:
         print(e)
