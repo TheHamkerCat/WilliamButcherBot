@@ -48,10 +48,6 @@ __HELP__ = """
 There's one module of this available for userbot also
 check userbot module help."""
 
-active_chats_bot = []
-active_chats_ubot = []
-
-
 async def chat_bot_toggle(message: Message, is_userbot: bool):
     status = message.text.split(None, 1)[1].lower()
     chat_id = message.chat.id
