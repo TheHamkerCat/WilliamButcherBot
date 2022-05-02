@@ -25,7 +25,7 @@ SOFTWARE.
 from pyrogram import filters
 from pyrogram.raw.functions.messages import DeleteHistory
 
-from wbb import BOT_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2, eor
+from wbb import BOT_ID, PM_PERMIT, SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.dbfunctions import (
     approve_pmpermit,
@@ -49,7 +49,7 @@ flood = {}
 @capture_err
 async def pmpermit_func(_, message):
     user_id = message.from_user.id
-    if await is_pmpermit_approved(user_id):
+    if not PM_PERMIT or await is_pmpermit_approved(user_id):
         return
     async for m in app2.iter_history(user_id, limit=6):
         if m.reply_markup:
