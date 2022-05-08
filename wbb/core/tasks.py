@@ -99,5 +99,4 @@ async def task_list(_, message: Message):
         message.chat.id,
         results.query_id,
         results.results[0].id,
-        hide_via=True,
     )
