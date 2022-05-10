@@ -28,7 +28,7 @@ from pyrogram.types import ChatPermissions
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
-from wbb.modules.admin import current_chat_permissions, list_admins
+from wbb.modules.admin import list_admins
 from wbb.utils.functions import get_urls_from_text
 
 __MODULE__ = "Locks"
@@ -63,6 +63,29 @@ data = {
     "useradd": "can_invite_users",
     "pin": "can_pin_messages",
 }
+
+
+async def current_chat_permissions(chat_id):
+    perms = []
+    perm = (await app.get_chat(chat_id)).permissions
+    if perm.can_send_messages:
+        perms.append("can_send_messages")
+    if perm.can_send_media_messages:
+        perms.append("can_send_media_messages")
+    if perm.can_send_other_messages:
+        perms.append("can_send_other_messages")
+    if perm.can_add_web_page_previews:
+        perms.append("can_add_web_page_previews")
+    if perm.can_send_polls:
+        perms.append("can_send_polls")
+    if perm.can_change_info:
+        perms.append("can_change_info")
+    if perm.can_invite_users:
+        perms.append("can_invite_users")
+    if perm.can_pin_messages:
+        perms.append("can_pin_messages")
+
+    return perms
 
 
 async def tg_lock(message, permissions: list, perm: str, lock: bool):
