@@ -61,7 +61,6 @@ async def clean_db(_, message):
         except Exception:
             await remove_served_chat(served_chat)
             served_chats.remove(served_chat)
-            pass
     await m.edit("**Database Cleaned.**")
 
 
