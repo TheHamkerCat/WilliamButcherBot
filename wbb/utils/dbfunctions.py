@@ -23,7 +23,7 @@ SOFTWARE.
 """
 import codecs
 import pickle
-import string
+from string import ascii_lowercase
 
 from typing import Dict, List, Union
 
@@ -188,7 +188,7 @@ async def delete_filter(chat_id: int, name: str) -> bool:
 
 
 async def int_to_alpha(user_id: int) -> str:
-    alphabet = list(string.ascii_lowercase)
+    alphabet = list(ascii_lowercase)[:10]
     text = ""
     user_id = str(user_id)
     for i in user_id:
@@ -197,7 +197,7 @@ async def int_to_alpha(user_id: int) -> str:
 
 
 async def alpha_to_int(user_id_alphabet: str) -> int:
-    alphabet = list(string.ascii_lowercase)
+    alphabet = list(ascii_lowercase)[:10]
     user_id = ""
     for i in user_id_alphabet:
         index = alphabet.index(i)
