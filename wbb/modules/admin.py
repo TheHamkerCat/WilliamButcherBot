@@ -352,16 +352,14 @@ async def list_ban_(c, message: Message):
     m = await message.reply_text('`Banning User from multiple groups. \
          This may take some time`')
     try:
-        chat_id = (await app.get_chat(uname)).id
-        msgtext = (await app.get_messages(chat_id,mid)).text
+        msgtext = (await app.get_messages(uname,mid)).text
         gusernames = re.findall('@\w+',msgtext)
     except:
         return await m.edit_text('Could not get group usernames')
     count = 0
     for username in gusernames:
         try:
-            cid = (await app.get_chat(username.strip('@'))).id
-            await app.ban_chat_member(cid,userid)
+            await app.ban_chat_member(username.strip('@'),userid)
             await asyncio.sleep(1)
         except FloodWait as e:
             await asyncio.sleep(e.x)
@@ -378,7 +376,6 @@ async def list_ban_(c, message: Message):
 **Reason:** {reason}
 '''
     await m.edit_text(msg)
-
 
 # Unban users listed in a message
 
@@ -397,16 +394,14 @@ async def list_unban_(c, message: Message):
     m = await message.reply_text('`Unbanning User from multiple groups. \
          This may take some time`')
     try:
-        chat_id = (await app.get_chat(uname)).id
-        msgtext = (await app.get_messages(chat_id,mid)).text
+        msgtext = (await app.get_messages(uname,mid)).text
         gusernames = re.findall('@\w+',msgtext)
     except:
         return await m.edit_text('Could not get the group usernames')
     count = 0
     for username in gusernames:
         try:
-            cid = (await app.get_chat(username.strip('@'))).id
-            await app.unban_chat_member(cid,userid)
+            await app.unban_chat_member(username.strip('@'),userid)
             await asyncio.sleep(1)
         except FloodWait as e:
             await asyncio.sleep(e.x)
