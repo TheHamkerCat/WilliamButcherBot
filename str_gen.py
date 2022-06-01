@@ -5,7 +5,7 @@ API_HASH = input("\nEnter Your API_HASH:\n > ")
 
 print("\n\n Enter Phone number when asked.\n\n")
 
-i = c(":memory:", api_id=API_ID, api_hash=API_HASH)
+i = c(name="user", in_memory=True, api_id=API_ID, api_hash=API_HASH)
 
 with i:
     ss = i.export_session_string()
