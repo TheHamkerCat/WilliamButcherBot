@@ -106,7 +106,7 @@ async def start_bot():
     log.info("Stopping clients")
     await app.stop()
     log.info("Cancelling asyncio tasks")
-    for task in asyncio.all_tasks():
+    for task in asyncio.all_tasks(loop):
         task.cancel()
     log.info("Dead!")
 
