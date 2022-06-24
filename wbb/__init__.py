@@ -103,7 +103,7 @@ loop.run_until_complete(load_sudoers())
 
 if not HEROKU:
     app2 = Client(
-        name="userbot",
+        "userbot",
         phone_number=PHONE_NUMBER,
         api_id=API_ID,
         api_hash=API_HASH,
@@ -115,7 +115,7 @@ aiohttpsession = ClientSession()
 
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
 
-app = Client(name="wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
+app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
 
 log.info("Starting bot client")
 app.start()
