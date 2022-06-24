@@ -107,7 +107,6 @@ if not HEROKU:
         phone_number=PHONE_NUMBER,
         api_id=API_ID,
         api_hash=API_HASH,
-        in_memory=True,
     )
 else:
     app2 = Client(session_string=SESSION_STRING, api_id=API_ID, api_hash=API_HASH)
