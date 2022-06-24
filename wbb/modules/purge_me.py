@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) present TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -90,7 +90,8 @@ log.info("Done pasting userbot commands on telegraph")
 
 
 @app2.on_message(
-    filters.command("help", prefixes=USERBOT_PREFIX) & filters.user(USERBOT_ID)
+    filters.command("help", prefixes=USERBOT_PREFIX) 
+    & filters.user(USERBOT_ID)
 )
 async def get_help(_, message: Message):
     await eor(

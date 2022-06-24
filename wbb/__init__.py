@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) present TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -98,24 +98,25 @@ async def load_sudoers():
             SUDOERS.add(user_id)
 
 
-loop = asyncio.get_event_loop()
+loop = asyncio.get_event_loop_policy().get_event_loop()
 loop.run_until_complete(load_sudoers())
 
 if not HEROKU:
     app2 = Client(
-        "userbot",
+        name="userbot",
         phone_number=PHONE_NUMBER,
         api_id=API_ID,
         api_hash=API_HASH,
+        in_memory=True,
     )
 else:
-    app2 = Client(SESSION_STRING, api_id=API_ID, api_hash=API_HASH)
+    app2 = Client(session_string=SESSION_STRING, api_id=API_ID, api_hash=API_HASH)
 
 aiohttpsession = ClientSession()
 
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
 
-app = Client("wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
+app = Client(name="wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
 
 log.info("Starting bot client")
 app.start()

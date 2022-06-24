@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) present TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,14 @@ SOFTWARE.
 import random
 from datetime import datetime
 
-from pyrogram import filters
+from pyrogram import filters, enums
 
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.dbfunctions import get_couple, save_couple
 
 __MODULE__ = "Shippering"
-__HELP__ = "/detect_gay - To Choose Couple Of The Day"
+__HELP__ = "/couple - To Choose Couple Of The Day"
 
 
 # Date and time
@@ -61,20 +61,22 @@ def tomorrow():
     return str(dt_tom())
 
 
-@app.on_message(filters.command("detect_gay") & ~filters.edited)
+@app.on_message(
+    filters.command("couple")
+)
 @capture_err
 async def couple(_, message):
-    if message.chat.type == "private":
+    if message.chat.type == enums.ChatType.PRIVATE:
         return await message.reply_text("This command only works in groups.")
 
-    m = await message.reply("Detecting gay among us...")
+    m = await message.reply("Detecting Couple among us...")
 
     try:
         chat_id = message.chat.id
         is_selected = await get_couple(chat_id, today())
         if not is_selected:
             list_of_users = []
-            async for i in app.iter_chat_members(message.chat.id):
+            async for i in app.get_chat_members(message.chat.id):
                 if not i.user.is_bot:
                     list_of_users.append(i.user.id)
             if len(list_of_users) < 2:

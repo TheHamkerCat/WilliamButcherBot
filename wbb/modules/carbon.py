@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) present TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,6 @@ from wbb.utils.functions import make_carbon
 
 @app.on_message(
     filters.command("carbon")
-    & ~filters.edited
 )
 @capture_err
 async def carbon_func(_, message):
