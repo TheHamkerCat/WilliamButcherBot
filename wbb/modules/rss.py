@@ -64,7 +64,7 @@ async def rss_worker():
             await asyncio.sleep(RSS_DELAY)
             continue
 
-        loop = asyncio.get_event_loop_policy().get_event_loop()
+        loop = asyncio.get_event_loop()
 
         for _feed in feeds:
             chat = _feed["chat_id"]
@@ -92,7 +92,7 @@ async def rss_worker():
         await asyncio.sleep(RSS_DELAY)
 
 
-loop = asyncio.get_event_loop_policy().get_event_loop()
+loop = asyncio.get_event_loop()
 loop.create_task(rss_worker())
 
 
@@ -119,7 +119,7 @@ async def add_feed_func(_, m: Message):
 
     ns = "[ERROR]: This feed isn't supported."
     try:
-        loop = asyncio.get_event_loop_policy().get_event_loop()
+        loop = asyncio.get_event_loop()
         parsed = await loop.run_in_executor(None, parse, url)
         feed = Feed(parsed)
     except Exception:
