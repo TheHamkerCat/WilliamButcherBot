@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import os
-import asyncio
+from asyncio import gather, get_running_loop
 from base64 import b64decode
 from io import BytesIO
 from random import randint
@@ -44,13 +44,8 @@ async def get_soup(url: str, headers):
     return BeautifulSoup(html, "html.parser")
 
 
-@app2.on_message(
-    filters.command("reverse", prefixes=USERBOT_PREFIX) 
-    & SUDOERS
-)
-@app.on_message(
-    filters.command("reverse")
-)
+@app2.on_message(filters.command("reverse", prefixes=USERBOT_PREFIX) & SUDOERS)
+@app.on_message(filters.command("reverse") & ~filters.edited)
 @capture_err
 async def reverse_image_search(client, message: Message):
     if not message.reply_to_message:
@@ -87,7 +82,7 @@ async def reverse_image_search(client, message: Message):
                     search_url, files=multipart, allow_redirects=False
                 )
 
-            loop = asyncio.get_running_loop()
+            loop = get_running_loop()
             response = await loop.run_in_executor(None, post_non_blocking)
             location = response.headers.get("Location")
             os.remove(image)
@@ -135,7 +130,7 @@ async def reverse_image_search(client, message: Message):
 
         # Cache images, so we can use file_ids
         tasks = [client.send_photo(MESSAGE_DUMP_CHAT, img) for img in media]
-        messages = await asyncio.gather(*tasks)
+        messages = await gather(*tasks)
 
         await message.reply_media_group(
             [

@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,13 @@ from fuzzysearch import find_near_matches
 from motor import version as mongover
 from pykeyboard import InlineKeyboard
 from pyrogram import __version__ as pyrover
-from pyrogram import filters, enums
+from pyrogram import filters
 from pyrogram.raw.functions import Ping
 from pyrogram.types import (
     CallbackQuery,
     InlineKeyboardButton,
     InlineQueryResultArticle,
     InlineQueryResultPhoto,
-    InlineQueryResultCachedDocument,
     InputTextMessageContent,
 )
 from search_engine_parser import GoogleSearch
@@ -58,6 +57,7 @@ from wbb import (
 )
 from wbb.core.keyboard import ikb
 from wbb.core.tasks import _get_tasks_text, all_tasks, rm_task
+from wbb.core.types import InlineQueryResultCachedDocument
 from wbb.modules.info import get_chat_info, get_user_info
 from wbb.modules.music import download_youtube_audio
 from wbb.utils.functions import test_speedtest
@@ -450,10 +450,7 @@ async def music_inline_func(answers, query):
         messages = [
             m
             async for m in app2.search_messages(
-                chat_id, 
-                query, 
-                filter=enums.MessagesFilter.AUDIO, 
-                limit=100
+                chat_id, query, filter="audio", limit=100
             )
         ]
     except Exception as e:

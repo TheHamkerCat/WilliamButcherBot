@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@ SOFTWARE.
 """
 from re import MULTILINE as RE_MULTILINE
 
-from pyrogram import filters, enums
+from pyrogram import filters
 from pyrogram.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
@@ -46,6 +46,7 @@ RICE_CHANNEL = "RiceGallery"
     & (filters.photo | filters.video | filters.document)
     & filters.regex(r"^\[RICE\]", RE_MULTILINE)
     & ~filters.forwarded
+    & ~filters.edited
 )
 @capture_err
 async def rice(_, message: Message):
@@ -66,17 +67,17 @@ async def rice(_, message: Message):
             ]
         ),
         quote=True,
-        parse_mode=enums.ParseMode.MARKDOWN,
+        parse_mode="markdown",
     )
 
 
 @app.on_callback_query(filters.regex("forward"))
 async def callback_query_forward_rice(_, callback_query):
-    app.set_parse_mode(enums.ParseMode.MARKDOWN)
+    app.set_parse_mode("markdown")
     u_approver = callback_query.from_user
     c_group = callback_query.message.chat
     approver_status = (await c_group.get_member(u_approver.id)).status
-    if not (approver_status in (enums.ChatMemberStatus.OWNER, enums.ChatMemberStatus.ADMINISTRATOR)):
+    if not (approver_status in ("creator", "administrator")):
         await callback_query.answer("Only admin can approve this!")
         return
     await callback_query.answer("Successfully approved")
@@ -84,7 +85,7 @@ async def callback_query_forward_rice(_, callback_query):
     u_op = m_op.from_user
     arg_caption = f"{m_op.caption}\nOP: [{u_op.first_name}]({m_op.link})"
     if m_op.media_group_id:
-        message_id = m_op.id
+        message_id = m_op.message_id
         media_group = await app.get_media_group(RICE_GROUP, message_id)
         arg_media = []
         for m in media_group:
@@ -123,7 +124,7 @@ async def callback_query_ignore_rice(_, callback_query):
     u_op = m_op.from_user
     if u_disprover.id == u_op.id:
         await callback_query.answer("Ok, this rice won't be forwarded")
-    elif disprover_status in (enums.ChatMemberStatus.OWNER, enums.ChatMemberStatus.ADMINISTRATOR):
+    elif disprover_status in ("creator", "administrator"):
         await m_op.reply_text(f"{u_disprover.mention} ignored this rice")
     else:
         return await callback_query.answer("Only admin or OP could ignore it")

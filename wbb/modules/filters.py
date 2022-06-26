@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -50,10 +50,7 @@ Checkout /markdownhelp to know more about formattings and other syntax.
 """
 
 
-@app.on_message(
-    filters.command("filter") 
-    & ~filters.private
-)
+@app.on_message(filters.command("filter") & ~filters.edited & ~filters.private)
 @adminsOnly("can_change_info")
 async def save_filters(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
@@ -85,8 +82,7 @@ async def save_filters(_, message):
 
 
 @app.on_message(
-    filters.command("filters") 
-    & ~filters.private
+    filters.command("filters") & ~filters.edited & ~filters.private
 )
 @capture_err
 async def get_filterss(_, message):
@@ -100,10 +96,7 @@ async def get_filterss(_, message):
     await message.reply_text(msg)
 
 
-@app.on_message(
-    filters.command("stop") 
-    & ~filters.private
-)
+@app.on_message(filters.command("stop") & ~filters.edited & ~filters.private)
 @adminsOnly("can_change_info")
 async def del_filter(_, message):
     if len(message.command) < 2:
@@ -121,6 +114,7 @@ async def del_filter(_, message):
 
 @app.on_message(
     filters.text
+    & ~filters.edited
     & ~filters.private
     & ~filters.via_bot
     & ~filters.forwarded,

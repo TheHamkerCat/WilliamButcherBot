@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@ SOFTWARE.
 
 import datetime
 import os
-import asyncio
+from asyncio import get_running_loop
 from functools import partial
 from io import BytesIO
 
@@ -78,9 +78,7 @@ def download_youtube_audio(arq_resp):
     return [title, performer, duration, audio_file, thumbnail_file]
 
 
-@app.on_message(
-    filters.command("ytmusic")
-)
+@app.on_message(filters.command("ytmusic") & ~filters.edited)
 @capture_err
 async def music(_, message):
     global is_downloading
@@ -97,7 +95,7 @@ async def music(_, message):
         f"Downloading {url}", disable_web_page_preview=True
     )
     try:
-        loop = asyncio.get_running_loop()
+        loop = get_running_loop()
         arq_resp = await arq.youtube(url)
         music = await loop.run_in_executor(
             None, partial(download_youtube_audio, arq_resp)
@@ -140,9 +138,7 @@ async def download_song(url):
 # Jiosaavn Music
 
 
-@app.on_message(
-    filters.command("saavn")
-)
+@app.on_message(filters.command("saavn") & ~filters.edited)
 @capture_err
 async def jssong(_, message):
     global is_downloading
@@ -185,9 +181,7 @@ async def jssong(_, message):
 # Lyrics
 
 
-@app.on_message(
-    filters.command("lyrics")
-)
+@app.on_message(filters.command("lyrics") & ~filters.edited)
 async def lyrics_func(_, message):
     if len(message.command) < 2:
         return await message.reply_text("**Usage:**\n/lyrics [QUERY]")

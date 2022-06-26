@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@ import re
 from contextlib import closing, suppress
 
 from uvloop import install
-from pyrogram import filters, idle, enums
+from pyrogram import filters, idle
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from wbb import (
@@ -106,7 +106,7 @@ async def start_bot():
     log.info("Stopping clients")
     await app.stop()
     log.info("Cancelling asyncio tasks")
-    for task in asyncio.all_tasks(loop):
+    for task in asyncio.all_tasks():
         task.cancel()
     log.info("Dead!")
 
@@ -115,8 +115,7 @@ home_keyboard_pm = InlineKeyboardMarkup(
     [
         [
             InlineKeyboardButton(
-                text="Commands ❓", 
-                callback_data="bot_commands"
+                text="Commands ❓", callback_data="bot_commands"
             ),
             InlineKeyboardButton(
                 text="Repo 🛠",
@@ -170,11 +169,9 @@ keyboard = InlineKeyboardMarkup(
 )
 
 
-@app.on_message(
-    filters.command("start")
-)
+@app.on_message(~filters.edited & filters.command("start"))
 async def start(_, message):
-    if message.chat.type != enums.ChatType.PRIVATE:
+    if message.chat.type != "private":
         return await message.reply(
             "Pm Me For More Details.", reply_markup=keyboard
         )
@@ -182,9 +179,7 @@ async def start(_, message):
         name = (message.text.split(None, 1)[1]).lower()
         if name == "mkdwn_help":
             await message.reply(
-                MARKDOWN, 
-                parse_mode=enums.ParseMode.HTML, 
-                disable_web_page_preview=True
+                MARKDOWN, parse_mode="html", disable_web_page_preview=True
             )
         elif "_" in name:
             module = name.split("_", 1)[1]
@@ -207,11 +202,9 @@ async def start(_, message):
     return
 
 
-@app.on_message(
-    filters.command("help")
-)
+@app.on_message(~filters.edited & filters.command("help"))
 async def help_command(_, message):
-    if message.chat.type != enums.ChatType.PRIVATE:
+    if message.chat.type != "private":
         if len(message.command) >= 2:
             name = (message.text.split(None, 1)[1]).replace(" ", "_").lower()
             if str(name) in HELPABLE:
@@ -385,4 +378,4 @@ if __name__ == "__main__":
     with closing(loop):
         with suppress(asyncio.exceptions.CancelledError):
             loop.run_until_complete(start_bot())
-        asyncio.run(asyncio.sleep(3))
+        loop.run_until_complete(asyncio.sleep(3.0))  # task cancel wait

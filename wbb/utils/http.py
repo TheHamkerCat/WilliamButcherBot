@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import asyncio
+from asyncio import gather
 
 from wbb import aiohttpsession as session
 
@@ -54,15 +54,15 @@ async def post(url: str, *args, **kwargs):
 
 
 async def multiget(url: str, times: int, *args, **kwargs):
-    return await asyncio.gather(*[get(url, *args, **kwargs) for _ in range(times)])
+    return await gather(*[get(url, *args, **kwargs) for _ in range(times)])
 
 
 async def multihead(url: str, times: int, *args, **kwargs):
-    return await asyncio.gather(*[head(url, *args, **kwargs) for _ in range(times)])
+    return await gather(*[head(url, *args, **kwargs) for _ in range(times)])
 
 
 async def multipost(url: str, times: int, *args, **kwargs):
-    return await asyncio.gather(*[post(url, *args, **kwargs) for _ in range(times)])
+    return await gather(*[post(url, *args, **kwargs) for _ in range(times)])
 
 
 async def resp_get(url: str, *args, **kwargs):

@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import re
-from datetime import datetime, timedelta
+from time import time
 
 from pyrogram import filters
 from pyrogram.types import ChatPermissions
@@ -47,8 +47,7 @@ __HELP__ = """
 
 
 @app.on_message(
-    filters.command("blacklist") 
-    & ~filters.private
+    filters.command("blacklist") & ~filters.edited & ~filters.private
 )
 @adminsOnly("can_restrict_members")
 async def save_filters(_, message):
@@ -65,8 +64,7 @@ async def save_filters(_, message):
 
 
 @app.on_message(
-    filters.command("blacklisted") 
-    & ~filters.private
+    filters.command("blacklisted") & ~filters.edited & ~filters.private
 )
 @capture_err
 async def get_filterss(_, message):
@@ -81,8 +79,7 @@ async def get_filterss(_, message):
 
 
 @app.on_message(
-    filters.command("whitelist") 
-    & ~filters.private
+    filters.command("whitelist") & ~filters.edited & ~filters.private
 )
 @adminsOnly("can_restrict_members")
 async def del_filter(_, message):
@@ -100,9 +97,8 @@ async def del_filter(_, message):
 
 @app.on_message(
     filters.text
-    & ~filters.private,
-    group=blacklist_filters_group
-)
+    & ~filters.private
+    & ~filters.edited, group=blacklist_filters_group)
 @capture_err
 async def blacklist_filters_re(_, message):
     text = message.text.lower().strip()
@@ -124,7 +120,7 @@ async def blacklist_filters_re(_, message):
                 await message.chat.restrict_member(
                     user.id,
                     ChatPermissions(),
-                    until_date=datetime.now() + timedelta(seconds=3600),
+                    until_date=int(time() + 3600),
                 )
             except Exception:
                 return

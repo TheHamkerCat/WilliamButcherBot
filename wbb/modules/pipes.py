@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -60,10 +60,7 @@ pipes_list_bot = {}
 pipes_list_userbot = {}
 
 
-@app.on_message(
-    ~filters.me, 
-    group=500
-)
+@app.on_message(~filters.me, group=500)
 @capture_err
 async def pipes_worker_bot(_, message: Message):
     chat_id = message.chat.id
@@ -71,10 +68,7 @@ async def pipes_worker_bot(_, message: Message):
         await message.forward(pipes_list_bot[chat_id])
 
 
-@app2.on_message(
-    ~filters.me, 
-    group=500
-)
+@app2.on_message(~filters.me, group=500)
 @capture_err
 async def pipes_worker_userbot(_, message: Message):
     chat_id = message.chat.id
@@ -101,10 +95,7 @@ async def pipes_worker_userbot(_, message: Message):
         await app.send_message(to_chat_id, text=message.text + caption)
 
 
-@app.on_message(
-    filters.command("activate_pipe") 
-    & SUDOERS
-)
+@app.on_message(filters.command("activate_pipe") & SUDOERS & ~filters.edited)
 @capture_err
 async def activate_pipe_func(_, message: Message):
     global pipes_list_bot, pipes_list_userbot
@@ -134,10 +125,7 @@ async def activate_pipe_func(_, message: Message):
     await message.reply_text("Activated pipe.")
 
 
-@app.on_message(
-    filters.command("deactivate_pipe") 
-    & SUDOERS
-)
+@app.on_message(filters.command("deactivate_pipe") & SUDOERS & ~filters.edited)
 @capture_err
 async def deactivate_pipe_func(_, message: Message):
     global pipes_list_bot, pipes_list_userbot
@@ -159,10 +147,7 @@ async def deactivate_pipe_func(_, message: Message):
     await message.reply_text("Deactivated pipe.")
 
 
-@app.on_message(
-    filters.command("pipes") 
-    & SUDOERS
-)
+@app.on_message(filters.command("pipes") & SUDOERS & ~filters.edited)
 @capture_err
 async def show_pipes_func(_, message: Message):
     pipes_list_bot.update(pipes_list_userbot)

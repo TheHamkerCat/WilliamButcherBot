@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import traceback
-import asyncio
+from asyncio import get_running_loop
 from io import BytesIO
 
 from googletrans import Translator
@@ -43,9 +43,7 @@ def convert(text):
     return audio
 
 
-@app.on_message(
-    filters.command("tts")
-)
+@app.on_message(filters.command("tts") & ~filters.edited)
 async def text_to_speech(_, message: Message):
     if not message.reply_to_message:
         return await message.reply_text("Reply to some text ffs.")
@@ -54,7 +52,7 @@ async def text_to_speech(_, message: Message):
     m = await message.reply_text("Processing")
     text = message.reply_to_message.text
     try:
-        loop = asyncio.get_running_loop()
+        loop = get_running_loop()
         audio = await loop.run_in_executor(None, convert, text)
         await message.reply_audio(audio)
         await m.delete()
