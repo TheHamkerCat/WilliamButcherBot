@@ -121,7 +121,7 @@ async def purge_me_func(_, message: Message):
     chat_id = message.chat.id
 
     message_ids = [
-        m.message_id
+        m.id
         async for m in app2.search_messages(
             chat_id,
             from_user=int(USERBOT_ID),

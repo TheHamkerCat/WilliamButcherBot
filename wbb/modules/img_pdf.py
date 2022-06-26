@@ -109,7 +109,7 @@ async def img_to_pdf(_, message: Message):
     if reply.media_group_id:
         messages = await app.get_media_group(
             message.chat.id,
-            reply.message_id,
+            reply.id,
         )
         return await convert(message, messages, m, start_time)
 

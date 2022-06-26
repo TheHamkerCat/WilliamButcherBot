@@ -44,7 +44,7 @@ from wbb.utils.http import get, post
 
 async def restart(m: Message):
     if m:
-        await start_restart_stage(m.chat.id, m.message_id)
+        await start_restart_stage(m.chat.id, m.id)
     execvp(executable, [executable, "-m", "wbb"])
 
 

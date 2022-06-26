@@ -92,7 +92,7 @@ async def pipes_worker_userbot(_, message: Message):
             await app.copy_message(
                 to_chat_id,
                 USERBOT_ID,
-                m.message_id,
+                m.id,
                 caption=caption,
             )
             await asyncio.sleep(2)

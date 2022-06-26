@@ -165,17 +165,17 @@ async def purgeFunc(_, message: Message):
 
     cmd = message.command
     if len(cmd) > 1 and cmd[1].isdigit():
-        purge_to = repliedmsg.message_id + int(cmd[1])
-        if purge_to > message.message_id:
-            purge_to = message.message_id
+        purge_to = repliedmsg.id + int(cmd[1])
+        if purge_to > message.id:
+            purge_to = message.id
     else:
-        purge_to = message.message_id   
+        purge_to = message.id  
 
     chat_id = message.chat.id
     message_ids = []
 
     for message_id in range(
-            repliedmsg.message_id,
+            repliedmsg.id,
             purge_to,
     ):
         message_ids.append(message_id)

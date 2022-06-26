@@ -166,7 +166,9 @@ async def commit(_, message):
     await message.reply_text(await get("http://whatthecommit.com/index.txt"))
 
 
-@app.on_message(filters.command("RTFM", "#") & ~filters.edited)
+@app.on_message(
+    filters.command("RTFM", "#")
+)
 async def rtfm(_, message):
     await message.delete()
     if not message.reply_to_message:
@@ -214,7 +216,7 @@ async def getid(client, message):
     if not getattr(reply, "empty", True):
         id_ = reply.from_user.id if reply.from_user else reply.sender_chat.id
         text += (
-            f"**[Replied Message ID:]({reply.link})** `{reply.message_id}`\n"
+            f"**[Replied Message ID:]({reply.link})** `{reply.id}`\n"
         )
         text += f"**[Replied User ID:](tg://user?id={id_})** `{id_}`"
 
