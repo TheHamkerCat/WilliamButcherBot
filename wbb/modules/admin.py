@@ -497,16 +497,16 @@ async def promoteFunc(_, message: Message):
         return await message.reply_text(f"Fully Promoted! {umention}")
 
     await message.chat.promote_member(
-        user_id=user_id,
-        can_invite_users=bot.can_invite_users,
-        can_delete_messages=bot.can_delete_messages,
-        can_manage_chat=bot.can_manage_chat,
-        can_manage_video_chats=bot.can_manage_video_chats,
-        privileges=ChatPrivileges(
+        user_id,
+        ChatPrivileges(
             can_change_info=False,
             can_restrict_members=False,
             can_pin_messages=False,
             can_promote_members=False,
+            can_invite_users=True,
+            can_delete_messages=True,
+            can_manage_chat=True,
+            can_manage_video_chats=True,
         ),
     )
     await message.reply_text(f"Promoted! {umention}")
