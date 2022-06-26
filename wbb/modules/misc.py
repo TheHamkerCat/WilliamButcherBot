@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) present TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ import subprocess
 from asyncio import Lock
 from re import findall
 
-from pyrogram import filters
+from pyrogram import filters, enums
 
 from wbb import SUDOERS, USERBOT_PREFIX, app, app2, arq, eor
 from wbb.core.decorators.errors import capture_err
@@ -104,9 +104,10 @@ PING_LOCK = Lock()
 @app2.on_message(
     SUDOERS
     & filters.command("ping", prefixes=USERBOT_PREFIX)
-    & ~filters.edited
 )
-@app.on_message(filters.command("ping") & ~filters.edited)
+@app.on_message(
+    filters.command("ping")
+)
 async def ping_handler(_, message):
     m = await eor(message, text="Pinging datacenters...")
     async with PING_LOCK:
@@ -139,7 +140,9 @@ async def ping_handler(_, message):
         await m.edit(text)
 
 
-@app.on_message(filters.command("asq") & ~filters.edited)
+@app.on_message(
+    filters.command("asq")
+)
 async def asq(_, message):
     err = "Reply to text message or pass the question as argument"
     if message.reply_to_message:
@@ -156,7 +159,9 @@ async def asq(_, message):
         await m.edit(resp.result)
 
 
-@app.on_message(filters.command("commit") & ~filters.edited)
+@app.on_message(
+    filters.command("commit")
+)
 async def commit(_, message):
     await message.reply_text(await get("http://whatthecommit.com/index.txt"))
 
@@ -171,17 +176,24 @@ async def rtfm(_, message):
     )
 
 
-@app.on_message(filters.command("runs") & ~filters.edited)
+@app.on_message(
+    filters.command("runs")
+)
 async def runs(_, message):
     await message.reply_text((await random_line("wbb/utils/runs.txt")))
 
 
-@app2.on_message(filters.command("id", prefixes=USERBOT_PREFIX) & SUDOERS)
-@app.on_message(filters.command("id"))
+@app2.on_message(
+    filters.command("id", prefixes=USERBOT_PREFIX) 
+    & SUDOERS
+)
+@app.on_message(
+    filters.command("id")
+)
 async def getid(client, message):
     chat = message.chat
     your_id = message.from_user.id
-    message_id = message.message_id
+    message_id = message.id
     reply = message.reply_to_message
 
     text = f"**[Message ID:]({message.link})** `{message_id}`\n"
@@ -210,12 +222,14 @@ async def getid(client, message):
         message,
         text=text,
         disable_web_page_preview=True,
-        parse_mode="md",
+        parse_mode=enums.ParseMode.MARKDOWN,
     )
 
 
 # Random
-@app.on_message(filters.command("random") & ~filters.edited)
+@app.on_message(
+    filters.command("random")
+)
 @capture_err
 async def random(_, message):
     if len(message.command) != 2:
@@ -239,7 +253,9 @@ async def random(_, message):
 
 
 # Translate
-@app.on_message(filters.command("tr") & ~filters.edited)
+@app.on_message(
+    filters.command("tr")
+)
 @capture_err
 async def tr(_, message):
     if len(message.command) != 2:
@@ -262,7 +278,9 @@ async def tr(_, message):
     await message.reply_text(result.result.translatedText)
 
 
-@app.on_message(filters.command("json") & ~filters.edited)
+@app.on_message(
+    filters.command("json")
+)
 @capture_err
 async def json_fetch(_, message):
     if len(message.command) != 2:
@@ -284,7 +302,9 @@ async def json_fetch(_, message):
         await m.edit(str(e))
 
 
-@app.on_message(filters.command(["kickme", "banme"]))
+@app.on_message(
+    filters.command(["kickme", "banme"])
+)
 async def kickbanme(_, message):
     await message.reply_text(
         "Haha, it doesn't work that way, You're stuck with everyone here."

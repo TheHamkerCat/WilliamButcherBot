@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) present TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -92,7 +92,9 @@ async def convert(
             remove(file)
 
 
-@app.on_message(filters.command("pdf") & ~filters.edited)
+@app.on_message(
+    filters.command("pdf")
+)
 @capture_err
 async def img_to_pdf(_, message: Message):
     reply = message.reply_to_message

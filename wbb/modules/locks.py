@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) present TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -113,7 +113,9 @@ async def tg_lock(message, permissions: list, perm: str, lock: bool):
 
 
 @app.on_message(
-    filters.command(["lock", "unlock"]) & ~filters.private & ~filters.edited)
+    filters.command(["lock", "unlock"]) 
+    & ~filters.private
+)
 @adminsOnly("can_restrict_members")
 async def locks_func(_, message):
     if len(message.command) != 2:
@@ -157,7 +159,9 @@ async def locks_func(_, message):
 
 
 @app.on_message(
-    filters.command("locks") & ~filters.private & ~filters.edited)
+    filters.command("locks") 
+    & ~filters.private
+)
 @capture_err
 async def locktypes(_, message):
     permissions = await current_chat_permissions(message.chat.id)
@@ -172,7 +176,11 @@ async def locktypes(_, message):
     await message.reply_text(perms)
 
 
-@app.on_message(filters.text & ~filters.private, group=69)
+@app.on_message(
+    filters.text & 
+    ~filters.private, 
+    group=69
+)
 async def url_detector(_, message):
     user = message.from_user
     chat_id = message.chat.id

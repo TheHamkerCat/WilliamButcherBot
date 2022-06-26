@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) present TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -66,7 +66,9 @@ MAX_STICKERS = (
 SUPPORTED_TYPES = ["jpeg", "png", "webp"]
 
 
-@app.on_message(filters.command("sticker_id") & ~filters.edited)
+@app.on_message(
+    filters.command("sticker_id")
+)
 @capture_err
 async def sticker_id(_, message: Message):
     reply = message.reply_to_message
@@ -80,7 +82,9 @@ async def sticker_id(_, message: Message):
     await message.reply_text(f"`{reply.sticker.file_id}`")
 
 
-@app.on_message(filters.command("get_sticker") & ~filters.edited)
+@app.on_message(
+    filters.command("get_sticker")
+)
 @capture_err
 async def sticker_image(_, message: Message):
     r = message.reply_to_message
@@ -106,7 +110,8 @@ async def sticker_image(_, message: Message):
 
 
 @app2.on_message(
-    filters.command("kang", prefixes=USERBOT_PREFIX) & SUDOERS,
+    filters.command("kang", prefixes=USERBOT_PREFIX) 
+    & SUDOERS,
 )
 async def userbot_kang(_, message: Message):
     reply = message.reply_to_message
@@ -137,7 +142,9 @@ async def userbot_kang(_, message: Message):
         await m.delete()
 
 
-@app.on_message(filters.command("kang") & ~filters.edited)
+@app.on_message(
+    filters.command("kang")
+)
 @capture_err
 async def kang(client, message: Message):
     if not message.reply_to_message:
