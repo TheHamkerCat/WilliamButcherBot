@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import asyncio
+from asyncio import gather
 from datetime import datetime, timedelta
 from io import BytesIO
 from math import atan2, cos, radians, sin, sqrt
@@ -34,7 +34,6 @@ from sys import executable
 import aiofiles
 import speedtest
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
-from pyrogram import enums
 from pyrogram.types import Message
 
 from wbb import aiohttpsession as aiosession
@@ -136,7 +135,7 @@ async def transfer_sh(file_or_message):
 
 async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
     Radius_Earth = 6371.0088
-    data1, data2 = await asyncio.gather(
+    data1, data2 = await gather(
         get(f"http://ipinfo.io/{ip1}"),
         get(f"http://ipinfo.io/{ip2}"),
     )
@@ -200,9 +199,9 @@ async def extract_userid(message, text: str):
     if len(entities) < 2:
         return (await app.get_users(text)).id
     entity = entities[1]
-    if entity.type == enums.MessageEntityType.MENTION:
+    if entity.type == "mention":
         return (await app.get_users(text)).id
-    if entity.type == enums.MessageEntityType.TEXT_MENTION:
+    if entity.type == "text_mention":
         return entity.user.id
     return None
 

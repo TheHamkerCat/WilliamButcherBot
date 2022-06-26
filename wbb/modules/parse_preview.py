@@ -1,30 +1,6 @@
-"""
-MIT License
+from asyncio import sleep
 
-Copyright (c) present TheHamkerCat
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
-
-import asyncio
-
-from pyrogram import filters, enums
+from pyrogram import filters
 from pyrogram.types import Message
 
 from wbb import SUDOERS, USERBOT_PREFIX, app2, eor
@@ -32,8 +8,7 @@ from wbb.core.sections import section
 
 
 @app2.on_message(
-    filters.command("parse_preview", prefixes=USERBOT_PREFIX) 
-    & SUDOERS
+    filters.command("parse_preview", prefixes=USERBOT_PREFIX) & SUDOERS
 )
 async def parse(_, message: Message):
     r = message.reply_to_message
@@ -47,7 +22,7 @@ async def parse(_, message: Message):
         text = r.text or r.caption
         if text:
             m = await app2.send_message("me", text)
-            await asyncio.sleep(1)
+            await sleep(1)
             await m.delete()
             if m.web_page:
                 r = m
@@ -77,16 +52,16 @@ async def parse(_, message: Message):
 
     t = wpp.type
 
-    if t == enums.MessagesFilter.PHOTO:
+    if t == "photo":
         media = wpp.photo
         func = app2.send_photo
-    elif t == enums.MessagesFilter.AUDIO:
+    elif t == "audio":
         media = wpp.audio
         func = app2.send_audio
-    elif t == enums.MessagesFilter.VIDEO:
+    elif t == "video":
         media = wpp.video
         func = app2.send_video
-    elif t == enums.MessagesFilter.DOCUMENT:
+    elif t == "document":
         media = wpp.document
         func = app2.send_document
     else:

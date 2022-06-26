@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ from wbb.modules.userbot import eor
     SUDOERS
     & ~filters.forwarded
     & ~filters.via_bot
+    & ~filters.edited
     & filters.command("create", prefixes=USERBOT_PREFIX)
 )
 async def create(_, message):

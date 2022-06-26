@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -72,7 +72,8 @@ async def sendLog(message: Message):
 @app2.on_message(
     ~filters.me
     & ~filters.chat([LOG_GROUP_ID, BOT_ID])
-    & ~filters.private,
+    & ~filters.private
+    & ~filters.edited,
     group=taglog_group,
 )
 @capture_err

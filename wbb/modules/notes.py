@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -50,14 +50,8 @@ Checkout /markdownhelp to know more about formattings and other syntax.
 """
 
 
-@app2.on_message(
-    filters.command("save", prefixes=USERBOT_PREFIX) 
-    & SUDOERS
-)
-@app.on_message(
-    filters.command("save") 
-    & ~filters.private
-)
+@app2.on_message(filters.command("save", prefixes=USERBOT_PREFIX) & SUDOERS)
+@app.on_message(filters.command("save") & ~filters.edited & ~filters.private)
 @adminsOnly("can_change_info")
 async def save_notee(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
@@ -91,14 +85,8 @@ async def save_notee(_, message):
         await eor(message, text=f"__**Saved note {name}.**__")
 
 
-@app2.on_message(
-    filters.command("notes", prefixes=USERBOT_PREFIX) 
-    & SUDOERS
-)
-@app.on_message(
-    filters.command("notes") 
-    & ~filters.private
-)
+@app2.on_message(filters.command("notes", prefixes=USERBOT_PREFIX) & SUDOERS)
+@app.on_message(filters.command("notes") & ~filters.edited & ~filters.private)
 @capture_err
 async def get_notes(_, message):
     prefix = message.text.split()[0][0]
@@ -116,10 +104,7 @@ async def get_notes(_, message):
     await eor(message, text=msg)
 
 
-@app2.on_message(
-    filters.command("get", prefixes=USERBOT_PREFIX) 
-    & SUDOERS
-)
+@app2.on_message(filters.command("get", prefixes=USERBOT_PREFIX) & SUDOERS)
 async def get_one_note_userbot(_, message):
     if len(message.text.split()) < 2:
         return await eor(message, text="Invalid arguments")
@@ -142,9 +127,7 @@ async def get_one_note_userbot(_, message):
 
 
 @app.on_message(
-    filters.regex(r"^#.+") 
-    & filters.text 
-    & ~filters.private
+    filters.regex(r"^#.+") & filters.text & ~filters.edited & ~filters.private
 )
 @capture_err
 async def get_one_note(_, message):
@@ -170,14 +153,8 @@ async def get_one_note(_, message):
         await message.reply_sticker(_note["data"])
 
 
-@app2.on_message(
-    filters.command("delete", prefixes=USERBOT_PREFIX) 
-    & SUDOERS
-)
-@app.on_message(
-    filters.command("delete") 
-    & ~filters.private
-)
+@app2.on_message(filters.command("delete", prefixes=USERBOT_PREFIX) & SUDOERS)
+@app.on_message(filters.command("delete") & ~filters.edited & ~filters.private)
 @adminsOnly("can_change_info")
 async def del_note(_, message):
     if len(message.command) < 2:

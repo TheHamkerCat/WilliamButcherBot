@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -106,10 +106,7 @@ async def get_initial_captcha_cache():
 loop.create_task(get_initial_captcha_cache())
 
 
-@app.on_message(
-    filters.new_chat_members, 
-    group=welcome_captcha_group
-)
+@app.on_message(filters.new_chat_members, group=welcome_captcha_group)
 @capture_err
 async def welcome(_, message: Message):
     global answers_dicc
@@ -364,9 +361,7 @@ async def _ban_restricted_user_until_date(
 
 
 @app.on_message(
-    filters.command("captcha") 
-    & ~filters.private
-)
+    filters.command("captcha") & ~filters.private & ~filters.edited)
 @adminsOnly("can_restrict_members")
 async def captcha_state(_, message):
     usage = "**Usage:**\n/captcha [ENABLE|DISABLE]"
@@ -390,9 +385,7 @@ async def captcha_state(_, message):
 
 
 @app.on_message(
-    filters.command("set_welcome") 
-    & ~filters.private
-)
+    filters.command("set_welcome") & ~filters.private & ~filters.edited)
 @adminsOnly("can_change_info")
 async def set_welcome_func(_, message):
     usage = "You need to reply to a text, check the Greetings module in /help"
@@ -411,9 +404,7 @@ async def set_welcome_func(_, message):
 
 
 @app.on_message(
-    filters.command("del_welcome") 
-    & ~filters.private
-)
+    filters.command("del_welcome") & ~filters.private & ~filters.edited)
 @adminsOnly("can_change_info")
 async def del_welcome_func(_, message):
     chat_id = message.chat.id
@@ -422,9 +413,7 @@ async def del_welcome_func(_, message):
 
 
 @app.on_message(
-    filters.command("get_welcome") 
-    & ~filters.private
-)
+    filters.command("get_welcome") & ~filters.private & ~filters.edited)
 @adminsOnly("can_change_info")
 async def get_welcome_func(_, message):
     chat = message.chat

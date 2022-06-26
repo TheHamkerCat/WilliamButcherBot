@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -39,8 +39,7 @@ from wbb.utils.functions import extract_user
 
 
 @app2.on_message(
-    filters.command("anonymize", prefixes=USERBOT_PREFIX) 
-    & SUDOERS
+    filters.command("anonymize", prefixes=USERBOT_PREFIX) & SUDOERS
 )
 async def change_profile(_, message: Message):
     m = await eor(message, text="Anonymizing...")
