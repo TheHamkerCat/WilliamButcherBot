@@ -68,7 +68,8 @@ async def change_profile(_, message: Message):
 
 
 @app2.on_message(
-    filters.command("impersonate", prefixes=USERBOT_PREFIX) & SUDOERS
+    filters.command("impersonate", prefixes=USERBOT_PREFIX) 
+    & SUDOERS
 )
 async def impersonate(_, message: Message):
     user_id = await extract_user(message)

@@ -24,7 +24,7 @@ SOFTWARE.
 import asyncio
 import re
 
-from time import time
+from datetime import datetime, timedelta
 from pyrogram.errors import FloodWait
 from pyrogram import filters, enums
 from pyrogram.types import (
@@ -82,26 +82,26 @@ __HELP__ = """/ban - Ban A User
 async def member_permissions(chat_id: int, user_id: int):
     perms = []
     try:
-        member = (await app.get_chat_member(chat_id, user_id)).privileges
+        member = await app.get_chat_member(chat_id, user_id)
     except Exception:
         return []
-    if member.can_post_messages:
+    if member.privileges.can_post_messages:
         perms.append("can_post_messages")
-    if member.can_edit_messages:
+    if member.privileges.can_edit_messages:
         perms.append("can_edit_messages")
-    if member.can_delete_messages:
+    if member.privileges.can_delete_messages:
         perms.append("can_delete_messages")
-    if member.can_restrict_members:
+    if member.privileges.can_restrict_members:
         perms.append("can_restrict_members")
-    if member.can_promote_members:
+    if member.privileges.can_promote_members:
         perms.append("can_promote_members")
-    if member.can_change_info:
+    if member.privileges.can_change_info:
         perms.append("can_change_info")
-    if member.can_invite_users:
+    if member.privileges.can_invite_users:
         perms.append("can_invite_users")
-    if member.can_pin_messages:
+    if member.privileges.can_pin_messages:
         perms.append("can_pin_messages")
-    if member.can_manage_video_chats:
+    if member.privileges.can_manage_video_chats:
         perms.append("can_manage_video_chats")
     return perms
 
@@ -114,12 +114,12 @@ admins_in_chat = {}
 async def list_admins(chat_id: int):
     global admins_in_chat
     if chat_id in admins_in_chat:
-        interval = time() - admins_in_chat[chat_id]["last_updated_at"]
-        if interval < 3600:
+        interval = datetime.now() - admins_in_chat[chat_id]["last_updated_at"]
+        if interval < timedelta(seconds=3600):
             return admins_in_chat[chat_id]["data"]
 
     admins_in_chat[chat_id] = {
-        "last_updated_at": time(),
+        "last_updated_at": datetime.now(),
         "data": [
             member.user.id
             async for member in app.get_chat_members(
@@ -137,7 +137,7 @@ async def list_admins(chat_id: int):
 async def admin_cache_func(_, cmu: ChatMemberUpdated):
     if cmu.old_chat_member and cmu.old_chat_member.promoted_by:
         admins_in_chat[cmu.chat.id] = {
-            "last_updated_at": time(),
+            "last_updated_at": datetime.now(),
             "data": [
                 member.user.id
                 async for member in app.get_chat_members(
@@ -477,28 +477,28 @@ async def promoteFunc(_, message: Message):
     umention = (await app.get_users(user_id)).mention
     if not user_id:
         return await message.reply_text("I can't find that user.")
-    bot = (await app.get_chat_member(message.chat.id, BOT_ID)).privileges
+    bot = await app.get_chat_member(message.chat.id, BOT_ID)
     if user_id == BOT_ID:
         return await message.reply_text("I can't promote myself.")
-    if not bot.can_promote_members:
+    if not bot.privileges.can_promote_members:
         return await message.reply_text("I don't have enough permissions")
     if message.command[0][0] == "f":
         await message.chat.promote_member(
             user_id=user_id,
-            can_change_info=bot.can_change_info,
-            can_invite_users=bot.can_invite_users,
-            can_delete_messages=bot.can_delete_messages,
-            can_restrict_members=bot.can_restrict_members,
-            can_pin_messages=bot.can_pin_messages,
-            can_promote_members=bot.can_promote_members,
-            can_manage_chat=bot.can_manage_chat,
-            can_manage_video_chats=bot.can_manage_video_chats,
+            can_change_info=bot.privileges.can_change_info,
+            can_invite_users=bot.privileges.can_invite_users,
+            can_delete_messages=bot.privileges.can_delete_messages,
+            can_restrict_members=bot.privileges.can_restrict_members,
+            can_pin_messages=bot.privileges.can_pin_messages,
+            can_promote_members=bot.privileges.can_promote_members,
+            can_manage_chat=bot.privileges.can_manage_chat,
+            can_manage_video_chats=bot.privileges.can_manage_video_chats,
         )
         return await message.reply_text(f"Fully Promoted! {umention}")
 
     await message.chat.promote_member(
-        user_id,
-        ChatPrivileges(
+        user_id=user_id,
+        privileges=ChatPrivileges(
             can_change_info=False,
             can_restrict_members=False,
             can_pin_messages=False,
