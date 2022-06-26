@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) present TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,9 @@ __MODULE__ = "Repo"
 __HELP__ = "/repo - To Get My Github Repository Link " "And Support Group Link"
 
 
-@app.on_message(filters.command("repo") & ~filters.edited)
+@app.on_message(
+    filters.command("repo")
+)
 @capture_err
 async def repo(_, message):
     users = await get(

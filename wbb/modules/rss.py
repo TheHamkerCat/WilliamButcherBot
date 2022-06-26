@@ -1,4 +1,28 @@
-from asyncio import get_event_loop, sleep
+"""
+MIT License
+
+Copyright (c) present TheHamkerCat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
+import asyncio
 
 from feedparser import parse
 from pyrogram import filters
@@ -37,10 +61,10 @@ async def rss_worker():
     while True:
         feeds = await get_rss_feeds()
         if not feeds:
-            await sleep(RSS_DELAY)
+            await asyncio.sleep(RSS_DELAY)
             continue
 
-        loop = get_event_loop()
+        loop = asyncio.get_event_loop()
 
         for _feed in feeds:
             chat = _feed["chat_id"]
@@ -65,14 +89,16 @@ async def rss_worker():
                 log.info(f"Removed RSS Feed from {chat} (Invalid Chat)")
             except Exception as e:
                 log.info(f"RSS in {chat}: {str(e)}")
-        await sleep(RSS_DELAY)
+        await asyncio.sleep(RSS_DELAY)
 
 
-loop = get_event_loop()
+loop = asyncio.get_event_loop()
 loop.create_task(rss_worker())
 
 
-@app.on_message(filters.command("add_feed") & ~filters.edited)
+@app.on_message(
+    filters.command("add_feed")
+)
 @capture_err
 async def add_feed_func(_, m: Message):
     if len(m.command) != 2:
@@ -93,7 +119,7 @@ async def add_feed_func(_, m: Message):
 
     ns = "[ERROR]: This feed isn't supported."
     try:
-        loop = get_event_loop()
+        loop = asyncio.get_event_loop()
         parsed = await loop.run_in_executor(None, parse, url)
         feed = Feed(parsed)
     except Exception:
@@ -111,7 +137,9 @@ async def add_feed_func(_, m: Message):
     await add_rss_feed(chat_id, parsed.url, feed.title)
 
 
-@app.on_message(filters.command("rm_feed") & ~filters.edited)
+@app.on_message(
+    filters.command("rm_feed")
+)
 async def rm_feed_func(_, m: Message):
     if await is_rss_active(m.chat.id):
         await remove_rss_feed(m.chat.id)

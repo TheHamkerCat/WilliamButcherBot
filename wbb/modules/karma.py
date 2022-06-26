@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) present TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -60,8 +60,7 @@ regex_downvote = r"^(-|--|-1|👎|-- .+)$"
     & filters.reply
     & filters.regex(regex_upvote, re.IGNORECASE)
     & ~filters.via_bot
-    & ~filters.bot
-    & ~filters.edited,
+    & ~filters.bot,
     group=karma_positive_group,
 )
 @capture_err
@@ -99,8 +98,7 @@ async def upvote(_, message):
     & filters.reply
     & filters.regex(regex_downvote, re.IGNORECASE)
     & ~filters.via_bot
-    & ~filters.bot
-    & ~filters.edited,
+    & ~filters.bot,
     group=karma_negative_group,
 )
 @capture_err
@@ -132,7 +130,10 @@ async def downvote(_, message):
     )
 
 
-@app.on_message(filters.command("karma") & filters.group & ~filters.edited)
+@app.on_message(
+    filters.command("karma") 
+    & filters.group
+)
 @capture_err
 async def command_karma(_, message):
     chat_id = message.chat.id
@@ -183,7 +184,9 @@ async def command_karma(_, message):
 
 
 @app.on_message(
-    filters.command("karma_toggle") & ~filters.private & ~filters.edited)
+    filters.command("karma_toggle") 
+    & ~filters.private
+)
 @adminsOnly("can_change_info")
 async def captcha_state(_, message):
     usage = "**Usage:**\n/karma_toggle [ENABLE|DISABLE]"

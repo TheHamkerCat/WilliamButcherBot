@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) present TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -71,7 +71,9 @@ async def chat_bot_toggle(message: Message, is_userbot: bool):
 # Enabled | Disable Chatbot
 
 
-@app.on_message(filters.command("chatbot") & ~filters.edited)
+@app.on_message(
+    filters.command("chatbot")
+)
 @capture_err
 async def chatbot_status(_, message: Message):
     if len(message.command) != 2:
@@ -99,8 +101,7 @@ async def type_and_send(message: Message):
     & filters.reply
     & ~filters.bot
     & ~filters.via_bot
-    & ~filters.forwarded
-    & ~filters.edited,
+    & ~filters.forwarded,
     group=chatbot_group,
 )
 @capture_err
@@ -122,7 +123,6 @@ async def chatbot_talk(_, message: Message):
 
 @app2.on_message(
     filters.command("chatbot", prefixes=USERBOT_PREFIX)
-    & ~filters.edited
     & SUDOERS
 )
 @capture_err
@@ -133,7 +133,9 @@ async def chatbot_status_ubot(_, message: Message):
 
 
 @app2.on_message(
-    ~filters.me & ~filters.private & filters.text & ~filters.edited,
+    filters.me 
+    & ~filters.private 
+    & ~filters.text,
     group=chatbot_group,
 )
 @capture_err
@@ -157,7 +159,9 @@ async def chatbot_talk_ubot(_, message: Message):
 
 
 @app2.on_message(
-    filters.text & filters.private & ~filters.me & ~filters.edited,
+    filters.text 
+    & ~filters.private 
+    & ~filters.me,
     group=(chatbot_group + 1),
 )
 @capture_err

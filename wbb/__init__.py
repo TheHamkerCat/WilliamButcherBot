@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) present TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -109,7 +109,7 @@ if not HEROKU:
         api_hash=API_HASH,
     )
 else:
-    app2 = Client(SESSION_STRING, api_id=API_ID, api_hash=API_HASH)
+    app2 = Client(session_string=SESSION_STRING, api_id=API_ID, api_hash=API_HASH)
 
 aiohttpsession = ClientSession()
 

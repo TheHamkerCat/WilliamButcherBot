@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) present TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -56,8 +56,13 @@ async def take_screenshot(url: str, full: bool = False):
     return file
 
 
-@app2.on_message(filters.command("webss", USERBOT_PREFIX) & SUDOERS)
-@app.on_message(filters.command("webss") & ~filters.edited)
+@app2.on_message(
+    filters.command("webss", USERBOT_PREFIX) 
+    & SUDOERS
+)
+@app.on_message(
+    filters.command("webss")
+)
 @capture_err
 async def take_ss(_, message: Message):
     if len(message.command) < 2:
