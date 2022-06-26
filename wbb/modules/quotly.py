@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -64,14 +64,8 @@ def isArgInt(message: Message) -> list:
         return [False, 0]
 
 
-@app2.on_message(
-    filters.command("q", prefixes=USERBOT_PREFIX) 
-    & SUDOERS
-)
-@app.on_message(
-    filters.command("q") 
-    & ~filters.private
-)
+@app2.on_message(filters.command("q", prefixes=USERBOT_PREFIX) & SUDOERS)
+@app.on_message(filters.command("q") & ~filters.private & ~filters.edited)
 @capture_err
 async def quotly_func(client, message: Message):
     if not message.reply_to_message:
@@ -99,8 +93,8 @@ async def quotly_func(client, message: Message):
                 for i in await client.get_messages(
                     message.chat.id,
                     range(
-                        message.reply_to_message.id,
-                        message.reply_to_message.id + (count + 5),
+                        message.reply_to_message.message_id,
+                        message.reply_to_message.message_id + (count + 5),
                     ),
                     replies=0,
                 )
@@ -114,7 +108,7 @@ async def quotly_func(client, message: Message):
                 )
             reply_message = await client.get_messages(
                 message.chat.id,
-                message.reply_to_message.id,
+                message.reply_to_message.message_id,
                 replies=1,
             )
             messages = [reply_message]

@@ -10,12 +10,12 @@ import re
 import subprocess
 import sys
 import traceback
-import asyncio
+from asyncio import sleep
 from html import escape
 from io import StringIO
 from time import time
 
-from pyrogram import filters, enums
+from pyrogram import filters
 from pyrogram.errors import MessageNotModified
 from pyrogram.types import Message, ReplyKeyboardMarkup
 
@@ -40,18 +40,18 @@ async def aexec(code, client, message):
     return await locals()["__aexec"](client, message)
 
 
-async def get_edit(message: Message, text: str):
-    async for m in app2.get_chat_history(message.chat.id):
+async def iter_edit(message: Message, text: str):
+    async for m in app2.iter_history(message.chat.id):
 
         # If no replies found, reply
-        if m.id == message.id:
+        if m.message_id == message.message_id:
             return 0
 
         if not m.from_user or not m.text or not m.reply_to_message:
             continue
 
         if (
-                (m.reply_to_message.id == message.id)
+                (m.reply_to_message.message_id == message.message_id)
                 and (m.from_user.id == message.from_user.id)
                 and ("→" in m.text)
         ):
@@ -74,7 +74,7 @@ async def executor(client, message: Message):
     except IndexError:
         return await message.delete()
 
-    if message.chat.type == enums.ChatType.CHANNEL:
+    if message.chat.type == "channel":
         return
 
     m = message
@@ -144,7 +144,7 @@ async def executor(client, message: Message):
 
     # Edit the output if input is edited
     if message.edit_date:
-        status_ = await get_edit(message, final_output)
+        status_ = await iter_edit(message, final_output)
         if status_ == 0:
             return await message.reply(final_output, quote=True)
         return
@@ -157,6 +157,7 @@ async def executor(client, message: Message):
     SUDOERS
     & ~filters.forwarded
     & ~filters.via_bot
+    & ~filters.edited
     & filters.command("sh", prefixes=USERBOT_PREFIX),
 )
 async def shellrunner(_, message: Message):
@@ -219,7 +220,7 @@ async def shellrunner(_, message: Message):
             await app2.send_document(
                 message.chat.id,
                 "output.txt",
-                reply_to_message_id=message.id,
+                reply_to_message_id=message.message_id,
                 caption=escape(text),
             )
             return os.remove("output.txt")
@@ -237,6 +238,7 @@ async def shellrunner(_, message: Message):
 @app2.on_message(
     SUDOERS
     & filters.command("reserve", prefixes=USERBOT_PREFIX)
+    & ~filters.edited
 )
 async def reserve_channel_handler(_, message: Message):
     if len(message.text.split()) != 2:

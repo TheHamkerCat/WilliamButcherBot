@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,7 @@ __HELP__ = """
 @app.on_message(
     filters.command("set_chat_title")
     & ~filters.private
+    & ~filters.edited
 )
 @adminsOnly("can_change_info")
 async def set_chat_title(_, message):
@@ -55,6 +56,7 @@ async def set_chat_title(_, message):
 @app.on_message(
     filters.command("set_user_title")
     & ~filters.private
+    & ~filters.edited
 )
 @adminsOnly("can_change_info")
 async def set_user_title(_, message):
@@ -82,6 +84,7 @@ async def set_user_title(_, message):
 @app.on_message(
     filters.command("set_chat_photo")
     & ~filters.private
+    & ~filters.edited
 )
 @adminsOnly("can_change_info")
 async def set_chat_photo(_, message):

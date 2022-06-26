@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,8 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import asyncio
-from datetime import datetime, timedelta
+from asyncio import get_running_loop, sleep
+from time import time
 
 from pyrogram import filters
 from pyrogram.types import (
@@ -61,7 +61,8 @@ def reset_flood(chat_id, user_id=0):
     & ~filters.me
     & ~filters.private
     & ~filters.channel
-    & ~filters.bot,
+    & ~filters.bot
+    & ~filters.edited,
     group=flood_group,
 )
 @capture_err
@@ -100,7 +101,7 @@ async def flood_control_func(_, message: Message):
             await message.chat.restrict_member(
                 user_id,
                 permissions=ChatPermissions(),
-                until_date=datetime.now() + timedelta(seconds=3600),
+                until_date=int(time() + 3600),
             )
         except Exception:
             return
@@ -120,13 +121,13 @@ async def flood_control_func(_, message: Message):
         )
 
         async def delete():
-            await asyncio.sleep(3600)
+            await sleep(3600)
             try:
                 await m.delete()
             except Exception:
                 pass
 
-        loop = asyncio.get_running_loop()
+        loop = get_running_loop()
         return loop.create_task(delete())
     DB[chat_id][user_id] += 1
 
@@ -150,10 +151,7 @@ async def flood_callback_func(_, cq: CallbackQuery):
     await cq.message.edit(text)
 
 
-@app.on_message(
-    filters.command("flood") 
-    & ~filters.private
-)
+@app.on_message(filters.command("flood") & ~filters.private & ~filters.edited)
 @adminsOnly("can_change_info")
 async def flood_toggle(_, message: Message):
     if len(message.command) != 2:

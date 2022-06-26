@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -37,8 +37,7 @@ from wbb.utils.downloader import download
 
 
 @app2.on_message(
-    SUDOERS 
-    & filters.command("download", prefixes=USERBOT_PREFIX)
+    SUDOERS & filters.command("download", prefixes=USERBOT_PREFIX)
 )
 async def download_func(_, message: Message):
     reply = message.reply_to_message
@@ -106,10 +105,7 @@ async def download_func(_, message: Message):
     await eor(m, text=section("Downloaded", body))
 
 
-@app2.on_message(
-    SUDOERS 
-    & filters.command("upload", prefixes=USERBOT_PREFIX)
-)
+@app2.on_message(SUDOERS & filters.command("upload", prefixes=USERBOT_PREFIX))
 async def upload_func(_, message: Message):
     if len(message.text.split()) != 2:
         return await eor(message, text="Invalid Arguments")

@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) present TheHamkerCat
+Copyright (c) 2021 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,9 +30,7 @@ __MODULE__ = "Reddit"
 __HELP__ = "/reddit [query] - results something from reddit"
 
 
-@app.on_message(
-    filters.command("reddit")
-)
+@app.on_message(filters.command("reddit") & ~filters.edited)
 @capture_err
 async def reddit(_, message):
     if len(message.command) != 2:
