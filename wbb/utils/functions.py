@@ -168,11 +168,11 @@ async def time_converter(message: Message, time_value: str) -> int | datetime:
     if not time_digit.isdigit():
         return await message.reply_text("Incorrect time specified")
     if check_unit == "m":
-        temp_time = currunt_time + timedelta(minutes=int(time_digit))
+        temp_time = currunt_time + timedelta(minutes=int(time_digit) * 60)
     elif check_unit == "h":
-        temp_time = currunt_time + timedelta(hours=int(time_digit))
+        temp_time = currunt_time + timedelta(hours=int(time_digit) * 60 * 60)
     elif check_unit == "d":
-        temp_time = currunt_time + timedelta(days=int(time_digit))
+        temp_time = currunt_time + timedelta(days=int(time_digit) * 24 * 60 * 60)
     else:
         return await message.reply_text("Incorrect time specified.")
     return int(datetime.timestamp(temp_time))
