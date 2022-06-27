@@ -23,7 +23,7 @@ SOFTWARE.
 """
 from asyncio import gather, sleep
 
-from pyrogram import filters
+from pyrogram import filters, enums
 from pyrogram.types import Message
 
 from wbb import (
@@ -90,10 +90,16 @@ async def type_and_send(message: Message):
     chat_id = message.chat.id
     user_id = message.from_user.id if message.from_user else 0
     query = message.text.strip()
-    await message._client.send_chat_action(chat_id, "typing")
+    await message._client.send_chat_action(
+        chat_id, 
+        enums.ChatAction.TYPING
+    )
     response, _ = await gather(lunaQuery(query, user_id), sleep(3))
     await message.reply_text(response)
-    await message._client.send_chat_action(chat_id, "cancel")
+    await message._client.send_chat_action(
+        chat_id, 
+        enums.ChatAction.CANCEL
+    )
 
 
 @app.on_message(
