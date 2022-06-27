@@ -93,12 +93,20 @@ __HELP__ = """
 
 /ping
     Check ping of all 5 DCs.
-    
+
+/stat
+    Shows total count of the messages sent in the chat.
+
 #RTFM - Tell noobs to read the manual
 """
 
 ASQ_LOCK = Lock()
 PING_LOCK = Lock()
+
+
+@app.on_message(filters.command("stat") & ~filters.edited & ~filters.private)
+async def stat(_, message):
+    await message.reply_text(f"Total number of messages sent in {message.chat.title} is: {message.message_id + 1}")
 
 
 @app2.on_message(
