@@ -60,7 +60,7 @@ async def clean_db(_, message):
             await app.get_chat_members(served_chat, BOT_ID)
             await asyncio.sleep(2)
         except FloodWait as e:
-            await asyncio.sleep(int(e.x))
+            await asyncio.sleep(int(e.value))
         except Exception:
             await remove_served_chat(served_chat)
             served_chats.remove(served_chat)

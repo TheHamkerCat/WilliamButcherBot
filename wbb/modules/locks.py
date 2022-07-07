@@ -102,7 +102,8 @@ async def tg_lock(message, permissions: list, perm: str, lock: bool):
 
     try:
         await app.set_chat_permissions(
-            message.chat.id, ChatPermissions(**permissions)
+            message.chat.id, 
+            permissions=ChatPermissions(**permissions)
         )
     except ChatNotModified:
         return await message.reply_text(
@@ -138,13 +139,16 @@ async def locks_func(_, message):
             bool(state == "lock"),
         )
     elif parameter == "all" and state == "lock":
-        await app.set_chat_permissions(chat_id, ChatPermissions())
+        await app.set_chat_permissions(
+            chat_id, 
+            permissions=ChatPermissions()
+        )
         await message.reply_text(f"Locked Everything in {message.chat.title}")
 
     elif parameter == "all" and state == "unlock":
         await app.set_chat_permissions(
             chat_id,
-            ChatPermissions(
+            permissions=ChatPermissions(
                 can_send_messages=True,
                 can_send_media_messages=True,
                 can_send_other_messages=True,

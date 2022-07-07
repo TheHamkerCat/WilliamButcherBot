@@ -123,7 +123,7 @@ async def blacklist_filters_re(_, message):
             try:
                 await message.chat.restrict_member(
                     user.id,
-                    ChatPermissions(),
+                    permissions=ChatPermissions(),
                     until_date=datetime.now() + timedelta(seconds=3600),
                 )
             except Exception:

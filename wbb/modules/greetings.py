@@ -27,7 +27,7 @@ import os
 from datetime import datetime
 from random import shuffle
 
-from pyrogram import filters
+from pyrogram import filters, enums
 from pyrogram.errors.exceptions.bad_request_400 import (
     ChatAdminRequired,
     UserNotParticipant,
@@ -144,7 +144,10 @@ async def welcome(_, message: Message):
             if await has_solved_captcha_once(message.chat.id, member.id):
                 continue
 
-            await message.chat.restrict_member(member.id, ChatPermissions())
+            await message.chat.restrict_member(
+                member.id, 
+                permissions=ChatPermissions()
+            )
             text = (
                 f"{(member.mention())} Are you human?\n"
                 f"Solve this captcha in {WELCOME_DELAY_KICK_SEC} "
@@ -356,7 +359,7 @@ async def _ban_restricted_user_until_date(
 ):
     try:
         member = await group_chat.get_member(user_id)
-        if member.status == "restricted":
+        if member.status == enums.ChatMemberStatus.RESTRICTED:
             until_date = int(datetime.utcnow().timestamp() + duration)
             await group_chat.ban_member(user_id, until_date=until_date)
     except UserNotParticipant:
