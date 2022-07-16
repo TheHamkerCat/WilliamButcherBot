@@ -31,7 +31,7 @@ async def paste(_, message: Message):
     
     page_name = message.text.split(None, 1)[1]
     page = await create_telegraph(
-        page_name, html_content=reply.text.html
+        title=page_name, content=reply.text.html
     )
     return await message.reply(
         f"**Posted:** {page['url']}",
