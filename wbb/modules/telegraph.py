@@ -15,7 +15,7 @@ async def create_telegraph(title: str, content: str) -> str:
             title, html_content=content.replace("\n", "<br>")
         )
     except RetryAfterError as e:
-        await sleep(st.retry_after)
+        await sleep(e.retry_after)
         return await create_telegraph(title=title, content=content)
 
 @app.on_message(filters.command("telegraph") & ~filters.edited)
