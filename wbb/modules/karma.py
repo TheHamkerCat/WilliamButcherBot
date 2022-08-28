@@ -170,7 +170,7 @@ async def command_karma(_, message):
         await m.edit(section(msg, karma))
     else:
         if not message.reply_to_message.from_user:
-            return await message.reply("Anon user hash no karma.")
+            return await message.reply("Anon user has no karma.")
 
         user_id = message.reply_to_message.from_user.id
         karma = await get_karma(chat_id, await int_to_alpha(user_id))
