@@ -66,14 +66,6 @@ thehamkercat@arch:~$ cp sample_config.py config.py
 thehamkercat@arch:~$ python3 -m wbb
 ```
 
-<h1>
-    <p align="center">
-        <a href="https://heroku.com/deploy?template=https://github.com/thehamkercat/WilliamButcherBot">
-            <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
-        </a>
-    </p>
-</h1>
-
 <h3 align="center"> 
    Generating Pyrogram Session For Heroku
 </h3>
