@@ -75,7 +75,7 @@ __HELP__ = """/ban - Ban A User
 /unmute - Unmute A User
 /ban_ghosts - Ban Deleted Accounts
 /report | @admins | @admin - Report A Message To Admins.
-/admincache - Reload admin list"""
+/invite - Send Group/SuperGroup Invite Link."""
 
 
 async def member_permissions(chat_id: int, user_id: int):
@@ -820,3 +820,17 @@ async def report_user(_, message):
         text += f"[\u2063](tg://user?id={admin.user.id})"
 
     await message.reply_to_message.reply_text(text)
+
+
+@app.on_message(filters.command("invite") & ~filters.edited)
+@adminsOnly("can_invite_users")
+async def invite(_, message):
+    if message.chat.type in ["group", "supergroup"]:
+        link = (await app.get_chat(message.chat.id)).invite_link 
+        if not link:
+            link = await app.export_chat_invite_link(message.chat.id)
+        text = f"Here's This Group Invite Link.\n\n{link}"
+        if message.reply_to_message:
+            await message.reply_to_message.reply_text(text, disable_web_page_preview=True)
+        else:
+            await message.reply_text(text, disable_web_page_preview=True)
