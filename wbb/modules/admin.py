@@ -24,6 +24,7 @@ SOFTWARE.
 import asyncio
 import re
 
+from contextlib import suppress
 from time import time
 from pyrogram.errors import FloodWait
 from pyrogram import filters
@@ -280,14 +281,12 @@ async def banFunc(_, message: Message):
         msg += f"**Banned For:** {time_value}\n"
         if temp_reason:
             msg += f"**Reason:** {temp_reason}"
-        try:
+        with suppress(AttributeError):
             if len(time_value[:-1]) < 3:
                 await message.chat.ban_member(user_id, until_date=temp_ban)
                 await message.reply_text(msg)
             else:
                 await message.reply_text("You can't use more than 99")
-        except AttributeError:
-            pass
         return
     if reason:
         msg += f"**Reason:** {reason}"
