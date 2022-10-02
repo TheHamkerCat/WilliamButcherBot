@@ -101,7 +101,7 @@ async def load_sudoers():
 loop = asyncio.get_event_loop()
 loop.run_until_complete(load_sudoers())
 
-if not HEROKU:
+if not SESSION_STRING:
     app2 = Client(
         "userbot",
         phone_number=PHONE_NUMBER,
