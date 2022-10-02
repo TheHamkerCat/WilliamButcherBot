@@ -43,14 +43,14 @@ from wbb.utils.filter_groups import karma_negative_group, karma_positive_group
 from wbb.utils.functions import get_user_id_and_usernames
 
 __MODULE__ = "Karma"
-__HELP__ = """[UPVOTE] - Use upvote keywords like "+", "+1", "thanks" etc to upvote a message.
+__HELP__ = """[UPVOTE] - Use upvote keywords like "+", "+1", "thanks", etc to upvote a message.
 [DOWNVOTE] - Use downvote keywords like "-", "-1", etc to downvote a message.
 /karma_toggle [ENABLE|DISABLE] - Enable or Disable Karma System In Your Chat.
 Reply to a message with /karma to check a user's karma
 Send /karma without replying to any message to check karma list of top 10 users"""
 
-regex_upvote = r"^(\+|\+\+|\+1|thx|tnx|ty|thank you|thanx|thanks|pro|cool|good|👍|\+\+ .+)$"
-regex_downvote = r"^(-|--|-1|👎|-- .+)$"
+regex_upvote = r"^(\+|\+\+|\+1|thx|tnx|tq|ty|thankyou|thank you|thanx|thanks|pro|cool|good|agree|👍|\+\+ .+)$"
+regex_downvote = r"^(-|--|-1|not cool|disagree|worst|bad|👎|-- .+)$"
 
 
 @app.on_message(
@@ -128,7 +128,7 @@ async def downvote(_, message):
         new_karma = {"karma": karma}
         await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
     await message.reply_text(
-        f"Decremented Karma Of {user_mention} By 1 \nTotal Points: {karma}"
+        f"Decremented Karma of {user_mention} By 1 \nTotal Points: {karma}"
     )
 
 
@@ -194,9 +194,9 @@ async def captcha_state(_, message):
     state = state.lower()
     if state == "enable":
         await karma_on(chat_id)
-        await message.reply_text("Enabled karma system.")
+        await message.reply_text("Enabled Karma System for this chat.")
     elif state == "disable":
         await karma_off(chat_id)
-        await message.reply_text("Disabled karma system.")
+        await message.reply_text("Disabled Karma System for this chat.")
     else:
         await message.reply_text(usage)
