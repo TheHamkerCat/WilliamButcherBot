@@ -21,10 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import glob
-import importlib
-import sys
+from glob import glob
+from importlib import import_module
 from os.path import basename, dirname, isfile
+from sys import exit
 
 from wbb import MOD_LOAD, MOD_NOLOAD
 
@@ -32,14 +32,14 @@ from wbb import MOD_LOAD, MOD_NOLOAD
 def __list_all_modules():
     # This generates a list of modules in this
     # folder for the * in __main__ to work.
-    mod_paths = glob.glob(dirname(__file__) + "/*.py")
+    mod_paths = glob(dirname(__file__) + "/*.py")
     all_modules = [
         basename(f)[:-3]
         for f in mod_paths
         if isfile(f)
-           and f.endswith(".py")
-           and not f.endswith("__init__.py")
-           and not f.endswith("__main__.py")
+        and f.endswith(".py")
+        and not f.endswith("__init__.py")
+        and not f.endswith("__main__.py")
     ]
 
     if MOD_LOAD or MOD_NOLOAD:
@@ -49,20 +49,17 @@ def __list_all_modules():
                     any(mod == module_name for module_name in all_modules)
                     for mod in to_load
             ):
-                sys.exit()
+                exit()
 
         else:
             to_load = all_modules
 
-        if MOD_NOLOAD:
-            return [item for item in to_load if item not in MOD_NOLOAD]
-
-        return to_load
+        return [item for item in to_load if item not in MOD_NOLOAD] if MOD_NOLOAD else to_load
 
     return all_modules
 
 
 print("[INFO]: IMPORTING MODULES")
-importlib.import_module("wbb.modules.__main__")
+import_module("wbb.modules.__main__")
 ALL_MODULES = sorted(__list_all_modules())
 __all__ = ALL_MODULES + ["ALL_MODULES"]

@@ -1,11 +1,10 @@
 """ WRITTEN BY @pokurt, https://github.com/pokurt"""
 
-import sys
-import traceback
 from functools import wraps
+from sys import exc_info
+from traceback import format_exception
 
 from pyrogram.errors.exceptions.forbidden_403 import ChatWriteForbidden
-
 from wbb import LOG_GROUP_ID, app
 
 
@@ -22,8 +21,7 @@ def split_limits(text):
         else:
             result.append(small_msg)
             small_msg = line
-    else:
-        result.append(small_msg)
+    result.append(small_msg)
 
     return result
 
@@ -37,9 +35,9 @@ def capture_err(func):
             await app.leave_chat(message.chat.id)
             return
         except Exception as err:
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            errors = traceback.format_exception(
-                etype=exc_type,
+            exc_type, exc_obj, exc_tb = exc_info()
+            errors = format_exception(
+                exc_type,
                 value=exc_obj,
                 tb=exc_tb,
             )

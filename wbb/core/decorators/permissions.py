@@ -26,9 +26,7 @@ from traceback import format_exc as err
 
 from pyrogram.errors.exceptions.forbidden_403 import ChatWriteForbidden
 from pyrogram.types import Message
-
 from wbb import SUDOERS, app
-from wbb.modules.admin import member_permissions
 
 
 async def authorised(func, subFunc2, client, message, *args, **kwargs):
@@ -43,15 +41,42 @@ async def authorised(func, subFunc2, client, message, *args, **kwargs):
         except AttributeError:
             await message.reply_text(str(e))
         e = err()
-        print(str(e))
+        print(e)
     return subFunc2
+
+
+async def member_permissions(chat_id: int, user_id: int):
+    perms = []
+    try:
+        member = (await app.get_chat_member(chat_id, user_id)).privileges
+    except Exception:
+        return []
+    if member.can_post_messages:
+        perms.append("can_post_messages")
+    if member.can_edit_messages:
+        perms.append("can_edit_messages")
+    if member.can_delete_messages:
+        perms.append("can_delete_messages")
+    if member.can_restrict_members:
+        perms.append("can_restrict_members")
+    if member.can_promote_members:
+        perms.append("can_promote_members")
+    if member.can_change_info:
+        perms.append("can_change_info")
+    if member.can_invite_users:
+        perms.append("can_invite_users")
+    if member.can_pin_messages:
+        perms.append("can_pin_messages")
+    if member.can_manage_video_chats:
+        perms.append("can_manage_voice_chats")
+    return perms
 
 
 async def unauthorised(message: Message, permission, subFunc2):
     chatID = message.chat.id
     text = (
-            "You don't have the required permission to perform this action."
-            + f"\n**Permission:** __{permission}__"
+        "You don't have the required permission to perform this action."
+        + f"\n**Permission:** __{permission}__"
     )
     try:
         await message.reply_text(text)

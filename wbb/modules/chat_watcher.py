@@ -22,11 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from wbb import app
-from wbb.utils.dbfunctions import (
-    add_served_chat,
-    add_served_user,
-    blacklisted_chats,
-)
+from wbb.utils.dbfunctions import (add_served_chat, add_served_user,
+                                   blacklisted_chats)
 from wbb.utils.filter_groups import chat_watcher_group
 
 
@@ -35,14 +32,10 @@ async def chat_watcher_func(_, message):
     if message.from_user:
         user_id = message.from_user.id
         await add_served_user(user_id)
-
     chat_id = message.chat.id
     blacklisted_chats_list = await blacklisted_chats()
-
     if not chat_id:
         return
-
     if chat_id in blacklisted_chats_list:
         return await app.leave_chat(chat_id)
-
     await add_served_chat(chat_id)

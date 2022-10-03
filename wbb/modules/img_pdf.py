@@ -25,11 +25,10 @@ from io import BytesIO
 from os import path, remove
 from time import time
 
-import img2pdf
+from img2pdf import convert as img2pdf_convert
 from PIL import Image
 from pyrogram import filters
 from pyrogram.types import Message
-
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.sections import section
@@ -60,16 +59,12 @@ async def convert(
         img = Image.open(img_path).convert("RGB")
         img.save(img_path, "JPEG", quality=100)
 
-    pdf = BytesIO(img2pdf.convert(documents))
+    pdf = BytesIO(img2pdf_convert(documents))
     pdf.name = "wbb.pdf"
 
     if len(main_message.command) >= 2:
         names = main_message.text.split(None, 1)[1]
-        if not names.endswith(".pdf"):
-            pdf.name = names + ".pdf"
-        else:
-            pdf.name = names
-
+        pdf.name = names if names.endswith(".pdf") else names + ".pdf"
     elapsed = round(time() - start_time, 2)
 
     await main_message.reply_document(
@@ -92,7 +87,7 @@ async def convert(
             remove(file)
 
 
-@app.on_message(filters.command("pdf") & ~filters.edited)
+@app.on_message(filters.command("pdf"))
 @capture_err
 async def img_to_pdf(_, message: Message):
     reply = message.reply_to_message
@@ -105,10 +100,7 @@ async def img_to_pdf(_, message: Message):
     start_time = time()
 
     if reply.media_group_id:
-        messages = await app.get_media_group(
-            message.chat.id,
-            reply.message_id,
-        )
+        messages = await app.get_media_group(message.chat.id, reply.id)
         return await convert(message, messages, m, start_time)
 
     return await convert(message, [reply], m, start_time)

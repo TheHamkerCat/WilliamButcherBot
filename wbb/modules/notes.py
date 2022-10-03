@@ -24,17 +24,12 @@ SOFTWARE.
 from re import findall
 
 from pyrogram import filters
-
 from wbb import SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.keyboard import ikb
-from wbb.utils.dbfunctions import (
-    delete_note,
-    get_note,
-    get_note_names,
-    save_note,
-)
+from wbb.utils.dbfunctions import (delete_note, get_note, get_note_names,
+                                   save_note)
 from wbb.utils.functions import extract_text_and_keyb
 
 __MODULE__ = "Notes"
@@ -51,7 +46,7 @@ Checkout /markdownhelp to know more about formattings and other syntax.
 
 
 @app2.on_message(filters.command("save", prefixes=USERBOT_PREFIX) & SUDOERS)
-@app.on_message(filters.command("save") & ~filters.edited & ~filters.private)
+@app.on_message(filters.command("save") & ~filters.private)
 @adminsOnly("can_change_info")
 async def save_notee(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
@@ -86,11 +81,11 @@ async def save_notee(_, message):
 
 
 @app2.on_message(filters.command("notes", prefixes=USERBOT_PREFIX) & SUDOERS)
-@app.on_message(filters.command("notes") & ~filters.edited & ~filters.private)
+@app.on_message(filters.command("notes") & ~filters.private)
 @capture_err
 async def get_notes(_, message):
     prefix = message.text.split()[0][0]
-    is_ubot = bool(prefix == USERBOT_PREFIX)
+    is_ubot = prefix == USERBOT_PREFIX
     chat_id = USERBOT_ID if is_ubot else message.chat.id
 
     _notes = await get_note_names(chat_id)
@@ -126,9 +121,7 @@ async def get_one_note_userbot(_, message):
         await message.reply_sticker(_note["data"])
 
 
-@app.on_message(
-    filters.regex(r"^#.+") & filters.text & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.regex(r"^#.+") & filters.text & ~filters.private)
 @capture_err
 async def get_one_note(_, message):
     name = message.text.replace("#", "", 1)
@@ -154,7 +147,7 @@ async def get_one_note(_, message):
 
 
 @app2.on_message(filters.command("delete", prefixes=USERBOT_PREFIX) & SUDOERS)
-@app.on_message(filters.command("delete") & ~filters.edited & ~filters.private)
+@app.on_message(filters.command("delete") & ~filters.private)
 @adminsOnly("can_change_info")
 async def del_note(_, message):
     if len(message.command) < 2:
@@ -162,11 +155,9 @@ async def del_note(_, message):
     name = message.text.split(None, 1)[1].strip()
     if not name:
         return await eor(message, text="**Usage**\n__/delete [NOTE_NAME]__")
-
     prefix = message.text.split()[0][0]
-    is_ubot = bool(prefix == USERBOT_PREFIX)
+    is_ubot = prefix == USERBOT_PREFIX
     chat_id = USERBOT_ID if is_ubot else message.chat.id
-
     deleted = await delete_note(chat_id, name)
     if deleted:
         await eor(message, text=f"**Deleted note {name} successfully.**")

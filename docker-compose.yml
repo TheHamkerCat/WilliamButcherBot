@@ -1,0 +1,10 @@
+version: "3.3"
+
+services:
+  app:
+    container_name: wbb
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python3 -m wbb
+    restart: on-failure

@@ -21,21 +21,21 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import gather
+from asyncio import gather as asyncio_gather
 from datetime import datetime, timedelta
 from io import BytesIO
 from math import atan2, cos, radians, sin, sqrt
 from os import execvp
 from random import randint
-from re import findall
+from re import findall as re_findall
 from re import sub as re_sub
 from sys import executable
 
-import aiofiles
-import speedtest
+from aiofiles import open as aiofile_open
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
-
+from speedtest import Speedtest
 from wbb import aiohttpsession as aiosession
 from wbb.utils.dbfunctions import start_restart_stage
 from wbb.utils.http import get, post
@@ -43,7 +43,7 @@ from wbb.utils.http import get, post
 
 async def restart(m: Message):
     if m:
-        await start_restart_stage(m.chat.id, m.message_id)
+        await start_restart_stage(m.chat.id, m.id)
     execvp(executable, [executable, "-m", "wbb"])
 
 
@@ -102,7 +102,7 @@ def test_speedtest():
             zero += 1
         return f"{round(size, 2)} {units[zero]}"
 
-    speed = speedtest.Speedtest()
+    speed = Speedtest()
     info = speed.get_best_server()
     download = speed.download()
     upload = speed.upload()
@@ -126,7 +126,7 @@ async def transfer_sh(file_or_message):
     if isinstance(file_or_message, Message):
         file_or_message = await file_or_message.download()
     file = file_or_message
-    async with aiofiles.open(file, "rb") as f:
+    async with aiofile_open(file, "rb") as f:
         params = {file: await f.read()}
         resp = await post("https://transfer.sh/", data=params)
         url = resp.strip()
@@ -135,7 +135,7 @@ async def transfer_sh(file_or_message):
 
 async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
     Radius_Earth = 6371.0088
-    data1, data2 = await gather(
+    data1, data2 = await asyncio_gather(
         get(f"http://ipinfo.io/{ip1}"),
         get(f"http://ipinfo.io/{ip2}"),
     )
@@ -147,8 +147,7 @@ async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
     dlat = lat2 - lat1
     a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
-    distance = Radius_Earth * c
-    return distance
+    return Radius_Earth * c
 
 
 def get_urls_from_text(text: str) -> bool:
@@ -156,7 +155,7 @@ def get_urls_from_text(text: str) -> bool:
                 [.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(
                 \([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\
                 ()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))""".strip()
-    return [x[0] for x in findall(regex, str(text))]
+    return [x[0] for x in re_findall(regex, text)]
 
 
 async def time_converter(message: Message, time_value: str) -> int:
@@ -199,11 +198,9 @@ async def extract_userid(message, text: str):
     if len(entities) < 2:
         return (await app.get_users(text)).id
     entity = entities[1]
-    if entity.type == "mention":
+    if entity.type == MessageEntityType.MENTION:
         return (await app.get_users(text)).id
-    if entity.type == "text_mention":
-        return entity.user.id
-    return None
+    return entity.user.id if entity.type == MessageEntityType.TEXT_MENTION else None
 
 
 async def extract_user_and_reason(message, sender_chat=False):
@@ -214,22 +211,17 @@ async def extract_user_and_reason(message, sender_chat=False):
     if message.reply_to_message:
         reply = message.reply_to_message
         # if reply to a message and no reason is given
-        if not reply.from_user:
-            if (
-                    reply.sender_chat
-                    and reply.sender_chat != message.chat.id
-                    and sender_chat
-            ):
-                id_ = reply.sender_chat.id
-            else:
-                return None, None
-        else:
+        if reply.from_user:
             id_ = reply.from_user.id
-
-        if len(args) < 2:
-            reason = None
+        elif (
+            reply.sender_chat
+            and reply.sender_chat != message.chat.id
+            and sender_chat
+        ):
+            id_ = reply.sender_chat.id
         else:
-            reason = text.split(None, 1)[1]
+            return None, None
+        reason = None if len(args) < 2 else text.split(None, 1)[1]
         return id_, reason
 
     # if not reply to a message and no reason is given
@@ -249,11 +241,9 @@ async def extract_user(message):
     return (await extract_user_and_reason(message))[0]
 
 
-def get_file_id_from_message(
-        message,
-        max_file_size=3145728,
-        mime_types=["image/png", "image/jpeg"],
-):
+def get_file_id_from_message(message, max_file_size=3145728, mime_types=None):
+    if mime_types is None:
+        mime_types = ["image/png", "image/jpeg"]
     file_id = None
     if message.document:
         if int(message.document.file_size) > max_file_size:
@@ -299,7 +289,7 @@ def extract_text_and_keyb(ikb, text: str, row_width: int = 2):
 
         text, keyb = text.split("~")
 
-        keyb = findall(r"\[.+\,.+\]", keyb)
+        keyb = re_findall(r"\[.+\,.+\]", keyb)
         for btn_str in keyb:
             btn_str = re_sub(r"[\[\]]", "", btn_str)
             btn_str = btn_str.split(",")
@@ -319,7 +309,4 @@ async def get_user_id_and_usernames(client) -> dict:
         users = client.storage.conn.execute(
             'SELECT * FROM peers WHERE type in ("user", "bot") AND username NOT null'
         ).fetchall()
-    users_ = {}
-    for user in users:
-        users_[user[0]] = user[3]
-    return users_
+    return {user[0]: user[3] for user in users}

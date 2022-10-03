@@ -23,8 +23,7 @@ SOFTWARE.
 """
 from typing import List, Optional, Union
 
-import pyrogram
-from pyrogram import raw, types, utils
+from pyrogram import Client, raw, types, utils
 from pyrogram.file_id import DOCUMENT_TYPES, PHOTO_TYPES, FileId, FileType
 from pyrogram.types import InlineQueryResult
 
@@ -101,7 +100,7 @@ class InlineQueryResultAudio(InlineQueryResult):
 
         self.audio_url = audio_url
         self.thumb_url = thumb_url
-        self.voice = bool(mime_type == "audio/ogg")
+        self.voice = mime_type == "audio/ogg"
         self.title = title
         self.caption = caption
         self.description = description
@@ -118,7 +117,7 @@ class InlineQueryResultAudio(InlineQueryResult):
                 "input_message_content is required for audio with `text/html` mime type"
             )
 
-    async def write(self, client: "pyrogram.Client"):
+    async def write(self, client: "Client"):
         audio = raw.types.InputWebDocument(
             url=self.audio_url,
             size=0,
@@ -239,7 +238,7 @@ class InlineQueryResultCachedDocument(InlineQueryResult):
         self.reply_markup = reply_markup
         self.input_message_content = input_message_content
 
-    async def write(self, client: "pyrogram.Client"):
+    async def write(self, client: "Client"):
         document = get_input_file_from_file_id(self.file_id)
 
         message, entities = (

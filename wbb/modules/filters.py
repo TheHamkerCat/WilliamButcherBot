@@ -21,20 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import re
+from re import IGNORECASE
+from re import escape as re_escape
+from re import findall as re_findall
+from re import search as re_search
 
 from pyrogram import filters
-
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.keyboard import ikb
-from wbb.utils.dbfunctions import (
-    delete_filter,
-    get_filter,
-    get_filters_names,
-    save_filter,
-)
+from wbb.utils.dbfunctions import (delete_filter, get_filter,
+                                   get_filters_names, save_filter)
 from wbb.utils.filter_groups import chat_filters_group
 from wbb.utils.functions import extract_text_and_keyb
 
@@ -50,7 +48,7 @@ Checkout /markdownhelp to know more about formattings and other syntax.
 """
 
 
-@app.on_message(filters.command("filter") & ~filters.edited & ~filters.private)
+@app.on_message(filters.command("filter") & ~filters.private)
 @adminsOnly("can_change_info")
 async def save_filters(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
@@ -81,9 +79,7 @@ async def save_filters(_, message):
     await message.reply_text(f"__**Saved filter {name}.**__")
 
 
-@app.on_message(
-    filters.command("filters") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("filters") & ~filters.private)
 @capture_err
 async def get_filterss(_, message):
     _filters = await get_filters_names(message.chat.id)
@@ -96,7 +92,7 @@ async def get_filterss(_, message):
     await message.reply_text(msg)
 
 
-@app.on_message(filters.command("stop") & ~filters.edited & ~filters.private)
+@app.on_message(filters.command("stop") & ~filters.private)
 @adminsOnly("can_change_info")
 async def del_filter(_, message):
     if len(message.command) < 2:
@@ -112,14 +108,7 @@ async def del_filter(_, message):
         await message.reply_text("**No such filter.**")
 
 
-@app.on_message(
-    filters.text
-    & ~filters.edited
-    & ~filters.private
-    & ~filters.via_bot
-    & ~filters.forwarded,
-    group=chat_filters_group,
-)
+@app.on_message(filters.text & ~filters.private & ~filters.via_bot & ~filters.forwarded, group=chat_filters_group)
 @capture_err
 async def filters_re(_, message):
     text = message.text.lower().strip()
@@ -128,14 +117,14 @@ async def filters_re(_, message):
     chat_id = message.chat.id
     list_of_filters = await get_filters_names(chat_id)
     for word in list_of_filters:
-        pattern = r"( |^|[^\w])" + re.escape(word) + r"( |$|[^\w])"
-        if re.search(pattern, text, flags=re.IGNORECASE):
+        pattern = r"( |^|[^\w])" + re_escape(word) + r"( |$|[^\w])"
+        if re_search(pattern, text, flags=IGNORECASE):
             _filter = await get_filter(chat_id, word)
             data_type = _filter["type"]
             data = _filter["data"]
             if data_type == "text":
                 keyb = None
-                if re.findall(r"\[.+\,.+\]", data):
+                if re_findall(r"\[.+\,.+\]", data):
                     keyboard = extract_text_and_keyb(ikb, data)
                     if keyboard:
                         data, keyb = keyboard

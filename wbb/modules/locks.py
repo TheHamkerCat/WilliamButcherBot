@@ -24,7 +24,6 @@ SOFTWARE.
 from pyrogram import filters
 from pyrogram.errors.exceptions.bad_request_400 import ChatNotModified
 from pyrogram.types import ChatPermissions
-
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
@@ -46,7 +45,6 @@ Example:
     /lock all
 """
 
-incorrect_parameters = "Incorrect Parameters, Check Locks Section In Help."
 # Using disable_preview as a switch for url checker
 # That way we won't need an additional db to check
 # If url lock is enabled/disabled for a chat
@@ -93,9 +91,9 @@ async def tg_lock(message, permissions: list, perm: str, lock: bool):
         if perm not in permissions:
             return await message.reply_text("Already locked.")
         permissions.remove(perm)
+    elif perm in permissions:
+        return await message.reply_text("Already Unlocked.")
     else:
-        if perm in permissions:
-            return await message.reply_text("Already Unlocked.")
         permissions.append(perm)
 
     permissions = {perm: True for perm in list(set(permissions))}
@@ -112,29 +110,23 @@ async def tg_lock(message, permissions: list, perm: str, lock: bool):
     await message.reply_text(("Locked." if lock else "Unlocked."))
 
 
-@app.on_message(
-    filters.command(["lock", "unlock"]) & ~filters.private & ~filters.edited)
+@app.on_message(filters.command(["lock", "unlock"]) & ~filters.private)
 @adminsOnly("can_restrict_members")
 async def locks_func(_, message):
     if len(message.command) != 2:
-        return await message.reply_text(incorrect_parameters)
+        return await message.reply_text("Incorrect Parameters, Check Locks Section In Help.")
 
     chat_id = message.chat.id
     parameter = message.text.strip().split(None, 1)[1].lower()
     state = message.command[0].lower()
 
     if parameter not in data and parameter != "all":
-        return await message.reply_text(incorrect_parameters)
+        return await message.reply_text("Incorrect Parameters, Check Locks Section In Help.")
 
     permissions = await current_chat_permissions(chat_id)
 
     if parameter in data:
-        await tg_lock(
-            message,
-            permissions,
-            data[parameter],
-            bool(state == "lock"),
-        )
+        await tg_lock(message, permissions, data[parameter], state == "lock")
     elif parameter == "all" and state == "lock":
         await app.set_chat_permissions(chat_id, ChatPermissions())
         await message.reply_text(f"Locked Everything in {message.chat.title}")
@@ -156,8 +148,7 @@ async def locks_func(_, message):
         await message.reply(f"Unlocked Everything in {message.chat.title}")
 
 
-@app.on_message(
-    filters.command("locks") & ~filters.private & ~filters.edited)
+@app.on_message(filters.command("locks") & ~filters.private)
 @capture_err
 async def locktypes(_, message):
     permissions = await current_chat_permissions(message.chat.id)
@@ -165,10 +156,7 @@ async def locktypes(_, message):
     if not permissions:
         return await message.reply_text("No Permissions.")
 
-    perms = ""
-    for i in permissions:
-        perms += f"__**{i}**__\n"
-
+    perms = "".join(f"__**{i}**__\n" for i in permissions)
     await message.reply_text(perms)
 
 
@@ -191,7 +179,4 @@ async def url_detector(_, message):
             try:
                 await message.delete()
             except Exception:
-                await message.reply_text(
-                    "This message contains a URL, "
-                    + "but i don't have enough permissions to delete it"
-                )
+                await message.reply_text("This message contains a URL, but i don't have enough permissions to delete it")

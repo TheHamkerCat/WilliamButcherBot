@@ -23,7 +23,6 @@ SOFTWARE.
 """
 from pykeyboard import InlineKeyboard
 from pyrogram.types import InlineKeyboardButton as Ikb
-
 from wbb.utils.functions import get_urls_from_text as is_url
 
 

@@ -22,16 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import datetime
-import os
 from asyncio import get_running_loop
+from datetime import timedelta
 from functools import partial
 from io import BytesIO
+from os import path, remove, rename
 
 from pyrogram import filters
 from pytube import YouTube
 from requests import get
-
 from wbb import aiohttpsession as session
 from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
@@ -55,7 +54,7 @@ def download_youtube_audio(arq_resp):
 
     m, s = r.duration.split(":")
     duration = int(
-        datetime.timedelta(minutes=int(m), seconds=int(s)).total_seconds()
+        timedelta(minutes=int(m), seconds=int(s)).total_seconds()
     )
 
     if duration > 1800:
@@ -71,14 +70,14 @@ def download_youtube_audio(arq_resp):
     audio = yt.streams.filter(only_audio=True).get_audio_only()
 
     out_file = audio.download()
-    base, _ = os.path.splitext(out_file)
+    base, _ = path.splitext(out_file)
     audio_file = base + ".mp3"
-    os.rename(out_file, audio_file)
+    rename(out_file, audio_file)
 
     return [title, performer, duration, audio_file, thumbnail_file]
 
 
-@app.on_message(filters.command("ytmusic") & ~filters.edited)
+@app.on_message(filters.command("ytmusic"))
 @capture_err
 async def music(_, message):
     global is_downloading
@@ -121,8 +120,8 @@ async def music(_, message):
         thumb=thumbnail_file,
     )
     await m.delete()
-    os.remove(audio_file)
-    os.remove(thumbnail_file)
+    remove(audio_file)
+    remove(thumbnail_file)
     is_downloading = False
 
 
@@ -138,7 +137,7 @@ async def download_song(url):
 # Jiosaavn Music
 
 
-@app.on_message(filters.command("saavn") & ~filters.edited)
+@app.on_message(filters.command("saavn"))
 @capture_err
 async def jssong(_, message):
     global is_downloading
@@ -181,24 +180,20 @@ async def jssong(_, message):
 # Lyrics
 
 
-@app.on_message(filters.command("lyrics") & ~filters.edited)
+@app.on_message(filters.command("lyrics"))
 async def lyrics_func(_, message):
     if len(message.command) < 2:
         return await message.reply_text("**Usage:**\n/lyrics [QUERY]")
     m = await message.reply_text("**Searching**")
     query = message.text.strip().split(None, 1)[1]
-
     resp = await arq.lyrics(query)
-
     if not (resp.ok and resp.result):
         return await m.edit("No lyrics found.")
-
     song = resp.result[0]
     song_name = song['song']
     artist = song['artist']
     lyrics = song['lyrics']
     msg = f"**{song_name}** | **{artist}**\n\n__{lyrics}__"
-          
     if len(msg) > 4095:
         msg = await paste(msg)
         msg = f"**LYRICS_TOO_LONG:** [URL]({msg})"

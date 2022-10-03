@@ -24,16 +24,12 @@ SOFTWARE.
 from re import MULTILINE as RE_MULTILINE
 
 from pyrogram import filters
-from pyrogram.types import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    InputMediaPhoto,
-    InputMediaVideo,
-    Message,
-)
-
+from pyrogram.enums import ChatMemberStatus, ParseMode
+from pyrogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
+                            InputMediaPhoto, InputMediaVideo, Message)
 from wbb import app
 from wbb.core.decorators.errors import capture_err
+
 
 # NOTE: THIS MODULE IS SPECIFICALLY FOR @PatheticRice GROUP, YOU CAN REMOVE IT IN YOUR FORK IF YOU WANT TO
 
@@ -46,7 +42,7 @@ RICE_CHANNEL = "RiceGallery"
     & (filters.photo | filters.video | filters.document)
     & filters.regex(r"^\[RICE\]", RE_MULTILINE)
     & ~filters.forwarded
-    & ~filters.edited
+
 )
 @capture_err
 async def rice(_, message: Message):
@@ -67,26 +63,25 @@ async def rice(_, message: Message):
             ]
         ),
         quote=True,
-        parse_mode="markdown",
+        parse_mode=ParseMode.MARKDOWN,
     )
 
 
 @app.on_callback_query(filters.regex("forward"))
 async def callback_query_forward_rice(_, callback_query):
-    app.set_parse_mode("markdown")
+    app.set_parse_mode(ParseMode.MARKDOWN)
     u_approver = callback_query.from_user
     c_group = callback_query.message.chat
     approver_status = (await c_group.get_member(u_approver.id)).status
-    if not (approver_status in ("creator", "administrator")):
-        await callback_query.answer("Only admin can approve this!")
+    if approver_status not in (ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR):
+        await callback_query._client.answer_callback_query(callback_query.id, "Only admin can approve this!")
         return
-    await callback_query.answer("Successfully approved")
+    await callback_query._client.answer_callback_query(callback_query.id, "Successfully approved")
     m_op = callback_query.message.reply_to_message
     u_op = m_op.from_user
     arg_caption = f"{m_op.caption}\nOP: [{u_op.first_name}]({m_op.link})"
     if m_op.media_group_id:
-        message_id = m_op.message_id
-        media_group = await app.get_media_group(RICE_GROUP, message_id)
+        media_group = await app.get_media_group(RICE_GROUP, m_op.id)
         arg_media = []
         for m in media_group:
             if m.photo and m.caption:
@@ -123,9 +118,10 @@ async def callback_query_ignore_rice(_, callback_query):
     m_op = callback_query.message.reply_to_message
     u_op = m_op.from_user
     if u_disprover.id == u_op.id:
-        await callback_query.answer("Ok, this rice won't be forwarded")
-    elif disprover_status in ("creator", "administrator"):
+        await callback_query._client.answer_callback_query(callback_query.id, "Ok, this rice won't be forwarded")
+    elif disprover_status in (ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR):
+        await callback_query._client.answer_callback_query(callback_query.id)
         await m_op.reply_text(f"{u_disprover.mention} ignored this rice")
     else:
-        return await callback_query.answer("Only admin or OP could ignore it")
+        return await callback_query._client.answer_callback_query(callback_query.id, "Only admin or OP could ignore it")
     await callback_query.message.delete()

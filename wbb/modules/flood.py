@@ -21,22 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import get_running_loop, sleep
+from asyncio import get_running_loop
+from asyncio import sleep as asyncio_sleep
 from time import time
 
 from pyrogram import filters
-from pyrogram.types import (
-    CallbackQuery,
-    ChatPermissions,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    Message,
-)
-
+from pyrogram.types import (CallbackQuery, ChatPermissions,
+                            InlineKeyboardButton, InlineKeyboardMarkup,
+                            Message)
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
-from wbb.core.decorators.permissions import adminsOnly
-from wbb.modules.admin import list_admins, member_permissions
+from wbb.core.decorators.permissions import adminsOnly, member_permissions
+from wbb.modules.admin import list_admins
 from wbb.utils.dbfunctions import flood_off, flood_on, is_flood_on
 from wbb.utils.filter_groups import flood_group
 
@@ -56,15 +52,7 @@ def reset_flood(chat_id, user_id=0):
             DB[chat_id][user] = 0
 
 
-@app.on_message(
-    ~filters.service
-    & ~filters.me
-    & ~filters.private
-    & ~filters.channel
-    & ~filters.bot
-    & ~filters.edited,
-    group=flood_group,
-)
+@app.on_message(~filters.service & ~filters.me & ~filters.private & ~filters.channel & ~filters.bot, group=flood_group)
 @capture_err
 async def flood_control_func(_, message: Message):
     if not message.chat:
@@ -121,7 +109,7 @@ async def flood_control_func(_, message: Message):
         )
 
         async def delete():
-            await sleep(3600)
+            await asyncio_sleep(3600)
             try:
                 await m.delete()
             except Exception:
@@ -138,11 +126,12 @@ async def flood_callback_func(_, cq: CallbackQuery):
     permissions = await member_permissions(cq.message.chat.id, from_user.id)
     permission = "can_restrict_members"
     if permission not in permissions:
-        return await cq.answer(
+        return await cq._client.answer_callback_query(cq.id,
             "You don't have enough permissions to perform this action.\n"
             + f"Permission needed: {permission}",
             show_alert=True,
         )
+    await cq._client.answer_callback_query(cq.id)
     user_id = cq.data.split("_")[1]
     await cq.message.chat.unban_member(user_id)
     text = cq.message.text.markdown
@@ -151,7 +140,7 @@ async def flood_callback_func(_, cq: CallbackQuery):
     await cq.message.edit(text)
 
 
-@app.on_message(filters.command("flood") & ~filters.private & ~filters.edited)
+@app.on_message(filters.command("flood") & ~filters.private)
 @adminsOnly("can_change_info")
 async def flood_toggle(_, message: Message):
     if len(message.command) != 2:

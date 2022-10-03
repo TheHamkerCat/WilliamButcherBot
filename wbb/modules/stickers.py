@@ -21,35 +21,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import imghdr
-import os
-from asyncio import gather
+from asyncio import gather as asyncio_gather
+from imghdr import what as imghdr_what
+from os import path, remove
 from traceback import format_exc
 
 from pyrogram import filters
-from pyrogram.errors import (
-    PeerIdInvalid,
-    ShortnameOccupyFailed,
-    StickerEmojiInvalid,
-    StickerPngDimensions,
-    StickerPngNopng,
-    UserIsBlocked,
-)
+from pyrogram.errors import (PeerIdInvalid, ShortnameOccupyFailed,
+                             StickerEmojiInvalid, StickerPngDimensions,
+                             StickerPngNopng, UserIsBlocked)
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-
 from wbb import BOT_USERNAME, SUDOERS, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.files import (
-    get_document_from_file_id,
-    resize_file_to_sticker_size,
-    upload_document,
-)
-from wbb.utils.stickerset import (
-    add_sticker_to_set,
-    create_sticker,
-    create_sticker_set,
-    get_sticker_set_by_name,
-)
+from wbb.utils.files import (get_document_from_file_id,
+                             resize_file_to_sticker_size, upload_document)
+from wbb.utils.stickerset import (add_sticker_to_set, create_sticker,
+                                  create_sticker_set, get_sticker_set_by_name)
 
 __MODULE__ = "Stickers"
 __HELP__ = """
@@ -66,43 +53,35 @@ MAX_STICKERS = (
 SUPPORTED_TYPES = ["jpeg", "png", "webp"]
 
 
-@app.on_message(filters.command("sticker_id") & ~filters.edited)
+@app.on_message(filters.command("sticker_id"))
 @capture_err
 async def sticker_id(_, message: Message):
     reply = message.reply_to_message
-
     if not reply:
         return await message.reply("Reply to a sticker.")
-
     if not reply.sticker:
         return await message.reply("Reply to a sticker.")
-
     await message.reply_text(f"`{reply.sticker.file_id}`")
 
 
-@app.on_message(filters.command("get_sticker") & ~filters.edited)
+@app.on_message(filters.command("get_sticker"))
 @capture_err
 async def sticker_image(_, message: Message):
     r = message.reply_to_message
-
     if not r:
         return await message.reply("Reply to a sticker.")
-
     if not r.sticker:
         return await message.reply("Reply to a sticker.")
-
     m = await message.reply("Sending..")
     f = await r.download(f"{r.sticker.file_unique_id}.png")
-
-    await gather(
+    await asyncio_gather(
         *[
             message.reply_photo(f),
             message.reply_document(f),
         ]
     )
-
     await m.delete()
-    os.remove(f)
+    remove(f)
 
 
 @app2.on_message(
@@ -117,14 +96,14 @@ async def userbot_kang(_, message: Message):
     sticker_m = await reply.forward(BOT_USERNAME)
 
     # Send /kang message to bot and listen to his reply concurrently
-    bot_reply, kang_m_bot = await gather(
+    bot_reply, kang_m_bot = await asyncio_gather(
         app2.listen(BOT_USERNAME, filters=~filters.me),
         sticker_m.reply(message.text.replace(USERBOT_PREFIX, "/")),
     )
 
     # Edit init message of ubot with the reply of
     # bot we got in the previous block
-    bot_reply, ub_m = await gather(
+    bot_reply, ub_m = await asyncio_gather(
         app2.listen(BOT_USERNAME, filters=~filters.me),
         eor(message, text=bot_reply.text.markdown),
     )
@@ -137,7 +116,7 @@ async def userbot_kang(_, message: Message):
         await m.delete()
 
 
-@app.on_message(filters.command("kang") & ~filters.edited)
+@app.on_message(filters.command("kang"))
 @capture_err
 async def kang(client, message: Message):
     if not message.reply_to_message:
@@ -147,7 +126,6 @@ async def kang(client, message: Message):
             "You are anon admin, kang stickers in my pm."
         )
     msg = await message.reply_text("Kanging Sticker..")
-
     # Find the proper emoji
     args = message.text.split()
     if len(args) > 1:
@@ -159,7 +137,6 @@ async def kang(client, message: Message):
         sticker_emoji = message.reply_to_message.sticker.emoji
     else:
         sticker_emoji = "🤔"
-
     # Get the corresponding fileid, resize the file if necessary
     doc = message.reply_to_message.photo or message.reply_to_message.document
     try:
@@ -173,9 +150,8 @@ async def kang(client, message: Message):
         elif doc:
             if doc.file_size > 10000000:
                 return await msg.edit("File size too large.")
-
             temp_file_path = await app.download_media(doc)
-            image_type = imghdr.what(temp_file_path)
+            image_type = imghdr_what(temp_file_path)
             if image_type not in SUPPORTED_TYPES:
                 return await msg.edit(
                     "Format not supported! ({})".format(image_type)
@@ -193,8 +169,8 @@ async def kang(client, message: Message):
                 await upload_document(client, temp_file_path, message.chat.id),
                 sticker_emoji,
             )
-            if os.path.isfile(temp_file_path):
-                os.remove(temp_file_path)
+            if path.isfile(temp_file_path):
+                remove(temp_file_path)
         else:
             return await msg.edit("Nope, can't kang that.")
     except ShortnameOccupyFailed:
@@ -216,7 +192,6 @@ async def kang(client, message: Message):
             # Prevent infinite rules
             if limit >= 50:
                 return await msg.delete()
-
             stickerset = await get_sticker_set_by_name(client, packname)
             if not stickerset:
                 stickerset = await create_sticker_set(
@@ -229,12 +204,12 @@ async def kang(client, message: Message):
             elif stickerset.set.count >= MAX_STICKERS:
                 packnum += 1
                 packname = (
-                        "f"
-                        + str(packnum)
-                        + "_"
-                        + str(message.from_user.id)
-                        + "_by_"
-                        + BOT_USERNAME
+                    "f"
+                    + str(packnum)
+                    + "_"
+                    + str(message.from_user.id)
+                    + "_by_"
+                    + BOT_USERNAME
                 )
                 limit += 1
                 continue
@@ -245,7 +220,6 @@ async def kang(client, message: Message):
                     return await msg.edit("[ERROR]: INVALID_EMOJI_IN_ARGUMENT")
             limit += 1
             break
-
         await msg.edit(
             "Sticker Kanged To [Pack](t.me/addstickers/{})\nEmoji: {}".format(
                 packname, sticker_emoji

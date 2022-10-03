@@ -21,10 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import os
+from os import remove
 
 from pyrogram import filters
-
 from wbb import app
 from wbb.core.decorators.permissions import adminsOnly
 
@@ -36,11 +35,7 @@ __HELP__ = """
 """
 
 
-@app.on_message(
-    filters.command("set_chat_title")
-    & ~filters.private
-    & ~filters.edited
-)
+@app.on_message(filters.command("set_chat_title") & ~filters.private)
 @adminsOnly("can_change_info")
 async def set_chat_title(_, message):
     if len(message.command) < 2:
@@ -53,11 +48,7 @@ async def set_chat_title(_, message):
     )
 
 
-@app.on_message(
-    filters.command("set_user_title")
-    & ~filters.private
-    & ~filters.edited
-)
+@app.on_message(filters.command("set_user_title") & ~filters.private)
 @adminsOnly("can_change_info")
 async def set_user_title(_, message):
     if not message.reply_to_message:
@@ -81,11 +72,7 @@ async def set_user_title(_, message):
     )
 
 
-@app.on_message(
-    filters.command("set_chat_photo")
-    & ~filters.private
-    & ~filters.edited
-)
+@app.on_message(filters.command("set_chat_photo") & ~filters.private)
 @adminsOnly("can_change_info")
 async def set_chat_photo(_, message):
     reply = message.reply_to_message
@@ -107,4 +94,4 @@ async def set_chat_photo(_, message):
     photo = await reply.download()
     await message.chat.set_photo(photo)
     await message.reply_text("Successfully Changed Group Photo")
-    os.remove(photo)
+    remove(photo)

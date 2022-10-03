@@ -26,8 +26,7 @@ from traceback import format_exc
 
 from pyrogram import filters
 from pyrogram.types import Message
-
-from wbb import SUDOERS, USERBOT_PREFIX, app, app2, arq
+from wbb import SUDOERS, USERBOT_PREFIX, app, app2, arq, log
 from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "Quotly"
@@ -51,8 +50,7 @@ async def quotify(messages: list):
 
 
 def getArg(message: Message) -> str:
-    arg = message.text.strip().split(None, 1)[1].strip()
-    return arg
+    return message.text.strip().split(None, 1)[1].strip()
 
 
 def isArgInt(message: Message) -> list:
@@ -65,7 +63,7 @@ def isArgInt(message: Message) -> list:
 
 
 @app2.on_message(filters.command("q", prefixes=USERBOT_PREFIX) & SUDOERS)
-@app.on_message(filters.command("q") & ~filters.private & ~filters.edited)
+@app.on_message(filters.command("q") & ~filters.private)
 @capture_err
 async def quotly_func(client, message: Message):
     if not message.reply_to_message:
@@ -93,8 +91,8 @@ async def quotly_func(client, message: Message):
                 for i in await client.get_messages(
                     message.chat.id,
                     range(
-                        message.reply_to_message.message_id,
-                        message.reply_to_message.message_id + (count + 5),
+                        message.reply_to_message.id,
+                        message.reply_to_message.id + (count + 5),
                     ),
                     replies=0,
                 )
@@ -108,7 +106,7 @@ async def quotly_func(client, message: Message):
                 )
             reply_message = await client.get_messages(
                 message.chat.id,
-                message.reply_to_message.message_id,
+                message.reply_to_message.id,
                 replies=1,
             )
             messages = [reply_message]
@@ -119,7 +117,6 @@ async def quotly_func(client, message: Message):
     try:
         if not message:
             return await m.edit("Something went wrong.")
-
         sticker = await quotify(messages)
         if not sticker[0]:
             await message.reply_text(sticker[1])
@@ -127,7 +124,7 @@ async def quotly_func(client, message: Message):
         sticker = sticker[1]
         await message.reply_sticker(sticker)
         await m.delete()
-        sticker.close()
+        sticker.close()     
     except Exception as e:
         await m.edit(
             "Something went wrong while quoting messages,"

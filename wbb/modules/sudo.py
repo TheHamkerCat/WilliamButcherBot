@@ -23,11 +23,9 @@ SOFTWARE.
 """
 from pyrogram import filters
 from pyrogram.types import Message
-
 from wbb import BOT_ID, SUDOERS, USERBOT_PREFIX, app2, eor
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.dbfunctions import add_sudo, get_sudoers, remove_sudo
-from wbb.utils.functions import restart
 
 __MODULE__ = "Sudo"
 __HELP__ = """
@@ -63,12 +61,9 @@ async def useradd(_, message: Message):
         return await eor(
             message, text="You can't add assistant bot in sudoers."
         )
-
     await add_sudo(user_id)
-
     if user_id not in SUDOERS:
         SUDOERS.add(user_id)
-
     await eor(
         message,
         text=f"Successfully added {umention} in sudoers.",
@@ -85,15 +80,11 @@ async def userdel(_, message: Message):
         )
     user_id = message.reply_to_message.from_user.id
     umention = (await app2.get_users(user_id)).mention
-
     if user_id not in await get_sudoers():
         return await eor(message, text=f"{umention} is not in sudoers.")
-
     await remove_sudo(user_id)
-
     if user_id in SUDOERS:
         SUDOERS.remove(user_id)
-
     await eor(
         message,
         text=f"Successfully removed {umention} from sudoers.",
@@ -109,7 +100,7 @@ async def sudoers_list(_, message: Message):
     for user_id in sudoers:
         try:
             user = await app2.get_users(user_id)
-            user = user.first_name if not user.mention else user.mention
+            user = user.mention or user.first_name
             j += 1
         except Exception:
             continue

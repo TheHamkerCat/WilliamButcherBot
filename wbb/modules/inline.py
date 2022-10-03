@@ -23,10 +23,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import traceback
+from traceback import format_exc
 
 from wbb import app
-from wbb.utils.inlinefuncs import *
+from wbb.utils.inlinefuncs import (alive_function, execute_code,
+                                   google_search_func, image_func,
+                                   info_inline_func, inline_help_func,
+                                   lyrics_func, music_inline_func, ping_func,
+                                   pmpermit_func, speedtest_init,
+                                   task_inline_func, tg_search_func, tmdb_func,
+                                   torrent_func, translate_func, urban_func,
+                                   wall_func, wiki_func, youtube_func,
+                                   yt_music_func)
 
 __MODULE__ = "Inline"
 __HELP__ = """See inline for help related to inline"""
@@ -277,5 +285,5 @@ async def inline_query_handler(client, query):
             )
 
     except Exception as e:
-        e = traceback.format_exc()
+        e = format_exc()
         print(e, " InLine")

@@ -21,12 +21,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import asyncio
-import os
-import sys
-from contextlib import suppress
+from asyncio import get_running_loop
 from html import escape
+from os import remove
 from re import sub as re_sub
+from contextlib import suppress
+from sys import platform
 from sys import version as pyver
 from time import ctime, time
 
@@ -35,27 +35,14 @@ from motor import version as mongover
 from pykeyboard import InlineKeyboard
 from pyrogram import __version__ as pyrover
 from pyrogram import filters
+from pyrogram.enums import MessagesFilter
 from pyrogram.raw.functions import Ping
-from pyrogram.types import (
-    CallbackQuery,
-    InlineKeyboardButton,
-    InlineQueryResultArticle,
-    InlineQueryResultPhoto,
-    InputTextMessageContent,
-)
+from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
+                            InlineQueryResultArticle, InlineQueryResultPhoto,
+                            InputTextMessageContent)
 from search_engine_parser import GoogleSearch
-
-from wbb import (
-    BOT_USERNAME,
-    MESSAGE_DUMP_CHAT,
-    SUDOERS,
-    USERBOT_ID,
-    USERBOT_NAME,
-    USERBOT_USERNAME,
-    app,
-    app2,
-    arq,
-)
+from wbb import (BOT_USERNAME, MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_ID,
+                 USERBOT_NAME, USERBOT_USERNAME, app, app2, arq)
 from wbb.core.keyboard import ikb
 from wbb.core.tasks import _get_tasks_text, all_tasks, rm_task
 from wbb.core.types import InlineQueryResultCachedDocument
@@ -118,8 +105,8 @@ async def inline_help_func(__HELP__):
 
 async def alive_function(answers):
     buttons = InlineKeyboard(row_width=2)
-    bot_state = "Dead" if not await app.get_me() else "Alive"
-    ubot_state = "Dead" if not await app2.get_me() else "Alive"
+    bot_state = "Alive" if await app.get_me() else "Dead"
+    ubot_state = "Alive" if await app2.get_me() else "Dead"
     buttons.add(
         InlineKeyboardButton("Stats", callback_data="stats_callback"),
         InlineKeyboardButton(
@@ -134,7 +121,7 @@ async def alive_function(answers):
 **Python:** `{pyver.split()[0]}`
 **Pyrogram:** `{pyrover}`
 **MongoDB:** `{mongover}`
-**Platform:** `{sys.platform}`
+**Platform:** `{platform}`
 **Profiles:** [BOT](t.me/{BOT_USERNAME}) | [UBOT](t.me/{USERBOT_USERNAME})
 """
     answers.append(
@@ -200,9 +187,9 @@ async def urban_func(answers, text):
             )
         )
         return answers
-    results = results.result[0:48]
+    results = results.result[:48]
     for i in results:
-        clean = lambda x: re_sub(r"[\[\]]", "", x)
+        def clean(x): return re_sub(r"[\[\]]", "", x)
         msg = f"""
 **Query:** {text}
 
@@ -256,7 +243,7 @@ async def wall_func(answers, text):
             )
         )
         return answers
-    results = results.result[0:48]
+    results = results.result[:48]
     for i in results:
         answers.append(
             InlineQueryResultPhoto(
@@ -279,7 +266,7 @@ async def torrent_func(answers, text):
             )
         )
         return answers
-    results = results.result[0:48]
+    results = results.result[:48]
     for i in results:
         title = i.name
         size = i.size
@@ -319,7 +306,7 @@ async def youtube_func(answers, text):
             )
         )
         return answers
-    results = results.result[0:48]
+    results = results.result[:48]
     for i in results:
         buttons = InlineKeyboard(row_width=1)
         video_url = f"https://youtube.com{i.url_suffix}"
@@ -349,27 +336,27 @@ async def youtube_func(answers, text):
 
 
 async def lyrics_func(answers, text):
-    resp = await arq.lyrics(text)                                    
-    if not resp.ok:                                     
+    resp = await arq.lyrics(text)
+    if not resp.ok:
         answers.append(
-            InlineQueryResultArticle(                                         
-                title="Error",                 
+            InlineQueryResultArticle(
+                title="Error",
                 description=resp.result,
                 input_message_content=InputTextMessageContent(resp.result),
-            )                                                           
-        )                                                                  
-        return answers                                                
-    songs = resp.result                                                      
-    for song in songs:                                                       
+            )
+        )
+        return answers
+    songs = resp.result
+    for song in songs:
         song_name = song['song']
         artist = song['artist']
         lyrics = song['lyrics']
         msg = f"**{song_name}** | **{artist}**\n\n__{lyrics}__"
-          
+
         if len(msg) > 4095:
             msg = await paste(msg)
             msg = f"**LYRICS_TOO_LONG:** [URL]({msg})"
-                            
+
         answers.append(
             InlineQueryResultArticle(
                 title=song_name,
@@ -402,41 +389,36 @@ async def tg_search_func(answers, text, user_id):
         )
 
         return answers
-    text = text[0:-1]
+    text = text[:-1]
     async for message in app2.search_global(text, limit=49):
         buttons = InlineKeyboard(row_width=2)
         buttons.add(
             InlineKeyboardButton(
                 text="Origin",
-                url=message.link if message.link else "https://t.me/telegram",
+                url=message.link or "https://t.me/telegram",
             ),
             InlineKeyboardButton(
                 text="Search again",
                 switch_inline_query_current_chat="search",
             ),
         )
-        name = (
-            message.from_user.first_name
-            if message.from_user.first_name
-            else "NO NAME"
-        )
+        if message.from_user:
+            name = message.from_user.first_name or "NO NAME"
+        else:
+            name = "NO NAME"
         caption = f"""
 **Query:** {text}
-**Name:** {str(name)} [`{message.from_user.id}`]
-**Chat:** {str(message.chat.title)} [`{message.chat.id}`]
-**Date:** {ctime(message.date)}
+**Name:** {name} [`{message.from_user.id}`]
+**Chat:** {message.chat.title} [`{message.chat.id}`]
+**Date:** {ctime(message.date.timestamp())}
 **Text:** >>
 
-{message.text.markdown if message.text else message.caption if message.caption else '[NO_TEXT]'}
+{message.text.markdown if message.text else message.caption or '[NO_TEXT]'}
 """
-        result = InlineQueryResultArticle(
-            title=name,
-            description=message.text if message.text else "[NO_TEXT]",
-            reply_markup=buttons,
-            input_message_content=InputTextMessageContent(
-                caption, disable_web_page_preview=True
-            ),
-        )
+        result = InlineQueryResultArticle(title=name,
+                                          description=message.text or "[NO_TEXT]",
+                                          reply_markup=buttons,
+                                          input_message_content=InputTextMessageContent(caption, disable_web_page_preview=True))
         answers.append(result)
     return answers
 
@@ -448,7 +430,7 @@ async def music_inline_func(answers, query):
         messages = [
             m
             async for m in app2.search_messages(
-                chat_id, query, filter="audio", limit=100
+                chat_id, query, filter=MessagesFilter.AUDIO, limit=100
             )
         ]
     except Exception as e:
@@ -464,19 +446,14 @@ async def music_inline_func(answers, query):
             )
         )
         return answers
-    messages_ids_and_duration = []
-    for f_ in messages:
-        messages_ids_and_duration.append(
-            {
-                "message_id": f_.message_id,
-                "duration": f_.audio.duration if f_.audio.duration else 0,
-            }
-        )
+    messages_ids_and_duration = [
+        {"message_id": f_.id, "duration": f_.audio.duration or 0} for f_ in messages]
+
     messages = list(
         {v["duration"]: v for v in messages_ids_and_duration}.values()
     )
     messages_ids = [ff_["message_id"] for ff_ in messages]
-    messages = await app.get_messages(chat_id, messages_ids[0:48])
+    messages = await app.get_messages(chat_id, messages_ids[:48])
     return [
         InlineQueryResultCachedDocument(
             file_id=message_.audio.file_id,
@@ -548,10 +525,11 @@ async def speedtest_init(query):
 @app.on_callback_query(filters.regex("test_speedtest"))
 async def test_speedtest_cq(_, cq):
     if cq.from_user.id not in SUDOERS:
-        return await cq.answer("This Isn't For You!")
+        return await cq._client.answer_callback_query(cq.id, "This Isn't For You!")
+    await cq._client.answer_callback_query(cq.id)
     inline_message_id = cq.inline_message_id
     await app.edit_inline_text(inline_message_id, "**Testing**")
-    loop = asyncio.get_running_loop()
+    loop = get_running_loop()
     download, upload, info = await loop.run_in_executor(None, test_speedtest)
     msg = f"""
 **Download:** `{download}`
@@ -601,7 +579,7 @@ async def pmpermit_func(answers, user_id, victim):
 async def ping_func(answers):
     ping = Ping(ping_id=app.rnd_id())
     t1 = time()
-    await app.send(ping)
+    await app.invoke(ping)
     t2 = time()
     ping = f"{str(round((t2 - t1) * 1000, 2))} ms"
     answers.append(
@@ -615,7 +593,7 @@ async def ping_func(answers):
 
 async def yt_music_func(answers, url):
     arq_resp = await arq.youtube(url)
-    loop = asyncio.get_running_loop()
+    loop = get_running_loop()
     music = await loop.run_in_executor(None, download_youtube_audio, arq_resp)
     if not music:
         msg = "**ERROR**\n__MUSIC TOO LONG__"
@@ -642,8 +620,8 @@ async def yt_music_func(answers, url):
         performer=performer,
         thumb=thumbnail,
     )
-    os.remove(audio)
-    os.remove(thumbnail)
+    remove(audio)
+    remove(thumbnail)
     answers.append(
         InlineQueryResultCachedDocument(title=title, file_id=m.audio.file_id)
     )
@@ -693,11 +671,8 @@ async def tmdb_func(answers, query):
     for result in results:
         if not result.poster and not result.backdrop:
             continue
-        if not result.genre:
-            genre = None
-        else:
-            genre = " | ".join(result.genre)
-        description = result.overview[0:900] if result.overview else "None"
+        genre = " | ".join(result.genre) if result.genre else None
+        description = result.overview[:900] if result.overview else "None"
         caption = f"""
 **{result.title}**
 **Type:** {result.type}
@@ -715,15 +690,13 @@ async def tmdb_func(answers, query):
         )
         answers.append(
             InlineQueryResultPhoto(
-                photo_url=result.backdrop
-                if result.backdrop
-                else result.poster,
+                photo_url=result.backdrop or result.poster,
                 caption=caption,
                 title=result.title,
                 description=f"{genre} • {result.releaseDate} • {result.rating} • {description}",
-                reply_markup=buttons,
-            )
+                reply_markup=buttons)
         )
+
     return answers
 
 
@@ -765,12 +738,12 @@ async def execute_code(query):
     languages = (await arq.execute()).result
     if len(text.split()) == 1:
         answers = [
-                      InlineQueryResultArticle(
-                          title=lang,
-                          input_message_content=InputTextMessageContent(lang),
-                      )
-                      for lang in languages
-                  ][offset: offset + 25]
+            InlineQueryResultArticle(
+                title=lang,
+                input_message_content=InputTextMessageContent(lang),
+            )
+            for lang in languages
+        ][offset: offset + 25]
         await query.answer(
             next_offset=str(offset + 25),
             results=answers,
@@ -859,8 +832,8 @@ async def cancel_task_button(_, query: CallbackQuery):
     user_id = query.from_user.id
 
     if user_id not in SUDOERS:
-        return await query.answer("This is not for you.")
-
+        return await query._client.answer_callback_query(query.id, "This is not for you.")
+    await query._client.answer_callback_query(query.id)
     task_id = int(query.data.split("_")[-1])
     await rm_task(task_id)
 

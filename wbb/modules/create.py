@@ -23,18 +23,11 @@ SOFTWARE.
 """
 
 from pyrogram import filters
-
 from wbb import BOT_USERNAME, SUDOERS, USERBOT_PREFIX, app2
 from wbb.modules.userbot import eor
 
 
-@app2.on_message(
-    SUDOERS
-    & ~filters.forwarded
-    & ~filters.via_bot
-    & ~filters.edited
-    & filters.command("create", prefixes=USERBOT_PREFIX)
-)
+@app2.on_message(SUDOERS & ~filters.forwarded & ~filters.via_bot & filters.command("create", prefixes=USERBOT_PREFIX))
 async def create(_, message):
     if len(message.command) < 3:
         return await eor(message, text="__**.create (b|s|c) Name**__")

@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import gather
+from asyncio import gather as asyncio_gather
 from io import BytesIO
 from json import loads
 from os import remove
@@ -30,7 +30,6 @@ from traceback import format_exc
 
 from pyrogram import filters
 from pyrogram.types import Chat, Message
-
 from wbb import LOG_GROUP_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX
 from wbb import aiohttpsession as session
 from wbb import app, app2
@@ -38,23 +37,19 @@ from wbb.modules.userbot import eor
 from wbb.utils.functions import extract_user
 
 
-@app2.on_message(
-    filters.command("anonymize", prefixes=USERBOT_PREFIX) & SUDOERS
-)
+@app2.on_message(filters.command("anonymize", prefixes=USERBOT_PREFIX) & SUDOERS)
 async def change_profile(_, message: Message):
     m = await eor(message, text="Anonymizing...")
     try:
-        image_resp, name_resp = await gather(
+        image_resp, name_resp = await asyncio_gather(
             session.get("https://thispersondoesnotexist.com/image"),
             session.get(
-                "https://raw.githubusercontent.com/dominictarr/"
-                + "random-name/master/first-names.json"
-            ),
+                "https://raw.githubusercontent.com/dominictarr/random-name/master/first-names.json")
         )
         image = BytesIO(await image_resp.read())
         image.name = "a.png"
         name = choice(loads(await name_resp.text()))
-        await gather(
+        await asyncio_gather(
             app2.set_profile_photo(photo=image),
             app2.update_profile(first_name=name),
         )
@@ -66,9 +61,7 @@ async def change_profile(_, message: Message):
     image.close()
 
 
-@app2.on_message(
-    filters.command("impersonate", prefixes=USERBOT_PREFIX) & SUDOERS
-)
+@app2.on_message(filters.command("impersonate", prefixes=USERBOT_PREFIX) & SUDOERS)
 async def impersonate(_, message: Message):
     user_id = await extract_user(message)
 
@@ -84,7 +77,7 @@ async def impersonate(_, message: Message):
         fname = user.first_name
         lname = user.last_name or ""
         bio = user.bio or ""
-        pfp, _ = await gather(
+        pfp, _ = await asyncio_gather(
             app2.download_media(user.photo.big_file_id),
             app2.update_profile(fname, lname, bio),
         )
@@ -94,5 +87,4 @@ async def impersonate(_, message: Message):
         e = format_exc()
         err = await app.send_message(LOG_GROUP_ID, text=f"`{e}`")
         return await m.edit(f"**Error**: {err.link}")
-
     await m.edit(f"[Done](tg://user?id={USERBOT_ID})")

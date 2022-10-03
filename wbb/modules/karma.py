@@ -21,24 +21,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import re
+from re import IGNORECASE
 
 from pyrogram import filters
-
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.sections import section
-from wbb.utils.dbfunctions import (
-    alpha_to_int,
-    get_karma,
-    get_karmas,
-    int_to_alpha,
-    is_karma_on,
-    karma_off,
-    karma_on,
-    update_karma,
-)
+from wbb.utils.dbfunctions import (alpha_to_int, get_karma, get_karmas,
+                                   int_to_alpha, is_karma_on, karma_off,
+                                   karma_on, update_karma)
 from wbb.utils.filter_groups import karma_negative_group, karma_positive_group
 from wbb.utils.functions import get_user_id_and_usernames
 
@@ -58,10 +50,9 @@ regex_downvote = r"^(-|--|-1|not cool|disagree|worst|bad|👎|-- .+)$"
     & filters.group
     & filters.incoming
     & filters.reply
-    & filters.regex(regex_upvote, re.IGNORECASE)
+    & filters.regex(regex_upvote, IGNORECASE)
     & ~filters.via_bot
-    & ~filters.bot
-    & ~filters.edited,
+    & ~filters.bot,
     group=karma_positive_group,
 )
 @capture_err
@@ -81,15 +72,11 @@ async def upvote(_, message):
     if current_karma:
         current_karma = current_karma["karma"]
         karma = current_karma + 1
-        new_karma = {"karma": karma}
-        await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
     else:
         karma = 1
-        new_karma = {"karma": karma}
-        await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
-    await message.reply_text(
-        f"Incremented Karma of {user_mention} By 1 \nTotal Points: {karma}"
-    )
+    new_karma = {"karma": karma}
+    await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
+    await message.reply_text(f"Incremented Karma of {user_mention} By 1 \nTotal Points: {karma}")
 
 
 @app.on_message(
@@ -97,10 +84,9 @@ async def upvote(_, message):
     & filters.group
     & filters.incoming
     & filters.reply
-    & filters.regex(regex_downvote, re.IGNORECASE)
+    & filters.regex(regex_downvote, IGNORECASE)
     & ~filters.via_bot
-    & ~filters.bot
-    & ~filters.edited,
+    & ~filters.bot,
     group=karma_negative_group,
 )
 @capture_err
@@ -121,18 +107,16 @@ async def downvote(_, message):
     if current_karma:
         current_karma = current_karma["karma"]
         karma = current_karma - 1
-        new_karma = {"karma": karma}
-        await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
     else:
         karma = 1
-        new_karma = {"karma": karma}
-        await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
+    new_karma = {"karma": karma}
+    await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
     await message.reply_text(
         f"Decremented Karma of {user_mention} By 1 \nTotal Points: {karma}"
     )
 
 
-@app.on_message(filters.command("karma") & filters.group & ~filters.edited)
+@app.on_message(filters.command("karma") & filters.group)
 @capture_err
 async def command_karma(_, message):
     chat_id = message.chat.id
@@ -165,7 +149,7 @@ async def command_karma(_, message):
             if int(user_idd) not in list(userdb.keys()):
                 continue
             username = userdb[int(user_idd)]
-            karma["@" + username] = ["**" + str(karma_count) + "**"]
+            karma[f"@{username}"] = [f"**{karma_count}**"]
             limit += 1
         await m.edit(section(msg, karma))
     else:
@@ -174,16 +158,11 @@ async def command_karma(_, message):
 
         user_id = message.reply_to_message.from_user.id
         karma = await get_karma(chat_id, await int_to_alpha(user_id))
-        if karma:
-            karma = karma["karma"]
-            await message.reply_text(f"**Total Points**: __{karma}__")
-        else:
-            karma = 0
-            await message.reply_text(f"**Total Points**: __{karma}__")
+        karma = karma["karma"] if karma else 0
+        await message.reply_text(f"**Total Points**: __{karma}__")
 
 
-@app.on_message(
-    filters.command("karma_toggle") & ~filters.private & ~filters.edited)
+@app.on_message(filters.command("karma_toggle") & ~filters.private)
 @adminsOnly("can_change_info")
 async def captcha_state(_, message):
     usage = "**Usage:**\n/karma_toggle [ENABLE|DISABLE]"

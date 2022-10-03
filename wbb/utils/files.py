@@ -21,8 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import math
-import os
+from math import floor as math_floor
+from os import path, remove
 
 from PIL import Image
 from pyrogram import Client, raw
@@ -44,14 +44,14 @@ async def resize_file_to_sticker_size(file_path: str) -> str:
             scale = STICKER_DIMENSIONS[1] / size2
             size1new = size1 * scale
             size2new = STICKER_DIMENSIONS[1]
-        size1new = math.floor(size1new)
-        size2new = math.floor(size2new)
+        size1new = math_floor(size1new)
+        size2new = math_floor(size2new)
         sizenew = (size1new, size2new)
         im = im.resize(sizenew)
     else:
         im.thumbnail(STICKER_DIMENSIONS)
     try:
-        os.remove(file_path)
+        remove(file_path)
         file_path = f"{file_path}.png"
         return file_path
     finally:
@@ -61,16 +61,16 @@ async def resize_file_to_sticker_size(file_path: str) -> str:
 async def upload_document(
         client: Client, file_path: str, chat_id: int
 ) -> raw.base.InputDocument:
-    media = await client.send(
+    media = await client.invoke(
         raw.functions.messages.UploadMedia(
             peer=await client.resolve_peer(chat_id),
             media=raw.types.InputMediaUploadedDocument(
                 mime_type=client.guess_mime_type(file_path)
-                          or "application/zip",
+                or "application/zip",
                 file=await client.save_file(file_path),
                 attributes=[
                     raw.types.DocumentAttributeFilename(
-                        file_name=os.path.basename(file_path)
+                        file_name=path.basename(file_path)
                     )
                 ],
             ),

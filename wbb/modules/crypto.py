@@ -1,5 +1,4 @@
 from pyrogram import filters
-
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.keyboard import ikb
@@ -13,7 +12,7 @@ __HELP__ = """
 """
 
 
-@app.on_message(filters.command("crypto") & ~filters.edited)
+@app.on_message(filters.command("crypto"))
 @capture_err
 async def crypto(_, message):
     if len(message.command) < 2:

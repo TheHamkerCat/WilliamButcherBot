@@ -1,9 +1,10 @@
 # https://github.com/PaulSonOfLars/tgbot/blob/master/tg_bot/modules/sed.py
-import re
-import sre_constants
+from re import I
+from re import search as re_search
+from re import sub as re_sub
+from sre_constants import error as sre_error
 
 from pyrogram import filters
-
 from wbb import app
 from wbb.utils.filter_groups import regex_group
 
@@ -44,16 +45,16 @@ async def sed(_, message):
                 return await message.reply_text("Nice try -_-")
 
             if "i" in flags and "g" in flags:
-                text = re.sub(repl, repl_with, to_fix, flags=re.I).strip()
+                text = re_sub(repl, repl_with, to_fix, flags=I).strip()
             elif "i" in flags:
-                text = re.sub(
-                    repl, repl_with, to_fix, count=1, flags=re.I
+                text = re_sub(
+                    repl, repl_with, to_fix, count=1, flags=I
                 ).strip()
             elif "g" in flags:
-                text = re.sub(repl, repl_with, to_fix).strip()
+                text = re_sub(repl, repl_with, to_fix).strip()
             else:
-                text = re.sub(repl, repl_with, to_fix, count=1).strip()
-        except sre_constants.error:
+                text = re_sub(repl, repl_with, to_fix, count=1).strip()
+        except sre_error:
             return
 
         # empty string errors -_-
@@ -73,50 +74,40 @@ def infinite_checker(repl):
         r"\(.{1,}\)\{.{1,}(,)?\}\(.*\)(\+|\* |\{.*\})",
     ]
     for match in regex:
-        status = re.search(match, repl)
+        status = re_search(match, repl)
         return bool(status)
 
 
 def separate_sed(sed_string):
-    if (
-            len(sed_string) >= 3
-            and sed_string[1] in DELIMITERS
-            and sed_string.count(sed_string[1]) >= 2
-    ):
-        delim = sed_string[1]
-        start = counter = 2
-        while counter < len(sed_string):
-            if sed_string[counter] == "\\":
-                counter += 1
-
-            elif sed_string[counter] == delim:
-                replace = sed_string[start:counter]
-                counter += 1
-                start = counter
-                break
-
+    if len(sed_string) < 3 or sed_string[1] not in DELIMITERS or sed_string.count(sed_string[1]) < 2:
+        return
+    delim = sed_string[1]
+    start = counter = 2
+    while counter < len(sed_string):
+        if sed_string[counter] == "\\":
             counter += 1
-
-        else:
-            return None
-        while counter < len(sed_string):
-            if (
-                    sed_string[counter] == "\\"
-                    and counter + 1 < len(sed_string)
-                    and sed_string[counter + 1] == delim
-            ):
-                sed_string = sed_string[:counter] + sed_string[counter + 1:]
-
-            elif sed_string[counter] == delim:
-                replace_with = sed_string[start:counter]
-                counter += 1
-                break
-
+        elif sed_string[counter] == delim:
+            replace = sed_string[start:counter]
             counter += 1
-        else:
-            return replace, sed_string[start:], ""
+            start = counter
+            break
+        counter += 1
+    else:
+        return None
+    while counter < len(sed_string):
+        if (
+                sed_string[counter] == "\\"
+                and counter + 1 < len(sed_string)
+                and sed_string[counter + 1] == delim
+        ):
+            sed_string = sed_string[:counter] + sed_string[counter + 1:]
 
-        flags = ""
-        if counter < len(sed_string):
-            flags = sed_string[counter:]
-        return replace, replace_with, flags.lower()
+        elif sed_string[counter] == delim:
+            replace_with = sed_string[start:counter]
+            counter += 1
+            break
+        counter += 1
+    else:
+        return replace, sed_string[start:], ""
+    flags = sed_string[counter:] if counter < len(sed_string) else ""
+    return replace, replace_with, flags.lower()

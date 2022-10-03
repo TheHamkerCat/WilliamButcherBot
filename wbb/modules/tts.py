@@ -21,15 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import traceback
 from asyncio import get_running_loop
 from io import BytesIO
+from traceback import format_exc
 
 from googletrans import Translator
 from gtts import gTTS
 from pyrogram import filters
 from pyrogram.types import Message
-
 from wbb import app
 
 
@@ -43,7 +42,7 @@ def convert(text):
     return audio
 
 
-@app.on_message(filters.command("tts") & ~filters.edited)
+@app.on_message(filters.command("tts"))
 async def text_to_speech(_, message: Message):
     if not message.reply_to_message:
         return await message.reply_text("Reply to some text ffs.")
@@ -54,10 +53,10 @@ async def text_to_speech(_, message: Message):
     try:
         loop = get_running_loop()
         audio = await loop.run_in_executor(None, convert, text)
-        await message.reply_audio(audio)
+        await message.reply_audio(audio, caption=text)
         await m.delete()
         audio.close()
     except Exception as e:
         await m.edit(e)
-        e = traceback.format_exc()
+        e = format_exc()
         print(e)

@@ -21,11 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from pyrogram import filters as filters_
+from pyrogram.filters import create
 from pyrogram.types import Message
-
-from wbb import SUDOERS
-from wbb import USERBOT_ID as OWNER_ID
+from wbb import SUDOERS, USERBOT_ID
 from wbb.utils.functions import get_urls_from_text
 
 
@@ -37,9 +35,7 @@ def url(_, __, message: Message) -> bool:
     # doesn't have schema, ex-facebook.com
 
     text = message.text or message.caption
-    if not text:
-        return False
-    return bool(get_urls_from_text(text))
+    return bool(get_urls_from_text(text)) if text else False
 
 
 def entities(_, __, message: Message) -> bool:
@@ -51,24 +47,25 @@ def anonymous(_, __, message: Message) -> bool:
 
 
 def sudoers(_, __, message: Message) -> bool:
-    if not message.from_user:
-        return False
-    return message.from_user.id in SUDOERS
+    return message.from_user.id in SUDOERS if message.from_user else False
 
 
 def owner(_, __, message: Message) -> bool:
-    if not message.from_user:
-        return False
-    return message.from_user.id == OWNER_ID
+    return message.from_user.id == USERBOT_ID if message.from_user else False
+
+
+def edited_filter(_, __, m: Message):
+    return bool(m.edit_date)
 
 
 class Filters:
     pass
 
 
-filters = Filters
-filters.url = filters_.create(url)
-filters.entities = filters_.create(entities)
-filters.anonymous = filters_.create(anonymous)
-filters.sudoers = filters_.create(sudoers)
-filters.owner = filters_.create(owner)
+Customfilters = Filters
+Customfilters.url = create(url)
+Customfilters.entities = create(entities)
+Customfilters.anonymous = create(anonymous)
+Customfilters.sudoers = create(sudoers)
+Customfilters.owner = create(owner)
+Customfilters.edited = create(edited_filter)

@@ -21,31 +21,25 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import asyncio
+from asyncio import sleep as asyncio_sleep
 
 from pyrogram import filters
+from pyrogram.enums import ChatType
 from pyrogram.errors import FloodWait
-
 from wbb import BOT_ID, BOT_NAME, SUDOERS, USERBOT_NAME, app, app2
 from wbb.core.decorators.errors import capture_err
 from wbb.modules import ALL_MODULES
-from wbb.utils.dbfunctions import (
-    get_blacklist_filters_count,
-    get_filters_count,
-    get_gbans_count,
-    get_karmas_count,
-    get_notes_count,
-    get_rss_feeds_count,
-    get_served_chats,
-    get_served_users,
-    get_warns_count,
-    remove_served_chat,
-)
+from wbb.utils.dbfunctions import (get_blacklist_filters_count,
+                                   get_filters_count, get_gbans_count,
+                                   get_karmas_count, get_notes_count,
+                                   get_rss_feeds_count, get_served_chats,
+                                   get_served_users, get_warns_count,
+                                   remove_served_chat)
 from wbb.utils.http import get
 from wbb.utils.inlinefuncs import keywords_list
 
 
-@app.on_message(filters.command("clean_db") & ~filters.edited & SUDOERS)
+@app.on_message(filters.command("clean_db") & SUDOERS)
 @capture_err
 async def clean_db(_, message):
     served_chats = [int(i["chat_id"]) for i in (await get_served_chats())]
@@ -55,16 +49,17 @@ async def clean_db(_, message):
     for served_chat in served_chats:
         try:
             await app.get_chat_members(served_chat, BOT_ID)
-            await asyncio.sleep(2)
+            await asyncio_sleep(2)
         except FloodWait as e:
-            await asyncio.sleep(int(e.x))
+            await asyncio_sleep(e.value)
+            await app.get_chat_members(served_chat, BOT_ID)
         except Exception:
             await remove_served_chat(served_chat)
             served_chats.remove(served_chat)
     await m.edit("**Database Cleaned.**")
 
 
-@app.on_message(filters.command("gstats") & ~filters.edited & SUDOERS)
+@app.on_message(filters.command("gstats") & SUDOERS)
 @capture_err
 async def global_stats(_, message):
     m = await app.send_message(
@@ -106,9 +101,7 @@ async def global_stats(_, message):
     url = "https://api.github.com/repos/thehamkercat/williambutcherbot/contributors"
     rurl = "https://github.com/thehamkercat/williambutcherbot"
     developers = await get(url)
-    commits = 0
-    for developer in developers:
-        commits += developer["contributions"]
+    commits = sum(developer["contributions"] for developer in developers)
     developers = len(developers)
 
     # Rss feeds
@@ -118,17 +111,17 @@ async def global_stats(_, message):
 
     # Userbot info
     groups_ub = channels_ub = bots_ub = privates_ub = total_ub = 0
-    async for i in app2.iter_dialogs():
+    async for i in app2.get_dialogs():
         t = i.chat.type
         total_ub += 1
 
-        if t in ["supergroup", "group"]:
+        if t in [ChatType.SUPERGROUP, ChatType.GROUP]:
             groups_ub += 1
-        elif t == "channel":
+        elif t == ChatType.CHANNEL:
             channels_ub += 1
-        elif t == "bot":
+        elif t == ChatType.BOT:
             bots_ub += 1
-        elif t == "private":
+        elif t == ChatType.PRIVATE:
             privates_ub += 1
 
     msg = f"""

@@ -25,14 +25,14 @@ from os import remove
 from os import system as execute
 
 from pyrogram import filters
+from pyrogram.enums import ChatType
 from pyrogram.types import Message
-
 from wbb import MONGO_URL, SUDOERS, app
 
 
-@app.on_message(filters.command("backup") & SUDOERS & ~filters.edited)
+@app.on_message(filters.command("backup") & SUDOERS)
 async def backup(_, message: Message):
-    if message.chat.type != "private":
+    if message.chat.type != ChatType.PRIVATE:
         return await message.reply("This command can only be used in private")
 
     m = await message.reply("Backing up data...")

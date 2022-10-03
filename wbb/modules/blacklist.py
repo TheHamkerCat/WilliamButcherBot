@@ -21,21 +21,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import re
+from re import IGNORECASE
+from re import escape as re_escape
+from re import search as re_search
 from time import time
 
 from pyrogram import filters
 from pyrogram.types import ChatPermissions
-
 from wbb import SUDOERS, app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.modules.admin import list_admins
-from wbb.utils.dbfunctions import (
-    delete_blacklist_filter,
-    get_blacklisted_words,
-    save_blacklist_filter,
-)
+from wbb.utils.dbfunctions import (delete_blacklist_filter,
+                                   get_blacklisted_words,
+                                   save_blacklist_filter)
 from wbb.utils.filter_groups import blacklist_filters_group
 
 __MODULE__ = "Blacklist"
@@ -46,9 +45,7 @@ __HELP__ = """
 """
 
 
-@app.on_message(
-    filters.command("blacklist") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("blacklist") & ~filters.private)
 @adminsOnly("can_restrict_members")
 async def save_filters(_, message):
     if len(message.command) < 2:
@@ -63,9 +60,7 @@ async def save_filters(_, message):
     await message.reply_text(f"__**Blacklisted {word}.**__")
 
 
-@app.on_message(
-    filters.command("blacklisted") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("blacklisted") & ~filters.private)
 @capture_err
 async def get_filterss(_, message):
     data = await get_blacklisted_words(message.chat.id)
@@ -78,9 +73,7 @@ async def get_filterss(_, message):
         await message.reply_text(msg)
 
 
-@app.on_message(
-    filters.command("whitelist") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("whitelist") & ~filters.private)
 @adminsOnly("can_restrict_members")
 async def del_filter(_, message):
     if len(message.command) < 2:
@@ -95,10 +88,7 @@ async def del_filter(_, message):
     await message.reply_text("**No such blacklist filter.**")
 
 
-@app.on_message(
-    filters.text
-    & ~filters.private
-    & ~filters.edited, group=blacklist_filters_group)
+@app.on_message(filters.text & ~filters.private, group=blacklist_filters_group)
 @capture_err
 async def blacklist_filters_re(_, message):
     text = message.text.lower().strip()
@@ -112,8 +102,8 @@ async def blacklist_filters_re(_, message):
         return
     list_of_filters = await get_blacklisted_words(chat_id)
     for word in list_of_filters:
-        pattern = r"( |^|[^\w])" + re.escape(word) + r"( |$|[^\w])"
-        if re.search(pattern, text, flags=re.IGNORECASE):
+        pattern = r"( |^|[^\w])" + re_escape(word) + r"( |$|[^\w])"
+        if re_search(pattern, text, flags=IGNORECASE):
             if user.id in await list_admins(chat_id):
                 return
             try:

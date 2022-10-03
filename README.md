@@ -51,11 +51,11 @@
 thehamkercat@arch:~$ git clone https://github.com/thehamkercat/WilliamButcherBot
 thehamkercat@arch:~$ cd WilliamButcherBot
 thehamkercat@arch:~$ pip3 install -U -r requirements.txt
-thehamkercat@arch:~$ cp sample_config.py config.py
+thehamkercat@arch:~$ cp sample_config.env config.env
 ```
  
 <h3 align="center"> 
-    Edit <b>config.py</b> with your own values
+    Edit <b>config.env</b> with your own values
 </h3>
 
 <h2 align="center"> 
@@ -67,7 +67,7 @@ thehamkercat@arch:~$ python3 -m wbb
 ```
 
 <h3 align="center"> 
-   Generating Pyrogram Session For Heroku
+   Generating Pyrogram Session if you need
 </h3>
 
 ```console
@@ -96,11 +96,29 @@ thehamkercat@arch:~$ sudo docker build . -t wbb
 thehamkercat@arch:~$ sudo docker run wbb
 ```
 
+<h1 align="center"> 
+   ⇝ Docker Compose ⇜
+</h1>
+
+```console
+thehamkercat@arch:~$ sudo apt-get update -y && sudo apt-get install -y docker-compose
+thehamkercat@arch:~$ git clone https://github.com/thehamkercat/WilliamButcherBot
+thehamkercat@arch:~$ cd WilliamButcherBot
+thehamkercat@arch:~$ cp sample_config.env config.env
+```
+
+<h3 align="center"> 
+    Edit <b>config.env</b> with your own values
+</h3>
+
+```console
+thehamkercat@arch:~$ sudo docker-compose up -d --build
+```
 <h2 align="center"> 
    ⇝ Write new modules ⇜
 </h2>
 
-```py
+```python
 # Add license text here, get it from below
 
 from wbb import app # This is bot's client
@@ -114,7 +132,7 @@ __MODULE__ = "Module Name"
 __HELP__ = "Module help message"
 
 
-@app.on_message(~filters.edited & filters.command("start"))
+@app.on_message(filters.command("start"))
 async def some_function(_, message):
     await message.reply_text("I'm already up!!")
 

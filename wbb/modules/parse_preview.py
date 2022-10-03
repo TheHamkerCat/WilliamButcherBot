@@ -1,15 +1,12 @@
-from asyncio import sleep
+from asyncio import sleep as asyncio_sleep
 
 from pyrogram import filters
 from pyrogram.types import Message
-
 from wbb import SUDOERS, USERBOT_PREFIX, app2, eor
 from wbb.core.sections import section
 
 
-@app2.on_message(
-    filters.command("parse_preview", prefixes=USERBOT_PREFIX) & SUDOERS
-)
+@app2.on_message(filters.command("parse_preview", prefixes=USERBOT_PREFIX) & SUDOERS)
 async def parse(_, message: Message):
     r = message.reply_to_message
     has_wpp = False
@@ -22,7 +19,7 @@ async def parse(_, message: Message):
         text = r.text or r.caption
         if text:
             m = await app2.send_message("me", text)
-            await sleep(1)
+            await asyncio_sleep(1)
             await m.delete()
             if m.web_page:
                 r = m
@@ -31,9 +28,7 @@ async def parse(_, message: Message):
         has_wpp = True
 
     if not has_wpp:
-        return await m_.edit(
-            "Replied message has no webpage preview.",
-        )
+        return await m_.edit("Replied message has no webpage preview.")
 
     wpp = r.web_page
 

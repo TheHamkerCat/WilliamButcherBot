@@ -24,14 +24,11 @@ SOFTWARE.
 
 from pyrogram import filters
 from pyrogram.raw.functions.messages import DeleteHistory
-
-from wbb import BOT_ID, PM_PERMIT, SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2, eor
+from wbb import (BOT_ID, PM_PERMIT, SUDOERS, USERBOT_ID, USERBOT_PREFIX, app,
+                 app2, eor, log)
 from wbb.core.decorators.errors import capture_err
-from wbb.utils.dbfunctions import (
-    approve_pmpermit,
-    disapprove_pmpermit,
-    is_pmpermit_approved,
-)
+from wbb.utils.dbfunctions import (approve_pmpermit, disapprove_pmpermit,
+                                   is_pmpermit_approved)
 
 flood = {}
 
@@ -40,7 +37,6 @@ flood = {}
     filters.private
     & filters.incoming
     & ~filters.service
-    & ~filters.edited
     & ~filters.me
     & ~filters.bot
     & ~filters.via_bot
@@ -49,16 +45,18 @@ flood = {}
 @capture_err
 async def pmpermit_func(_, message):
     user_id = message.from_user.id
-    if not PM_PERMIT or await is_pmpermit_approved(user_id):
+    if not PM_PERMIT:
         return
-    async for m in app2.iter_history(user_id, limit=6):
+    if await is_pmpermit_approved(user_id):
+        return
+    async for m in app2.get_chat_history(user_id, limit=6):
         if m.reply_markup:
             await m.delete()
-    if str(user_id) in flood:
-        flood[str(user_id)] += 1
+    if user_id in flood:
+        flood[user_id] += 1
     else:
-        flood[str(user_id)] = 1
-    if flood[str(user_id)] > 5:
+        flood[user_id] = 1
+    if flood[user_id] > 5:
         await message.reply_text("SPAM DETECTED, BLOCKED USER AUTOMATICALLY!")
         return await app2.block_user(user_id)
     results = await app2.get_inline_bot_results(BOT_ID, f"pmpermit {user_id}")
@@ -83,6 +81,8 @@ async def pm_approve(_, message):
         return await eor(message, text="User is already approved to pm")
     await approve_pmpermit(user_id)
     await eor(message, text="User is approved to pm")
+    if user_id in flood:
+        del flood[user_id]
 
 
 @app2.on_message(
@@ -98,7 +98,7 @@ async def pm_disapprove(_, message):
     user_id = message.reply_to_message.from_user.id
     if not await is_pmpermit_approved(user_id):
         await eor(message, text="User is already disapproved to pm")
-        async for m in app2.iter_history(user_id, limit=6):
+        async for m in app2.get_chat_history(user_id, limit=6):
             if m.reply_markup:
                 try:
                     await m.delete()
@@ -151,46 +151,47 @@ async def pmpermit_cq(_, cq):
     )
     if data == "approve":
         if user_id != USERBOT_ID:
-            return await cq.answer("This Button Is Not For You")
+            return await cq._client.answer_callback_query(cq.id, "This Button Is Not For You")
+        await cq._client.answer_callback_query(cq.id)
+        if int(victim) in flood2:
+            del flood[int(victim)]
         await approve_pmpermit(int(victim))
         return await app.edit_inline_text(
             cq.inline_message_id, "User Has Been Approved To PM."
         )
-
-    if data == "block":
+    elif data == "block":
         if user_id != USERBOT_ID:
-            return await cq.answer("This Button Is Not For You")
-        await cq.answer()
+            return await cq._client.answer_callback_query(cq.id, "This Button Is Not For You")
+        await cq._client.answer_callback_query(cq.id)
         await app.edit_inline_text(
             cq.inline_message_id, "Successfully blocked the user."
         )
         await app2.block_user(int(victim))
-        return await app2.send(
+        return await app2.invoke(
             DeleteHistory(
                 peer=(await app2.resolve_peer(victim)),
                 max_id=0,
                 revoke=False,
             )
         )
-
-    if user_id == USERBOT_ID:
-        return await cq.answer("It's For The Other Person.")
-
-    if data == "to_scam_you":
-        async for m in app2.iter_history(user_id, limit=6):
+    elif data == "to_scam_you":
+        if user_id == USERBOT_ID:
+            return await cq._client.answer_callback_query(cq.id, "It's For The Other Person.")
+        await cq._client.answer_callback_query(cq.id,)
+        async for m in app2.get_chat_history(user_id, limit=6):
             if m.reply_markup:
                 await m.delete()
         await app2.send_message(user_id, "Blocked, Go scam someone else.")
         await app2.block_user(user_id)
-        await cq.answer()
-
     elif data == "approve_me":
-        await cq.answer()
-        if str(user_id) in flood2:
-            flood2[str(user_id)] += 1
+        if user_id == USERBOT_ID:
+            return await cq._client.answer_callback_query(cq.id, "It's For The Other Person.")
+        await cq._client.answer_callback_query(cq.id)
+        if user_id in flood2:
+            flood2[user_id] += 1
         else:
-            flood2[str(user_id)] = 1
-        if flood2[str(user_id)] > 5:
+            flood2[user_id] = 1
+        if flood2[user_id] > 5:
             await app2.send_message(user_id, "SPAM DETECTED, USER BLOCKED.")
             return await app2.block_user(user_id)
         await app2.send_message(

@@ -3,7 +3,6 @@ from time import time
 
 from pyrogram import filters
 from pyrogram.types import Message
-
 from wbb import BOT_ID, SUDOERS, USERBOT_PREFIX, app2
 from wbb.core.sections import bold, section, w
 
@@ -66,12 +65,12 @@ async def _get_tasks_text():
         elapsed = round(time() - started)
         info = t._repr_info()
 
-        id = task[0]
+        id_ = task[0]
         text += section(
             f"{indent}Task {i}",
             body={
                 "Name": t.get_name(),
-                "Task ID": id,
+                "Task ID": id_,
                 "Status": info[0].capitalize(),
                 "Origin": info[2].split("/")[-1].replace(">", ""),
                 "Running since": f"{elapsed}s",

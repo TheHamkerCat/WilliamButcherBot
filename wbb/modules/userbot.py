@@ -5,23 +5,20 @@
             https://github.com/pokurt/Nana-Remix/blob/master/nana/plugins/devs.py
 """
 
-import os
-import re
-import subprocess
 import sys
-import traceback
-from asyncio import sleep
 from html import escape
 from io import StringIO
-from time import time
+from os import remove
+from re import split as re_split
+from subprocess import PIPE, Popen
+from traceback import format_exc
 
 from pyrogram import filters
+from pyrogram.enums import ChatType
 from pyrogram.errors import MessageNotModified
 from pyrogram.types import Message, ReplyKeyboardMarkup
-
 from wbb import app2  # don't remove
-from wbb import SUDOERS, USERBOT_PREFIX, app, arq, eor
-from wbb.core.keyboard import ikb
+from wbb import SUDOERS, USERBOT_PREFIX, eor
 from wbb.core.tasks import add_task, rm_task
 
 # Eval and Sh module from nana-remix
@@ -29,7 +26,7 @@ from wbb.core.tasks import add_task, rm_task
 m = None
 p = print
 r = None
-arrow = lambda x: (x.text if isinstance(x, Message) else "") + "\n`→`"
+def arrow(x): return (x.text if isinstance(x, Message) else "") + "\n`→`"
 
 
 async def aexec(code, client, message):
@@ -41,17 +38,17 @@ async def aexec(code, client, message):
 
 
 async def iter_edit(message: Message, text: str):
-    async for m in app2.iter_history(message.chat.id):
+    async for m in app2.get_chat_history(message.chat.id):
 
         # If no replies found, reply
-        if m.message_id == message.message_id:
+        if m.id == message.id:
             return 0
 
         if not m.from_user or not m.text or not m.reply_to_message:
             continue
 
         if (
-                (m.reply_to_message.message_id == message.message_id)
+                (m.reply_to_message.id == message.id)
                 and (m.from_user.id == message.from_user.id)
                 and ("→" in m.text)
         ):
@@ -73,10 +70,8 @@ async def executor(client, message: Message):
         cmd = message.text.split(" ", maxsplit=1)[1]
     except IndexError:
         return await message.delete()
-
-    if message.chat.type == "channel":
+    if message.chat.type == ChatType.CHANNEL:
         return
-
     m = message
     p = print
 
@@ -106,7 +101,7 @@ async def executor(client, message: Message):
 
         await task
     except Exception as e:
-        e = traceback.format_exc()
+        e = format_exc()
         print(e)
         exc = e.splitlines()[-1]
 
@@ -137,11 +132,10 @@ async def executor(client, message: Message):
             caption="`→`\n  **Attached Document**",
             quote=False,
         )
-        os.remove(filename)
+        remove(filename)
         if status:
             await status.delete()
         return
-
     # Edit the output if input is edited
     if message.edit_date:
         status_ = await iter_edit(message, final_output)
@@ -149,7 +143,7 @@ async def executor(client, message: Message):
             return await message.reply(final_output, quote=True)
         return
     if not status.from_user:
-        status = await app2.get_messages(status.chat.id, status.message_id)
+        status = await app2.get_messages(status.chat.id, status.id)
     await eor(status, text=final_output, quote=True)
 
 
@@ -157,13 +151,11 @@ async def executor(client, message: Message):
     SUDOERS
     & ~filters.forwarded
     & ~filters.via_bot
-    & ~filters.edited
     & filters.command("sh", prefixes=USERBOT_PREFIX),
 )
 async def shellrunner(_, message: Message):
     if len(message.command) < 2:
         return await eor(message, text="**Usage:**\n/sh git pull")
-
     if message.reply_to_message:
         r = message.reply_to_message
         if r.reply_markup and isinstance(
@@ -171,18 +163,17 @@ async def shellrunner(_, message: Message):
                 ReplyKeyboardMarkup,
         ):
             return await eor(message, text="INSECURE!")
-
     text = message.text.split(None, 1)[1]
     if "\n" in text:
         code = text.split("\n")
         output = ""
         for x in code:
-            shell = re.split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x)
+            shell = re_split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x)
             try:
-                process = subprocess.Popen(
+                process = Popen(
                     shell,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
+                    stdout=PIPE,
+                    stderr=PIPE,
                 )
             except Exception as err:
                 print(err)
@@ -194,18 +185,18 @@ async def shellrunner(_, message: Message):
             output += process.stdout.read()[:-1].decode("utf-8")
             output += "\n"
     else:
-        shell = re.split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", text)
+        shell = re_split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", text)
         for a, _ in enumerate(shell):
             shell[a] = shell[a].replace('"', "")
         try:
-            process = subprocess.Popen(
+            process = Popen(
                 shell,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                stdout=PIPE,
+                stderr=PIPE,
             )
         except Exception as err:
             print(err)
-            errors = traceback.format_exc()
+            errors = format_exc()
             return await eor(
                 message,
                 text=f"**INPUT:**\n```{escape(text)}```\n\n**ERROR:**\n```{''.join(errors)}```",
@@ -220,10 +211,10 @@ async def shellrunner(_, message: Message):
             await app2.send_document(
                 message.chat.id,
                 "output.txt",
-                reply_to_message_id=message.message_id,
+                reply_to_message_id=message.id,
                 caption=escape(text),
             )
-            return os.remove("output.txt")
+            return remove("output.txt")
         await eor(
             message,
             text=f"**INPUT:**\n```{escape(text)}```\n\n**OUTPUT:**\n```{escape(output)}```",
@@ -235,11 +226,7 @@ async def shellrunner(_, message: Message):
         )
 
 
-@app2.on_message(
-    SUDOERS
-    & filters.command("reserve", prefixes=USERBOT_PREFIX)
-    & ~filters.edited
-)
+@app2.on_message(SUDOERS & filters.command("reserve", prefixes=USERBOT_PREFIX))
 async def reserve_channel_handler(_, message: Message):
     if len(message.text.split()) != 2:
         return await eor(message, text="Pass a username as argument!!")
@@ -252,8 +239,8 @@ async def reserve_channel_handler(_, message: Message):
         username, "Created by .reserve command"
     )
     try:
-        await app2.update_chat_username(chat.id, username)
+        await app2.set_chat_username(chat.id, username)
     except Exception as e:
-        await m.edit(f"Couldn't Reserve, Error: `{str(e)}`")
+        await m.edit(f"Couldn't Reserve, Error: `{e}`")
         return await app2.delete_channel(chat.id)
     await m.edit(f"Reserved @{username} Successfully")

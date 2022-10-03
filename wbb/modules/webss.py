@@ -21,20 +21,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import gather
+from asyncio import gather as asyncio_gather
 from base64 import b64decode
 from io import BytesIO
 
 from pyrogram import filters
 from pyrogram.types import Message
-
 from wbb import SUDOERS, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.http import post
 
 
 async def take_screenshot(url: str, full: bool = False):
-    url = "https://" + url if not url.startswith("http") else url
+    url = url if url.startswith("http") else "https://" + url
     payload = {
         "url": url,
         "width": 1920,
@@ -57,12 +56,11 @@ async def take_screenshot(url: str, full: bool = False):
 
 
 @app2.on_message(filters.command("webss", USERBOT_PREFIX) & SUDOERS)
-@app.on_message(filters.command("webss") & ~filters.edited)
+@app.on_message(filters.command("webss"))
 @capture_err
 async def take_ss(_, message: Message):
     if len(message.command) < 2:
         return await eor(message, text="Give A Url To Fetch Screenshot.")
-
     if len(message.command) == 2:
         url = message.text.split(None, 1)[1]
         full = False
@@ -76,20 +74,16 @@ async def take_ss(_, message: Message):
         ]
     else:
         return await eor(message, text="Invalid Command.")
-
     m = await eor(message, text="Capturing screenshot...")
-
     try:
         photo = await take_screenshot(url, full)
         if not photo:
             return await m.edit("Failed To Take Screenshot")
-
         m = await m.edit("Uploading...")
-
         if not full:
             # Full size images have problem with reply_photo, that's why
             # we need to only use reply_photo if we're not using full size
-            await gather(
+            await asyncio_gather(
                 *[message.reply_document(photo), message.reply_photo(photo)]
             )
         else:

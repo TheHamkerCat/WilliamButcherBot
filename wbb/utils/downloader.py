@@ -1,8 +1,7 @@
 from os.path import abspath as absolute_path
 from time import time
 
-import aiofiles
-
+from aiofiles import open as aiofiles_open
 from wbb import aiohttpsession as session
 from wbb.core.tasks import add_task
 
@@ -22,7 +21,7 @@ async def download_url(
     async with session.get(url) as response:
         ensure_status(response.status)
 
-        async with aiofiles.open(file_path, "wb") as f:
+        async with aiofiles_open(file_path, "wb") as f:
             # Save content in file using aiohttp streamReader.
             async for chunk in response.content.iter_chunked(chunk_size):
                 await f.write(chunk)
