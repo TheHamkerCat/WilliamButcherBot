@@ -1,3 +1,4 @@
+import asyncio
 from wbb import app
 from pyrogram import filters
 from pyrogram.types import Message
@@ -17,7 +18,12 @@ async def ip_lookup(_, message: Message):
         return await message.reply_text("ip address is missing")
     ip_address = message.command[1]
     msg = await message.reply_text("checking ip address...")
-    res = await http.get(f"https://ipinfo.io/{ip_address}/json")
+    try:
+        res = await http.get(f"https://ipinfo.io/{ip_address}/json", timeout=5)
+    except asyncio.TimeoutError:
+        return await message.reply_text("request timeout")
+    except Exception as e:
+        return await message.reply_text(f"ERROR: `{e}`")
     hostname = res.get("hostname", "N/A")
     city = res.get("city", "N/A")
     region = res.get("region", "N/A")
