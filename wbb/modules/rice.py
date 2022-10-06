@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from re import MULTILINE as RE_MULTILINE
+from re import MULTILINE
 
 from pyrogram import filters
 from pyrogram.enums import ChatMemberStatus, ParseMode
@@ -29,7 +29,6 @@ from pyrogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                             InputMediaPhoto, InputMediaVideo, Message)
 from wbb import app
 from wbb.core.decorators.errors import capture_err
-
 
 # NOTE: THIS MODULE IS SPECIFICALLY FOR @PatheticRice GROUP, YOU CAN REMOVE IT IN YOUR FORK IF YOU WANT TO
 
@@ -40,7 +39,7 @@ RICE_CHANNEL = "RiceGallery"
 @app.on_message(
     filters.chat(RICE_GROUP)
     & (filters.photo | filters.video | filters.document)
-    & filters.regex(r"^\[RICE\]", RE_MULTILINE)
+    & filters.regex(r"^\[RICE\]", MULTILINE)
     & ~filters.forwarded
 
 )

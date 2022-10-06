@@ -21,8 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import gather as asyncio_gather
-from asyncio import get_running_loop
+from asyncio import gather, get_running_loop
 from base64 import b64decode
 from io import BytesIO
 from os import remove
@@ -122,7 +121,7 @@ async def reverse_image_search(client, message: Message):
                 media.append(img)
         # Cache images, so we can use file_ids
         tasks = [client.send_photo(MESSAGE_DUMP_CHAT, img) for img in media]
-        messages = await asyncio_gather(*tasks)
+        messages = await gather(*tasks)
         await message.reply_media_group(
             [
                 InputMediaPhoto(

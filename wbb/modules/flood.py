@@ -21,8 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import get_running_loop
-from asyncio import sleep as asyncio_sleep
+from asyncio import get_running_loop, sleep
 from time import time
 
 from pyrogram import filters
@@ -109,7 +108,7 @@ async def flood_control_func(_, message: Message):
         )
 
         async def delete():
-            await asyncio_sleep(3600)
+            await sleep(3600)
             try:
                 await m.delete()
             except Exception:

@@ -21,8 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import gather as asyncio_gather
-from asyncio import sleep as asyncio_sleep
+from asyncio import gather, sleep
 
 from pyrogram import filters
 from pyrogram.types import Message
@@ -76,7 +75,7 @@ async def pipes_worker_userbot(_, message: Message):
         caption = f"\n\nForwarded from `{chat_id}`"
         to_chat_id = pipes_list_bot[chat_id]
         if not message.text:
-            m, temp = await asyncio_gather(app.listen(USERBOT_ID), message.copy(BOT_ID))
+            m, temp = await gather(app.listen(USERBOT_ID), message.copy(BOT_ID))
             caption = f"{temp.caption}{caption}" if temp.caption else caption
             await app.copy_message(
                 to_chat_id,
@@ -84,7 +83,7 @@ async def pipes_worker_userbot(_, message: Message):
                 m.id,
                 caption=caption,
             )
-            await asyncio_sleep(2)
+            await sleep(2)
             return await temp.delete()
         await app.send_message(to_chat_id, text=message.text + caption)
 

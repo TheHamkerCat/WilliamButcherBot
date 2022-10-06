@@ -21,8 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import gather as asyncio_gather
-from asyncio import sleep as asyncio_sleep
+from asyncio import gather, sleep
 
 from pyrogram import filters
 from pyrogram.enums import ChatAction
@@ -82,7 +81,7 @@ async def type_and_send(message: Message):
     user_id = message.from_user.id if message.from_user else 0
     query = message.text.strip()
     await message._client.send_chat_action(chat_id, ChatAction.TYPING)
-    response, _ = await asyncio_gather(lunaQuery(query, user_id), asyncio_sleep(3))
+    response, _ = await gather(lunaQuery(query, user_id), sleep(3))
     await message.reply_text(response)
     await message._client.send_chat_action(chat_id, ChatAction.CANCEL)
 

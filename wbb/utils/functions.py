@@ -21,14 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import gather as asyncio_gather
+from asyncio import gather
 from datetime import datetime, timedelta
 from io import BytesIO
 from math import atan2, cos, radians, sin, sqrt
 from os import execvp
 from random import randint
-from re import findall as re_findall
-from re import sub as re_sub
+from re import findall, sub
 from sys import executable
 
 from aiofiles import open as aiofile_open
@@ -135,7 +134,7 @@ async def transfer_sh(file_or_message):
 
 async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
     Radius_Earth = 6371.0088
-    data1, data2 = await asyncio_gather(
+    data1, data2 = await gather(
         get(f"http://ipinfo.io/{ip1}"),
         get(f"http://ipinfo.io/{ip2}"),
     )
@@ -155,7 +154,7 @@ def get_urls_from_text(text: str) -> bool:
                 [.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(
                 \([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\
                 ()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))""".strip()
-    return [x[0] for x in re_findall(regex, text)]
+    return [x[0] for x in findall(regex, text)]
 
 
 async def time_converter(message: Message, time_value: str) -> int:
@@ -289,9 +288,9 @@ def extract_text_and_keyb(ikb, text: str, row_width: int = 2):
 
         text, keyb = text.split("~")
 
-        keyb = re_findall(r"\[.+\,.+\]", keyb)
+        keyb = findall(r"\[.+\,.+\]", keyb)
         for btn_str in keyb:
-            btn_str = re_sub(r"[\[\]]", "", btn_str)
+            btn_str = sub(r"[\[\]]", "", btn_str)
             btn_str = btn_str.split(",")
             btn_txt, btn_url = btn_str[0], btn_str[1].strip()
 

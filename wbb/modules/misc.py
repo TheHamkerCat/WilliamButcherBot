@@ -22,9 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from asyncio import Lock
-from re import MULTILINE as RE_MULTILINE
-from re import findall as re_findall
-from secrets import choice as secret_choice
+from re import MULTILINE, findall
+from secrets import choice
 from string import ascii_letters, digits
 from subprocess import check_output
 
@@ -119,8 +118,8 @@ async def ping_handler(_, message):
             try:
                 shell = check_output(
                     [f"ping -c 1 -W 2 {ip}"], shell=True).decode('utf-8')
-                resp_time = re_findall(
-                    r"time=.+m?s", shell, RE_MULTILINE)[0].replace("time=", "")
+                resp_time = findall(
+                    r"time=.+m?s", shell, MULTILINE)[0].replace("time=", "")
                 text += f"    **{dc.upper()}:** {resp_time} ✅\n"
             except Exception:
                 # There's a cross emoji here, but it's invisible.
@@ -210,7 +209,7 @@ async def random(_, message):
     try:
         if 1 < int(length) < 1000:
             alphabet = ascii_letters + digits
-            password = "".join(secret_choice(alphabet)
+            password = "".join(choice(alphabet)
                                for _ in range(int(length)))
             await message.reply_text(f"`{password}`")
         else:

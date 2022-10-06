@@ -1,7 +1,5 @@
 # https://github.com/PaulSonOfLars/tgbot/blob/master/tg_bot/modules/sed.py
-from re import I
-from re import search as re_search
-from re import sub as re_sub
+from re import I, search, sub
 from sre_constants import error as sre_error
 
 from pyrogram import filters
@@ -45,15 +43,15 @@ async def sed(_, message):
                 return await message.reply_text("Nice try -_-")
 
             if "i" in flags and "g" in flags:
-                text = re_sub(repl, repl_with, to_fix, flags=I).strip()
+                text = sub(repl, repl_with, to_fix, flags=I).strip()
             elif "i" in flags:
-                text = re_sub(
+                text = sub(
                     repl, repl_with, to_fix, count=1, flags=I
                 ).strip()
             elif "g" in flags:
-                text = re_sub(repl, repl_with, to_fix).strip()
+                text = sub(repl, repl_with, to_fix).strip()
             else:
-                text = re_sub(repl, repl_with, to_fix, count=1).strip()
+                text = sub(repl, repl_with, to_fix, count=1).strip()
         except sre_error:
             return
 
@@ -74,7 +72,7 @@ def infinite_checker(repl):
         r"\(.{1,}\)\{.{1,}(,)?\}\(.*\)(\+|\* |\{.*\})",
     ]
     for match in regex:
-        status = re_search(match, repl)
+        status = search(match, repl)
         return bool(status)
 
 

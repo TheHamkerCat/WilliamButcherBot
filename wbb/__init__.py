@@ -25,11 +25,10 @@ SOFTWARE.
 
 from asyncio import get_event_loop
 from inspect import getfullargspec
-from os import environ
+from os import path
 from time import ctime, time
 
 from aiohttp import ClientSession
-from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from pyrogram import Client, filters
 from pyrogram.types import Message
@@ -37,102 +36,16 @@ from pyromod import listen
 from Python_ARQ import ARQ
 from telegraph import Telegraph
 
-load_dotenv("config.env")
-
-BOT_TOKEN = environ.get('BOT_TOKEN', '')
-if len(BOT_TOKEN) == 0:
-    print("BOT_TOKEN variable is missing! Exiting now")
-    exit(1)
-
-API_ID = environ.get('API_ID', '')
-if len(API_ID) == 0:
-    print("API_ID variable is missing! Exiting now")
-    exit(1)
+if path.exists("config.py"):
+    from config import *
 else:
-    API_ID = int(API_ID)
-
-API_HASH = environ.get('API_HASH', '')
-if len(API_HASH) == 0:
-    print("API_HASH variable is missing! Exiting now")
-    exit(1)
-
-ARQ_API_KEY = environ.get('ARQ_API_KEY', '')
-if len(ARQ_API_KEY) == 0:
-    print("ARQ_API_KEY variable is missing! Exiting now\nGet this from @ARQRobot")
-    exit(1)
-
-MONGO_URL = environ.get('MONGO_URL', '')
-if len(MONGO_URL) == 0:
-    print("MONGO_URL variable is missing! Exiting now")
-    exit(1)
-
-MESSAGE_DUMP_CHAT = environ.get('MESSAGE_DUMP_CHAT', '')
-if len(MESSAGE_DUMP_CHAT) == 0:
-    print("MESSAGE_DUMP_CHAT variable is missing! Exiting now")
-    exit(1)
-else:
-    MESSAGE_DUMP_CHAT = int(MESSAGE_DUMP_CHAT)
-
-LOG_GROUP_ID = environ.get('LOG_GROUP_ID', '')
-if len(LOG_GROUP_ID) == 0:
-    print("LOG_GROUP_ID variable is missing! Exiting now")
-    exit(1)
-else:
-    LOG_GROUP_ID = int(LOG_GROUP_ID)
-
-GBAN_LOG_GROUP_ID = environ.get('GBAN_LOG_GROUP_ID', '')
-if len(GBAN_LOG_GROUP_ID) == 0:
-    print("GBAN_LOG_GROUP_ID variable is missing! Exiting now")
-    exit(1)
-else:
-    GBAN_LOG_GROUP_ID = int(GBAN_LOG_GROUP_ID)
-
-USERBOT_PREFIX = environ.get('USERBOT_PREFIX', '')
-if len(USERBOT_PREFIX) == 0:
-    USERBOT_PREFIX = "."
-
-PHONE_NUMBER = environ.get('PHONE_NUMBER', '')
-if len(PHONE_NUMBER) == 0:
-    PHONE_NUMBER = None
-
-SESSION_STRING = environ.get('SESSION_STRING', '')
-if len(SESSION_STRING) == 0:
-    SESSION_STRING = None
-
-if PHONE_NUMBER:
-    app2 = Client("userbot", phone_number=PHONE_NUMBER, api_id=API_ID, api_hash=API_HASH)
-elif SESSION_STRING:
-    app2 = Client('userbot', api_id=API_ID, api_hash=API_HASH, session_string=SESSION_STRING)
-else:
-    print("PHONE_NUMBER or SESSION_STRING is required for start bot.")
-    exit(1)
-
-aid = environ.get('SUDO_USERS_ID', '')
-if len(aid) != 0:
-    aid = aid.split()
-    SUDO_USERS_ID = {int(_id.strip()) for _id in aid} # Sudo users have full access to everything, don't trust anyone
-else:
-    SUDO_USERS_ID = set()
-
-WELCOME_DELAY_KICK_SEC = environ.get('WELCOME_DELAY_KICK_SEC', '')
-if len(WELCOME_DELAY_KICK_SEC) == 0:
-    WELCOME_DELAY_KICK_SEC = 300
-else:
-    WELCOME_DELAY_KICK_SEC = int(WELCOME_DELAY_KICK_SEC)
-
-RSS_DELAY = environ.get('RSS_DELAY', '')
-RSS_DELAY = 300 if len(RSS_DELAY) == 0 else int(RSS_DELAY)
-
-PM_PERMIT = environ.get('PM_PERMIT', '')
-PM_PERMIT = PM_PERMIT.lower() in ['true', '1']
-
-LOG_MENTIONS = environ.get('LOG_MENTIONS', '')
-LOG_MENTIONS = LOG_MENTIONS.lower() in ['true', '1']
+    from sample_config import *
 
 MOD_LOAD = []
 MOD_NOLOAD = []
 SUDOERS = filters.user()
 bot_start_time = time()
+
 
 class Log:
     def __init__(self, save_to_file=False, file_name="wbb.log"):
@@ -179,13 +92,22 @@ async def load_sudoers():
         for user_id in sudoers:
             SUDOERS.add(user_id)
 
+if PHONE_NUMBER:
+    app2 = Client("userbot", phone_number=PHONE_NUMBER,
+                  api_id=API_ID, api_hash=API_HASH)
+elif SESSION_STRING:
+    app2 = Client('userbot', api_id=API_ID, api_hash=API_HASH,
+                  session_string=SESSION_STRING)
+else:
+    print("PHONE_NUMBER or SESSION_STRING is required for start bot.")
+    exit(1)
 
 loop = get_event_loop()
 loop.run_until_complete(load_sudoers())
 
 aiohttpsession = ClientSession()
 
-arq = ARQ("https://arq.hamker.in", ARQ_API_KEY, aiohttpsession)
+arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
 
 app = Client("wbb", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 

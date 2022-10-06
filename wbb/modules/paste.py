@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from os import remove
-from re import compile as re_compile
+from re import compile
 
 from aiofiles import open as aiofiles_open
 from pyrogram import filters
@@ -34,7 +34,7 @@ from wbb.utils.pastebin import paste
 
 __MODULE__ = "Paste"
 __HELP__ = "/paste - To Paste Replied Text Or Document To A Pastebin"
-pattern = re_compile(r"^text/|json$|yaml$|xml$|toml$|x-sh$|x-shellscript$")
+pattern = compile(r"^text/|json$|yaml$|xml$|toml$|x-sh$|x-shellscript$")
 
 
 @app2.on_message(filters.command("paste", prefixes=USERBOT_PREFIX) & SUDOERS)

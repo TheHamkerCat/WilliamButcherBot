@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import gather as asyncio_gather
+from asyncio import gather
 from imghdr import what as imghdr_what
 from os import path, remove
 from traceback import format_exc
@@ -74,7 +74,7 @@ async def sticker_image(_, message: Message):
         return await message.reply("Reply to a sticker.")
     m = await message.reply("Sending..")
     f = await r.download(f"{r.sticker.file_unique_id}.png")
-    await asyncio_gather(
+    await gather(
         *[
             message.reply_photo(f),
             message.reply_document(f),
@@ -96,14 +96,14 @@ async def userbot_kang(_, message: Message):
     sticker_m = await reply.forward(BOT_USERNAME)
 
     # Send /kang message to bot and listen to his reply concurrently
-    bot_reply, kang_m_bot = await asyncio_gather(
+    bot_reply, kang_m_bot = await gather(
         app2.listen(BOT_USERNAME, filters=~filters.me),
         sticker_m.reply(message.text.replace(USERBOT_PREFIX, "/")),
     )
 
     # Edit init message of ubot with the reply of
     # bot we got in the previous block
-    bot_reply, ub_m = await asyncio_gather(
+    bot_reply, ub_m = await gather(
         app2.listen(BOT_USERNAME, filters=~filters.me),
         eor(message, text=bot_reply.text.markdown),
     )

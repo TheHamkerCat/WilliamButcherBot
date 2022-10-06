@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import sleep as asyncio_sleep
+from asyncio import sleep
 from os import getpid
 from subprocess import check_output
 from time import time
@@ -102,9 +102,9 @@ async def ban_globally(_, message):
         try:
             await app.ban_chat_member(served_chat["chat_id"], user.id)
             number_of_chats += 1
-            await asyncio_sleep(1)
+            await sleep(1)
         except FloodWait as e:
-            await asyncio_sleep(e.value)
+            await sleep(e.value)
         except Exception:
             pass
     try:
@@ -177,10 +177,10 @@ async def broadcast_message(_, message):
     for i in chats:
         try:
             await app.send_message(i, text=text)
-            await asyncio_sleep(sleep_time)
+            await sleep(sleep_time)
             sent += 1
         except FloodWait as e:
-            await asyncio_sleep(e.value)
+            await sleep(e.value)
         except Exception:
             pass
     await m.edit(f"**Broadcasted Message In {sent} Chats.**")

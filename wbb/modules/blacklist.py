@@ -21,9 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from re import IGNORECASE
-from re import escape as re_escape
-from re import search as re_search
+from re import IGNORECASE, escape, search
 from time import time
 
 from pyrogram import filters
@@ -102,8 +100,8 @@ async def blacklist_filters_re(_, message):
         return
     list_of_filters = await get_blacklisted_words(chat_id)
     for word in list_of_filters:
-        pattern = r"( |^|[^\w])" + re_escape(word) + r"( |$|[^\w])"
-        if re_search(pattern, text, flags=IGNORECASE):
+        pattern = r"( |^|[^\w])" + escape(word) + r"( |$|[^\w])"
+        if search(pattern, text, flags=IGNORECASE):
             if user.id in await list_admins(chat_id):
                 return
             try:

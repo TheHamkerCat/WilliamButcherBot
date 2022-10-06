@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from asyncio import get_running_loop
+from contextlib import suppress
 from html import escape
 from os import remove
-from re import sub as re_sub
-from contextlib import suppress
+from re import sub
 from sys import platform
 from sys import version as pyver
 from time import ctime, time
@@ -189,7 +189,7 @@ async def urban_func(answers, text):
         return answers
     results = results.result[:48]
     for i in results:
-        def clean(x): return re_sub(r"[\[\]]", "", x)
+        def clean(x): return sub(r"[\[\]]", "", x)
         msg = f"""
 **Query:** {text}
 

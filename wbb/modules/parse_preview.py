@@ -1,4 +1,4 @@
-from asyncio import sleep as asyncio_sleep
+from asyncio import sleep
 
 from pyrogram import filters
 from pyrogram.types import Message
@@ -19,7 +19,7 @@ async def parse(_, message: Message):
         text = r.text or r.caption
         if text:
             m = await app2.send_message("me", text)
-            await asyncio_sleep(1)
+            await sleep(1)
             await m.delete()
             if m.web_page:
                 r = m

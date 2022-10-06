@@ -21,10 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from re import IGNORECASE
-from re import escape as re_escape
-from re import findall as re_findall
-from re import search as re_search
+from re import IGNORECASE, escape, findall, search
 
 from pyrogram import filters
 from wbb import app
@@ -117,14 +114,14 @@ async def filters_re(_, message):
     chat_id = message.chat.id
     list_of_filters = await get_filters_names(chat_id)
     for word in list_of_filters:
-        pattern = r"( |^|[^\w])" + re_escape(word) + r"( |$|[^\w])"
-        if re_search(pattern, text, flags=IGNORECASE):
+        pattern = r"( |^|[^\w])" + escape(word) + r"( |$|[^\w])"
+        if search(pattern, text, flags=IGNORECASE):
             _filter = await get_filter(chat_id, word)
             data_type = _filter["type"]
             data = _filter["data"]
             if data_type == "text":
                 keyb = None
-                if re_findall(r"\[.+\,.+\]", data):
+                if findall(r"\[.+\,.+\]", data):
                     keyboard = extract_text_and_keyb(ikb, data)
                     if keyboard:
                         data, keyb = keyboard

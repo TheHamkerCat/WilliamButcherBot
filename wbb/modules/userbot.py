@@ -9,7 +9,7 @@ import sys
 from html import escape
 from io import StringIO
 from os import remove
-from re import split as re_split
+from re import split
 from subprocess import PIPE, Popen
 from traceback import format_exc
 
@@ -168,7 +168,7 @@ async def shellrunner(_, message: Message):
         code = text.split("\n")
         output = ""
         for x in code:
-            shell = re_split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x)
+            shell = split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", x)
             try:
                 process = Popen(
                     shell,
@@ -185,7 +185,7 @@ async def shellrunner(_, message: Message):
             output += process.stdout.read()[:-1].decode("utf-8")
             output += "\n"
     else:
-        shell = re_split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", text)
+        shell = split(""" (?=(?:[^'"]|'[^']*'|"[^"]*")*$)""", text)
         for a, _ in enumerate(shell):
             shell[a] = shell[a].replace('"', "")
         try:

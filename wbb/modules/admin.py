@@ -21,11 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import gather as asyncio_gather
-from asyncio import sleep as asyncio_sleep
+from asyncio import gather, sleep
 from contextlib import suppress
-from re import findall as re_findall
-from re import search as re_search
+from re import findall, search
 from time import time
 
 from pyrogram import filters
@@ -187,7 +185,7 @@ async def kickFunc(_, message: Message):
         await message.reply_to_message.delete()
     await message.chat.ban_member(user_id)
     await message.reply_text(msg)
-    await asyncio_sleep(1)
+    await sleep(1)
     await message.chat.unban_member(user_id)
 
 
@@ -292,7 +290,7 @@ async def list_ban_(c, message: Message):
     lreason = msglink_reason.split()
     messagelink, reason = lreason[0], " ".join(lreason[1:])
 
-    if not re_search(r"(https?://)?t(elegram)?\.me/\w+/\d+", messagelink):  # validate link
+    if not search(r"(https?://)?t(elegram)?\.me/\w+/\d+", messagelink):  # validate link
         return await message.reply_text("Invalid message link provided")
     if userid == BOT_ID:
         return await message.reply_text("I can't ban myself.")
@@ -303,16 +301,16 @@ async def list_ban_(c, message: Message):
     m = await message.reply_text("`Banning User from multiple groups.This may take some time`")
     try:
         msgtext = (await app.get_messages(uname, mid)).text
-        gusernames = re_findall("@\w+", msgtext)
+        gusernames = findall("@\w+", msgtext)
     except:
         return await m.edit_text("Could not get group usernames")
     count = 0
     for username in gusernames:
         try:
             await app.ban_chat_member(username.strip("@"), userid)
-            await asyncio_sleep(1)
+            await sleep(1)
         except FloodWait as e:
-            await asyncio_sleep(e.value)
+            await sleep(e.value)
             await app.ban_chat_member(username.strip("@"), userid)
         except:
             continue
@@ -337,7 +335,7 @@ async def list_unban_(c, message: Message):
     userid, msglink = await extract_user_and_reason(message)
     if not userid or not msglink:
         return await message.reply_text("Provide a userid/username along with message link to list-unban")
-    if not re_search(r"(https?://)?t(elegram)?\.me/\w+/\d+", msglink):  # validate link
+    if not search(r"(https?://)?t(elegram)?\.me/\w+/\d+", msglink):  # validate link
         return await message.reply_text("Invalid message link provided")
 
     splitted = msglink.split("/")
@@ -348,16 +346,16 @@ async def list_unban_(c, message: Message):
     )
     try:
         msgtext = (await app.get_messages(uname, mid)).text
-        gusernames = re_findall("@\w+", msgtext)
+        gusernames = findall("@\w+", msgtext)
     except:
         return await m.edit_text("Could not get the group usernames")
     count = 0
     for username in gusernames:
         try:
             await app.unban_chat_member(username.strip("@"), userid)
-            await asyncio_sleep(1)
+            await sleep(1)
         except FloodWait as e:
-            await asyncio_sleep(e.value)
+            await sleep(e.value)
             await app.unban_chat_member(username.strip("@"), userid)
         except:
             continue
@@ -589,7 +587,7 @@ async def warn_user(_, message: Message):
         return await message.reply_text(
             "I can't warn an admin, You know the rules, so do i."
         )
-    user, warns = await asyncio_gather(
+    user, warns = await gather(
         app.get_users(user_id),
         get_warn(chat_id, await int_to_alpha(user_id)),
     )

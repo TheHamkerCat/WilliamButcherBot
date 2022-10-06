@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import sleep as asyncio_sleep
+from asyncio import sleep
 
 from pyrogram import filters
 from pyrogram.enums import ChatType
@@ -49,9 +49,9 @@ async def clean_db(_, message):
     for served_chat in served_chats:
         try:
             await app.get_chat_members(served_chat, BOT_ID)
-            await asyncio_sleep(2)
+            await sleep(2)
         except FloodWait as e:
-            await asyncio_sleep(e.value)
+            await sleep(e.value)
             await app.get_chat_members(served_chat, BOT_ID)
         except Exception:
             await remove_served_chat(served_chat)

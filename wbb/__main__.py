@@ -21,11 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import all_tasks, exceptions, get_event_loop
-from asyncio import sleep as asyncio_sleep
+from asyncio import all_tasks, exceptions, get_event_loop, sleep
 from contextlib import closing, suppress
 from importlib import import_module
-from re import match as re_match
+from re import match
 
 from pyrogram import filters, idle
 from pyrogram.enums import ChatType, ParseMode
@@ -285,12 +284,12 @@ async def stats_callbacc(_, CallbackQuery):
 
 @app.on_callback_query(filters.regex(r"help_(.*?)"))
 async def help_button(client, query):
-    home_match = re_match(r"help_home\((.+?)\)", query.data)
-    mod_match = re_match(r"help_module\((.+?)\)", query.data)
-    prev_match = re_match(r"help_prev\((.+?)\)", query.data)
-    next_match = re_match(r"help_next\((.+?)\)", query.data)
-    back_match = re_match(r"help_back", query.data)
-    create_match = re_match(r"help_create", query.data)
+    home_match = match(r"help_home\((.+?)\)", query.data)
+    mod_match = match(r"help_module\((.+?)\)", query.data)
+    prev_match = match(r"help_prev\((.+?)\)", query.data)
+    next_match = match(r"help_next\((.+?)\)", query.data)
+    back_match = match(r"help_back", query.data)
+    create_match = match(r"help_create", query.data)
     await query._client.answer_callback_query(query.id)
     user_id = query.from_user.id
     if user_id not in page_controller:
@@ -375,4 +374,4 @@ if __name__ == "__main__":
     with closing(loop):
         with suppress(exceptions.CancelledError):
             loop.run_until_complete(start_bot())
-        loop.run_until_complete(asyncio_sleep(3.0))  # task cancel wait
+        loop.run_until_complete(sleep(3.0))  # task cancel wait

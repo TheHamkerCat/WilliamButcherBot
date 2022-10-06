@@ -22,9 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from asyncio import create_task as asyncio_create_task
-from asyncio import get_running_loop
-from asyncio import sleep as asyncio_sleep
+from asyncio import create_task, get_running_loop, sleep
 from datetime import datetime, timezone
 from os import remove
 from random import shuffle
@@ -175,12 +173,12 @@ async def welcome(_, message: Message):
         # Save captcha answers etc in mongodb in case bot gets crashed or restarted.
         await update_captcha_cache(answers_dicc)
 
-        asyncio_create_task(
+        create_task(
             kick_restricted_after_delay(
                 WELCOME_DELAY_KICK_SEC, button_message, member
             )
         )
-        await asyncio_sleep(0.5)
+        await sleep(0.5)
 
 
 async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
@@ -203,10 +201,10 @@ async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
             reply_markup=keyb,
             disable_web_page_preview=True,
         )
-        await asyncio_sleep(300)
+        await sleep(300)
         await m.delete()
 
-    asyncio_create_task(_send_wait_delete())
+    create_task(_send_wait_delete())
 
 
 @app.on_callback_query(filters.regex("pressed_button"))
@@ -253,7 +251,7 @@ async def callback_query_welcome_button(_, callback_query):
                 if attempts >= 3:
                     answers_dicc.remove(iii)
                     await button_message.chat.ban_member(pending_user_id)
-                    await asyncio_sleep(1)
+                    await sleep(1)
                     await button_message.chat.unban_member(pending_user_id)
                     await button_message.delete()
                     await update_captcha_cache(answers_dicc)
@@ -299,7 +297,7 @@ async def kick_restricted_after_delay(delay, button_message: Message, user: User
     button message and join message and then kick him
     """
     global answers_dicc
-    await asyncio_sleep(delay)
+    await sleep(delay)
     join_message = button_message.reply_to_message
     group_chat = button_message.chat
     user_id = user.id

@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import gather as asyncio_gather
+from asyncio import gather
 from io import BytesIO
 from json import loads
 from os import remove
@@ -41,7 +41,7 @@ from wbb.utils.functions import extract_user
 async def change_profile(_, message: Message):
     m = await eor(message, text="Anonymizing...")
     try:
-        image_resp, name_resp = await asyncio_gather(
+        image_resp, name_resp = await gather(
             session.get("https://thispersondoesnotexist.com/image"),
             session.get(
                 "https://raw.githubusercontent.com/dominictarr/random-name/master/first-names.json")
@@ -49,7 +49,7 @@ async def change_profile(_, message: Message):
         image = BytesIO(await image_resp.read())
         image.name = "a.png"
         name = choice(loads(await name_resp.text()))
-        await asyncio_gather(
+        await gather(
             app2.set_profile_photo(photo=image),
             app2.update_profile(first_name=name),
         )
@@ -77,7 +77,7 @@ async def impersonate(_, message: Message):
         fname = user.first_name
         lname = user.last_name or ""
         bio = user.bio or ""
-        pfp, _ = await asyncio_gather(
+        pfp, _ = await gather(
             app2.download_media(user.photo.big_file_id),
             app2.update_profile(fname, lname, bio),
         )

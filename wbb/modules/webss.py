@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from asyncio import gather as asyncio_gather
+from asyncio import gather
 from base64 import b64decode
 from io import BytesIO
 
@@ -83,7 +83,7 @@ async def take_ss(_, message: Message):
         if not full:
             # Full size images have problem with reply_photo, that's why
             # we need to only use reply_photo if we're not using full size
-            await asyncio_gather(
+            await gather(
                 *[message.reply_document(photo), message.reply_photo(photo)]
             )
         else:
