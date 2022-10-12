@@ -18,8 +18,7 @@ if path.exists('config.env'):
     if len(API_HASH) == 0:
         print("API_HASH variable is missing!")
     
-    ARQ_API_URL = environ.get('ARQ_API_URL', '')
-    ARQ_API_URL = 'https://arq.hamker.in' if len(ARQ_API_URL) == 0 else ARQ_API_URL
+    ARQ_API_URL = environ.get('ARQ_API_URL', 'https://arq.hamker.in')
 
     ARQ_API_KEY = environ.get('ARQ_API_KEY', '')
     if len(ARQ_API_KEY) == 0:
@@ -29,27 +28,13 @@ if path.exists('config.env'):
     if len(MONGO_URL) == 0:
         print("MONGO_URL variable is missing!")
 
-    MESSAGE_DUMP_CHAT = environ.get('MESSAGE_DUMP_CHAT', '')
-    if len(MESSAGE_DUMP_CHAT) == 0:
-        print("MESSAGE_DUMP_CHAT variable is missing!")
-    else:
-        MESSAGE_DUMP_CHAT = int(MESSAGE_DUMP_CHAT)
+    MESSAGE_DUMP_CHAT = environ.get('MESSAGE_DUMP_CHAT', 0)
 
-    LOG_GROUP_ID = environ.get('LOG_GROUP_ID', '')
-    if len(LOG_GROUP_ID) == 0:
-        print("LOG_GROUP_ID variable is missing!")
-    else:
-        LOG_GROUP_ID = int(LOG_GROUP_ID)
+    LOG_GROUP_ID = environ.get('LOG_GROUP_ID', 0)
 
-    GBAN_LOG_GROUP_ID = environ.get('GBAN_LOG_GROUP_ID', '')
-    if len(GBAN_LOG_GROUP_ID) == 0:
-        print("GBAN_LOG_GROUP_ID variable is missing!")
-    else:
-        GBAN_LOG_GROUP_ID = int(GBAN_LOG_GROUP_ID)
+    GBAN_LOG_GROUP_ID = environ.get('GBAN_LOG_GROUP_ID', 0)
 
-    USERBOT_PREFIX = environ.get('USERBOT_PREFIX', '')
-    if len(USERBOT_PREFIX) == 0:
-        USERBOT_PREFIX = "."
+    USERBOT_PREFIX = environ.get('USERBOT_PREFIX', '.')
 
     PHONE_NUMBER = environ.get('PHONE_NUMBER', '')
     if len(PHONE_NUMBER) == 0:
@@ -59,22 +44,12 @@ if path.exists('config.env'):
     if len(SESSION_STRING) == 0:
         SESSION_STRING = None
 
-    aid = environ.get('SUDO_USERS_ID', '')
-    if len(aid) != 0:
-        aid = aid.split()
-        # Sudo users have full access to everything, don't trust anyone
-        SUDO_USERS_ID = {int(_id.strip()) for _id in aid}
-    else:
-        SUDO_USERS_ID = set()
+    # Sudo users have full access to everything, don't trust anyone
+    SUDO_USERS_ID = {int(_id.strip()) for _id in environ.get('SUDO_USERS_ID').split()}
 
-    WELCOME_DELAY_KICK_SEC = environ.get('WELCOME_DELAY_KICK_SEC', '')
-    if len(WELCOME_DELAY_KICK_SEC) == 0:
-        WELCOME_DELAY_KICK_SEC = 300
-    else:
-        WELCOME_DELAY_KICK_SEC = int(WELCOME_DELAY_KICK_SEC)
+    WELCOME_DELAY_KICK_SEC = environ.get('WELCOME_DELAY_KICK_SEC', 300)
 
-    RSS_DELAY = environ.get('RSS_DELAY', '')
-    RSS_DELAY = 300 if len(RSS_DELAY) == 0 else int(RSS_DELAY)
+    RSS_DELAY = environ.get('RSS_DELAY', 300)
 
     PM_PERMIT = environ.get('PM_PERMIT', '')
     PM_PERMIT = PM_PERMIT.lower() in ['true', '1']
