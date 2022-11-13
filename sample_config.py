@@ -1,19 +1,19 @@
-BOT_TOKEN = "467677575:YZfaakjwd545dfg-N6JStihhuw5gQeZHntc"
-API_ID = 123456
-SESSION_STRING = "" # Check Readme to generate sessions; need for userbot
-API_HASH = "dfxcgs5s12hdcxfgdfz"
-USERBOT_PREFIX = "."
-PHONE_NUMBER = "+916969696969"  # Need for Userbot
+BOT_TOKEN = "5764925353:AAEKHnBKbDaYOmShUMeESapV55Ix7mgYJW0"
+API_ID = 13515342
+SESSION_STRING = "1BVtsOJsBu01fXqOyNKw36jiQppad_fHWLpyS8W0Px76Ocg7IVN6JPq5irCx5UlKLCJnU__DDVVzyfwvf71O5Pgs8PNZ0s8EBB1Brz6s_dSGkCvvQdKRwQTEu9dp7WH9_OCdERURLtk9ALdLj9Cww2JHbXm_zGqzCML9rHg6O7_0tMpLrVOssMR8TZV36c-BIVkUVdMW7tWArYmqxep2N_RjaATu7Q6aRghmXFw5swGWVYlza8uuA_stRPk-wvNBkBTWHeahZGtA3NlC3Y47AxFtRwSIwnPav4prY_1kRw3kVAWQYIP6Rf1ApUVmshF7rDun7OSgFmUs2BC_FKcfYor9L31p2VKQ=" 
+API_HASH = "8cb1a48861ddd8063adb972a44b2b1f6"
+USERBOT_PREFIX = "/"
+PHONE_NUMBER = "+6285697204981"  # Need for Userbot
 SUDO_USERS_ID = [
-    4543744343,
-    543214651351,
+    1293361587,
+    1385170049,
 ]  # Sudo users have full access to everything, don't trust anyone
-LOG_GROUP_ID = -100125431255
-GBAN_LOG_GROUP_ID = -100125431255
-MESSAGE_DUMP_CHAT = -1001181696437
+LOG_GROUP_ID = -1001896097424
+GBAN_LOG_GROUP_ID = -1001896097424
+MESSAGE_DUMP_CHAT = -1001896097424
 WELCOME_DELAY_KICK_SEC = 300
-MONGO_URL = "mongodb+srv://username:password@cluster0.ksiis.mongodb.net/YourDataBaseName?retryWrites=true&w=majority"
-ARQ_API_KEY = "Get this from @ARQRobot"
+MONGO_URL = "mongodb+srv://saga:saga@cluster0.bdv3ezf.mongodb.net/?retryWrites=true&w=majority"
+ARQ_API_KEY = "RCEICT-GFYKSO-WJOAJH-KJOJXD-ARQ"
 ARQ_API_URL = "https://arq.hamker.in"
 LOG_MENTIONS = True
 RSS_DELAY = 300  # In seconds
