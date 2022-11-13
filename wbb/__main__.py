@@ -140,15 +140,11 @@ home_keyboard_pm = InlineKeyboardMarkup(
     ]
 )
 
-PM_START_TEXT = """
-*Hello {} !*
-✪ I'm an Saga management bot [✨](https://graph.org/file/2dd5c9729f4c99bd03686.jpg)
-────────────────────────
-× *Uptime:* `{}`
-× `{}` *users, across* `{}` *chats.*
-────────────────────────
-✪ Hit /help to see my available commands.
-"""
+home_text_pm = (https://graph.org/file/2dd5c9729f4c99bd03686.jpg)
+        f"Hey there! My name is Saga Manage. I can manage your "
+        + "group with lots of useful features, feel free to "
+        + "add me to your group."
+)
 
 keyboard = InlineKeyboardMarkup(
     [
