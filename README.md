@@ -1,5 +1,6 @@
 <h1 align="center"> 
-    ✨SagaManageBot✨ 
+    ✨Saga✨
+<img src="https://graph.org/file/2dd5c9729f4c99bd03686.jpg"> 
 </h1>
 
 <h3 align="center"> 
@@ -28,8 +29,8 @@
 
 <p align="center">
     A Support Group and ready-to-use running instance of this bot can be found on Telegram <br>
-    <a href="https://t.me/WilliamButcherBot"> WilliamButcherBot </a> | 
-    <a href="https://t.me/wbbsupport"> WbbSupport </a>
+    <a href="https://t.me/managesecurity_bot">managesecurity_bot </a> | 
+    <a href="https://t.me/scattermanage"> scattersupport </a>
 </p>
 
 <h2 align="center"> 
@@ -49,7 +50,7 @@
 
 ```console
 thehamkercat@arch:~$ git clone https://github.com/sagaProjects/ManageBot
-thehamkercat@arch:~$ cd ManageBoy
+thehamkercat@arch:~$ cd ManageBot
 thehamkercat@arch:~$ pip3 install -U -r requirements.txt
 thehamkercat@arch:~$ cp sample_config.py config.py
 ```
@@ -76,26 +77,6 @@ thehamkercat@arch:~$ cd WilliamButcherBot
 thehamkercat@arch:~$ pip3 install pyrogram TgCrypto
 thehamkercat@arch:~$ python3 str_gen.py
 ```
-
-<h1 align="center"> 
-   ⇝ Docker ⇜
-</h1>
-
-```console
-thehamkercat@arch:~$ git clone https://github.com/thehamkercat/WilliamButcherBot
-thehamkercat@arch:~$ cd WilliamButcherBot
-thehamkercat@arch:~$ cp sample_config.env config.env
-```
-
-<h3 align="center"> 
-    Edit <b> config.env </b> with your own values
-</h3>
-
-```console
-thehamkercat@arch:~$ sudo docker build . -t wbb
-thehamkercat@arch:~$ sudo docker run wbb
-```
-
 <h2 align="center"> 
    ⇝ Write new modules ⇜
 </h2>
