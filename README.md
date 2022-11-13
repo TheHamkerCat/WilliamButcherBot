@@ -30,7 +30,7 @@
 <p align="center">
     A Support Group and ready-to-use running instance of this bot can be found on Telegram <br>
     <a href="https://t.me/managesecurity_bot">managesecurity_bot </a> | 
-    <a href="https://t.me/scattermanage"> scattersupport </a>
+    <a href="https://t.me/scattersuport"> scattersuport </a>
 </p>
 
 <h2 align="center"> 
