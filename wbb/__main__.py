@@ -118,8 +118,8 @@ home_keyboard_pm = InlineKeyboardMarkup(
                 text="Commands ❓", callback_data="bot_commands"
             ),
             InlineKeyboardButton(
-                text="Repo 🛠",
-                url="https://github.com/thehamkercat/WilliamButcherBot",
+                text="Developer 🛠",
+                url="https://t.me/thismebots",
             ),
         ],
         [
@@ -128,7 +128,7 @@ home_keyboard_pm = InlineKeyboardMarkup(
                 callback_data="stats_callback",
             ),
             InlineKeyboardButton(
-                text="Support 👨", url="http://t.me/WBBSupport"
+                text="Support 👨", url="http://t.me/scatterSuport"
             ),
         ],
         [
@@ -141,9 +141,13 @@ home_keyboard_pm = InlineKeyboardMarkup(
 )
 
 home_text_pm = (
-        f"Hey there! My name is {BOT_NAME}. I can manage your "
-        + "group with lots of useful features, feel free to "
-        + "add me to your group."
+        f"Hello {} !*
+✪ I'm an Saga management bot [✨](https://graph.org/file/2dd5c9729f4c99bd03686.jpg
+────────────────────────
+× *Uptime:* {}
+× {} *users, across* {} *chats.*
+────────────────────────
+✪ Hit /help to see my available commands.
 )
 
 keyboard = InlineKeyboardMarkup(
@@ -154,8 +158,8 @@ keyboard = InlineKeyboardMarkup(
                 url=f"t.me/{BOT_USERNAME}?start=help",
             ),
             InlineKeyboardButton(
-                text="Repo 🛠",
-                url="https://github.com/thehamkercat/WilliamButcherBot",
+                text="Developer 🛠",
+                url="https://t.me/thismebots",
             ),
         ],
         [
@@ -163,7 +167,7 @@ keyboard = InlineKeyboardMarkup(
                 text="System Stats 💻",
                 callback_data="stats_callback",
             ),
-            InlineKeyboardButton(text="Support 👨", url="t.me/WBBSupport"),
+            InlineKeyboardButton(text="Support 👨", url="t.me/scatterSuport"),
         ],
     ]
 )
