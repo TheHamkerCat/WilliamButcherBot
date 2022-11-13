@@ -48,8 +48,8 @@
 </h2>
 
 ```console
-thehamkercat@arch:~$ git clone https://github.com/thehamkercat/WilliamButcherBot
-thehamkercat@arch:~$ cd WilliamButcherBot
+thehamkercat@arch:~$ git clone https://github.com/sagaProjects/ManageBot
+thehamkercat@arch:~$ cd ManageBoy
 thehamkercat@arch:~$ pip3 install -U -r requirements.txt
 thehamkercat@arch:~$ cp sample_config.py config.py
 ```
