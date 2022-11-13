@@ -6,7 +6,7 @@ from telethon.tl.functions.channels import GetParticipantRequest
 from telethon.tl.types import ChannelParticipantAdmin
 from telethon.tl.types import ChannelParticipantCreator
 
-from SagaSupport import telethn as client
+from managesecurity_bot import telethn as client
 
 spam_chats = []
 
