@@ -4,10 +4,8 @@ SESSION_STRING = "BQBGZZ5Iqu-qI7RSyOYyzjP6RrqeSGsGfbqdL3wb9dOglWEpqOnyhFKRaQ5lRI
 API_HASH = "8cb1a48861ddd8063adb972a44b2b1f6"
 USERBOT_PREFIX = "/"
 PHONE_NUMBER = "+6285697204981"  # Need for Userbot
-SUDO_USERS_ID = [
-    1293361587,
-    1385170049,
-]  # Sudo users have full access to everything, don't trust anyone
+SUDO_USERS_ID = [1385170049 , 1293361587]
+# Sudo users have full access to everything, don't trust anyone
 LOG_GROUP_ID = -1001896097424
 GBAN_LOG_GROUP_ID = -1001896097424
 MESSAGE_DUMP_CHAT = -1001896097424
