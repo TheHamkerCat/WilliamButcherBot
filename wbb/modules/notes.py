@@ -60,24 +60,33 @@ async def save_notee(_, message):
             text="**Usage:**\nReply to a text or sticker with /save [NOTE_NAME] to save it.",
         )
 
-    elif (
-            not message.reply_to_message.text
-            and not message.reply_to_message.sticker
-    ):
+    elif not message.reply_to_message:
         await eor(
             message,
-            text="__**You can only save text or stickers in notes.**__",
+            text="__**You can only save only reply.**__",
         )
     else:
         name = message.text.split(None, 1)[1].strip()
         if not name:
             return await eor(message, text="**Usage**\n__/save [NOTE_NAME]__")
-        _type = "text" if message.reply_to_message.text else "sticker"
+        if message.reply_to_message.text:
+            _type = "text"
+            file = message.reply_to_message.text.markdown
+        elif message.reply_to_message.sticker:
+            _type = "sticker"
+            file = message.reply_to_message.sticker.file_id
+        elif message.reply_to_message.photo:
+            _type = "photo"
+            file = message.reply_to_message.photo.file_id
+        elif message.reply_to_message.video:
+            _type = "video"
+            file = message.reply_to_message.video.file_id
+        elif message.reply_to_message.voice:
+            _type = "voice"
+            file = message.reply_to_message.voice.file_id
         note = {
             "type": _type,
-            "data": message.reply_to_message.text.markdown
-            if _type == "text"
-            else message.reply_to_message.sticker.file_id,
+            "data": file,
         }
         prefix = message.text.split()[0][0]
         chat_id = message.chat.id if prefix != USERBOT_PREFIX else USERBOT_ID
@@ -122,9 +131,14 @@ async def get_one_note_userbot(_, message):
             text=data,
             disable_web_page_preview=True,
         )
-    else:
+    elif _note["type"] == "sticker":
         await message.reply_sticker(_note["data"])
-
+    elif _note["type"] == "photo":
+        await message.reply_photo(_note["data"])
+    elif _note["type"] == "video":
+        await message.reply_video(_note["data"])
+    elif _note["type"] == "voice":
+        await message.reply_voice(_note["data"])
 
 @app.on_message(
     filters.regex(r"^#.+") & filters.text & ~filters.edited & ~filters.private
