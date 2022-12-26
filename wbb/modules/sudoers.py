@@ -152,7 +152,7 @@ __**New Global Ban**__
         )
     except Exception:
         await message.reply_text(
-            "User Gbanned, But This Gban Action Wasn't Logged, Add Me Bot In GBAN_LOG_GROUP"
+            "User Gbanned, But This Gban Action Wasn't Logged, Add Me In GBAN_LOG_GROUP"
         )
 
 
