@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,7 @@ pattern = re.compile(r"^text/|json$|yaml$|xml$|toml$|x-sh$|x-shellscript$")
 
 
 @app2.on_message(filters.command("paste", prefixes=USERBOT_PREFIX) & SUDOERS)
-@app.on_message(filters.command("paste") & ~filters.edited)
+@app.on_message(filters.command("paste"))
 @capture_err
 async def paste_func(_, message: Message):
     if not message.reply_to_message:
@@ -47,9 +47,7 @@ async def paste_func(_, message: Message):
     r = message.reply_to_message
 
     if not r.text and not r.document:
-        return await eor(
-            message, text="Only text and documents are supported."
-        )
+        return await eor(message, text="Only text and documents are supported.")
 
     m = await eor(message, text="Pasting...")
 

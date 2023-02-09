@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -95,7 +95,7 @@ async def get_chat_info(chat, already=False):
     return [caption, photo_id]
 
 
-@app.on_message(filters.command("info") & ~filters.edited)
+@app.on_message(filters.command("info"))
 async def info_func(_, message: Message):
     if message.reply_to_message:
         user = message.reply_to_message.from_user.id
@@ -120,13 +120,11 @@ async def info_func(_, message: Message):
     os.remove(photo)
 
 
-@app.on_message(filters.command("chat_info") & ~filters.edited)
+@app.on_message(filters.command("chat_info"))
 async def chat_info_func(_, message: Message):
     try:
         if len(message.command) > 2:
-            return await message.reply_text(
-                "**Usage:**/chat_info [USERNAME|ID]"
-            )
+            return await message.reply_text("**Usage:**/chat_info [USERNAME|ID]")
 
         if len(message.command) == 1:
             chat = message.chat.id

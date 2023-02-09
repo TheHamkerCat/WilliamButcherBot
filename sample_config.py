@@ -1,6 +1,6 @@
 BOT_TOKEN = "467677575:YZfaakjwd545dfg-N6JStihhuw5gQeZHntc"
 API_ID = 123456
-SESSION_STRING = "" # Check Readme to generate sessions; need for userbot
+SESSION_STRING = ""  # Check Readme to generate sessions; need for userbot
 API_HASH = "dfxcgs5s12hdcxfgdfz"
 USERBOT_PREFIX = "."
 PHONE_NUMBER = "+916969696969"  # Need for Userbot

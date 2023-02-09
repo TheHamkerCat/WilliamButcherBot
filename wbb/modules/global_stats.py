@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@ SOFTWARE.
 import asyncio
 
 from pyrogram import filters
+from pyrogram.enums import ChatType
 from pyrogram.errors import FloodWait
 
 from wbb import BOT_ID, BOT_NAME, SUDOERS, USERBOT_NAME, app, app2
@@ -45,7 +46,7 @@ from wbb.utils.http import get
 from wbb.utils.inlinefuncs import keywords_list
 
 
-@app.on_message(filters.command("clean_db") & ~filters.edited & SUDOERS)
+@app.on_message(filters.command("clean_db") & SUDOERS)
 @capture_err
 async def clean_db(_, message):
     served_chats = [int(i["chat_id"]) for i in (await get_served_chats())]
@@ -64,7 +65,7 @@ async def clean_db(_, message):
     await m.edit("**Database Cleaned.**")
 
 
-@app.on_message(filters.command("gstats") & ~filters.edited & SUDOERS)
+@app.on_message(filters.command("gstats") & SUDOERS)
 @capture_err
 async def global_stats(_, message):
     m = await app.send_message(
@@ -118,17 +119,17 @@ async def global_stats(_, message):
 
     # Userbot info
     groups_ub = channels_ub = bots_ub = privates_ub = total_ub = 0
-    async for i in app2.iter_dialogs():
+    async for i in app2.get_dialogs():
         t = i.chat.type
         total_ub += 1
 
-        if t in ["supergroup", "group"]:
+        if t in [ChatType.SUPERGROUP, ChatType.GROUP]:
             groups_ub += 1
-        elif t == "channel":
+        elif t == ChatType.CHANNEL:
             channels_ub += 1
-        elif t == "bot":
+        elif t == ChatType.BOT:
             bots_ub += 1
-        elif t == "private":
+        elif t == ChatType.PRIVATE:
             privates_ub += 1
 
     msg = f"""

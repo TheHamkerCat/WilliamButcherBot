@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,9 +26,10 @@ import importlib
 import re
 from contextlib import closing, suppress
 
-from uvloop import install
 from pyrogram import filters, idle
+from pyrogram.enums import ChatType, ParseMode
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from uvloop import install
 
 from wbb import (
     BOT_NAME,
@@ -55,15 +56,9 @@ async def start_bot():
 
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
-        if (
-                hasattr(imported_module, "__MODULE__")
-                and imported_module.__MODULE__
-        ):
+        if hasattr(imported_module, "__MODULE__") and imported_module.__MODULE__:
             imported_module.__MODULE__ = imported_module.__MODULE__
-            if (
-                    hasattr(imported_module, "__HELP__")
-                    and imported_module.__HELP__
-            ):
+            if hasattr(imported_module, "__HELP__") and imported_module.__HELP__:
                 HELPABLE[
                     imported_module.__MODULE__.replace(" ", "_").lower()
                 ] = imported_module
@@ -114,9 +109,7 @@ async def start_bot():
 home_keyboard_pm = InlineKeyboardMarkup(
     [
         [
-            InlineKeyboardButton(
-                text="Commands ❓", callback_data="bot_commands"
-            ),
+            InlineKeyboardButton(text="Commands ❓", callback_data="bot_commands"),
             InlineKeyboardButton(
                 text="Repo 🛠",
                 url="https://github.com/thehamkercat/WilliamButcherBot",
@@ -127,9 +120,7 @@ home_keyboard_pm = InlineKeyboardMarkup(
                 text="System Stats 🖥",
                 callback_data="stats_callback",
             ),
-            InlineKeyboardButton(
-                text="Support 👨", url="http://t.me/WBBSupport"
-            ),
+            InlineKeyboardButton(text="Support 👨", url="http://t.me/WBBSupport"),
         ],
         [
             InlineKeyboardButton(
@@ -141,9 +132,9 @@ home_keyboard_pm = InlineKeyboardMarkup(
 )
 
 home_text_pm = (
-        f"Hey there! My name is {BOT_NAME}. I can manage your "
-        + "group with lots of useful features, feel free to "
-        + "add me to your group."
+    f"Hey there! My name is {BOT_NAME}. I can manage your "
+    + "group with lots of useful features, feel free to "
+    + "add me to your group."
 )
 
 keyboard = InlineKeyboardMarkup(
@@ -169,23 +160,21 @@ keyboard = InlineKeyboardMarkup(
 )
 
 
-@app.on_message(~filters.edited & filters.command("start"))
+@app.on_message(filters.command("start"))
 async def start(_, message):
-    if message.chat.type != "private":
-        return await message.reply(
-            "Pm Me For More Details.", reply_markup=keyboard
-        )
+    if message.chat.type != ChatType.PRIVATE:
+        return await message.reply("Pm Me For More Details.", reply_markup=keyboard)
     if len(message.text.split()) > 1:
         name = (message.text.split(None, 1)[1]).lower()
         if name == "mkdwn_help":
             await message.reply(
-                MARKDOWN, parse_mode="html", disable_web_page_preview=True
+                MARKDOWN, parse_mode=ParseMode.HTML, disable_web_page_preview=True
             )
         elif "_" in name:
             module = name.split("_", 1)[1]
             text = (
-                    f"Here is the help for **{HELPABLE[module].__MODULE__}**:\n"
-                    + HELPABLE[module].__HELP__
+                f"Here is the help for **{HELPABLE[module].__MODULE__}**:\n"
+                + HELPABLE[module].__HELP__
             )
             await message.reply(text, disable_web_page_preview=True)
         elif name == "help":
@@ -202,9 +191,9 @@ async def start(_, message):
     return
 
 
-@app.on_message(~filters.edited & filters.command("help"))
+@app.on_message(filters.command("help"))
 async def help_command(_, message):
-    if message.chat.type != "private":
+    if message.chat.type != ChatType.PRIVATE:
         if len(message.command) >= 2:
             name = (message.text.split(None, 1)[1]).replace(" ", "_").lower()
             if str(name) in HELPABLE:
@@ -223,35 +212,27 @@ async def help_command(_, message):
                     reply_markup=key,
                 )
             else:
-                await message.reply(
-                    "PM Me For More Details.", reply_markup=keyboard
-                )
+                await message.reply("PM Me For More Details.", reply_markup=keyboard)
         else:
-            await message.reply(
-                "Pm Me For More Details.", reply_markup=keyboard
-            )
+            await message.reply("Pm Me For More Details.", reply_markup=keyboard)
     else:
         if len(message.command) >= 2:
             name = (message.text.split(None, 1)[1]).replace(" ", "_").lower()
             if str(name) in HELPABLE:
                 text = (
-                        f"Here is the help for **{HELPABLE[name].__MODULE__}**:\n"
-                        + HELPABLE[name].__HELP__
+                    f"Here is the help for **{HELPABLE[name].__MODULE__}**:\n"
+                    + HELPABLE[name].__HELP__
                 )
                 await message.reply(text, disable_web_page_preview=True)
             else:
-                text, help_keyboard = await help_parser(
-                    message.from_user.first_name
-                )
+                text, help_keyboard = await help_parser(message.from_user.first_name)
                 await message.reply(
                     text,
                     reply_markup=help_keyboard,
                     disable_web_page_preview=True,
                 )
         else:
-            text, help_keyboard = await help_parser(
-                message.from_user.first_name
-            )
+            text, help_keyboard = await help_parser(message.from_user.first_name)
             await message.reply(
                 text, reply_markup=help_keyboard, disable_web_page_preview=True
             )
@@ -302,7 +283,7 @@ async def help_button(client, query):
     create_match = re.match(r"help_create", query.data)
     top_text = f"""
 Hello {query.from_user.first_name}, My name is {BOT_NAME}.
-I'm a group management bot with some usefule features.
+I'm a group management bot with some useful features.
 You can choose an option below, by clicking a button.
 Also you can ask anything in Support Group.
 
@@ -313,10 +294,8 @@ General command are:
     if mod_match:
         module = (mod_match.group(1)).replace(" ", "_")
         text = (
-                "{} **{}**:\n".format(
-                    "Here is the help for", HELPABLE[module].__MODULE__
-                )
-                + HELPABLE[module].__HELP__
+            "{} **{}**:\n".format("Here is the help for", HELPABLE[module].__MODULE__)
+            + HELPABLE[module].__HELP__
         )
 
         await query.message.edit(
@@ -356,9 +335,7 @@ General command are:
     elif back_match:
         await query.message.edit(
             text=top_text,
-            reply_markup=InlineKeyboardMarkup(
-                paginate_modules(0, HELPABLE, "help")
-            ),
+            reply_markup=InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help")),
             disable_web_page_preview=True,
         )
 

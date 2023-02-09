@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,6 @@ SOFTWARE.
 import codecs
 import pickle
 from string import ascii_lowercase
-
 from typing import Dict, List, Union
 
 from wbb import db
@@ -594,10 +593,7 @@ async def deactivate_pipe(from_chat_id: int, to_chat_id: int):
     if not pipes:
         return
     for pipe in pipes:
-        if (
-                pipe["from_chat_id"] == from_chat_id
-                and pipe["to_chat_id"] == to_chat_id
-        ):
+        if pipe["from_chat_id"] == from_chat_id and pipe["to_chat_id"] == to_chat_id:
             pipes.remove(pipe)
     return await pipesdb.update_one(
         {"pipe": "pipe"}, {"$set": {"pipes": pipes}}, upsert=True
@@ -606,10 +602,7 @@ async def deactivate_pipe(from_chat_id: int, to_chat_id: int):
 
 async def is_pipe_active(from_chat_id: int, to_chat_id: int) -> bool:
     for pipe in await show_pipes():
-        if (
-                pipe["from_chat_id"] == from_chat_id
-                and pipe["to_chat_id"] == to_chat_id
-        ):
+        if pipe["from_chat_id"] == from_chat_id and pipe["to_chat_id"] == to_chat_id:
             return True
 
 
@@ -753,9 +746,11 @@ async def get_rss_feeds_count() -> int:
 
 
 async def check_chatbot():
-    return (
-        await chatbotdb.find_one({"chatbot": "chatbot"}) or {"bot": [], "userbot": []}
-    )
+    return await chatbotdb.find_one({"chatbot": "chatbot"}) or {
+        "bot": [],
+        "userbot": [],
+    }
+
 
 async def add_chatbot(chat_id: int, is_userbot: bool = False):
     list_id = await check_chatbot()

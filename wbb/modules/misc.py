@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ import subprocess
 from asyncio import Lock
 from re import findall
 
-from pyrogram import filters
+from pyrogram import enums, filters
 
 from wbb import SUDOERS, USERBOT_PREFIX, app, app2, arq, eor
 from wbb.core.decorators.errors import capture_err
@@ -101,12 +101,8 @@ ASQ_LOCK = Lock()
 PING_LOCK = Lock()
 
 
-@app2.on_message(
-    SUDOERS
-    & filters.command("ping", prefixes=USERBOT_PREFIX)
-    & ~filters.edited
-)
-@app.on_message(filters.command("ping") & ~filters.edited)
+@app2.on_message(SUDOERS & filters.command("ping", prefixes=USERBOT_PREFIX))
+@app.on_message(filters.command("ping"))
 async def ping_handler(_, message):
     m = await eor(message, text="Pinging datacenters...")
     async with PING_LOCK:
@@ -125,12 +121,11 @@ async def ping_handler(_, message):
                     ["ping", "-c", "1", "-W", "2", ip],
                     text=True,
                     check=True,
-                    capture_output=True
+                    capture_output=True,
                 )
                 resp_time = findall(r"time=.+m?s", shell.stdout, re.MULTILINE)[
-                    0].replace(
-                    "time=", ""
-                )
+                    0
+                ].replace("time=", "")
 
                 text += f"    **{dc.upper()}:** {resp_time} ✅\n"
             except Exception:
@@ -139,7 +134,7 @@ async def ping_handler(_, message):
         await m.edit(text)
 
 
-@app.on_message(filters.command("asq") & ~filters.edited)
+@app.on_message(filters.command("asq"))
 async def asq(_, message):
     err = "Reply to text message or pass the question as argument"
     if message.reply_to_message:
@@ -156,22 +151,20 @@ async def asq(_, message):
         await m.edit(resp.result)
 
 
-@app.on_message(filters.command("commit") & ~filters.edited)
+@app.on_message(filters.command("commit"))
 async def commit(_, message):
     await message.reply_text(await get("http://whatthecommit.com/index.txt"))
 
 
-@app.on_message(filters.command("RTFM", "#") & ~filters.edited)
+@app.on_message(filters.command("RTFM", "#"))
 async def rtfm(_, message):
     await message.delete()
     if not message.reply_to_message:
         return await message.reply_text("Reply To A Message lol")
-    await message.reply_to_message.reply_text(
-        "Are You Lost? READ THE FUCKING DOCS!"
-    )
+    await message.reply_to_message.reply_text("Are You Lost? READ THE FUCKING DOCS!")
 
 
-@app.on_message(filters.command("runs") & ~filters.edited)
+@app.on_message(filters.command("runs"))
 async def runs(_, message):
     await message.reply_text((await random_line("wbb/utils/runs.txt")))
 
@@ -181,7 +174,7 @@ async def runs(_, message):
 async def getid(client, message):
     chat = message.chat
     your_id = message.from_user.id
-    message_id = message.message_id
+    message_id = message.id
     reply = message.reply_to_message
 
     text = f"**[Message ID:]({message.link})** `{message_id}`\n"
@@ -201,21 +194,19 @@ async def getid(client, message):
     text += f"**[Chat ID:](https://t.me/{chat.username})** `{chat.id}`\n\n"
     if not getattr(reply, "empty", True):
         id_ = reply.from_user.id if reply.from_user else reply.sender_chat.id
-        text += (
-            f"**[Replied Message ID:]({reply.link})** `{reply.message_id}`\n"
-        )
+        text += f"**[Replied Message ID:]({reply.link})** `{reply.message_id}`\n"
         text += f"**[Replied User ID:](tg://user?id={id_})** `{id_}`"
 
     await eor(
         message,
         text=text,
         disable_web_page_preview=True,
-        parse_mode="md",
+        parse_mode=enums.ParseMode.MARKDOWN,
     )
 
 
 # Random
-@app.on_message(filters.command("random") & ~filters.edited)
+@app.on_message(filters.command("random"))
 @capture_err
 async def random(_, message):
     if len(message.command) != 2:
@@ -226,9 +217,7 @@ async def random(_, message):
     try:
         if 1 < int(length) < 1000:
             alphabet = string.ascii_letters + string.digits
-            password = "".join(
-                secrets.choice(alphabet) for i in range(int(length))
-            )
+            password = "".join(secrets.choice(alphabet) for i in range(int(length)))
             await message.reply_text(f"`{password}`")
         else:
             await message.reply_text("Specify A Length Between 1-1000")
@@ -239,7 +228,7 @@ async def random(_, message):
 
 
 # Translate
-@app.on_message(filters.command("tr") & ~filters.edited)
+@app.on_message(filters.command("tr"))
 @capture_err
 async def tr(_, message):
     if len(message.command) != 2:
@@ -262,7 +251,7 @@ async def tr(_, message):
     await message.reply_text(result.result.translatedText)
 
 
-@app.on_message(filters.command("json") & ~filters.edited)
+@app.on_message(filters.command("json"))
 @capture_err
 async def json_fetch(_, message):
     if len(message.command) != 2:

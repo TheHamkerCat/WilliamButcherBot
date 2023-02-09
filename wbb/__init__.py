@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -103,13 +103,15 @@ loop.run_until_complete(load_sudoers())
 
 if not SESSION_STRING:
     app2 = Client(
-        "userbot",
-        phone_number=PHONE_NUMBER,
+        name="userbot",
         api_id=API_ID,
         api_hash=API_HASH,
+        phone_number=PHONE_NUMBER,
     )
 else:
-    app2 = Client(SESSION_STRING, api_id=API_ID, api_hash=API_HASH)
+    app2 = Client(
+        name="userbot", api_id=API_ID, api_hash=API_HASH, session_string=SESSION_STRING
+    )
 
 aiohttpsession = ClientSession()
 

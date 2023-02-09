@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -57,12 +57,7 @@ def reset_flood(chat_id, user_id=0):
 
 
 @app.on_message(
-    ~filters.service
-    & ~filters.me
-    & ~filters.private
-    & ~filters.channel
-    & ~filters.bot
-    & ~filters.edited,
+    ~filters.service & ~filters.me & ~filters.private & ~filters.channel & ~filters.bot,
     group=flood_group,
 )
 @capture_err
@@ -86,7 +81,7 @@ async def flood_control_func(_, message: Message):
     if user_id not in DB[chat_id]:
         DB[chat_id][user_id] = 0
 
-    # Reset floodb of current chat if some other user sends a message
+    # Reset flood db of current chat if some other user sends a message
     reset_flood(chat_id, user_id)
 
     # Ignore devs and admins
@@ -109,7 +104,7 @@ async def flood_control_func(_, message: Message):
             [
                 [
                     InlineKeyboardButton(
-                        text="🚨   Unmute   🚨",
+                        text="🚨  Unmute  🚨",
                         callback_data=f"unmute_{user_id}",
                     )
                 ]
@@ -151,7 +146,7 @@ async def flood_callback_func(_, cq: CallbackQuery):
     await cq.message.edit(text)
 
 
-@app.on_message(filters.command("flood") & ~filters.private & ~filters.edited)
+@app.on_message(filters.command("flood") & ~filters.private)
 @adminsOnly("can_change_info")
 async def flood_toggle(_, message: Message):
     if len(message.command) != 2:

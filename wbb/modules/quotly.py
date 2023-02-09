@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -65,15 +65,13 @@ def isArgInt(message: Message) -> list:
 
 
 @app2.on_message(filters.command("q", prefixes=USERBOT_PREFIX) & SUDOERS)
-@app.on_message(filters.command("q") & ~filters.private & ~filters.edited)
+@app.on_message(filters.command("q") & ~filters.private)
 @capture_err
 async def quotly_func(client, message: Message):
     if not message.reply_to_message:
         return await message.reply_text("Reply to a message to quote it.")
     if not message.reply_to_message.text:
-        return await message.reply_text(
-            "Replied message has no text, can't quote it."
-        )
+        return await message.reply_text("Replied message has no text, can't quote it.")
     m = await message.reply_text("Quoting Messages")
     if len(message.command) < 2:
         messages = [message.reply_to_message]
@@ -86,15 +84,15 @@ async def quotly_func(client, message: Message):
 
             count = arg[1]
 
-            # Fetching 5 extra messages so tha twe can ignore media
+            # Fetching 5 extra messages so that we can ignore media
             # messages and still end up with correct offset
             messages = [
                 i
                 for i in await client.get_messages(
                     message.chat.id,
                     range(
-                        message.reply_to_message.message_id,
-                        message.reply_to_message.message_id + (count + 5),
+                        message.reply_to_message.id,
+                        message.reply_to_message.id + (count + 5),
                     ),
                     replies=0,
                 )
@@ -108,14 +106,12 @@ async def quotly_func(client, message: Message):
                 )
             reply_message = await client.get_messages(
                 message.chat.id,
-                message.reply_to_message.message_id,
+                message.reply_to_message.id,
                 replies=1,
             )
             messages = [reply_message]
     else:
-        return await m.edit(
-            "Incorrect argument, check quotly module in help section."
-        )
+        return await m.edit("Incorrect argument, check quotly module in help section.")
     try:
         if not message:
             return await m.edit("Something went wrong.")

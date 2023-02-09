@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,12 +29,7 @@ from wbb import SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.keyboard import ikb
-from wbb.utils.dbfunctions import (
-    delete_note,
-    get_note,
-    get_note_names,
-    save_note,
-)
+from wbb.utils.dbfunctions import delete_note, get_note, get_note_names, save_note
 from wbb.utils.functions import extract_text_and_keyb
 
 __MODULE__ = "Notes"
@@ -51,7 +46,7 @@ Checkout /markdownhelp to know more about formattings and other syntax.
 
 
 @app2.on_message(filters.command("save", prefixes=USERBOT_PREFIX) & SUDOERS)
-@app.on_message(filters.command("save") & ~filters.edited & ~filters.private)
+@app.on_message(filters.command("save") & ~filters.private)
 @adminsOnly("can_change_info")
 async def save_notee(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
@@ -60,10 +55,7 @@ async def save_notee(_, message):
             text="**Usage:**\nReply to a text or sticker with /save [NOTE_NAME] to save it.",
         )
 
-    elif (
-            not message.reply_to_message.text
-            and not message.reply_to_message.sticker
-    ):
+    elif not message.reply_to_message.text and not message.reply_to_message.sticker:
         await eor(
             message,
             text="__**You can only save text or stickers in notes.**__",
@@ -86,7 +78,7 @@ async def save_notee(_, message):
 
 
 @app2.on_message(filters.command("notes", prefixes=USERBOT_PREFIX) & SUDOERS)
-@app.on_message(filters.command("notes") & ~filters.edited & ~filters.private)
+@app.on_message(filters.command("notes") & ~filters.private)
 @capture_err
 async def get_notes(_, message):
     prefix = message.text.split()[0][0]
@@ -126,9 +118,7 @@ async def get_one_note_userbot(_, message):
         await message.reply_sticker(_note["data"])
 
 
-@app.on_message(
-    filters.regex(r"^#.+") & filters.text & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.regex(r"^#.+") & filters.text & ~filters.private)
 @capture_err
 async def get_one_note(_, message):
     name = message.text.replace("#", "", 1)
@@ -154,7 +144,7 @@ async def get_one_note(_, message):
 
 
 @app2.on_message(filters.command("delete", prefixes=USERBOT_PREFIX) & SUDOERS)
-@app.on_message(filters.command("delete") & ~filters.edited & ~filters.private)
+@app.on_message(filters.command("delete") & ~filters.private)
 @adminsOnly("can_change_info")
 async def del_note(_, message):
     if len(message.command) < 2:

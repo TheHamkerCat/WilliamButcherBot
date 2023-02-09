@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -120,7 +120,6 @@ async def welcome(_, message: Message):
 
     for member in message.new_chat_members:
         try:
-
             if member.id in SUDOERS:
                 continue  # ignore sudo users
 
@@ -209,9 +208,7 @@ async def welcome(_, message: Message):
         await update_captcha_cache(answers_dicc)
 
         asyncio.create_task(
-            kick_restricted_after_delay(
-                WELCOME_DELAY_KICK_SEC, button_message, member
-            )
+            kick_restricted_after_delay(WELCOME_DELAY_KICK_SEC, button_message, member)
         )
         await asyncio.sleep(0.5)
 
@@ -261,16 +258,14 @@ async def callback_query_welcome_button(_, callback_query):
     if len(answers_dicc) != 0:
         for i in answers_dicc:
             if (
-                    i["user_id"] == pending_user_id
-                    and i["chat_id"] == button_message.chat.id
+                i["user_id"] == pending_user_id
+                and i["chat_id"] == button_message.chat.id
             ):
                 correct_answer = i["answer"]
                 keyboard = i["keyboard"]
 
     if not (correct_answer and keyboard):
-        return await callback_query.answer(
-            "Something went wrong, Rejoin the " "chat!"
-        )
+        return await callback_query.answer("Something went wrong, Rejoin the " "chat!")
 
     if pending_user_id != pressed_user_id:
         return await callback_query.answer("This is not for you")
@@ -279,8 +274,8 @@ async def callback_query_welcome_button(_, callback_query):
         await callback_query.answer("Yeah, It's Wrong.")
         for iii in answers_dicc:
             if (
-                    iii["user_id"] == pending_user_id
-                    and iii["chat_id"] == button_message.chat.id
+                iii["user_id"] == pending_user_id
+                and iii["chat_id"] == button_message.chat.id
             ):
                 attempts = iii["attempts"]
                 if attempts >= 3:
@@ -312,8 +307,8 @@ async def callback_query_welcome_button(_, callback_query):
     if len(answers_dicc) != 0:
         for ii in answers_dicc:
             if (
-                    ii["user_id"] == pending_user_id
-                    and ii["chat_id"] == button_message.chat.id
+                ii["user_id"] == pending_user_id
+                and ii["chat_id"] == button_message.chat.id
             ):
                 answers_dicc.remove(ii)
                 await update_captcha_cache(answers_dicc)
@@ -327,9 +322,7 @@ async def callback_query_welcome_button(_, callback_query):
     return await send_welcome_message(chat, pending_user_id, True)
 
 
-async def kick_restricted_after_delay(
-        delay, button_message: Message, user: User
-):
+async def kick_restricted_after_delay(delay, button_message: Message, user: User):
     """If the new member is still restricted after the delay, delete
     button message and join message and then kick him
     """
@@ -348,20 +341,17 @@ async def kick_restricted_after_delay(
     await _ban_restricted_user_until_date(group_chat, user_id, duration=delay)
 
 
-async def _ban_restricted_user_until_date(
-        group_chat, user_id: int, duration: int
-):
+async def _ban_restricted_user_until_date(group_chat, user_id: int, duration: int):
     try:
         member = await group_chat.get_member(user_id)
-        if member.status == "restricted":
+        if member.status == ChatMemberStatus.RESTRICTED:
             until_date = int(datetime.utcnow().timestamp() + duration)
             await group_chat.ban_member(user_id, until_date=until_date)
     except UserNotParticipant:
         pass
 
 
-@app.on_message(
-    filters.command("captcha") & ~filters.private & ~filters.edited)
+@app.on_message(filters.command("captcha") & ~filters.private)
 @adminsOnly("can_restrict_members")
 async def captcha_state(_, message):
     usage = "**Usage:**\n/captcha [ENABLE|DISABLE]"
@@ -384,8 +374,7 @@ async def captcha_state(_, message):
 # WELCOME MESSAGE
 
 
-@app.on_message(
-    filters.command("set_welcome") & ~filters.private & ~filters.edited)
+@app.on_message(filters.command("set_welcome") & ~filters.private)
 @adminsOnly("can_change_info")
 async def set_welcome_func(_, message):
     usage = "You need to reply to a text, check the Greetings module in /help"
@@ -403,8 +392,7 @@ async def set_welcome_func(_, message):
     await message.reply_text("Welcome message has been successfully set.")
 
 
-@app.on_message(
-    filters.command("del_welcome") & ~filters.private & ~filters.edited)
+@app.on_message(filters.command("del_welcome") & ~filters.private)
 @adminsOnly("can_change_info")
 async def del_welcome_func(_, message):
     chat_id = message.chat.id
@@ -412,8 +400,7 @@ async def del_welcome_func(_, message):
     await message.reply_text("Welcome message has been deleted.")
 
 
-@app.on_message(
-    filters.command("get_welcome") & ~filters.private & ~filters.edited)
+@app.on_message(filters.command("get_welcome") & ~filters.private)
 @adminsOnly("can_change_info")
 async def get_welcome_func(_, message):
     chat = message.chat
@@ -421,9 +408,7 @@ async def get_welcome_func(_, message):
     if not welcome:
         return await message.reply_text("No welcome message set.")
     if not message.from_user:
-        return await message.reply_text(
-            "You're anon, can't send welcome message."
-        )
+        return await message.reply_text("You're anon, can't send welcome message.")
 
     await send_welcome_message(chat, message.from_user.id)
 

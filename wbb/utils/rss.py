@@ -16,7 +16,9 @@ class Feed:
         self.summary = entry.get("summary") or ""
 
     def parsed(self):
-        text = f"**Title:** [{self.title.strip()}]({self.link or 'https://google.com'})\n"
+        text = (
+            f"**Title:** [{self.title.strip()}]({self.link or 'https://google.com'})\n"
+        )
         if self.author:
             text += f"**Author:** {self.author}\n"
         if self.published:

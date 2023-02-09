@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@ from sys import executable
 import aiofiles
 import speedtest
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
 
 from wbb import aiohttpsession as aiosession
@@ -43,7 +44,7 @@ from wbb.utils.http import get, post
 
 async def restart(m: Message):
     if m:
-        await start_restart_stage(m.chat.id, m.message_id)
+        await start_restart_stage(m.chat.id, m.id)
     execvp(executable, [executable, "-m", "wbb"])
 
 
@@ -94,7 +95,7 @@ def generate_captcha():
 
 def test_speedtest():
     def speed_convert(size):
-        power = 2 ** 10
+        power = 2**10
         zero = 0
         units = {0: "", 1: "Kb/s", 2: "Mb/s", 3: "Gb/s", 4: "Tb/s"}
         while size > power:
@@ -199,9 +200,9 @@ async def extract_userid(message, text: str):
     if len(entities) < 2:
         return (await app.get_users(text)).id
     entity = entities[1]
-    if entity.type == "mention":
+    if entity.type == MessageEntityType.MENTION:
         return (await app.get_users(text)).id
-    if entity.type == "text_mention":
+    if entity.type == MessageEntityType.TEXT_MENTION:
         return entity.user.id
     return None
 
@@ -216,9 +217,9 @@ async def extract_user_and_reason(message, sender_chat=False):
         # if reply to a message and no reason is given
         if not reply.from_user:
             if (
-                    reply.sender_chat
-                    and reply.sender_chat != message.chat.id
-                    and sender_chat
+                reply.sender_chat
+                and reply.sender_chat != message.chat.id
+                and sender_chat
             ):
                 id_ = reply.sender_chat.id
             else:
@@ -250,9 +251,9 @@ async def extract_user(message):
 
 
 def get_file_id_from_message(
-        message,
-        max_file_size=3145728,
-        mime_types=["image/png", "image/jpeg"],
+    message,
+    max_file_size=3145728,
+    mime_types=["image/png", "image/jpeg"],
 ):
     file_id = None
     if message.document:

@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,10 +27,7 @@ from wbb import app, arq
 from wbb.core.sections import section
 
 
-@app.on_message(
-    filters.command("arq")
-    & ~filters.edited
-)
+@app.on_message(filters.command("arq"))
 async def arq_stats(_, message):
     data = await arq.stats()
     if not data.ok:

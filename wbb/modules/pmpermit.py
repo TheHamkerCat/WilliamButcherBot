@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,6 @@ flood = {}
     filters.private
     & filters.incoming
     & ~filters.service
-    & ~filters.edited
     & ~filters.me
     & ~filters.bot
     & ~filters.via_bot
@@ -51,7 +50,7 @@ async def pmpermit_func(_, message):
     user_id = message.from_user.id
     if not PM_PERMIT or await is_pmpermit_approved(user_id):
         return
-    async for m in app2.iter_history(user_id, limit=6):
+    async for m in app2.get_chat_history(user_id, limit=6):
         if m.reply_markup:
             await m.delete()
     if str(user_id) in flood:
@@ -70,9 +69,7 @@ async def pmpermit_func(_, message):
 
 
 @app2.on_message(
-    filters.command("approve", prefixes=USERBOT_PREFIX)
-    & SUDOERS
-    & ~filters.via_bot
+    filters.command("approve", prefixes=USERBOT_PREFIX) & SUDOERS & ~filters.via_bot
 )
 @capture_err
 async def pm_approve(_, message):
@@ -86,19 +83,15 @@ async def pm_approve(_, message):
 
 
 @app2.on_message(
-    filters.command("disapprove", prefixes=USERBOT_PREFIX)
-    & SUDOERS
-    & ~filters.via_bot
+    filters.command("disapprove", prefixes=USERBOT_PREFIX) & SUDOERS & ~filters.via_bot
 )
 async def pm_disapprove(_, message):
     if not message.reply_to_message:
-        return await eor(
-            message, text="Reply to a user's message to disapprove."
-        )
+        return await eor(message, text="Reply to a user's message to disapprove.")
     user_id = message.reply_to_message.from_user.id
     if not await is_pmpermit_approved(user_id):
         await eor(message, text="User is already disapproved to pm")
-        async for m in app2.iter_history(user_id, limit=6):
+        async for m in app2.get_chat_history(user_id, limit=6):
             if m.reply_markup:
                 try:
                     await m.delete()
@@ -110,9 +103,7 @@ async def pm_disapprove(_, message):
 
 
 @app2.on_message(
-    filters.command("block", prefixes=USERBOT_PREFIX)
-    & SUDOERS
-    & ~filters.via_bot
+    filters.command("block", prefixes=USERBOT_PREFIX) & SUDOERS & ~filters.via_bot
 )
 @capture_err
 async def block_user_func(_, message):
@@ -125,9 +116,7 @@ async def block_user_func(_, message):
 
 
 @app2.on_message(
-    filters.command("unblock", prefixes=USERBOT_PREFIX)
-    & SUDOERS
-    & ~filters.via_bot
+    filters.command("unblock", prefixes=USERBOT_PREFIX) & SUDOERS & ~filters.via_bot
 )
 async def unblock_user_func(_, message):
     if not message.reply_to_message:
@@ -177,7 +166,7 @@ async def pmpermit_cq(_, cq):
         return await cq.answer("It's For The Other Person.")
 
     if data == "to_scam_you":
-        async for m in app2.iter_history(user_id, limit=6):
+        async for m in app2.get_chat_history(user_id, limit=6):
             if m.reply_markup:
                 await m.delete()
         await app2.send_message(user_id, "Blocked, Go scam someone else.")

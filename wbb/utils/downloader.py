@@ -13,9 +13,9 @@ def ensure_status(status_code: int):
 
 
 async def download_url(
-        url,
-        file_path,
-        chunk_size,
+    url,
+    file_path,
+    chunk_size,
 ):
     file_path = file_path or url.split("/")[-1][:20]
 
@@ -31,10 +31,10 @@ async def download_url(
 
 
 async def download(
-        url: str,
-        file_path: str = None,
-        chunk_size: int = 1000000,  # 1MB chunk
-        task_id: int = int(time()),
+    url: str,
+    file_path: str = None,
+    chunk_size: int = 1000000,  # 1MB chunk
+    task_id: int = int(time()),
 ):
     """
     :url: url where the file is located

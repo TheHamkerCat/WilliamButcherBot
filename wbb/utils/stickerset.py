@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,10 +27,10 @@ from pyrogram import Client, errors, raw
 
 
 async def get_sticker_set_by_name(
-        client: Client, name: str
+    client: Client, name: str
 ) -> raw.base.messages.StickerSet:
     try:
-        return await client.send(
+        return await client.invoke(
             raw.functions.messages.GetStickerSet(
                 stickerset=raw.types.InputStickerSetShortName(short_name=name),
                 hash=0,
@@ -46,13 +46,13 @@ async def get_sticker_set_by_name(
 
 
 async def create_sticker_set(
-        client: Client,
-        owner: int,
-        title: str,
-        short_name: str,
-        stickers: List[raw.base.InputStickerSetItem],
+    client: Client,
+    owner: int,
+    title: str,
+    short_name: str,
+    stickers: List[raw.base.InputStickerSetItem],
 ) -> raw.base.messages.StickerSet:
-    return await client.send(
+    return await client.invoke(
         raw.functions.stickers.CreateStickerSet(
             user_id=await client.resolve_peer(owner),
             title=title,
@@ -63,11 +63,11 @@ async def create_sticker_set(
 
 
 async def add_sticker_to_set(
-        client: Client,
-        stickerset: raw.base.messages.StickerSet,
-        sticker: raw.base.InputStickerSetItem,
+    client: Client,
+    stickerset: raw.base.messages.StickerSet,
+    sticker: raw.base.InputStickerSetItem,
 ) -> raw.base.messages.StickerSet:
-    return await client.send(
+    return await client.invoke(
         raw.functions.stickers.AddStickerToSet(
             stickerset=raw.types.InputStickerSetShortName(
                 short_name=stickerset.set.short_name
@@ -78,6 +78,6 @@ async def add_sticker_to_set(
 
 
 async def create_sticker(
-        sticker: raw.base.InputDocument, emoji: str
+    sticker: raw.base.InputDocument, emoji: str
 ) -> raw.base.InputStickerSetItem:
     return raw.types.InputStickerSetItem(document=sticker, emoji=emoji)

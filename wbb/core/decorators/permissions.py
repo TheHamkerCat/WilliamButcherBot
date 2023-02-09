@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -50,8 +50,8 @@ async def authorised(func, subFunc2, client, message, *args, **kwargs):
 async def unauthorised(message: Message, permission, subFunc2):
     chatID = message.chat.id
     text = (
-            "You don't have the required permission to perform this action."
-            + f"\n**Permission:** __{permission}__"
+        "You don't have the required permission to perform this action."
+        + f"\n**Permission:** __{permission}__"
     )
     try:
         await message.reply_text(text)
@@ -67,10 +67,7 @@ def adminsOnly(permission):
             chatID = message.chat.id
             if not message.from_user:
                 # For anonymous admins
-                if (
-                        message.sender_chat
-                        and message.sender_chat.id == message.chat.id
-                ):
+                if message.sender_chat and message.sender_chat.id == message.chat.id:
                     return await authorised(
                         func,
                         subFunc2,
@@ -85,9 +82,7 @@ def adminsOnly(permission):
             permissions = await member_permissions(chatID, userID)
             if userID not in SUDOERS and permission not in permissions:
                 return await unauthorised(message, permission, subFunc2)
-            return await authorised(
-                func, subFunc2, client, message, *args, **kwargs
-            )
+            return await authorised(func, subFunc2, client, message, *args, **kwargs)
 
         return subFunc2
 

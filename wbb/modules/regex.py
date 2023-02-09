@@ -39,16 +39,13 @@ async def sed(_, message):
             )
 
         try:
-
             if infinite_checker(repl):
                 return await message.reply_text("Nice try -_-")
 
             if "i" in flags and "g" in flags:
                 text = re.sub(repl, repl_with, to_fix, flags=re.I).strip()
             elif "i" in flags:
-                text = re.sub(
-                    repl, repl_with, to_fix, count=1, flags=re.I
-                ).strip()
+                text = re.sub(repl, repl_with, to_fix, count=1, flags=re.I).strip()
             elif "g" in flags:
                 text = re.sub(repl, repl_with, to_fix).strip()
             else:
@@ -79,9 +76,9 @@ def infinite_checker(repl):
 
 def separate_sed(sed_string):
     if (
-            len(sed_string) >= 3
-            and sed_string[1] in DELIMITERS
-            and sed_string.count(sed_string[1]) >= 2
+        len(sed_string) >= 3
+        and sed_string[1] in DELIMITERS
+        and sed_string.count(sed_string[1]) >= 2
     ):
         delim = sed_string[1]
         start = counter = 2
@@ -101,11 +98,11 @@ def separate_sed(sed_string):
             return None
         while counter < len(sed_string):
             if (
-                    sed_string[counter] == "\\"
-                    and counter + 1 < len(sed_string)
-                    and sed_string[counter + 1] == delim
+                sed_string[counter] == "\\"
+                and counter + 1 < len(sed_string)
+                and sed_string[counter + 1] == delim
             ):
-                sed_string = sed_string[:counter] + sed_string[counter + 1:]
+                sed_string = sed_string[:counter] + sed_string[counter + 1 :]
 
             elif sed_string[counter] == delim:
                 replace_with = sed_string[start:counter]
