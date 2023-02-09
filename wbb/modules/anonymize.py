@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -38,9 +38,7 @@ from wbb.modules.userbot import eor
 from wbb.utils.functions import extract_user
 
 
-@app2.on_message(
-    filters.command("anonymize", prefixes=USERBOT_PREFIX) & SUDOERS
-)
+@app2.on_message(filters.command("anonymize", prefixes=USERBOT_PREFIX) & SUDOERS)
 async def change_profile(_, message: Message):
     m = await eor(message, text="Anonymizing...")
     try:
@@ -66,9 +64,7 @@ async def change_profile(_, message: Message):
     image.close()
 
 
-@app2.on_message(
-    filters.command("impersonate", prefixes=USERBOT_PREFIX) & SUDOERS
-)
+@app2.on_message(filters.command("impersonate", prefixes=USERBOT_PREFIX) & SUDOERS)
 async def impersonate(_, message: Message):
     user_id = await extract_user(message)
 

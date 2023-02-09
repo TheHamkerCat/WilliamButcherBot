@@ -6,10 +6,7 @@ from wbb.modules.userbot import eor
 from wbb.utils.filter_groups import autocorrect_group
 
 
-@app.on_message(
-    filters.command("autocorrect")
-    & ~filters.edited
-)
+@app.on_message(filters.command("autocorrect"))
 async def autocorrect_bot(_, message: Message):
     if not message.reply_to_message:
         return await message.reply_text("Reply to a text message.")
@@ -27,9 +24,7 @@ async def autocorrect_bot(_, message: Message):
 IS_ENABLED = False
 
 
-@app2.on_message(
-    filters.command("autocorrect", prefixes=USERBOT_PREFIX) & SUDOERS
-)
+@app2.on_message(filters.command("autocorrect", prefixes=USERBOT_PREFIX) & SUDOERS)
 async def autocorrect_ubot_toggle(_, message: Message):
     global IS_ENABLED
     if len(message.command) != 2:
@@ -42,13 +37,11 @@ async def autocorrect_ubot_toggle(_, message: Message):
         IS_ENABLED = False
         await eor(message, text="Disabled!")
     else:
-        return await eor(
-            message, text="Wrong argument, Pass (ENABLE|DISABLE)."
-        )
+        return await eor(message, text="Wrong argument, Pass (ENABLE|DISABLE).")
 
 
 @app2.on_message(
-    filters.text & ~filters.edited & filters.user(USERBOT_ID),
+    filters.text & filters.user(USERBOT_ID),
     group=autocorrect_group,
 )
 async def autocorrect_ubot(_, message: Message):

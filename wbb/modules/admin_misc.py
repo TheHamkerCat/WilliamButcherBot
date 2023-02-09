@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -36,11 +36,7 @@ __HELP__ = """
 """
 
 
-@app.on_message(
-    filters.command("set_chat_title")
-    & ~filters.private
-    & ~filters.edited
-)
+@app.on_message(filters.command("set_chat_title") & ~filters.private)
 @adminsOnly("can_change_info")
 async def set_chat_title(_, message):
     if len(message.command) < 2:
@@ -53,11 +49,7 @@ async def set_chat_title(_, message):
     )
 
 
-@app.on_message(
-    filters.command("set_user_title")
-    & ~filters.private
-    & ~filters.edited
-)
+@app.on_message(filters.command("set_user_title") & ~filters.private)
 @adminsOnly("can_change_info")
 async def set_user_title(_, message):
     if not message.reply_to_message:
@@ -81,19 +73,13 @@ async def set_user_title(_, message):
     )
 
 
-@app.on_message(
-    filters.command("set_chat_photo")
-    & ~filters.private
-    & ~filters.edited
-)
+@app.on_message(filters.command("set_chat_photo") & ~filters.private)
 @adminsOnly("can_change_info")
 async def set_chat_photo(_, message):
     reply = message.reply_to_message
 
     if not reply:
-        return await message.reply_text(
-            "Reply to a photo to set it as chat_photo"
-        )
+        return await message.reply_text("Reply to a photo to set it as chat_photo")
 
     file = reply.document or reply.photo
     if not file:

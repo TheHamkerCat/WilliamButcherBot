@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,17 +32,17 @@ mono = lambda x: f"`{x}`{n}"
 
 
 def section(
-        title: str,
-        body: dict,
-        indent: int = 2,
-        underline: bool = False,
+    title: str,
+    body: dict,
+    indent: int = 2,
+    underline: bool = False,
 ) -> str:
     text = (bold_ul(title) + n) if underline else bold(title) + n
 
     for key, value in body.items():
         text += (
-                indent * w
-                + bold(key)
-                + ((value[0] + n) if isinstance(value, list) else mono(value))
+            indent * w
+            + bold(key)
+            + ((value[0] + n) if isinstance(value, list) else mono(value))
         )
     return text

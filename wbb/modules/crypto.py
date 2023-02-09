@@ -13,7 +13,7 @@ __HELP__ = """
 """
 
 
-@app.on_message(filters.command("crypto") & ~filters.edited)
+@app.on_message(filters.command("crypto"))
 @capture_err
 async def crypto(_, message):
     if len(message.command) < 2:

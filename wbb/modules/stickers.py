@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -66,7 +66,7 @@ MAX_STICKERS = (
 SUPPORTED_TYPES = ["jpeg", "png", "webp"]
 
 
-@app.on_message(filters.command("sticker_id") & ~filters.edited)
+@app.on_message(filters.command("sticker_id"))
 @capture_err
 async def sticker_id(_, message: Message):
     reply = message.reply_to_message
@@ -80,7 +80,7 @@ async def sticker_id(_, message: Message):
     await message.reply_text(f"`{reply.sticker.file_id}`")
 
 
-@app.on_message(filters.command("get_sticker") & ~filters.edited)
+@app.on_message(filters.command("get_sticker"))
 @capture_err
 async def sticker_image(_, message: Message):
     r = message.reply_to_message
@@ -137,25 +137,20 @@ async def userbot_kang(_, message: Message):
         await m.delete()
 
 
-@app.on_message(filters.command("kang") & ~filters.edited)
+@app.on_message(filters.command("kang"))
 @capture_err
 async def kang(client, message: Message):
     if not message.reply_to_message:
         return await message.reply_text("Reply to a sticker/image to kang it.")
     if not message.from_user:
-        return await message.reply_text(
-            "You are anon admin, kang stickers in my pm."
-        )
+        return await message.reply_text("You are anon admin, kang stickers in my pm.")
     msg = await message.reply_text("Kanging Sticker..")
 
     # Find the proper emoji
     args = message.text.split()
     if len(args) > 1:
         sticker_emoji = str(args[1])
-    elif (
-            message.reply_to_message.sticker
-            and message.reply_to_message.sticker.emoji
-    ):
+    elif message.reply_to_message.sticker and message.reply_to_message.sticker.emoji:
         sticker_emoji = message.reply_to_message.sticker.emoji
     else:
         sticker_emoji = "🤔"
@@ -177,13 +172,9 @@ async def kang(client, message: Message):
             temp_file_path = await app.download_media(doc)
             image_type = imghdr.what(temp_file_path)
             if image_type not in SUPPORTED_TYPES:
-                return await msg.edit(
-                    "Format not supported! ({})".format(image_type)
-                )
+                return await msg.edit("Format not supported! ({})".format(image_type))
             try:
-                temp_file_path = await resize_file_to_sticker_size(
-                    temp_file_path
-                )
+                temp_file_path = await resize_file_to_sticker_size(temp_file_path)
             except OSError as e:
                 await msg.edit_text("Something wrong happened.")
                 raise Exception(
@@ -229,12 +220,12 @@ async def kang(client, message: Message):
             elif stickerset.set.count >= MAX_STICKERS:
                 packnum += 1
                 packname = (
-                        "f"
-                        + str(packnum)
-                        + "_"
-                        + str(message.from_user.id)
-                        + "_by_"
-                        + BOT_USERNAME
+                    "f"
+                    + str(packnum)
+                    + "_"
+                    + str(message.from_user.id)
+                    + "_by_"
+                    + BOT_USERNAME
                 )
                 limit += 1
                 continue

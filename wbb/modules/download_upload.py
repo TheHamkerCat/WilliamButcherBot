@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -36,9 +36,7 @@ from wbb.core.tasks import add_task, rm_task
 from wbb.utils.downloader import download
 
 
-@app2.on_message(
-    SUDOERS & filters.command("download", prefixes=USERBOT_PREFIX)
-)
+@app2.on_message(SUDOERS & filters.command("download", prefixes=USERBOT_PREFIX))
 async def download_func(_, message: Message):
     reply = message.reply_to_message
     start = time()

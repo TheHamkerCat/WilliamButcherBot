@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,6 @@ from wbb.modules.userbot import eor
     SUDOERS
     & ~filters.forwarded
     & ~filters.via_bot
-    & ~filters.edited
     & filters.command("create", prefixes=USERBOT_PREFIX)
 )
 async def create(_, message):
@@ -41,9 +40,7 @@ async def create(_, message):
     group_type = message.command[1]
     split = message.command[2:]
     group_name = " ".join(split)
-    desc = "Welcome To My " + (
-        "Supergroup" if group_type == "s" else "Channel"
-    )
+    desc = "Welcome To My " + ("Supergroup" if group_type == "s" else "Channel")
     if group_type == "b":  # for basicgroup
         _id = await app2.create_group(group_name, BOT_USERNAME)
         link = await app2.get_chat(_id["id"])

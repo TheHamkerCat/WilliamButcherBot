@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -54,9 +54,7 @@ def download_youtube_audio(arq_resp):
     performer = r.channel
 
     m, s = r.duration.split(":")
-    duration = int(
-        datetime.timedelta(minutes=int(m), seconds=int(s)).total_seconds()
-    )
+    duration = int(datetime.timedelta(minutes=int(m), seconds=int(s)).total_seconds())
 
     if duration > 1800:
         return
@@ -78,7 +76,7 @@ def download_youtube_audio(arq_resp):
     return [title, performer, duration, audio_file, thumbnail_file]
 
 
-@app.on_message(filters.command("ytmusic") & ~filters.edited)
+@app.on_message(filters.command("ytmusic"))
 @capture_err
 async def music(_, message):
     global is_downloading
@@ -91,9 +89,7 @@ async def music(_, message):
             "Another download is in progress, try again after sometime."
         )
     is_downloading = True
-    m = await message.reply_text(
-        f"Downloading {url}", disable_web_page_preview=True
-    )
+    m = await message.reply_text(f"Downloading {url}", disable_web_page_preview=True)
     try:
         loop = get_running_loop()
         arq_resp = await arq.youtube(url)
@@ -138,7 +134,7 @@ async def download_song(url):
 # Jiosaavn Music
 
 
-@app.on_message(filters.command("saavn") & ~filters.edited)
+@app.on_message(filters.command("saavn"))
 @capture_err
 async def jssong(_, message):
     global is_downloading
@@ -181,7 +177,7 @@ async def jssong(_, message):
 # Lyrics
 
 
-@app.on_message(filters.command("lyrics") & ~filters.edited)
+@app.on_message(filters.command("lyrics"))
 async def lyrics_func(_, message):
     if len(message.command) < 2:
         return await message.reply_text("**Usage:**\n/lyrics [QUERY]")
@@ -194,11 +190,11 @@ async def lyrics_func(_, message):
         return await m.edit("No lyrics found.")
 
     song = resp.result[0]
-    song_name = song['song']
-    artist = song['artist']
-    lyrics = song['lyrics']
+    song_name = song["song"]
+    artist = song["artist"]
+    lyrics = song["lyrics"]
     msg = f"**{song_name}** | **{artist}**\n\n__{lyrics}__"
-          
+
     if len(msg) > 4095:
         msg = await paste(msg)
         msg = f"**LYRICS_TOO_LONG:** [URL]({msg})"

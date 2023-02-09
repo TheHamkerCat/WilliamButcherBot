@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -78,15 +78,13 @@ async def pipes_worker_userbot(_, message: Message):
         to_chat_id = pipes_list_bot[chat_id]
 
         if not message.text:
-            m, temp = await asyncio.gather(
-                app.listen(USERBOT_ID), message.copy(BOT_ID)
-            )
+            m, temp = await asyncio.gather(app.listen(USERBOT_ID), message.copy(BOT_ID))
             caption = f"{temp.caption}{caption}" if temp.caption else caption
 
             await app.copy_message(
                 to_chat_id,
                 USERBOT_ID,
-                m.message_id,
+                m.id,
                 caption=caption,
             )
             await asyncio.sleep(2)
@@ -95,7 +93,7 @@ async def pipes_worker_userbot(_, message: Message):
         await app.send_message(to_chat_id, text=message.text + caption)
 
 
-@app.on_message(filters.command("activate_pipe") & SUDOERS & ~filters.edited)
+@app.on_message(filters.command("activate_pipe") & SUDOERS)
 @capture_err
 async def activate_pipe_func(_, message: Message):
     global pipes_list_bot, pipes_list_userbot
@@ -125,7 +123,7 @@ async def activate_pipe_func(_, message: Message):
     await message.reply_text("Activated pipe.")
 
 
-@app.on_message(filters.command("deactivate_pipe") & SUDOERS & ~filters.edited)
+@app.on_message(filters.command("deactivate_pipe") & SUDOERS)
 @capture_err
 async def deactivate_pipe_func(_, message: Message):
     global pipes_list_bot, pipes_list_userbot
@@ -147,7 +145,7 @@ async def deactivate_pipe_func(_, message: Message):
     await message.reply_text("Deactivated pipe.")
 
 
-@app.on_message(filters.command("pipes") & SUDOERS & ~filters.edited)
+@app.on_message(filters.command("pipes") & SUDOERS)
 @capture_err
 async def show_pipes_func(_, message: Message):
     pipes_list_bot.update(pipes_list_userbot)
@@ -157,7 +155,6 @@ async def show_pipes_func(_, message: Message):
     text = ""
     for count, pipe in enumerate(pipes_list_bot.items(), 1):
         text += (
-                f"**Pipe:** `{count}`\n**From:** `{pipe[0]}`\n"
-                + f"**To:** `{pipe[1]}`\n\n"
+            f"**Pipe:** `{count}`\n**From:** `{pipe[0]}`\n" + f"**To:** `{pipe[1]}`\n\n"
         )
     await message.reply_text(text)

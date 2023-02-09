@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -50,25 +50,20 @@ Checkout /markdownhelp to know more about formattings and other syntax.
 """
 
 
-@app.on_message(filters.command("filter") & ~filters.edited & ~filters.private)
+@app.on_message(filters.command("filter") & ~filters.private)
 @adminsOnly("can_change_info")
 async def save_filters(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
         return await message.reply_text(
             "**Usage:**\nReply to a text or sticker with /filter [FILTER_NAME] to save it."
         )
-    if (
-            not message.reply_to_message.text
-            and not message.reply_to_message.sticker
-    ):
+    if not message.reply_to_message.text and not message.reply_to_message.sticker:
         return await message.reply_text(
             "__**You can only save text or stickers in filters.**__"
         )
     name = message.text.split(None, 1)[1].strip()
     if not name:
-        return await message.reply_text(
-            "**Usage:**\n__/filter [FILTER_NAME]__"
-        )
+        return await message.reply_text("**Usage:**\n__/filter [FILTER_NAME]__")
     chat_id = message.chat.id
     _type = "text" if message.reply_to_message.text else "sticker"
     _filter = {
@@ -81,22 +76,20 @@ async def save_filters(_, message):
     await message.reply_text(f"__**Saved filter {name}.**__")
 
 
-@app.on_message(
-    filters.command("filters") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("filters") & ~filters.private)
 @capture_err
 async def get_filterss(_, message):
     _filters = await get_filters_names(message.chat.id)
     if not _filters:
         return await message.reply_text("**No filters in this chat.**")
     _filters.sort()
-    msg = f"List of filters in {message.chat.title}\n"
+    msg = f"List of filters in {message.chat.title} :\n"
     for _filter in _filters:
         msg += f"**-** `{_filter}`\n"
     await message.reply_text(msg)
 
 
-@app.on_message(filters.command("stop") & ~filters.edited & ~filters.private)
+@app.on_message(filters.command("stop") & ~filters.private)
 @adminsOnly("can_change_info")
 async def del_filter(_, message):
     if len(message.command) < 2:
@@ -113,11 +106,7 @@ async def del_filter(_, message):
 
 
 @app.on_message(
-    filters.text
-    & ~filters.edited
-    & ~filters.private
-    & ~filters.via_bot
-    & ~filters.forwarded,
+    filters.text & ~filters.private & ~filters.via_bot & ~filters.forwarded,
     group=chat_filters_group,
 )
 @capture_err

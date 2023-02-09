@@ -7,9 +7,7 @@ from wbb import SUDOERS, USERBOT_PREFIX, app2, eor
 from wbb.core.sections import section
 
 
-@app2.on_message(
-    filters.command("parse_preview", prefixes=USERBOT_PREFIX) & SUDOERS
-)
+@app2.on_message(filters.command("parse_preview", prefixes=USERBOT_PREFIX) & SUDOERS)
 async def parse(_, message: Message):
     r = message.reply_to_message
     has_wpp = False
@@ -39,9 +37,7 @@ async def parse(_, message: Message):
 
     body = {
         "Title": [wpp.title or "Null"],
-        "Description": [
-            (wpp.description[:50] + "...") if wpp.description else "Null"
-        ],
+        "Description": [(wpp.description[:50] + "...") if wpp.description else "Null"],
         "URL": [wpp.display_url or "Null"],
         "Author": [wpp.author or "Null"],
         "Site Name": [wpp.site_name or "Null"],

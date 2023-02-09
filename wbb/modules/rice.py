@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@ SOFTWARE.
 from re import MULTILINE as RE_MULTILINE
 
 from pyrogram import filters
+from pyrogram.enums import ChatMemberStatus, ParseMode
 from pyrogram.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
@@ -46,7 +47,6 @@ RICE_CHANNEL = "RiceGallery"
     & (filters.photo | filters.video | filters.document)
     & filters.regex(r"^\[RICE\]", RE_MULTILINE)
     & ~filters.forwarded
-    & ~filters.edited
 )
 @capture_err
 async def rice(_, message: Message):
@@ -59,15 +59,13 @@ async def rice(_, message: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(
-                        "Approve (Forward)", callback_data="forward"
-                    ),
+                    InlineKeyboardButton("Approve (Forward)", callback_data="forward"),
                     InlineKeyboardButton("Ignore", callback_data="ignore"),
                 ]
             ]
         ),
         quote=True,
-        parse_mode="markdown",
+        parse_mode=ParseMode.MARKDOWN,
     )
 
 
@@ -77,7 +75,7 @@ async def callback_query_forward_rice(_, callback_query):
     u_approver = callback_query.from_user
     c_group = callback_query.message.chat
     approver_status = (await c_group.get_member(u_approver.id)).status
-    if not (approver_status in ("creator", "administrator")):
+    if not approver_status in (ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER):
         await callback_query.answer("Only admin can approve this!")
         return
     await callback_query.answer("Successfully approved")
@@ -85,20 +83,16 @@ async def callback_query_forward_rice(_, callback_query):
     u_op = m_op.from_user
     arg_caption = f"{m_op.caption}\nOP: [{u_op.first_name}]({m_op.link})"
     if m_op.media_group_id:
-        message_id = m_op.message_id
+        message_id = m_op.id
         media_group = await app.get_media_group(RICE_GROUP, message_id)
         arg_media = []
         for m in media_group:
             if m.photo and m.caption:
-                arg_media.append(
-                    InputMediaPhoto(m.photo.file_id, caption=arg_caption)
-                )
+                arg_media.append(InputMediaPhoto(m.photo.file_id, caption=arg_caption))
             elif m.photo:
                 arg_media.append(InputMediaPhoto(m.photo.file_id))
             elif m.video and m.caption:
-                arg_media.append(
-                    InputMediaVideo(m.video.file_id, caption=arg_caption)
-                )
+                arg_media.append(InputMediaVideo(m.video.file_id, caption=arg_caption))
             elif m.video:
                 arg_media.append(InputMediaVideo(m.video.file_id))
         m_cp = await app.send_media_group(RICE_CHANNEL, arg_media)
@@ -124,7 +118,7 @@ async def callback_query_ignore_rice(_, callback_query):
     u_op = m_op.from_user
     if u_disprover.id == u_op.id:
         await callback_query.answer("Ok, this rice won't be forwarded")
-    elif disprover_status in ("creator", "administrator"):
+    elif disprover_status in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER]:
         await m_op.reply_text(f"{u_disprover.mention} ignored this rice")
     else:
         return await callback_query.answer("Only admin or OP could ignore it")

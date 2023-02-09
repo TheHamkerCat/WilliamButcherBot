@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@ from fuzzysearch import find_near_matches
 from motor import version as mongover
 from pykeyboard import InlineKeyboard
 from pyrogram import __version__ as pyrover
-from pyrogram import filters
+from pyrogram import enums, filters
 from pyrogram.raw.functions import Ping
 from pyrogram.types import (
     CallbackQuery,
@@ -122,9 +122,7 @@ async def alive_function(answers):
     ubot_state = "Dead" if not await app2.get_me() else "Alive"
     buttons.add(
         InlineKeyboardButton("Stats", callback_data="stats_callback"),
-        InlineKeyboardButton(
-            "Go Inline!", switch_inline_query_current_chat=""
-        ),
+        InlineKeyboardButton("Go Inline!", switch_inline_query_current_chat=""),
     )
 
     msg = f"""
@@ -180,9 +178,7 @@ __**Translated from {result.src} to {result.dest}**__
             ),
             InlineQueryResultArticle(
                 title=result.translatedText,
-                input_message_content=InputTextMessageContent(
-                    result.translatedText
-                ),
+                input_message_content=InputTextMessageContent(result.translatedText),
             ),
         ]
     )
@@ -331,9 +327,7 @@ async def youtube_func(answers, text):
 **Duration:** {i.duration}
 **Uploaded:** {i.publish_time}
 **Description:** {i.long_desc}"""
-        description = (
-            f"{i.views} | {i.channel} | {i.duration} | {i.publish_time}"
-        )
+        description = f"{i.views} | {i.channel} | {i.duration} | {i.publish_time}"
         answers.append(
             InlineQueryResultArticle(
                 title=i.title,
@@ -349,27 +343,27 @@ async def youtube_func(answers, text):
 
 
 async def lyrics_func(answers, text):
-    resp = await arq.lyrics(text)                                    
-    if not resp.ok:                                     
+    resp = await arq.lyrics(text)
+    if not resp.ok:
         answers.append(
-            InlineQueryResultArticle(                                         
-                title="Error",                 
+            InlineQueryResultArticle(
+                title="Error",
                 description=resp.result,
                 input_message_content=InputTextMessageContent(resp.result),
-            )                                                           
-        )                                                                  
-        return answers                                                
-    songs = resp.result                                                      
-    for song in songs:                                                       
-        song_name = song['song']
-        artist = song['artist']
-        lyrics = song['lyrics']
+            )
+        )
+        return answers
+    songs = resp.result
+    for song in songs:
+        song_name = song["song"]
+        artist = song["artist"]
+        lyrics = song["lyrics"]
         msg = f"**{song_name}** | **{artist}**\n\n__{lyrics}__"
-          
+
         if len(msg) > 4095:
             msg = await paste(msg)
             msg = f"**LYRICS_TOO_LONG:** [URL]({msg})"
-                            
+
         answers.append(
             InlineQueryResultArticle(
                 title=song_name,
@@ -416,9 +410,7 @@ async def tg_search_func(answers, text, user_id):
             ),
         )
         name = (
-            message.from_user.first_name
-            if message.from_user.first_name
-            else "NO NAME"
+            message.from_user.first_name if message.from_user.first_name else "NO NAME"
         )
         caption = f"""
 **Query:** {text}
@@ -448,7 +440,7 @@ async def music_inline_func(answers, query):
         messages = [
             m
             async for m in app2.search_messages(
-                chat_id, query, filter="audio", limit=100
+                chat_id, query, filter=enums.MessagesFilter.AUDIO, limit=100
             )
         ]
     except Exception as e:
@@ -468,14 +460,12 @@ async def music_inline_func(answers, query):
     for f_ in messages:
         messages_ids_and_duration.append(
             {
-                "message_id": f_.message_id,
+                "message_id": f_.id,
                 "duration": f_.audio.duration if f_.audio.duration else 0,
             }
         )
-    messages = list(
-        {v["duration"]: v for v in messages_ids_and_duration}.values()
-    )
-    messages_ids = [ff_["message_id"] for ff_ in messages]
+    messages = list({v["duration"]: v for v in messages_ids_and_duration}.values())
+    messages_ids = [ff_.id for ff_ in messages]
     messages = await app.get_messages(chat_id, messages_ids[0:48])
     return [
         InlineQueryResultCachedDocument(
@@ -529,9 +519,7 @@ async def speedtest_init(query):
         return answers
     msg = "**Click The Button Below To Perform A Speedtest**"
     button = InlineKeyboard(row_width=1)
-    button.add(
-        InlineKeyboardButton(text="Test", callback_data="test_speedtest")
-    )
+    button.add(InlineKeyboardButton(text="Test", callback_data="test_speedtest"))
     answers.append(
         InlineQueryResultArticle(
             title="Click Here",
@@ -577,9 +565,7 @@ async def pmpermit_func(answers, user_id, victim):
             text="For promotion",
             callback_data="pmpermit to_scam_you a",
         ),
-        InlineKeyboardButton(
-            text="Approve me", callback_data="pmpermit approve_me a"
-        ),
+        InlineKeyboardButton(text="Approve me", callback_data="pmpermit approve_me a"),
         InlineKeyboardButton(
             text="Approve", callback_data=f"pmpermit approve {victim}"
         ),
@@ -715,9 +701,7 @@ async def tmdb_func(answers, query):
         )
         answers.append(
             InlineQueryResultPhoto(
-                photo_url=result.backdrop
-                if result.backdrop
-                else result.poster,
+                photo_url=result.backdrop if result.backdrop else result.poster,
                 caption=caption,
                 title=result.title,
                 description=f"{genre} • {result.releaseDate} • {result.rating} • {description}",
@@ -765,12 +749,12 @@ async def execute_code(query):
     languages = (await arq.execute()).result
     if len(text.split()) == 1:
         answers = [
-                      InlineQueryResultArticle(
-                          title=lang,
-                          input_message_content=InputTextMessageContent(lang),
-                      )
-                      for lang in languages
-                  ][offset: offset + 25]
+            InlineQueryResultArticle(
+                title=lang,
+                input_message_content=InputTextMessageContent(lang),
+            )
+            for lang in languages
+        ][offset : offset + 25]
         await query.answer(
             next_offset=str(offset + 25),
             results=answers,
@@ -801,9 +785,7 @@ async def execute_code(query):
             answers.append(
                 InlineQueryResultArticle(
                     title="Error",
-                    input_message_content=InputTextMessageContent(
-                        response.result
-                    ),
+                    input_message_content=InputTextMessageContent(response.result),
                 )
             )
         else:

@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -36,10 +36,10 @@ from wbb.core.sections import section
 
 
 async def convert(
-        main_message: Message,
-        reply_messages,
-        status_message: Message,
-        start_time: float,
+    main_message: Message,
+    reply_messages,
+    status_message: Message,
+    start_time: float,
 ):
     m = status_message
 
@@ -92,7 +92,7 @@ async def convert(
             remove(file)
 
 
-@app.on_message(filters.command("pdf") & ~filters.edited)
+@app.on_message(filters.command("pdf"))
 @capture_err
 async def img_to_pdf(_, message: Message):
     reply = message.reply_to_message
@@ -107,7 +107,7 @@ async def img_to_pdf(_, message: Message):
     if reply.media_group_id:
         messages = await app.get_media_group(
             message.chat.id,
-            reply.message_id,
+            reply.id,
         )
         return await convert(message, messages, m, start_time)
 

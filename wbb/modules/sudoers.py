@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -92,7 +92,7 @@ DISK: {disk}%
 # Gban
 
 
-@app.on_message(filters.command("gban") & SUDOERS & ~filters.edited)
+@app.on_message(filters.command("gban") & SUDOERS)
 @capture_err
 async def ban_globally(_, message):
     user_id, reason = await extract_user_and_reason(message)
@@ -120,7 +120,7 @@ async def ban_globally(_, message):
             number_of_chats += 1
             await asyncio.sleep(1)
         except FloodWait as e:
-            await asyncio.sleep(int(e.x))
+            await asyncio.sleep(int(e.value))
         except Exception:
             pass
     try:
@@ -152,14 +152,14 @@ __**New Global Ban**__
         )
     except Exception:
         await message.reply_text(
-            "User Gbanned, But This Gban Action Wasn't Logged, Add Me Bot In GBAN_LOG_GROUP"
+            "User Gbanned, But This Gban Action Wasn't Logged, Add Me In GBAN_LOG_GROUP"
         )
 
 
 # Ungban
 
 
-@app.on_message(filters.command("ungban") & SUDOERS & ~filters.edited)
+@app.on_message(filters.command("ungban") & SUDOERS)
 @capture_err
 async def unban_globally(_, message):
     user_id = await extract_user(message)
@@ -178,7 +178,7 @@ async def unban_globally(_, message):
 # Broadcast
 
 
-@app.on_message(filters.command("broadcast") & SUDOERS & ~filters.edited)
+@app.on_message(filters.command("broadcast") & SUDOERS)
 @capture_err
 async def broadcast_message(_, message):
     if len(message.command) < 2:
@@ -197,7 +197,7 @@ async def broadcast_message(_, message):
             await asyncio.sleep(sleep_time)
             sent += 1
         except FloodWait as e:
-            await asyncio.sleep(int(e.x))
+            await asyncio.sleep(int(e.value))
         except Exception:
             pass
     await m.edit(f"**Broadcasted Message In {sent} Chats.**")
@@ -206,7 +206,7 @@ async def broadcast_message(_, message):
 # Update
 
 
-@app.on_message(filters.command("update") & SUDOERS & ~filters.edited)
+@app.on_message(filters.command("update") & SUDOERS)
 async def update_restart(_, message):
     try:
         out = subprocess.check_output(["git", "pull"]).decode("UTF-8")
@@ -215,7 +215,5 @@ async def update_restart(_, message):
         await message.reply_text(f"```{out}```")
     except Exception as e:
         return await message.reply_text(str(e))
-    m = await message.reply_text(
-        "**Updated with default branch, restarting now.**"
-    )
+    m = await message.reply_text("**Updated with default branch, restarting now.**")
     await restart(m)

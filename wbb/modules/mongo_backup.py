@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,15 +24,15 @@ SOFTWARE.
 from os import remove
 from os import system as execute
 
-from pyrogram import filters
+from pyrogram import enums, filters
 from pyrogram.types import Message
 
 from wbb import MONGO_URL, SUDOERS, app
 
 
-@app.on_message(filters.command("backup") & SUDOERS & ~filters.edited)
+@app.on_message(filters.command("backup") & SUDOERS)
 async def backup(_, message: Message):
-    if message.chat.type != "private":
+    if message.chat.type != enums.ChatType.PRIVATE:
         return await message.reply("This command can only be used in private")
 
     m = await message.reply("Backing up data...")

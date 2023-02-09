@@ -1,9 +1,10 @@
 import asyncio
-from wbb import app
+
 from pyrogram import filters
 from pyrogram.types import Message
-from wbb.utils import http
 
+from wbb import app
+from wbb.utils import http
 
 # For /help menu
 __MODULE__ = "iplookup"
@@ -12,7 +13,7 @@ __HELP__ = """
 """
 
 
-@app.on_message(~filters.edited & filters.command("iplookup"))
+@app.on_message(filters.command("iplookup"))
 async def ip_lookup(_, message: Message):
     if len(message.command) < 2:
         return await message.reply_text("ip address is missing")
@@ -30,12 +31,15 @@ async def ip_lookup(_, message: Message):
     country = res.get("country", "N/A")
     location = res.get("loc", "N/A")
     org = res.get("org", "N/A")
-    await msg.edit((
-        f"**Details of `{ip_address}`**\n\n"
-        f"HostName: `{hostname}`\n"
-        f"City: `{city}`\n"
-        f"Region: `{region}`\n"
-        f"Country: `{country}`\n"
-        f"Org: `{org}`\n"
-        f"Map: https://www.google.fr/maps?q={location}\n"
-    ), disable_web_page_preview=True)
+    await msg.edit(
+        (
+            f"**Details of `{ip_address}`**\n\n"
+            f"HostName: `{hostname}`\n"
+            f"City: `{city}`\n"
+            f"Region: `{region}`\n"
+            f"Country: `{country}`\n"
+            f"Org: `{org}`\n"
+            f"Map: https://www.google.fr/maps?q={location}\n"
+        ),
+        disable_web_page_preview=True,
+    )

@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@ from pyrogram.types import Message
 from wbb import BOT_ID, SUDOERS, USERBOT_PREFIX, app2, eor
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.dbfunctions import add_sudo, get_sudoers, remove_sudo
-from wbb.utils.functions import restart
 
 __MODULE__ = "Sudo"
 __HELP__ = """
@@ -60,9 +59,7 @@ async def useradd(_, message: Message):
     if user_id in sudoers:
         return await eor(message, text=f"{umention} is already in sudoers.")
     if user_id == BOT_ID:
-        return await eor(
-            message, text="You can't add assistant bot in sudoers."
-        )
+        return await eor(message, text="You can't add assistant bot in sudoers.")
 
     await add_sudo(user_id)
 

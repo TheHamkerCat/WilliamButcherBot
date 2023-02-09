@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -46,41 +46,33 @@ __HELP__ = """
 """
 
 
-@app.on_message(
-    filters.command("blacklist") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("blacklist") & ~filters.private)
 @adminsOnly("can_restrict_members")
 async def save_filters(_, message):
     if len(message.command) < 2:
         return await message.reply_text("Usage:\n/blacklist [WORD|SENTENCE]")
     word = message.text.split(None, 1)[1].strip()
     if not word:
-        return await message.reply_text(
-            "**Usage**\n__/blacklist [WORD|SENTENCE]__"
-        )
+        return await message.reply_text("**Usage**\n__/blacklist [WORD|SENTENCE]__")
     chat_id = message.chat.id
     await save_blacklist_filter(chat_id, word)
     await message.reply_text(f"__**Blacklisted {word}.**__")
 
 
-@app.on_message(
-    filters.command("blacklisted") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("blacklisted") & ~filters.private)
 @capture_err
 async def get_filterss(_, message):
     data = await get_blacklisted_words(message.chat.id)
     if not data:
         await message.reply_text("**No blacklisted words in this chat.**")
     else:
-        msg = f"List of blacklisted words in {message.chat.title}\n"
+        msg = f"List of blacklisted words in {message.chat.title} :\n"
         for word in data:
             msg += f"**-** `{word}`\n"
         await message.reply_text(msg)
 
 
-@app.on_message(
-    filters.command("whitelist") & ~filters.edited & ~filters.private
-)
+@app.on_message(filters.command("whitelist") & ~filters.private)
 @adminsOnly("can_restrict_members")
 async def del_filter(_, message):
     if len(message.command) < 2:
@@ -95,10 +87,7 @@ async def del_filter(_, message):
     await message.reply_text("**No such blacklist filter.**")
 
 
-@app.on_message(
-    filters.text
-    & ~filters.private
-    & ~filters.edited, group=blacklist_filters_group)
+@app.on_message(filters.text & ~filters.private, group=blacklist_filters_group)
 @capture_err
 async def blacklist_filters_re(_, message):
     text = message.text.lower().strip()

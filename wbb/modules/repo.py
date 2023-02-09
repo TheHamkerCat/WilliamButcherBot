@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 TheHamkerCat
+Copyright (c) 2023 TheHamkerCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@ __MODULE__ = "Repo"
 __HELP__ = "/repo - To Get My Github Repository Link " "And Support Group Link"
 
 
-@app.on_message(filters.command("repo") & ~filters.edited)
+@app.on_message(filters.command("repo"))
 @capture_err
 async def repo(_, message):
     users = await get(
@@ -40,9 +40,7 @@ async def repo(_, message):
     list_of_users = ""
     count = 1
     for user in users:
-        list_of_users += (
-            f"**{count}.** [{user['login']}]({user['html_url']})\n"
-        )
+        list_of_users += f"**{count}.** [{user['login']}]({user['html_url']})\n"
         count += 1
 
     text = f"""[Github](https://github.com/thehamkercat/WilliamButcherBot) | [Group](t.me/PatheticProgrammers)
@@ -50,6 +48,4 @@ async def repo(_, message):
 | Contributors |
 ----------------```
 {list_of_users}"""
-    await app.send_message(
-        message.chat.id, text=text, disable_web_page_preview=True
-    )
+    await app.send_message(message.chat.id, text=text, disable_web_page_preview=True)
