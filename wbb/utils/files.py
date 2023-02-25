@@ -61,7 +61,7 @@ async def resize_file_to_sticker_size(file_path: str) -> str:
 async def upload_document(
     client: Client, file_path: str, chat_id: int
 ) -> raw.base.InputDocument:
-    media = await client.send(
+    media = await client.invoke(
         raw.functions.messages.UploadMedia(
             peer=await client.resolve_peer(chat_id),
             media=raw.types.InputMediaUploadedDocument(
