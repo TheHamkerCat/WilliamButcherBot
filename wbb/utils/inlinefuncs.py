@@ -587,7 +587,7 @@ async def pmpermit_func(answers, user_id, victim):
 async def ping_func(answers):
     ping = Ping(ping_id=app.rnd_id())
     t1 = time()
-    await app.send(ping)
+    await app.invoke(ping)
     t2 = time()
     ping = f"{str(round((t2 - t1) * 1000, 2))} ms"
     answers.append(

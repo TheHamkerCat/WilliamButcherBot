@@ -154,7 +154,7 @@ async def pmpermit_cq(_, cq):
             cq.inline_message_id, "Successfully blocked the user."
         )
         await app2.block_user(int(victim))
-        return await app2.send(
+        return await app2.invoke(
             DeleteHistory(
                 peer=(await app2.resolve_peer(victim)),
                 max_id=0,
