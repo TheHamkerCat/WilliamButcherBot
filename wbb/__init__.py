@@ -50,7 +50,6 @@ MOD_LOAD = []
 MOD_NOLOAD = []
 SUDOERS = filters.user()
 bot_start_time = time.time()
-SLAP_STICKERS = SLAP_STICKERS
 
 
 class Log:
