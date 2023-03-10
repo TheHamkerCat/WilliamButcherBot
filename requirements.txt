@@ -25,3 +25,4 @@ fuzzysearch
 img2pdf
 telegraph
 pytube
+pytz

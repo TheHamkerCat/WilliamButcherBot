@@ -23,6 +23,7 @@ SOFTWARE.
 """
 import random
 from datetime import datetime
+import pytz
 
 from pyrogram import enums, filters
 
@@ -36,8 +37,13 @@ __HELP__ = "/detect_gay - To Choose Couple Of The Day"
 
 # Date and time
 def dt():
-    now = datetime.now()
-    dt_string = now.strftime("%d/%m/%Y %H:%M")
+    # Set the timezone to Indian Standard Time
+    ist_timezone = pytz.timezone('Asia/Kolkata')
+
+    # Get the current time in IST
+    ist_now = datetime.now(ist_timezone)
+
+    dt_string = ist_now.strftime("%d/%m/%Y %H:%M")
     dt_list = dt_string.split(" ")
     return dt_list
 
@@ -75,8 +81,9 @@ async def couple(_, message):
         if not is_selected:
             list_of_users = []
             async for i in app.get_chat_members(message.chat.id):
-                if not i.user.is_bot:
-                    list_of_users.append(i.user.id)
+                if not i.user.is_bot and not i.user.is_deleted:
+                    user = await app.get_users(i.user.id)
+                    list_of_users.append(user.id)
             if len(list_of_users) < 2:
                 return await m.edit("Not enough users")
             c1_id = random.choice(list_of_users)
