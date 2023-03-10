@@ -27,8 +27,9 @@ import subprocess
 import time
 
 import psutil
-from pyrogram import filters
+from pyrogram import filters, types
 from pyrogram.errors import FloodWait
+from pyrogram.types import InlineKeyboardMarkup
 
 from wbb import (
     BOT_ID,
@@ -45,6 +46,7 @@ from wbb.utils.dbfunctions import (
     get_served_chats,
     is_gbanned_user,
     remove_gban_user,
+    get_served_users,
 )
 from wbb.utils.functions import extract_user, extract_user_and_reason, restart
 
@@ -59,6 +61,8 @@ __HELP__ = """
 /clean_db - Clean database.
 
 /broadcast - To Broadcast A Message To All Groups.
+
+/ubroadcast - To Broadcast A Message To All Users.
 
 /update - To Update And Restart The Bot
 
@@ -181,10 +185,13 @@ async def unban_globally(_, message):
 @app.on_message(filters.command("broadcast") & SUDOERS)
 @capture_err
 async def broadcast_message(_, message):
-    if len(message.command) < 2:
-        return await message.reply_text("**Usage**:\n/broadcast [MESSAGE]")
     sleep_time = 0.1
-    text = message.text.split(None, 1)[1]
+    text = message.reply_to_message.text.markdown
+    reply_message = message.reply_to_message
+
+    reply_markup = None
+    if reply_message.reply_markup:
+        reply_markup = InlineKeyboardMarkup(reply_message.reply_markup.inline_keyboard)
     sent = 0
     schats = await get_served_chats()
     chats = [int(chat["chat_id"]) for chat in schats]
@@ -193,7 +200,11 @@ async def broadcast_message(_, message):
     )
     for i in chats:
         try:
-            await app.send_message(i, text=text)
+            await app.send_message(
+                i,
+                text=text,
+                reply_markup=reply_markup,
+            )
             await asyncio.sleep(sleep_time)
             sent += 1
         except FloodWait as e:
@@ -217,3 +228,37 @@ async def update_restart(_, message):
         return await message.reply_text(str(e))
     m = await message.reply_text("**Updated with default branch, restarting now.**")
     await restart(m)
+
+
+@app.on_message(filters.command("ubroadcast") & SUDOERS)
+@capture_err
+async def broadcast_message(_, message):
+    sleep_time = 0.1
+    sent = 0
+    schats = await get_served_users()
+    chats = [int(chat["user_id"]) for chat in schats]
+    text = message.reply_to_message.text.markdown
+    reply_message = message.reply_to_message
+
+    reply_markup = None
+    if reply_message.reply_markup:
+        reply_markup = InlineKeyboardMarkup(reply_message.reply_markup.inline_keyboard)
+
+    m = await message.reply_text(
+        f"Broadcast in progress, will take {len(chats) * sleep_time} seconds."
+    )
+
+    for i in chats:
+        try:
+            await app.send_message(
+                i,
+                text=text,
+                reply_markup=reply_markup,
+            )
+            await asyncio.sleep(sleep_time)
+            sent += 1
+        except FloodWait as e:
+            await asyncio.sleep(int(e.value))
+        except Exception:
+            pass
+    await m.edit(f"**Broadcasted Message to {sent} Users.**")
