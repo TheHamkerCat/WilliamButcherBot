@@ -65,6 +65,19 @@ async def clean_db(_, message):
     await m.edit("**Database Cleaned.**")
 
 
+async def get_total_users_count():
+    schats = await get_served_chats()
+    chats = [int(chat["chat_id"]) for chat in schats]
+    total_count = 0
+    for chat_id in chats:
+        try:
+            count = await app.get_chat_members_count(chat_id)
+            total_count += count
+        except Exception:
+            print(f"Error fetching members count for chat: {chat_id}")
+    return total_count
+
+
 @app.on_message(filters.command("gstats") & SUDOERS)
 @capture_err
 async def global_stats(_, message):
@@ -77,6 +90,7 @@ async def global_stats(_, message):
     # For bot served chat and users count
     served_chats = len(await get_served_chats())
     served_users = len(await get_served_users())
+    total_users = await get_total_users_count()  # get total user count
     # Gbans count
     gbans = await get_gbans_count()
     _notes = await get_notes_count()
@@ -144,6 +158,7 @@ async def global_stats(_, message):
     **{warns_count}** Warns, Across **{warns_chats_count}** chats.
     **{karmas_count}** Karma, Across **{karmas_chats_count}** chats.
     **{served_users}** Users, Across **{served_chats}** chats.
+    **{total_users}** Total users in chats.
     **{developers}** Developers And **{commits}** Commits On **[Github]({rurl})**.
 
 **Global Stats of {USERBOT_NAME}**:
