@@ -316,7 +316,7 @@ def extract_text_and_keyb(ikb, text: str, row_width: int = 2):
 
 
 async def get_user_id_and_usernames(client) -> dict:
-    with client.storage.lock, client.storage.conn:
+    with client.storage.conn:
         users = client.storage.conn.execute(
             'SELECT * FROM peers WHERE type in ("user", "bot") AND username NOT null'
         ).fetchall()
