@@ -802,7 +802,7 @@ async def report_user(_, message):
     text = f"Reported {user_mention} to admins!"
     admin_data = [
         i
-        async for i in await app.get_chat_members(
+        async for i in app.get_chat_members(
             chat_id=message.chat.id, filter=ChatMembersFilter.ADMINISTRATORS
         )
     ]  # will it give floods ???
