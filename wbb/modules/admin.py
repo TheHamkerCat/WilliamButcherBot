@@ -29,7 +29,7 @@ from time import time
 from pyrogram import filters
 from pyrogram.enums import ChatMembersFilter, ChatType
 from pyrogram.errors import FloodWait
-from pyrogram.types import CallbackQuery, ChatMemberUpdated, ChatPermissions, Message
+from pyrogram.types import CallbackQuery, ChatMemberUpdated, ChatPermissions, ChatPrivileges, Message
 
 from wbb import BOT_ID, SUDOERS, app, log
 from wbb.core.decorators.errors import capture_err
@@ -73,9 +73,8 @@ __HELP__ = """/ban - Ban A User
 
 async def member_permissions(chat_id: int, user_id: int):
     perms = []
-    try:
-        member = (await app.get_chat_member(chat_id, user_id)).privileges
-    except Exception:
+    member = (await app.get_chat_member(chat_id, user_id)).privileges
+    if not member:
         return []
     if member.can_post_messages:
         perms.append("can_post_messages")
@@ -435,27 +434,31 @@ async def promoteFunc(_, message: Message):
     if message.command[0][0] == "f":
         await message.chat.promote_member(
             user_id=user_id,
-            can_change_info=bot.can_change_info,
-            can_invite_users=bot.can_invite_users,
-            can_delete_messages=bot.can_delete_messages,
-            can_restrict_members=bot.can_restrict_members,
-            can_pin_messages=bot.can_pin_messages,
-            can_promote_members=bot.can_promote_members,
-            can_manage_chat=bot.can_manage_chat,
-            can_manage_video_chats=bot.can_manage_video_chats,
+            privileges=ChatPrivileges(
+                can_change_info=bot.can_change_info,
+                can_invite_users=bot.can_invite_users,
+                can_delete_messages=bot.can_delete_messages,
+                can_restrict_members=bot.can_restrict_members,
+                can_pin_messages=bot.can_pin_messages,
+                can_promote_members=bot.can_promote_members,
+                can_manage_chat=bot.can_manage_chat,
+                can_manage_video_chats=bot.can_manage_video_chats,
+            ),
         )
         return await message.reply_text(f"Fully Promoted! {umention}")
 
     await message.chat.promote_member(
         user_id=user_id,
-        can_change_info=False,
-        can_invite_users=bot.can_invite_users,
-        can_delete_messages=bot.can_delete_messages,
-        can_restrict_members=False,
-        can_pin_messages=False,
-        can_promote_members=False,
-        can_manage_chat=bot.can_manage_chat,
-        can_manage_video_chats=bot.can_manage_video_chats,
+        privileges=ChatPrivileges(
+            can_change_info=False,
+            can_invite_users=bot.can_invite_users,
+            can_delete_messages=bot.can_delete_messages,
+            can_restrict_members=False,
+            can_pin_messages=False,
+            can_promote_members=False,
+            can_manage_chat=bot.can_manage_chat,
+            can_manage_video_chats=bot.can_manage_video_chats,
+        ),
     )
     await message.reply_text(f"Promoted! {umention}")
 
@@ -477,14 +480,16 @@ async def demote(_, message: Message):
         )
     await message.chat.promote_member(
         user_id=user_id,
-        can_change_info=False,
-        can_invite_users=False,
-        can_delete_messages=False,
-        can_restrict_members=False,
-        can_pin_messages=False,
-        can_promote_members=False,
-        can_manage_chat=False,
-        can_manage_video_chats=False,
+        privileges=ChatPrivileges(
+            can_change_info=False,
+            can_invite_users=False,
+            can_delete_messages=False,
+            can_restrict_members=False,
+            can_pin_messages=False,
+            can_promote_members=False,
+            can_manage_chat=False,
+            can_manage_video_chats=False,
+        ),
     )
     umention = (await app.get_users(user_id)).mention
     await message.reply_text(f"Demoted! {umention}")
