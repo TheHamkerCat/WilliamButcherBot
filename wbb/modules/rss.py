@@ -65,6 +65,7 @@ async def rss_worker():
                 ChannelPrivate,
                 InputUserDeactivated,
                 UserIsBlocked,
+                AttributeError,
             ):
                 await remove_rss_feed(chat)
                 log.info(f"Removed RSS Feed from {chat} (Invalid Chat)")
