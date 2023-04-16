@@ -42,6 +42,7 @@ from pyrogram.types import (
     InlineQueryResultArticle,
     InlineQueryResultPhoto,
     InputTextMessageContent,
+    InlineQueryResultCachedDocument,
 )
 from search_engine_parser import GoogleSearch
 
@@ -58,7 +59,6 @@ from wbb import (
 )
 from wbb.core.keyboard import ikb
 from wbb.core.tasks import _get_tasks_text, all_tasks, rm_task
-from wbb.core.types import InlineQueryResultCachedDocument
 from wbb.modules.info import get_chat_info, get_user_info
 from wbb.modules.music import download_youtube_audio
 from wbb.utils.functions import test_speedtest
@@ -460,16 +460,16 @@ async def music_inline_func(answers, query):
     for f_ in messages:
         messages_ids_and_duration.append(
             {
-                "message_id": f_.id,
+                "id": f_.id,
                 "duration": f_.audio.duration if f_.audio.duration else 0,
             }
         )
     messages = list({v["duration"]: v for v in messages_ids_and_duration}.values())
-    messages_ids = [ff_.id for ff_ in messages]
+    messages_ids = [ff_['id'] for ff_ in messages]
     messages = await app.get_messages(chat_id, messages_ids[0:48])
     return [
         InlineQueryResultCachedDocument(
-            file_id=message_.audio.file_id,
+            document_file_id=message_.audio.file_id,
             title=message_.audio.title,
         )
         for message_ in messages
@@ -631,7 +631,7 @@ async def yt_music_func(answers, url):
     os.remove(audio)
     os.remove(thumbnail)
     answers.append(
-        InlineQueryResultCachedDocument(title=title, file_id=m.audio.file_id)
+        InlineQueryResultCachedDocument(title=title, document_file_id=m.audio.file_id)
     )
     return answers
 

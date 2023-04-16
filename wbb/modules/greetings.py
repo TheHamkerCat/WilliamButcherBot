@@ -28,6 +28,7 @@ from datetime import datetime
 from random import shuffle
 
 from pyrogram import filters
+from pyrogram.enums import ChatMemberStatus
 from pyrogram.errors.exceptions.bad_request_400 import (
     ChatAdminRequired,
     UserNotParticipant,
