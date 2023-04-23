@@ -194,7 +194,7 @@ async def getid(client, message):
     text += f"**[Chat ID:](https://t.me/{chat.username})** `{chat.id}`\n\n"
     if not getattr(reply, "empty", True):
         id_ = reply.from_user.id if reply.from_user else reply.sender_chat.id
-        text += f"**[Replied Message ID:]({reply.link})** `{reply.message_id}`\n"
+        text += f"**[Replied Message ID:]({reply.link})** `{reply.id}`\n"
         text += f"**[Replied User ID:](tg://user?id={id_})** `{id_}`"
 
     await eor(
