@@ -24,7 +24,12 @@ async def autocorrect_bot(_, message: Message):
 IS_ENABLED = False
 
 
-@app2.on_message(filters.command("autocorrect", prefixes=USERBOT_PREFIX) & SUDOERS)
+@app2.on_message(
+    filters.command("autocorrect", prefixes=USERBOT_PREFIX)
+    & ~filters.forwarded
+    & ~filters.via_bot
+    & SUDOERS
+)
 async def autocorrect_ubot_toggle(_, message: Message):
     global IS_ENABLED
     if len(message.command) != 2:
@@ -41,7 +46,10 @@ async def autocorrect_ubot_toggle(_, message: Message):
 
 
 @app2.on_message(
-    filters.text & filters.user(USERBOT_ID),
+    filters.text
+    & filters.user(USERBOT_ID)
+    & ~filters.forwarded
+    & ~filters.via_bot,
     group=autocorrect_group,
 )
 async def autocorrect_ubot(_, message: Message):

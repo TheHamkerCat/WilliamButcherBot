@@ -56,7 +56,12 @@ async def take_screenshot(url: str, full: bool = False):
     return file
 
 
-@app2.on_message(filters.command("webss", USERBOT_PREFIX) & SUDOERS)
+@app2.on_message(
+    filters.command("webss", USERBOT_PREFIX)
+    & ~filters.forwarded
+    & ~filters.via_bot
+    & SUDOERS
+)
 @app.on_message(filters.command("webss"))
 @capture_err
 async def take_ss(_, message: Message):

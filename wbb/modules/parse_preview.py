@@ -7,7 +7,12 @@ from wbb import SUDOERS, USERBOT_PREFIX, app2, eor
 from wbb.core.sections import section
 
 
-@app2.on_message(filters.command("parse_preview", prefixes=USERBOT_PREFIX) & SUDOERS)
+@app2.on_message(
+    filters.command("parse_preview", prefixes=USERBOT_PREFIX)
+    & ~filters.forwarded
+    & ~filters.via_bot
+    & SUDOERS
+)
 async def parse(_, message: Message):
     r = message.reply_to_message
     has_wpp = False

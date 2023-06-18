@@ -106,7 +106,10 @@ async def sticker_image(_, message: Message):
 
 
 @app2.on_message(
-    filters.command("kang", prefixes=USERBOT_PREFIX) & SUDOERS,
+    filters.command("kang", prefixes=USERBOT_PREFIX)
+    & ~filters.forwarded
+    & ~filters.via_bot
+    & SUDOERS,
 )
 async def userbot_kang(_, message: Message):
     reply = message.reply_to_message

@@ -116,7 +116,12 @@ async def chatbot_talk(_, message: Message):
 # FOR USERBOT
 
 
-@app2.on_message(filters.command("chatbot", prefixes=USERBOT_PREFIX) & SUDOERS)
+@app2.on_message(
+    filters.command("chatbot", prefixes=USERBOT_PREFIX)
+    & SUDOERS
+    & ~filters.forwarded
+    & ~filters.via_bot
+)
 @capture_err
 async def chatbot_status_ubot(_, message: Message):
     if len(message.text.split()) != 2:

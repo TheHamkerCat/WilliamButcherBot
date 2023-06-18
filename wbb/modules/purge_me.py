@@ -25,7 +25,7 @@ SOFTWARE.
 from pyrogram import filters
 from pyrogram.types import Message
 
-from wbb import USERBOT_ID, USERBOT_PREFIX, app2, eor, log, telegraph
+from wbb import SUDOERS, USERBOT_ID, USERBOT_PREFIX, app2, eor, log, telegraph
 
 __MODULE__ = "Userbot"
 TEXT = """
@@ -90,7 +90,10 @@ log.info("Done pasting userbot commands on telegraph")
 
 
 @app2.on_message(
-    filters.command("help", prefixes=USERBOT_PREFIX) & filters.user(USERBOT_ID)
+    filters.command("help", prefixes=USERBOT_PREFIX)
+    & ~filters.forwarded
+    & ~filters.via_bot
+    & filters.user(USERBOT_ID)
 )
 async def get_help(_, message: Message):
     await eor(
@@ -102,6 +105,8 @@ async def get_help(_, message: Message):
 
 @app2.on_message(
     filters.command(["purgeme", "purge_me"], prefixes=USERBOT_PREFIX)
+    & ~filters.forwarded
+    & ~filters.via_bot
     & filters.user(USERBOT_ID)
 )
 async def purge_me_func(_, message: Message):

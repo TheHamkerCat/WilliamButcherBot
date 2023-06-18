@@ -38,7 +38,12 @@ __HELP__ = "/paste - To Paste Replied Text Or Document To A Pastebin"
 pattern = re.compile(r"^text/|json$|yaml$|xml$|toml$|x-sh$|x-shellscript$")
 
 
-@app2.on_message(filters.command("paste", prefixes=USERBOT_PREFIX) & SUDOERS)
+@app2.on_message(
+    filters.command("paste", prefixes=USERBOT_PREFIX) 
+    & ~filters.forwarded
+    & ~filters.via_bot
+    & SUDOERS
+)
 @app.on_message(filters.command("paste"))
 @capture_err
 async def paste_func(_, message: Message):

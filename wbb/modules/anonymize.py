@@ -38,7 +38,12 @@ from wbb.modules.userbot import eor
 from wbb.utils.functions import extract_user
 
 
-@app2.on_message(filters.command("anonymize", prefixes=USERBOT_PREFIX) & SUDOERS)
+@app2.on_message(
+    filters.command("anonymize", prefixes=USERBOT_PREFIX)
+    & ~filters.forwarded
+    & ~filters.via_bot
+    & SUDOERS
+)
 async def change_profile(_, message: Message):
     m = await eor(message, text="Anonymizing...")
     try:
@@ -64,7 +69,12 @@ async def change_profile(_, message: Message):
     image.close()
 
 
-@app2.on_message(filters.command("impersonate", prefixes=USERBOT_PREFIX) & SUDOERS)
+@app2.on_message(
+    filters.command("impersonate", prefixes=USERBOT_PREFIX)
+    & ~filters.forwarded
+    & ~filters.via_bot
+    & SUDOERS
+)
 async def impersonate(_, message: Message):
     user_id = await extract_user(message)
 

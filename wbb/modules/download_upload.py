@@ -36,7 +36,12 @@ from wbb.core.tasks import add_task, rm_task
 from wbb.utils.downloader import download
 
 
-@app2.on_message(SUDOERS & filters.command("download", prefixes=USERBOT_PREFIX))
+@app2.on_message(
+    SUDOERS
+    & filters.command("download", prefixes=USERBOT_PREFIX)
+    & ~filters.forwarded
+    & ~filters.via_bot
+)
 async def download_func(_, message: Message):
     reply = message.reply_to_message
     start = time()
@@ -103,7 +108,12 @@ async def download_func(_, message: Message):
     await eor(m, text=section("Downloaded", body))
 
 
-@app2.on_message(SUDOERS & filters.command("upload", prefixes=USERBOT_PREFIX))
+@app2.on_message(
+    SUDOERS
+    & filters.command("upload", prefixes=USERBOT_PREFIX)
+    & ~filters.forwarded
+    & ~filters.via_bot
+)
 async def upload_func(_, message: Message):
     if len(message.text.split()) != 2:
         return await eor(message, text="Invalid Arguments")

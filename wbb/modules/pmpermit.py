@@ -69,7 +69,10 @@ async def pmpermit_func(_, message):
 
 
 @app2.on_message(
-    filters.command("approve", prefixes=USERBOT_PREFIX) & SUDOERS & ~filters.via_bot
+    filters.command("approve", prefixes=USERBOT_PREFIX)
+    & SUDOERS 
+    & ~filters.via_bot
+    & ~filters.forwarded
 )
 @capture_err
 async def pm_approve(_, message):
@@ -83,7 +86,10 @@ async def pm_approve(_, message):
 
 
 @app2.on_message(
-    filters.command("disapprove", prefixes=USERBOT_PREFIX) & SUDOERS & ~filters.via_bot
+    filters.command("disapprove", prefixes=USERBOT_PREFIX)
+    & SUDOERS 
+    & ~filters.via_bot
+    & ~filters.forwarded
 )
 async def pm_disapprove(_, message):
     if not message.reply_to_message:
@@ -103,7 +109,10 @@ async def pm_disapprove(_, message):
 
 
 @app2.on_message(
-    filters.command("block", prefixes=USERBOT_PREFIX) & SUDOERS & ~filters.via_bot
+    filters.command("block", prefixes=USERBOT_PREFIX)
+    & SUDOERS
+    & ~filters.via_bot
+    & ~filters.forwarded
 )
 @capture_err
 async def block_user_func(_, message):
@@ -116,7 +125,10 @@ async def block_user_func(_, message):
 
 
 @app2.on_message(
-    filters.command("unblock", prefixes=USERBOT_PREFIX) & SUDOERS & ~filters.via_bot
+    filters.command("unblock", prefixes=USERBOT_PREFIX)
+    & SUDOERS 
+    & ~filters.via_bot
+    & ~filters.forwarded
 )
 async def unblock_user_func(_, message):
     if not message.reply_to_message:

@@ -231,7 +231,12 @@ async def shellrunner(_, message: Message):
         )
 
 
-@app2.on_message(SUDOERS & filters.command("reserve", prefixes=USERBOT_PREFIX))
+@app2.on_message(
+    filters.command("reserve", prefixes=USERBOT_PREFIX)
+    & ~filters.forwarded
+    & ~filters.via_bot
+    & SUDOERS
+)
 async def reserve_channel_handler(_, message: Message):
     if len(message.text.split()) != 2:
         return await eor(message, text="Pass a username as argument!!")
