@@ -125,20 +125,17 @@ log.info("Starting userbot client")
 app2.start()
 
 log.info("Gathering profile info")
-x = app.get_me()
-y = app2.get_me()
+BOT_ID = app.me.id
+BOT_NAME = app.me.first_name + (app.me.last_name or "")
+BOT_USERNAME = app.me.username
+BOT_MENTION = app.me.mention
+BOT_DC_ID = app.me.dc_id
 
-BOT_ID = x.id
-BOT_NAME = x.first_name + (x.last_name or "")
-BOT_USERNAME = x.username
-BOT_MENTION = x.mention
-BOT_DC_ID = x.dc_id
-
-USERBOT_ID = y.id
-USERBOT_NAME = y.first_name + (y.last_name or "")
-USERBOT_USERNAME = y.username
-USERBOT_MENTION = y.mention
-USERBOT_DC_ID = y.dc_id
+USERBOT_ID = app2.me.id
+USERBOT_NAME = app2.me.first_name + (app2.me.last_name or "")
+USERBOT_USERNAME = app2.me.username
+USERBOT_MENTION = app2.me.mention
+USERBOT_DC_ID = app2.me.dc_id
 
 if USERBOT_ID not in SUDOERS:
     SUDOERS.add(USERBOT_ID)
