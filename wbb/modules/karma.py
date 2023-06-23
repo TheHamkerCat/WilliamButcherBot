@@ -49,8 +49,8 @@ __HELP__ = """[UPVOTE] - Use upvote keywords like "+", "+1", "thanks", etc to up
 Reply to a message with /karma to check a user's karma
 Send /karma without replying to any message to check karma list of top 10 users"""
 
-regex_upvote = r"^(\+|\+\+|\+1|thx|tnx|tq|ty|thankyou|thank you|thanx|thanks|pro|cool|good|agree|👍|\+\+ .+)$"
-regex_downvote = r"^(-|--|-1|not cool|disagree|worst|bad|👎|-- .+)$"
+regex_upvote = r"^(\++|\+1|thx|tnx|tq|ty|thankyou|thank you|thanx|thanks|pro|cool|good|agree|👍|\++ .+)$"
+regex_downvote = r"^(-+|-1|not cool|disagree|worst|bad|👎|-+ .+)$"
 
 
 @app.on_message(
