@@ -1,5 +1,9 @@
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv("config.env" if os.path.isfile("config.env") else "sample_config.env")
+
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 API_ID = int(os.environ.get('API_ID'))
 SESSION_STRING = os.environ.get('SESSION_STRING', '')
