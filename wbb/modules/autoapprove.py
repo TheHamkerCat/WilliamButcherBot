@@ -56,4 +56,4 @@ async def autoapprove(client, message: ChatJoinRequest):
     chat=message.chat 
     user=message.from_user
     if approvaldb.count_documents({"chat_id": chat.id}) > 0:
-        await client.approve_chat_join_request(chat_id=chat.id, user_id=user.id)
+        await app.approve_chat_join_request(chat_id=chat.id, user_id=user.id)
