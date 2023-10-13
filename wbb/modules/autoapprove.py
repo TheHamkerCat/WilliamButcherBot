@@ -3,6 +3,7 @@ from wbb import db
 from pyrogram import filters
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ChatJoinRequest, CallbackQuery, Message, Chat
+from wbb.modules.greetings import send_welcome_message
 
 approvaldb = db.autoapprove
 
@@ -28,7 +29,7 @@ async def approval_command(client, message):
             await message.reply("**Autoapproval for this chat is disabled.**", reply_markup=keyboard_ON)
     else:
         await message.reply("**You need to be a group administrator to use this command.**")
-        return
+    return
 
 
 
@@ -51,6 +52,8 @@ async def approval_cb(client, cb):
                 await cb.edit_message_text("**Autoapproval for this chat is disabled.**", reply_markup=keyboard_ON)
     else:
         await cb.answer("This is not for you :-_-:", show_alert=True)
+    return
+
 
 @app.on_chat_join_request(filters.group)
 async def accept(client, message: ChatJoinRequest):
@@ -58,4 +61,6 @@ async def accept(client, message: ChatJoinRequest):
     user=message.from_user
     if (await approvaldb.count_documents({"chat_id": chat.id})) > 0:
         await app.approve_chat_join_request(chat_id=chat.id, user_id=user.id)
-        return
+        await send_welcome_message(chat, user.id, True)
+    return 
+
