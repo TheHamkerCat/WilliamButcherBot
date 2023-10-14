@@ -1,7 +1,6 @@
 from wbb import app, SUDOERS
 from wbb import db
 from pyrogram import filters
-from pyrogram.enums import ChatMemberStatus
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ChatJoinRequest, CallbackQuery, Message, Chat
 from wbb.modules.greetings import send_welcome_message
 from wbb.core.decorators.permissions import adminsOnly
@@ -22,7 +21,6 @@ This module helps to automatically accept chat join request send by a user throu
 @adminsOnly("can_change_info")
 async def approval_command(client, message):
     chat_id = message.chat.id
-    admin = await app.get_chat_member(chat_id, message.from_user.id)
     if (await approvaldb.count_documents({"chat_id": chat_id})) > 0:
         keyboard_OFF = InlineKeyboardMarkup([[InlineKeyboardButton("Turn OFF", callback_data="approval_off")]])
         await message.reply("**Autoapproval for this chat: Enabled.**", reply_markup=keyboard_OFF)
