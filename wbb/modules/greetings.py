@@ -107,9 +107,7 @@ async def get_initial_captcha_cache():
 loop.create_task(get_initial_captcha_cache())
 
 
-@app.on_message(filters.new_chat_members, group=welcome_captcha_group)
-@capture_err
-async def welcome(_, message: Message):
+async def handle_new_member(message: Message, member, chat):
     global answers_dicc
 
     # Get cached answers from mongodb in case of bot's been restarted or crashed.
@@ -117,102 +115,111 @@ async def welcome(_, message: Message):
 
     # Mute new member and send message with button
     if not await is_captcha_on(message.chat.id):
+        await send_welcome_message(message.chat, member.id)
         return
 
-    for member in message.new_chat_members:
-        try:
-            if member.id in SUDOERS:
-                continue  # ignore sudo users
+    try:
+        if member.id in SUDOERS:
+            return  # Ignore sudo users
 
-            if await is_gbanned_user(member.id):
-                await message.chat.ban_member(member.id)
-                await message.reply_text(
-                    f"{member.mention} was globally banned, and got removed,"
-                    + " if you think this is a false gban, you can appeal"
-                    + " for this ban in support chat."
-                )
-                continue
-
-            if member.is_bot:
-                continue  # ignore bots
-
-            # Ignore user if he has already solved captcha in this group
-            # someday
-            if await has_solved_captcha_once(message.chat.id, member.id):
-                continue
-
-            await message.chat.restrict_member(member.id, ChatPermissions())
-            text = (
-                f"{(member.mention())} Are you human?\n"
-                f"Solve this captcha in {WELCOME_DELAY_KICK_SEC} "
-                "seconds and 4 attempts or you'll be kicked."
+        if await is_gbanned_user(member.id):
+            await message.chat.ban_member(member.id)
+            await app.send_message(
+                chat.id,
+                f"{member.mention} was globally banned, and got removed,"
+                + " if you think this is a false gban, you can appeal"
+                + " for this ban in support chat."
             )
-        except ChatAdminRequired:
             return
-        # Generate a captcha image, answers and some wrong answers
-        captcha = generate_captcha()
-        captcha_image = captcha[0]
-        captcha_answer = captcha[1]
-        wrong_answers = captcha[2]  # This consists of 8 wrong answers
-        correct_button = InlineKeyboardButton(
-            f"{captcha_answer}",
-            callback_data=f"pressed_button {captcha_answer} {member.id}",
+
+        if member.is_bot:
+            return  # Ignore bots
+
+        # Ignore user if he has already solved captcha in this group
+        # someday
+        if await has_solved_captcha_once(message.chat.id, member.id):
+            return
+
+        await message.chat.restrict_member(member.id, ChatPermissions())
+        text = (
+            f"{(member.mention())} Are you human?\n"
+            f"Solve this captcha in {WELCOME_DELAY_KICK_SEC} "
+            "seconds and 4 attempts or you'll be kicked."
         )
-        temp_keyboard_1 = [correct_button]  # Button row 1
-        temp_keyboard_2 = []  # Botton row 2
-        temp_keyboard_3 = []
-        for i in range(2):
-            temp_keyboard_1.append(
-                InlineKeyboardButton(
-                    f"{wrong_answers[i]}",
-                    callback_data=f"pressed_button {wrong_answers[i]} {member.id}",
-                )
-            )
-        for i in range(2, 5):
-            temp_keyboard_2.append(
-                InlineKeyboardButton(
-                    f"{wrong_answers[i]}",
-                    callback_data=f"pressed_button {wrong_answers[i]} {member.id}",
-                )
-            )
-        for i in range(5, 8):
-            temp_keyboard_3.append(
-                InlineKeyboardButton(
-                    f"{wrong_answers[i]}",
-                    callback_data=f"pressed_button {wrong_answers[i]} {member.id}",
-                )
-            )
+    except ChatAdminRequired:
+        return
 
-        shuffle(temp_keyboard_1)
-        keyboard = [temp_keyboard_1, temp_keyboard_2, temp_keyboard_3]
-        shuffle(keyboard)
-        verification_data = {
-            "chat_id": message.chat.id,
-            "user_id": member.id,
-            "answer": captcha_answer,
-            "keyboard": keyboard,
-            "attempts": 0,
-        }
-        keyboard = InlineKeyboardMarkup(keyboard)
-        # Append user info, correct answer and
-        answers_dicc.append(verification_data)
-        # keyboard for later use with callback query
-        button_message = await message.reply_photo(
-            photo=captcha_image,
-            caption=text,
-            reply_markup=keyboard,
-            quote=True,
+    # Generate a captcha image, answers, and some wrong answers
+    captcha = generate_captcha()
+    captcha_image = captcha[0]
+    captcha_answer = captcha[1]
+    wrong_answers = captcha[2]  # This consists of 8 wrong answers
+    correct_button = InlineKeyboardButton(
+        f"{captcha_answer}",
+        callback_data=f"pressed_button {captcha_answer} {member.id}",
+    )
+    temp_keyboard_1 = [correct_button]  # Button row 1
+    temp_keyboard_2 = []  # Botton row 2
+    temp_keyboard_3 = []
+    for i in range(2):
+        temp_keyboard_1.append(
+            InlineKeyboardButton(
+                f"{wrong_answers[i]}",
+                callback_data=f"pressed_button {wrong_answers[i]} {member.id}",
+            )
         )
-        os.remove(captcha_image)
-
-        # Save captcha answers etc in mongodb in case bot gets crashed or restarted.
-        await update_captcha_cache(answers_dicc)
-
-        asyncio.create_task(
-            kick_restricted_after_delay(WELCOME_DELAY_KICK_SEC, button_message, member)
+    for i in range(2, 5):
+        temp_keyboard_2.append(
+            InlineKeyboardButton(
+                f"{wrong_answers[i]}",
+                callback_data=f"pressed_button {wrong_answers[i]} {member.id}",
+            )
         )
-        await asyncio.sleep(0.5)
+    for i in range(5, 8):
+        temp_keyboard_3.append(
+            InlineKeyboardButton(
+                f"{wrong_answers[i]}",
+                callback_data=f"pressed_button {wrong_answers[i]} {member.id}",
+            )
+        )
 
+    shuffle(temp_keyboard_1)
+    keyboard = [temp_keyboard_1, temp_keyboard_2, temp_keyboard_3]
+    shuffle(keyboard)
+    verification_data = {
+        "chat_id": message.chat.id,
+        "user_id": member.id,
+        "answer": captcha_answer,
+        "keyboard": keyboard,
+        "attempts": 0,
+    }
+    keyboard = InlineKeyboardMarkup(keyboard)
+    # Append user info, correct answer, and
+    answers_dicc.append(verification_data)
+    # keyboard for later use with callback query
+    button_message = await app.send_photo(
+        chat_id=chat.id,
+        photo=captcha_image,
+        caption=text,
+        reply_markup=keyboard,
+    )
+    os.remove(captcha_image)
+
+    # Save captcha answers etc in mongodb in case the bot gets crashed or restarted.
+    await update_captcha_cache(answers_dicc)
+
+    asyncio.create_task(
+        kick_restricted_after_delay(WELCOME_DELAY_KICK_SEC, button_message, member)
+    )
+    await asyncio.sleep(0.5)
+
+@app.on_message(filters.new_chat_members, group=welcome_captcha_group)
+@capture_err
+async def welcome(_, message: Message):
+    chat = message.chat
+    members = message.new_chat_members
+    for member in members:
+        return await handle_new_member(message, member, chat)
 
 async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
     raw_text = await get_welcome(chat.id)
