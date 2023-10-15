@@ -2,7 +2,7 @@ from wbb import app, SUDOERS
 from wbb import db
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ChatJoinRequest, CallbackQuery, Message, Chat
-from wbb.modules.greetings import send_welcome_message
+from wbb.modules.greetings import handle_new_member
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.modules.admin import member_permissions
 
@@ -62,5 +62,5 @@ async def accept(client, message: ChatJoinRequest):
     user=message.from_user
     if (await approvaldb.count_documents({"chat_id": chat.id})) > 0:
         await app.approve_chat_join_request(chat_id=chat.id, user_id=user.id)
-        await send_welcome_message(chat, user.id, True)
+        await handle_new_member(message, user, chat)
     return 
