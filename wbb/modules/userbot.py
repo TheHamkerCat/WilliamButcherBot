@@ -247,7 +247,7 @@ async def reserve_channel_handler(_, message: Message):
 
     chat = await app2.create_channel(username, "Created by .reserve command")
     try:
-        await app2.update_chat_username(chat.id, username)
+        await app2.set_chat_username(chat.id, username)
     except Exception as e:
         await m.edit(f"Couldn't Reserve, Error: `{str(e)}`")
         return await app2.delete_channel(chat.id)
