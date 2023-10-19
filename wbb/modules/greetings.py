@@ -336,10 +336,8 @@ async def kick_restricted_after_delay(delay, button_message: Message, user: User
     """
     global answers_dicc
     await asyncio.sleep(delay)
-    join_message = button_message.reply_to_message
     group_chat = button_message.chat
     user_id = user.id
-    await join_message.delete()
     await button_message.delete()
     if len(answers_dicc) != 0:
         for i in answers_dicc:
