@@ -434,7 +434,7 @@ async def set_welcome_func(_, message):
         if not text:
             return await message.reply_text(usage, reply_markup=key)
         raw_text = text.markdown
-        await check_caption(message, chat_id, raw_text, animation_id, photo_id)
+        return await check_caption(message, chat_id, raw_text, animation_id, photo_id)
     if replied_message.photo:
         photo_id = replied_message.photo.file_id
         text = replied_message.caption
@@ -442,13 +442,13 @@ async def set_welcome_func(_, message):
         if not text:
             return await message.reply_text(usage, reply_markup=key)
         raw_text = text.markdown
-        await check_caption(message, chat_id, raw_text, animation_id, photo_id)
+        return await check_caption(message, chat_id, raw_text, animation_id, photo_id)
     if replied_message.text:
         animation_id = None
         text = replied_message.text
         photo_id = None
         raw_text = text.markdown
-        await check_caption(message, chat_id, raw_text, animation_id, photo_id)
+        return await check_caption(message, chat_id, raw_text, animation_id, photo_id)
     else:
         await message.reply_text("Only text, gif and photo welcome message are supposed")
 
