@@ -73,7 +73,8 @@ format for a welcome message, check end of this message.
 /get_welcome - Get the welcome message.
 
 **SET_WELCOME ->**
-To set a photo or gif as welcome message. Add your welcome message as caption to the photo or gif. The caption muse be in the format given below.
+
+**To set a photo or gif as welcome message. Add your welcome message as caption to the photo or gif. The caption muse be in the format given below.**
 
 For text welcome message just send the text. Then reply with the command 
 
@@ -408,7 +409,7 @@ async def check_caption(message, chat_id, raw_text, animation_id, photo_id):
 @app.on_message(filters.command("set_welcome") & ~filters.private)
 @adminsOnly("can_change_info")
 async def set_welcome_func(_, message):
-    usage = "You need to reply to a text, gif or photo.\n\nNotes: caption required for gif and photo."
+    usage = "You need to reply to a text, gif or photo to set it as greetings.\n\nNotes: caption required for gif and photo."
     key = InlineKeyboardMarkup(
         [
             [
