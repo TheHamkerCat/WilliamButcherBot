@@ -42,7 +42,7 @@ from pyrogram.types import (
     User,
 )
 
-from wbb import SUDOERS, WELCOME_DELAY_KICK_SEC, app
+from wbb import SUDOERS, WELCOME_DELAY_KICK_SEC, BOT_USERNAME, app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.keyboard import ikb
@@ -73,6 +73,10 @@ format for a welcome message, check end of this message.
 /get_welcome - Get the welcome message.
 
 **SET_WELCOME ->**
+
+**To set a photo or gif as welcome message. Add your welcome message as caption to the photo or gif. The caption muse be in the format given below.**
+
+For text welcome message just send the text. Then reply with the command 
 
 The format should be something like below.
 
@@ -106,7 +110,6 @@ async def get_initial_captcha_cache():
 
 loop.create_task(get_initial_captcha_cache())
 
-
 async def handle_new_member(message: Message, member, chat):
     global answers_dicc
 
@@ -115,8 +118,9 @@ async def handle_new_member(message: Message, member, chat):
 
     # Mute new member and send message with button
     if not await is_captcha_on(message.chat.id):
-        await send_welcome_message(message.chat, member.id)
-        return
+        if member.is_bot:
+            return 
+        return await send_welcome_message(message.chat, message.from_user.id)
 
     try:
         if member.id in SUDOERS:
@@ -222,11 +226,10 @@ async def welcome(_, message: Message):
         return await handle_new_member(message, member, chat)
 
 async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
-    raw_text = await get_welcome(chat.id)
+    raw_text, animation_id, photo_id = await get_welcome(chat.id)
 
     if not raw_text:
         return
-
     text, keyb = extract_text_and_keyb(ikb, raw_text)
 
     if "{chat}" in text:
@@ -235,12 +238,27 @@ async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
         text = text.replace("{name}", (await app.get_users(user_id)).mention)
 
     async def _send_wait_delete():
-        m = await app.send_message(
-            chat.id,
-            text=text,
-            reply_markup=keyb,
-            disable_web_page_preview=True,
-        )
+        if not animation_id and not photo_id:
+            m = await app.send_message(
+                chat.id,
+                text=text,
+                reply_markup=keyb,
+                disable_web_page_preview=True,
+            )
+        elif not animation_id:
+            m = await app.send_photo(
+                chat.id,
+                photo=photo_id,
+                caption=text,
+                reply_markup=keyb,
+            )
+        else:
+            m = await app.send_animation(
+                chat.id,
+                animation=animation_id,
+                caption=text,
+                reply_markup=keyb,
+            )
         await asyncio.sleep(300)
         await m.delete()
 
@@ -292,8 +310,7 @@ async def callback_query_welcome_button(_, callback_query):
                     await asyncio.sleep(1)
                     await button_message.chat.unban_member(pending_user_id)
                     await button_message.delete()
-                    await update_captcha_cache(answers_dicc)
-                    return
+                    return await update_captcha_cache(answers_dicc)
 
                 iii["attempts"] += 1
                 break
@@ -362,8 +379,8 @@ async def _ban_restricted_user_until_date(group_chat, user_id: int, duration: in
 async def captcha_state(_, message):
     usage = "**Usage:**\n/captcha [ENABLE|DISABLE]"
     if len(message.command) != 2:
-        await message.reply_text(usage)
-        return
+        return await message.reply_text(usage)
+
     chat_id = message.chat.id
     state = message.text.split(None, 1)[1].strip()
     state = state.lower()
@@ -380,22 +397,57 @@ async def captcha_state(_, message):
 # WELCOME MESSAGE
 
 
+async def check_caption(message, chat_id, raw_text, animation_id, photo_id):
+    if not extract_text_and_keyb(ikb, raw_text):
+        return await message.reply_text("Wrong formatting, check the help section.")
+    
+    await set_welcome(chat_id, raw_text, animation_id, photo_id)
+    await message.reply_text("Welcome message has been successfully set.")
+
 @app.on_message(filters.command("set_welcome") & ~filters.private)
 @adminsOnly("can_change_info")
 async def set_welcome_func(_, message):
-    usage = "You need to reply to a text, check the Greetings module in /help"
-    if not message.reply_to_message:
-        await message.reply_text(usage)
-        return
-    if not message.reply_to_message.text:
-        await message.reply_text(usage)
-        return
+    usage = "You need to reply to a text, gif or photo to set it as greetings.\n\nNotes: caption required for gif and photo."
+    key = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    text="More Help",
+                    url=f"t.me/{BOT_USERNAME}?start=help_greetings",
+                )
+            ],
+        ]
+    )
+    replied_message = message.reply_to_message
     chat_id = message.chat.id
-    raw_text = message.reply_to_message.text.markdown
-    if not (extract_text_and_keyb(ikb, raw_text)):
-        return await message.reply_text("Wrong formating, check help section.")
-    await set_welcome(chat_id, raw_text)
-    await message.reply_text("Welcome message has been successfully set.")
+
+    if not replied_message:
+        return await message.reply_text(usage, reply_markup=key)
+
+    if replied_message.animation:
+        animation_id = replied_message.animation.file_id
+        text = replied_message.caption
+        photo_id = None
+        if not text:
+            return await message.reply_text(usage, reply_markup=key)
+        raw_text = text.markdown
+        return await check_caption(message, chat_id, raw_text, animation_id, photo_id)
+    if replied_message.photo:
+        photo_id = replied_message.photo.file_id
+        text = replied_message.caption
+        animation_id = None
+        if not text:
+            return await message.reply_text(usage, reply_markup=key)
+        raw_text = text.markdown
+        return await check_caption(message, chat_id, raw_text, animation_id, photo_id)
+    if replied_message.text:
+        animation_id = None
+        text = replied_message.text
+        photo_id = None
+        raw_text = text.markdown
+        return await check_caption(message, chat_id, raw_text, animation_id, photo_id)
+    else:
+        await message.reply_text("Only text, gif and photo welcome message are supposed")
 
 
 @app.on_message(filters.command("del_welcome") & ~filters.private)
@@ -410,12 +462,12 @@ async def del_welcome_func(_, message):
 @adminsOnly("can_change_info")
 async def get_welcome_func(_, message):
     chat = message.chat
-    welcome = await get_welcome(chat.id)
-    if not welcome:
+    raw_text, animation_id, photo_id = await get_welcome(chat.id)
+    if not raw_text:
         return await message.reply_text("No welcome message set.")
     if not message.from_user:
         return await message.reply_text("You're anon, can't send welcome message.")
 
     await send_welcome_message(chat, message.from_user.id)
 
-    await message.reply_text(f'`{welcome.replace("`", "")}`')
+    await message.reply_text(f'photo_id: `{photo_id}`\n\nGif_id: `{animation_id}`\n\n`{raw_text.replace("`", "")}`')

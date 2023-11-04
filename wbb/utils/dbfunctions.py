@@ -494,16 +494,23 @@ async def disapprove_pmpermit(user_id: int):
     return await pmpermitdb.delete_one({"user_id": user_id})
 
 
-async def get_welcome(chat_id: int) -> str:
-    text = await welcomedb.find_one({"chat_id": chat_id})
-    if not text:
-        return ""
-    return text["text"]
+async def get_welcome(chat_id: int) -> (str, str, str):
+    data = await welcomedb.find_one({"chat_id": chat_id})
+    if not data:
+        return "", "", ""
+    raw_text = data.get("raw_text", "")
+    animation_id = data.get("animation_id", "")
+    photo_id = data.get("photo_id", "")
+
+    return raw_text, animation_id, photo_id
 
 
-async def set_welcome(chat_id: int, text: str):
+async def set_welcome(chat_id: int, raw_text: str, animation_id: str, photo_id: str):
+    update_data = {"raw_text": raw_text, "animation_id": animation_id, "photo_id": photo_id}
     return await welcomedb.update_one(
-        {"chat_id": chat_id}, {"$set": {"text": text}}, upsert=True
+        {"chat_id": chat_id},
+        {"$set": update_data},
+        upsert=True
     )
 
 
