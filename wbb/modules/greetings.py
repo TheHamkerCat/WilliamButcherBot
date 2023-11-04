@@ -120,8 +120,7 @@ async def handle_new_member(message: Message, member, chat):
     if not await is_captcha_on(message.chat.id):
         if member.is_bot:
             return 
-        await send_welcome_message(message.chat, message.from_user.id)
-        return
+        return await send_welcome_message(message.chat, message.from_user.id)
 
     try:
         if member.id in SUDOERS:
@@ -311,8 +310,7 @@ async def callback_query_welcome_button(_, callback_query):
                     await asyncio.sleep(1)
                     await button_message.chat.unban_member(pending_user_id)
                     await button_message.delete()
-                    await update_captcha_cache(answers_dicc)
-                    return
+                    return await update_captcha_cache(answers_dicc)
 
                 iii["attempts"] += 1
                 break
@@ -381,8 +379,8 @@ async def _ban_restricted_user_until_date(group_chat, user_id: int, duration: in
 async def captcha_state(_, message):
     usage = "**Usage:**\n/captcha [ENABLE|DISABLE]"
     if len(message.command) != 2:
-        await message.reply_text(usage)
-        return
+        return await message.reply_text(usage)
+
     chat_id = message.chat.id
     state = message.text.split(None, 1)[1].strip()
     state = state.lower()
@@ -424,8 +422,7 @@ async def set_welcome_func(_, message):
     chat_id = message.chat.id
 
     if not replied_message:
-        await message.reply_text(usage, reply_markup=key)
-        return
+        return await message.reply_text(usage, reply_markup=key)
 
     if replied_message.animation:
         animation_id = replied_message.animation.file_id
