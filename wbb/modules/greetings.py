@@ -424,7 +424,7 @@ async def set_welcome_func(_, message):
     if not replied_message:
         return await message.reply_text(usage, reply_markup=key)
 
-     if replied_message.animation:
+    if replied_message.animation:
         welcome = "Animation"
         file_id = replied_message.animation.file_id
         text = replied_message.caption      
