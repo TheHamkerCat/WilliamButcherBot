@@ -451,7 +451,6 @@ async def save_captcha_solved(chat_id: int, user_id: int):
         upsert=True,
     )
 
-
 async def is_antiservice_on(chat_id: int) -> bool:
     chat = await antiservicedb.find_one({"chat_id": chat_id})
     if not chat:
@@ -498,15 +497,17 @@ async def get_welcome(chat_id: int) -> (str, str, str):
     data = await welcomedb.find_one({"chat_id": chat_id})
     if not data:
         return "", "", ""
+        
+    welcome = data.get("welcome", "")    
     raw_text = data.get("raw_text", "")
-    animation_id = data.get("animation_id", "")
-    photo_id = data.get("photo_id", "")
+    file_id = data.get("file_id", "")
 
-    return raw_text, animation_id, photo_id
+    return welcome, raw_text, file_id
 
 
-async def set_welcome(chat_id: int, raw_text: str, animation_id: str, photo_id: str):
-    update_data = {"raw_text": raw_text, "animation_id": animation_id, "photo_id": photo_id}
+async def set_welcome(chat_id: int, welcome: str, raw_text: str, file_id: str):
+    update_data = {"welcome": welcome, "raw_text": raw_text, "file_id": file_id}
+
     return await welcomedb.update_one(
         {"chat_id": chat_id},
         {"$set": update_data},
