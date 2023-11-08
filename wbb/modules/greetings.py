@@ -226,7 +226,7 @@ async def welcome(_, message: Message):
         return await handle_new_member(message, member, chat)
 
 async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
-    raw_text, animation_id, photo_id = await get_welcome(chat.id)
+    welcome, raw_text, file_id = await get_welcome(chat.id)
 
     if not raw_text:
         return
@@ -238,24 +238,24 @@ async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
         text = text.replace("{name}", (await app.get_users(user_id)).mention)
 
     async def _send_wait_delete():
-        if not animation_id and not photo_id:
+        if welcome == "Text":
             m = await app.send_message(
                 chat.id,
                 text=text,
                 reply_markup=keyb,
                 disable_web_page_preview=True,
             )
-        elif not animation_id:
+        elif welcome == "Photo":
             m = await app.send_photo(
                 chat.id,
-                photo=photo_id,
+                photo=file_id,
                 caption=text,
                 reply_markup=keyb,
             )
         else:
             m = await app.send_animation(
                 chat.id,
-                animation=animation_id,
+                animation=file_id,
                 caption=text,
                 reply_markup=keyb,
             )
@@ -397,11 +397,11 @@ async def captcha_state(_, message):
 # WELCOME MESSAGE
 
 
-async def check_caption(message, chat_id, raw_text, animation_id, photo_id):
+async def check_caption(message, chat_id, welcome, raw_text, file_id):
     if not extract_text_and_keyb(ikb, raw_text):
         return await message.reply_text("Wrong formatting, check the help section.")
     
-    await set_welcome(chat_id, raw_text, animation_id, photo_id)
+    await set_welcome(chat_id, welcome, raw_text, file_id)
     await message.reply_text("Welcome message has been successfully set.")
 
 @app.on_message(filters.command("set_welcome") & ~filters.private)
@@ -424,28 +424,28 @@ async def set_welcome_func(_, message):
     if not replied_message:
         return await message.reply_text(usage, reply_markup=key)
 
-    if replied_message.animation:
-        animation_id = replied_message.animation.file_id
-        text = replied_message.caption
-        photo_id = None
+     if replied_message.animation:
+        welcome = "Animation"
+        file_id = replied_message.animation.file_id
+        text = replied_message.caption      
         if not text:
             return await message.reply_text(usage, reply_markup=key)
         raw_text = text.markdown
-        return await check_caption(message, chat_id, raw_text, animation_id, photo_id)
+        return await check_caption(message, chat_id, welcome, raw_text, file_id)
     if replied_message.photo:
-        photo_id = replied_message.photo.file_id
+        welcome = "Photo"
+        file_id = replied_message.photo.file_id
         text = replied_message.caption
-        animation_id = None
         if not text:
             return await message.reply_text(usage, reply_markup=key)
         raw_text = text.markdown
-        return await check_caption(message, chat_id, raw_text, animation_id, photo_id)
+        return await check_caption(message, chat_id, welcome, raw_text, file_id)
     if replied_message.text:
-        animation_id = None
+        welcome = "Text"
+        file_id = None
         text = replied_message.text
-        photo_id = None
         raw_text = text.markdown
-        return await check_caption(message, chat_id, raw_text, animation_id, photo_id)
+        return await check_caption(message, chat_id, welcome, raw_text, file_id)
     else:
         await message.reply_text("Only text, gif and photo welcome message are supposed")
 
@@ -462,7 +462,7 @@ async def del_welcome_func(_, message):
 @adminsOnly("can_change_info")
 async def get_welcome_func(_, message):
     chat = message.chat
-    raw_text, animation_id, photo_id = await get_welcome(chat.id)
+    welcome, raw_text, file_id = await get_welcome(chat.id)
     if not raw_text:
         return await message.reply_text("No welcome message set.")
     if not message.from_user:
@@ -470,4 +470,4 @@ async def get_welcome_func(_, message):
 
     await send_welcome_message(chat, message.from_user.id)
 
-    await message.reply_text(f'photo_id: `{photo_id}`\n\nGif_id: `{animation_id}`\n\n`{raw_text.replace("`", "")}`')
+    await message.reply_text(f'Welcome: {welcome}\n\nFile_id: `{file_id}`\n\n`{raw_text.replace("`", "")}`')
