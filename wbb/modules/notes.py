@@ -84,7 +84,7 @@ async def save_notee(_, message):
         else:
             if replied_message.sticker or replied_message.video_note:
                 data = None
-            elif not replied_message.caption:
+            elif not replied_message.text and not replied_message.caption:
                 data = None
             else:
                 data = replied_message.text.markdown if replied_message.text else replied_message.caption.markdown
