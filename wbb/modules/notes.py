@@ -200,6 +200,10 @@ async def get_one_note(_, message):
             keyboard = extract_text_and_keyb(ikb, data)
             if keyboard:
                 data, keyb = keyboard
+    replied_message = message.reply_to_message
+    if replied_message:
+        if replied_message.from_user.id != message.from_user.id:
+            message = replied_message
     if type == "text":
         await message.reply_text(
             text=data,
