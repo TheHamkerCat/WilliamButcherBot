@@ -35,7 +35,11 @@ from wbb.utils.functions import extract_text_and_keyb
 __MODULE__ = "Notes"
 __HELP__ = """/notes To Get All The Notes In The Chat.
 
-/save [NOTE_NAME] To Save A Note (Can be a sticker or text).
+/save [NOTE_NAME] To Save A Note.
+
+Supported note types are Text, Animation, Photo, Document, Video, video notes, Audio, Voice
+
+To change caption of any files use.\n/save [NOTE_NAME] [NEW_CAPTION]
 
 #NOTE_NAME To Get A Note.
 
@@ -68,7 +72,7 @@ async def save_notee(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
         await eor(
             message,
-            text="**Usage:**\nReply to a text or sticker with /save [NOTE_NAME] to save it.",
+            text="**Usage:**\nReply to a message with /save [NOTE_NAME] to save a new note.",
         )
     else:
         name = message.text.split(None, 1)[1].strip()
@@ -116,10 +120,11 @@ async def save_notee(_, message):
             _type = "voice"
             file_id = replied_message.voice.file_id
         if replied_message.reply_markup:
-            urls = extract_urls(replied_message.reply_markup)
-            if urls:
-                response = "\n".join([f"{name}=[{text}, {url}]" for name, text, url in urls])
-                data = data + response
+            if not "~" in data:
+                urls = extract_urls(replied_message.reply_markup)
+                if urls:
+                    response = "\n".join([f"{name}=[{text}, {url}]" for name, text, url in urls])
+                    data = data + response
         note = {
             "type": _type,
             "data": data,
