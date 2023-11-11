@@ -37,10 +37,17 @@ from wbb.utils.dbfunctions import (
 )
 from wbb.utils.filter_groups import chat_filters_group
 from wbb.utils.functions import extract_text_and_keyb
+from wbb.modules.notes import extract_urls
 
 __MODULE__ = "Filters"
 __HELP__ = """/filters To Get All The Filters In The Chat.
-/filter [FILTER_NAME] To Save A Filter (Can be a sticker or text).
+/filter [FILTER_NAME] To Save A Filter(reply to a message).
+
+Supported filter types are Text, Animation, Photo, Document, Video, video notes, Audio, Voice
+
+To use more words in a filter use.
+`/filter Hey_there` To filter "Hey there"
+
 /stop [FILTER_NAME] To Stop A Filter.
 
 
@@ -55,25 +62,66 @@ Checkout /markdownhelp to know more about formattings and other syntax.
 async def save_filters(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
         return await message.reply_text(
-            "**Usage:**\nReply to a text or sticker with /filter [FILTER_NAME] to save it."
-        )
-    if not message.reply_to_message.text and not message.reply_to_message.sticker:
-        return await message.reply_text(
-            "__**You can only save text or stickers in filters.**__"
-        )
+            "**Usage:**\nReply to a message with /filter [FILTER_NAME] to save it.\nTo set a new filter"
+        )    
     name = message.text.split(None, 1)[1].strip()
     if not name:
-        return await message.reply_text("**Usage:**\n__/filter [FILTER_NAME]__")
+        return await message.reply_text("**Usage:**\n__/filter [FILTER_NAME]__")    
     chat_id = message.chat.id
-    _type = "text" if message.reply_to_message.text else "sticker"
+    replied_message = message.reply_to_message
+    text = name.split(" ", 1)    
+    if len(text) > 1:
+        name = text[0]
+        data = text[1].strip()
+        if replied_message.sticker or replied_message.video_note:
+            data = None
+    else:
+        if replied_message.sticker or replied_message.video_note:
+            data = None
+        elif not replied_message.text and not replied_message.caption:
+            data = None
+        else:
+            data = replied_message.text.markdown if replied_message.text else replied_message.caption.markdown
+    if replied_message.text:
+        _type = "text"
+        file_id = None
+    if replied_message.sticker:
+        _type = "sticker"
+        file_id = replied_message.sticker.file_id
+    if replied_message.animation:
+        _type = "animation"
+        file_id = replied_message.animation.file_id
+    if replied_message.photo:
+        _type = "photo"
+        file_id = replied_message.photo.file_id
+    if replied_message.document:
+        _type = "document"
+        file_id = replied_message.document.file_id
+    if replied_message.video:
+        _type = "video"
+        file_id = replied_message.video.file_id
+    if replied_message.video_note:
+        _type = "video_note"
+        file_id = replied_message.video_note.file_id
+    if replied_message.audio:
+        _type = "audio"
+        file_id = replied_message.audio.file_id
+    if replied_message.voice:
+        _type = "voice"
+        file_id = replied_message.voice.file_id    
+    if replied_message.reply_markup and not "~" in data:
+        urls = extract_urls(replied_message.reply_markup)
+        if urls:
+            response = "\n".join([f"{name}=[{text}, {url}]" for name, text, url in urls])
+            data = data + response
+    name = name.replace("_", " ")
     _filter = {
         "type": _type,
-        "data": message.reply_to_message.text.markdown
-        if _type == "text"
-        else message.reply_to_message.sticker.file_id,
+        "data": data,
+        "file_id": file_id,
     }
     await save_filter(chat_id, name, _filter)
-    await message.reply_text(f"__**Saved filter {name}.**__")
+    return await message.reply_text(f"__**Saved filter {name}.**__")
 
 
 @app.on_message(filters.command("filters") & ~filters.private)
@@ -122,33 +170,67 @@ async def filters_re(_, message):
             _filter = await get_filter(chat_id, word)
             data_type = _filter["type"]
             data = _filter["data"]
-            if data_type == "text":
-                keyb = None
+            file_id = _filter["file_id"]
+            keyb = None
+            if data:
                 if re.findall(r"\[.+\,.+\]", data):
                     keyboard = extract_text_and_keyb(ikb, data)
                     if keyboard:
                         data, keyb = keyboard
+            replied_message = message.reply_to_message
+            if replied_message:
+                if text.startswith("~"):
+                    await message.delete()
+                if replied_message.from_user.id != message.from_user.id:
+                    message = replied_message
 
-                if message.reply_to_message:
-                    await message.reply_to_message.reply_text(
-                        data,
-                        reply_markup=keyb,
-                        disable_web_page_preview=True,
-                    )
-
-                    if text.startswith("~"):
-                        await message.delete()
-                    return
-
-                return await message.reply_text(
-                    data,
+            if data_type == "text":
+                await message.reply_text(
+                    text=data,
                     reply_markup=keyb,
                     disable_web_page_preview=True,
                 )
-            if message.reply_to_message:
-                await message.reply_to_message.reply_sticker(data)
-
-                if text.startswith("~"):
-                    await message.delete()
-                return
-            return await message.reply_sticker(data)
+            if data_type == "sticker":
+                await message.reply_sticker(
+                    sticker=file_id,
+                )
+            if data_type == "animation":
+                await message.reply_animation(
+                    animation=file_id,
+                    caption=data,
+                    reply_markup=keyb,
+                )
+            if data_type == "photo":
+                await message.reply_photo(
+                    photo=file_id,
+                    caption=data,
+                    reply_markup=keyb,
+                )
+            if data_type == "document":
+                await message.reply_document(
+                    document=file_id,
+                    caption=data,
+                    reply_markup=keyb,
+                )
+            if data_type == "video":
+                await message.reply_video(
+                    video=file_id,
+                    caption=data,
+                    reply_markup=keyb,
+                )
+            if data_type == "video_note":
+                await message.reply_video_note(
+                    video_note=file_id,
+                )
+            if data_type == "audio":
+                await message.reply_audio(
+                    audio=file_id,
+                    caption=data,
+                    reply_markup=keyb,
+                )
+            if data_type == "voice":
+                await message.reply_voice(
+                    voice=file_id,
+                    caption=data,
+                    reply_markup=keyb,
+                )
