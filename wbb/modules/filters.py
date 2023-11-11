@@ -62,7 +62,7 @@ Checkout /markdownhelp to know more about formattings and other syntax.
 async def save_filters(_, message):
     if len(message.command) < 2 or not message.reply_to_message:
         return await message.reply_text(
-            "**Usage:**\nReply to a message with /filter [FILTER_NAME] to save it.\nTo set a new filter"
+            "**Usage:**\nReply to a message with /filter [FILTER_NAME] To set a new filter."
         )    
     name = message.text.split(None, 1)[1].strip()
     if not name:
