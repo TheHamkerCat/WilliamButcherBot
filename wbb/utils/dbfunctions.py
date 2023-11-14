@@ -126,6 +126,10 @@ async def delete_note(chat_id: int, name: str) -> bool:
     return False
 
 
+async def deleteall_notes(chat_id: int):
+    return await notesdb.delete_one({"chat_id": chat_id})
+
+
 async def get_filters_count() -> dict:
     chats_count = 0
     filters_count = 0
@@ -184,6 +188,10 @@ async def delete_filter(chat_id: int, name: str) -> bool:
         )
         return True
     return False
+
+
+async def deleteall_filters(chat_id: int):
+    return await filtersdb.delete_one({"chat_id": chat_id})
 
 
 async def int_to_alpha(user_id: int) -> str:
