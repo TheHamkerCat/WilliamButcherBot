@@ -2,6 +2,7 @@
 MIT License
 
 Copyright (c) 2023 TheHamkerCat
+Copyright (c) 2023 SI_NN_ER_LS 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -313,6 +314,23 @@ def extract_text_and_keyb(ikb, text: str, row_width: int = 2):
     except Exception:
         return
     return text, keyboard
+
+# BUILDING AN AI BY SI_NN_ER_LS
+async def check_format(ikb, raw_text: str):
+    keyb = findall(r"\[.+\,.+\]", raw_text)
+    if keyb and not "~" in raw_text:
+        raw_text = raw_text.replace("button=", "\n~\nbutton=")
+        return raw_text
+    if "~" in raw_text and not keyb:
+        raw_text =raw_text.replace("~", "")
+        return raw_text
+    if "~" in raw_text and keyb:
+        if not extract_text_and_keyb(ikb, raw_text):
+            return ""
+        else:
+            return raw_text 
+    else:
+        return raw_text
 
 
 async def get_user_id_and_usernames(client) -> dict:
