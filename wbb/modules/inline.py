@@ -3,6 +3,7 @@
 MIT License
 
 Copyright (c) 2023 TheHamkerCat
+Copyright (c) 2023 SI_NN_ER_LS 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,12 +26,31 @@ SOFTWARE.
 
 import traceback
 
-from wbb import app
+from wbb import app, BOT_USERNAME 
 from wbb.utils.inlinefuncs import *
+from pyrogram import filters
 
 __MODULE__ = "Inline"
-__HELP__ = """See inline for help related to inline"""
+__HELP__ = f"""
 
+Send /inline for help related to inline.
+
+**Example Usage:**
+`@{BOT_USERNAME} google github`
+"""
+
+
+@app.on_message(filters.command("inline"))
+async def inline(_, message):
+    buttons = InlineKeyboard(row_width=4)
+    buttons.add(
+        *[
+            (InlineKeyboardButton(text=i, switch_inline_query_current_chat=i))
+            for i in keywords_list
+        ]
+    )
+    text = "**Here are the commands available for inline**"
+    await message.reply_text(text=text, reply_markup=buttons)
 
 @app.on_inline_query()
 async def inline_query_handler(client, query):
