@@ -2,6 +2,7 @@
 MIT License
 
 Copyright (c) 2023 TheHamkerCat
+Copyright (c) 2023 SI_NN_ER_LS 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +33,7 @@ from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.keyboard import ikb
 from wbb.utils.dbfunctions import delete_note, get_note, get_note_names, save_note, deleteall_notes
 from wbb.modules.admin import member_permissions
-from wbb.utils.functions import extract_text_and_keyb
+from wbb.utils.functions import extract_text_and_keyb, check_format
 
 __MODULE__ = "Notes"
 __HELP__ = """/notes To Get All The Notes In The Chat.
@@ -63,40 +64,44 @@ def extract_urls(reply_markup):
                     urls.append((f"{name}", button.text, button.url))
     return urls
 
-@app2.on_message(
-    filters.command("save", prefixes=USERBOT_PREFIX)
-    & ~filters.forwarded
-    & ~filters.via_bot
-    & SUDOERS
-)
+
 @app.on_message(filters.command("save") & ~filters.private)
 @adminsOnly("can_change_info")
 async def save_notee(_, message):
     try:
-        if len(message.command) < 2 or not message.reply_to_message:
+        if len(message.command) < 2:
             await eor(
                 message,
                 text="**Usage:**\nReply to a message with /save [NOTE_NAME] to save a new note.",
             )
         else:
-            text = message.text.markdown
+            replied_message = message.reply_to_message
+            if not replied_message:
+                replied_message = message
+            text = message.text.markdown if message.text else message.caption.markdown
             name = text.split(None, 1)[1].strip()
             if not name:
                 return await eor(message, text="**Usage**\n__/save [NOTE_NAME]__")
-            replied_message = message.reply_to_message
             text = name.split(" ", 1)
             if len(text) > 1:
                 name = text[0]
                 data = text[1].strip()
-                if replied_message.sticker or replied_message.video_note:
+                if replied_message and (replied_message.sticker or replied_message.video_note):
                     data = None
             else:
-                if replied_message.sticker or replied_message.video_note:
+                if replied_message and (replied_message.sticker or replied_message.video_note):
                     data = None
-                elif not replied_message.text and not replied_message.caption:
+                elif replied_message and not replied_message.text and not replied_message.caption:
                     data = None
                 else:
                     data = replied_message.text.markdown if replied_message.text else replied_message.caption.markdown
+                    match = "/save " + name
+                    if not message.reply_to_message and message.text:
+                        if match == data:
+                            return await message.reply_text("**Usage:**\n__/save [NOTE_NAME] [CONTENT]__\n`-----------OR-----------`\nReply to a message with.\n/save [NOTE_NAME]")
+                    elif not message.reply_to_message and not message.text:
+                        if match == data:
+                            data = None
             if replied_message.text:
                 _type = "text"
                 file_id = None
@@ -129,15 +134,18 @@ async def save_notee(_, message):
                 if urls:
                     response = "\n".join([f"{name}=[{text}, {url}]" for name, text, url in urls])
                     data = data + response
-            note = {
-                "type": _type,
-                "data": data,
-                "file_id": file_id,
-            }
-            prefix = message.text.split()[0][0]
-            chat_id = message.chat.id if prefix != USERBOT_PREFIX else USERBOT_ID
-            await save_note(chat_id, name, note)
-            await eor(message, text=f"__**Saved note {name}.**__")
+            data = await check_format(ikb, data)
+            if data:
+                note = {
+                    "type": _type,
+                    "data": data,
+                    "file_id": file_id,
+                }
+                chat_id = message.chat.id 
+                await save_note(chat_id, name, note)
+                await eor(message, text=f"__**Saved note {name}.**__")
+            else:
+                return await message.reply_text("**Wrong formatting, check the help section.**")
     except UnboundLocalError:
         return await message.reply_text("**Replied message is inaccessible.\n`Forward the message and try again`**")
 
