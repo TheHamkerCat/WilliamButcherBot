@@ -36,10 +36,9 @@ __HELP__ = f"""
 
 async def rss_worker():
     log.info("RSS Worker started")
-    while True:
+    while not await sleep(RSS_DELAY):
         feeds = await get_rss_feeds()
         if not feeds:
-            await sleep(RSS_DELAY)
             continue
 
         loop = get_event_loop()
@@ -71,7 +70,6 @@ async def rss_worker():
                 log.info(f"Removed RSS Feed from {chat} (Invalid Chat)")
             except Exception as e:
                 log.info(f"RSS in {chat}: {str(e)}")
-        await sleep(RSS_DELAY)
 
 
 loop = get_event_loop()
