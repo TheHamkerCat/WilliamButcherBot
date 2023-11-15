@@ -97,9 +97,7 @@ async def save_filters(_, message):
                 elif not message.reply_to_message and not message.text:
                     if match == data:
                         data = None
-        if replied_message.sticker:
-            _type = "sticker"
-           if replied_message.text:
+        if replied_message.text:
             _type = "text"
             file_id = None
         if replied_message.sticker:
