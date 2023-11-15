@@ -69,7 +69,7 @@ async def rss_worker():
                 await remove_rss_feed(chat)
                 log.info(f"Removed RSS Feed from {chat} (Invalid Chat)")
             except Exception as e:
-                log.info(f"RSS in {chat}: {str(e)}")
+                log.info(f"RSS in {chat}: {e}")
 
 
 loop = get_event_loop()
