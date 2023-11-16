@@ -62,6 +62,7 @@ from wbb.utils.dbfunctions import (
 )
 from wbb.utils.filter_groups import welcome_captcha_group
 from wbb.utils.functions import extract_text_and_keyb, generate_captcha, check_format
+from wbb.modules.notes import extract_urls
 
 __MODULE__ = "Greetings"
 __HELP__ = """
@@ -440,6 +441,11 @@ async def set_welcome_func(_, message):
             file_id = None
             text = replied_message.text
             raw_text = text.markdown
+        if replied_message.reply_markup and not "~" in raw_text:
+            urls = extract_urls(replied_message.reply_markup)
+            if urls:
+                response = "\n".join([f"{name}=[{text}, {url}]" for name, text, url in urls])
+                raw_text = raw_text + response
         raw_text = await check_format(ikb, raw_text)
         if raw_text:
             await set_welcome(chat_id, welcome, raw_text, file_id)
