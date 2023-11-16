@@ -135,18 +135,18 @@ async def save_notee(_, message):
                 if urls:
                     response = "\n".join([f"{name}=[{text}, {url}]" for name, text, url in urls])
                     data = data + response
-            data = await check_format(ikb, data)
             if data:
-                note = {
-                    "type": _type,
-                    "data": data,
-                    "file_id": file_id,
-                }
-                chat_id = message.chat.id 
-                await save_note(chat_id, name, note)
-                await eor(message, text=f"__**Saved note {name}.**__")
-            else:
-                return await message.reply_text("**Wrong formatting, check the help section.**")
+                data = await check_format(ikb, data)
+                if not data:
+                    return await message.reply_text("**Wrong formatting, check the help section.**")
+            note = {
+                "type": _type,
+                "data": data,
+                "file_id": file_id,
+            }
+            chat_id = message.chat.id 
+            await save_note(chat_id, name, note)
+            await eor(message, text=f"__**Saved note {name}.**__")
     except UnboundLocalError:
         return await message.reply_text("**Replied message is inaccessible.\n`Forward the message and try again`**")
 
@@ -205,6 +205,8 @@ async def get_one_note_userbot(_, message):
 @app.on_message(filters.regex(r"^#.+") & filters.text & ~filters.private)
 @capture_err
 async def get_one_note(_, message):
+    user_id = message.from_user.id 
+    chat_id = message.chat.id 
     name = message.text.replace("#", "", 1)
     if not name:
         return
@@ -215,7 +217,11 @@ async def get_one_note(_, message):
     data = _note["data"]
     file_id = _note["file_id"]
     keyb = None
-    if data:       
+    if data:
+        if "{chat}" in data:
+            data = data.replace("{chat}", (await app.get_chat(chat_id)).title)
+        if "{name}" in data:
+            data = data.replace("{name}", (await app.get_users(user_id)).mention)
         if findall(r"\[.+\,.+\]", data):
             keyboard = extract_text_and_keyb(ikb, data)
             if keyboard:
