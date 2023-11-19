@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import re
 
 from pyrogram import filters
@@ -38,7 +39,7 @@ from wbb.utils.dbfunctions import (
     deleteall_filters,
 )
 from wbb.utils.filter_groups import chat_filters_group
-from wbb.utils.functions import extract_text_and_keyb
+from wbb.utils.functions import extract_text_and_keyb, check_format
 from wbb.modules.admin import member_permissions
 from wbb.modules.notes import extract_urls
 
@@ -64,29 +65,38 @@ Checkout /markdownhelp to know more about formattings and other syntax.
 @adminsOnly("can_change_info")
 async def save_filters(_, message):
     try:
-        if len(message.command) < 2 or not message.reply_to_message:
+        if len(message.command) < 2:
             return await message.reply_text(
-                "**Usage:**\nReply to a message with /filter [FILTER_NAME] To set a new filter."
+                "**Usage:**\nReply to a message with /filter [FILTER_NAME] [CONTENT] To set a new filter."
             )
-        text = message.text.markdown
+        replied_message = message.reply_to_message
+        if not replied_message:
+            replied_message = message
+        text = message.text.markdown if message.text else message.caption.markdown
         name = text.split(None, 1)[1].strip()
         if not name:
             return await message.reply_text("**Usage:**\n__/filter [FILTER_NAME]__")
         chat_id = message.chat.id
-        replied_message = message.reply_to_message
         text = name.split(" ", 1)
         if len(text) > 1:
             name = text[0]
             data = text[1].strip()
-            if replied_message.sticker or replied_message.video_note:
+            if replied_message and (replied_message.sticker or replied_message.video_note):
                 data = None
         else:
-            if replied_message.sticker or replied_message.video_note:
+            if replied_message and (replied_message.sticker or replied_message.video_note):
                 data = None
-            elif not replied_message.text and not replied_message.caption:
+            elif replied_message and not replied_message.text and not replied_message.caption:
                 data = None
             else:
                 data = replied_message.text.markdown if replied_message.text else replied_message.caption.markdown
+                match = "/filter " + name
+                if not message.reply_to_message and message.text:
+                    if match == data:
+                        return await message.reply_text("**Usage:**\n__/filter [FILTER_NAME] [CONTENT]__\n`-----------OR-----------`\nReply to a message with.\n/filter [FILTER_NAME].")
+                elif not message.reply_to_message and not message.text:
+                    if match == data:
+                        data = None
         if replied_message.text:
             _type = "text"
             file_id = None
@@ -119,6 +129,10 @@ async def save_filters(_, message):
             if urls:
                 response = "\n".join([f"{name}=[{text}, {url}]" for name, text, url in urls])
                 data = data + response
+        if data:
+            data = await check_format(ikb, data)
+            if not data:
+                return await message.reply_text("**Wrong formatting, check the help section.**")
         name = name.replace("_", " ")
         _filter = {
             "type": _type,
@@ -166,6 +180,8 @@ async def del_filter(_, message):
 )
 @capture_err
 async def filters_re(_, message):
+    user_id = message.from_user.id
+    chat_id = message.chat.id
     text = message.text.lower().strip()
     if not text:
         return
@@ -180,6 +196,10 @@ async def filters_re(_, message):
             file_id = _filter["file_id"]
             keyb = None
             if data:
+                if "{chat}" in data:
+                    data = data.replace("{chat}", (await app.get_chat(chat_id)).title)
+                if "{name}" in data:
+                    data = data.replace("{name}", (await app.get_users(user_id)).mention)
                 if re.findall(r"\[.+\,.+\]", data):
                     keyboard = extract_text_and_keyb(ikb, data)
                     if keyboard:
