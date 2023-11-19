@@ -60,7 +60,8 @@ from wbb.utils.dbfunctions import (
     update_captcha_cache,
 )
 from wbb.utils.filter_groups import welcome_captcha_group
-from wbb.utils.functions import extract_text_and_keyb, generate_captcha
+from wbb.utils.functions import extract_text_and_keyb, generate_captcha, check_format
+from wbb.modules.notes import extract_urls
 
 __MODULE__ = "Greetings"
 __HELP__ = """
@@ -90,10 +91,6 @@ button2=[Github, https://github.com]
 ```
 
 **NOTES ->**
-
-for /rules, you can do /filter rules to a message
-containing rules of your groups whenever a user
-sends /rules, he'll get the message
 
 Checkout /markdownhelp to know more about formattings and other syntax.
 """
@@ -230,7 +227,10 @@ async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
 
     if not raw_text:
         return
-    text, keyb = extract_text_and_keyb(ikb, raw_text)
+    text = raw_text
+    keyb = None
+    if "~" in raw_text:
+        text, keyb = extract_text_and_keyb(ikb, raw_text)
 
     if "{chat}" in text:
         text = text.replace("{chat}", chat.title)
@@ -397,13 +397,6 @@ async def captcha_state(_, message):
 # WELCOME MESSAGE
 
 
-async def check_caption(message, chat_id, welcome, raw_text, file_id):
-    if not extract_text_and_keyb(ikb, raw_text):
-        return await message.reply_text("Wrong formatting, check the help section.")
-    
-    await set_welcome(chat_id, welcome, raw_text, file_id)
-    await message.reply_text("Welcome message has been successfully set.")
-
 @app.on_message(filters.command("set_welcome") & ~filters.private)
 @adminsOnly("can_change_info")
 async def set_welcome_func(_, message):
@@ -420,34 +413,42 @@ async def set_welcome_func(_, message):
     )
     replied_message = message.reply_to_message
     chat_id = message.chat.id
-
-    if not replied_message:
-        return await message.reply_text(usage, reply_markup=key)
-
-    if replied_message.animation:
-        welcome = "Animation"
-        file_id = replied_message.animation.file_id
-        text = replied_message.caption      
-        if not text:
-            return await message.reply_text(usage, reply_markup=key)
-        raw_text = text.markdown
-        return await check_caption(message, chat_id, welcome, raw_text, file_id)
-    if replied_message.photo:
-        welcome = "Photo"
-        file_id = replied_message.photo.file_id
-        text = replied_message.caption
-        if not text:
-            return await message.reply_text(usage, reply_markup=key)
-        raw_text = text.markdown
-        return await check_caption(message, chat_id, welcome, raw_text, file_id)
-    if replied_message.text:
-        welcome = "Text"
-        file_id = None
-        text = replied_message.text
-        raw_text = text.markdown
-        return await check_caption(message, chat_id, welcome, raw_text, file_id)
-    else:
-        await message.reply_text("Only text, gif and photo welcome message are supposed")
+    try:
+        if not replied_message:
+            await message.reply_text(usage, reply_markup=key)
+            return
+        if replied_message.animation:
+            welcome = "Animation"
+            file_id = replied_message.animation.file_id
+            text = replied_message.caption      
+            if not text:
+                return await message.reply_text(usage, reply_markup=key)
+            raw_text = text.markdown
+        if replied_message.photo:
+            welcome = "Photo"
+            file_id = replied_message.photo.file_id
+            text = replied_message.caption
+            if not text:
+                return await message.reply_text(usage, reply_markup=key)
+            raw_text = text.markdown
+        if replied_message.text:
+            welcome = "Text"
+            file_id = None
+            text = replied_message.text
+            raw_text = text.markdown
+        if replied_message.reply_markup and not "~" in raw_text:
+            urls = extract_urls(replied_message.reply_markup)
+            if urls:
+                response = "\n".join([f"{name}=[{text}, {url}]" for name, text, url in urls])
+                raw_text = raw_text + response
+        raw_text = await check_format(ikb, raw_text)
+        if raw_text:
+            await set_welcome(chat_id, welcome, raw_text, file_id)
+            return await message.reply_text("Welcome message has been successfully set.")
+        else:
+            return await message.reply_text("Wrong formatting, check the help section.\n\n**Usage:**\nText: `Text`\nText + Buttons: `Text ~ Buttons`", reply_markup=key)
+    except UnboundLocalError:
+        return await message.reply_text("**Only Text, Gif and Photo welcome message are supported.**")
 
 
 @app.on_message(filters.command("del_welcome") & ~filters.private)

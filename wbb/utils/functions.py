@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 from asyncio import gather
 from datetime import datetime, timedelta
 from io import BytesIO
@@ -313,6 +314,23 @@ def extract_text_and_keyb(ikb, text: str, row_width: int = 2):
     except Exception:
         return
     return text, keyboard
+
+# BUILDING AN AI BY SI_NN_ER_LS
+async def check_format(ikb, raw_text: str):
+    keyb = findall(r"\[.+\,.+\]", raw_text)
+    if keyb and not "~" in raw_text:
+        raw_text = raw_text.replace("button=", "\n~\nbutton=")
+        return raw_text
+    if "~" in raw_text and not keyb:
+        raw_text =raw_text.replace("~", "")
+        return raw_text
+    if "~" in raw_text and keyb:
+        if not extract_text_and_keyb(ikb, raw_text):
+            return ""
+        else:
+            return raw_text 
+    else:
+        return raw_text
 
 
 async def get_user_id_and_usernames(client) -> dict:
