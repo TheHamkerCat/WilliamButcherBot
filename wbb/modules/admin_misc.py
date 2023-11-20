@@ -79,7 +79,9 @@ async def set_chat_photo(_, message):
     reply = message.reply_to_message
 
     if not reply:
-        return await message.reply_text("Reply to a photo to set it as chat_photo")
+        return await message.reply_text(
+            "Reply to a photo to set it as chat_photo"
+        )
 
     file = reply.document or reply.photo
     if not file:

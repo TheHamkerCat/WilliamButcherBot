@@ -42,7 +42,9 @@ async def autocorrect_ubot_toggle(_, message: Message):
         IS_ENABLED = False
         await eor(message, text="Disabled!")
     else:
-        return await eor(message, text="Wrong argument, Pass (ENABLE|DISABLE).")
+        return await eor(
+            message, text="Wrong argument, Pass (ENABLE|DISABLE)."
+        )
 
 
 @app2.on_message(

@@ -53,7 +53,9 @@ async def save_filters(_, message):
         return await message.reply_text("Usage:\n/blacklist [WORD|SENTENCE]")
     word = message.text.split(None, 1)[1].strip()
     if not word:
-        return await message.reply_text("**Usage**\n__/blacklist [WORD|SENTENCE]__")
+        return await message.reply_text(
+            "**Usage**\n__/blacklist [WORD|SENTENCE]__"
+        )
     chat_id = message.chat.id
     await save_blacklist_filter(chat_id, word)
     await message.reply_text(f"__**Blacklisted {word}.**__")

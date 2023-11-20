@@ -64,7 +64,9 @@ async def useradd(_, message: Message):
     if user_id in sudoers:
         return await eor(message, text=f"{umention} is already in sudoers.")
     if user_id == BOT_ID:
-        return await eor(message, text="You can't add assistant bot in sudoers.")
+        return await eor(
+            message, text="You can't add assistant bot in sudoers."
+        )
 
     await add_sudo(user_id)
 

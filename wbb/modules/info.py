@@ -124,7 +124,9 @@ async def info_func(_, message: Message):
 async def chat_info_func(_, message: Message):
     try:
         if len(message.command) > 2:
-            return await message.reply_text("**Usage:**/chat_info [USERNAME|ID]")
+            return await message.reply_text(
+                "**Usage:**/chat_info [USERNAME|ID]"
+            )
 
         if len(message.command) == 1:
             chat = message.chat.id

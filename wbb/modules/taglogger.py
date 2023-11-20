@@ -70,7 +70,8 @@ async def sendLog(message: Message):
 
 
 @app2.on_message(
-    ~filters.me & ~filters.chat([LOG_GROUP_ID, BOT_ID])
+    ~filters.me
+    & ~filters.chat([LOG_GROUP_ID, BOT_ID])
     & ~filters.private
     & ~filters.forwarded
     & ~filters.via_bot,
@@ -84,7 +85,9 @@ async def tagLoggerFunc(_, message: Message):
         return
     if message.reply_to_message:
         reply_message = message.reply_to_message
-        if reply_message.from_user and (reply_message.from_user.id == USERBOT_ID):
+        if reply_message.from_user and (
+            reply_message.from_user.id == USERBOT_ID
+        ):
             return await sendLog(message)
 
     if message.text:
@@ -93,5 +96,9 @@ async def tagLoggerFunc(_, message: Message):
         text = message.caption
     else:
         return
-    if str(USERBOT_ID) in text or str(USERBOT_USERNAME) in text or USERBOT_NAME in text:
+    if (
+        str(USERBOT_ID) in text
+        or str(USERBOT_USERNAME) in text
+        or USERBOT_NAME in text
+    ):
         await sendLog(message)

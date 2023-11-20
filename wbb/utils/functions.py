@@ -315,20 +315,20 @@ def extract_text_and_keyb(ikb, text: str, row_width: int = 2):
         return
     return text, keyboard
 
-# BUILDING AN AI BY SI_NN_ER_LS
+
 async def check_format(ikb, raw_text: str):
     keyb = findall(r"\[.+\,.+\]", raw_text)
     if keyb and not "~" in raw_text:
         raw_text = raw_text.replace("button=", "\n~\nbutton=")
         return raw_text
     if "~" in raw_text and not keyb:
-        raw_text =raw_text.replace("~", "")
+        raw_text = raw_text.replace("~", "")
         return raw_text
     if "~" in raw_text and keyb:
         if not extract_text_and_keyb(ikb, raw_text):
             return ""
         else:
-            return raw_text 
+            return raw_text
     else:
         return raw_text
 

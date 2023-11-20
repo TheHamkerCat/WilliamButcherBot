@@ -25,15 +25,25 @@ SOFTWARE.
 from re import findall
 
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from pyrogram.types import (
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
 
 from wbb import SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.keyboard import ikb
-from wbb.utils.dbfunctions import delete_note, get_note, get_note_names, save_note, deleteall_notes
 from wbb.modules.admin import member_permissions
-from wbb.utils.functions import extract_text_and_keyb, check_format
+from wbb.utils.dbfunctions import (
+    delete_note,
+    deleteall_notes,
+    get_note,
+    get_note_names,
+    save_note,
+)
+from wbb.utils.functions import check_format, extract_text_and_keyb
 
 __MODULE__ = "Notes"
 __HELP__ = """/notes To Get All The Notes In The Chat.
@@ -60,7 +70,11 @@ def extract_urls(reply_markup):
         for i, row in enumerate(buttons):
             for j, button in enumerate(row):
                 if button.url:
-                    name = "\n~\nbutton" if i * len(row) + j + 1 == 1 else f"button{i * len(row) + j + 1}"
+                    name = (
+                        "\n~\nbutton"
+                        if i * len(row) + j + 1 == 1
+                        else f"button{i * len(row) + j + 1}"
+                    )
                     urls.append((f"{name}", button.text, button.url))
     return urls
 
@@ -78,27 +92,47 @@ async def save_notee(_, message):
             replied_message = message.reply_to_message
             if not replied_message:
                 replied_message = message
-            text = message.text.markdown if message.text else message.caption.markdown
+            text = (
+                message.text.markdown
+                if message.text
+                else message.caption.markdown
+            )
             name = text.split(None, 1)[1].strip()
             if not name:
-                return await eor(message, text="**Usage**\n__/save [NOTE_NAME]__")
+                return await eor(
+                    message, text="**Usage**\n__/save [NOTE_NAME]__"
+                )
             text = name.split(" ", 1)
             if len(text) > 1:
                 name = text[0]
                 data = text[1].strip()
-                if replied_message and (replied_message.sticker or replied_message.video_note):
+                if replied_message and (
+                    replied_message.sticker or replied_message.video_note
+                ):
                     data = None
             else:
-                if replied_message and (replied_message.sticker or replied_message.video_note):
+                if replied_message and (
+                    replied_message.sticker or replied_message.video_note
+                ):
                     data = None
-                elif replied_message and not replied_message.text and not replied_message.caption:
+                elif (
+                    replied_message
+                    and not replied_message.text
+                    and not replied_message.caption
+                ):
                     data = None
                 else:
-                    data = replied_message.text.markdown if replied_message.text else replied_message.caption.markdown
+                    data = (
+                        replied_message.text.markdown
+                        if replied_message.text
+                        else replied_message.caption.markdown
+                    )
                     match = "/save " + name
                     if not message.reply_to_message and message.text:
                         if match == data:
-                            return await message.reply_text("**Usage:**\n__/save [NOTE_NAME] [CONTENT]__\n`-----------OR-----------`\nReply to a message with.\n/save [NOTE_NAME]")
+                            return await message.reply_text(
+                                "**Usage:**\n__/save [NOTE_NAME] [CONTENT]__\n`-----------OR-----------`\nReply to a message with.\n/save [NOTE_NAME]"
+                            )
                     elif not message.reply_to_message and not message.text:
                         if match == data:
                             data = None
@@ -132,22 +166,28 @@ async def save_notee(_, message):
             if replied_message.reply_markup and not "~" in data:
                 urls = extract_urls(replied_message.reply_markup)
                 if urls:
-                    response = "\n".join([f"{name}=[{text}, {url}]" for name, text, url in urls])
+                    response = "\n".join(
+                        [f"{name}=[{text}, {url}]" for name, text, url in urls]
+                    )
                     data = data + response
             if data:
                 data = await check_format(ikb, data)
                 if not data:
-                    return await message.reply_text("**Wrong formatting, check the help section.**")
+                    return await message.reply_text(
+                        "**Wrong formatting, check the help section.**"
+                    )
             note = {
                 "type": _type,
                 "data": data,
                 "file_id": file_id,
             }
-            chat_id = message.chat.id 
+            chat_id = message.chat.id
             await save_note(chat_id, name, note)
             await eor(message, text=f"__**Saved note {name}.**__")
     except UnboundLocalError:
-        return await message.reply_text("**Replied message is inaccessible.\n`Forward the message and try again`**")
+        return await message.reply_text(
+            "**Replied message is inaccessible.\n`Forward the message and try again`**"
+        )
 
 
 @app2.on_message(
@@ -204,8 +244,8 @@ async def get_one_note_userbot(_, message):
 @app.on_message(filters.regex(r"^#.+") & filters.text & ~filters.private)
 @capture_err
 async def get_one_note(_, message):
-    user_id = message.from_user.id 
-    chat_id = message.chat.id 
+    user_id = message.from_user.id
+    chat_id = message.chat.id
     name = message.text.replace("#", "", 1)
     if not name:
         return
@@ -214,13 +254,15 @@ async def get_one_note(_, message):
         return
     type = _note["type"]
     data = _note["data"]
-    file_id = _note["file_id"]
+    file_id = _note.get("file_id")
     keyb = None
     if data:
         if "{chat}" in data:
             data = data.replace("{chat}", (await app.get_chat(chat_id)).title)
         if "{name}" in data:
-            data = data.replace("{name}", (await app.get_users(user_id)).mention)
+            data = data.replace(
+                "{name}", (await app.get_users(user_id)).mention
+            )
         if findall(r"\[.+\,.+\]", data):
             keyboard = extract_text_and_keyb(ikb, data)
             if keyboard:
@@ -280,6 +322,7 @@ async def get_one_note(_, message):
             reply_markup=keyb,
         )
 
+
 @app2.on_message(
     filters.command("delete", prefixes=USERBOT_PREFIX)
     & ~filters.forwarded
@@ -315,12 +358,18 @@ async def delete_all(_, message):
     else:
         keyboard = InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton("YES, DO IT", callback_data="delete_yes"), 
-                 InlineKeyboardButton("Cancel", callback_data="delete_no")
+                [
+                    InlineKeyboardButton(
+                        "YES, DO IT", callback_data="delete_yes"
+                    ),
+                    InlineKeyboardButton("Cancel", callback_data="delete_no"),
                 ]
             ]
         )
-        await message.reply_text("**Are you sure you want to delete all the notes in this chat forever ?.**", reply_markup=keyboard)
+        await message.reply_text(
+            "**Are you sure you want to delete all the notes in this chat forever ?.**",
+            reply_markup=keyboard,
+        )
 
 
 @app.on_callback_query(filters.regex("delete_(.*)"))
@@ -330,12 +379,17 @@ async def delete_all_cb(_, cb):
     permissions = await member_permissions(chat_id, from_user.id)
     permission = "can_change_info"
     if permission not in permissions:
-        return await cb.answer(f"You don't have the required permission.\n Permission: {permission}", show_alert=True)
+        return await cb.answer(
+            f"You don't have the required permission.\n Permission: {permission}",
+            show_alert=True,
+        )
     input = cb.data.split("_", 1)[1]
     if input == "yes":
         stoped_all = await deleteall_notes(chat_id)
         if stoped_all:
-            return await cb.message.edit("**Successfully deleted all notes on this chat.**")
+            return await cb.message.edit(
+                "**Successfully deleted all notes on this chat.**"
+            )
     if input == "no":
         await cb.message.reply_to_message.delete()
         await cb.message.delete()

@@ -39,7 +39,7 @@ pattern = re.compile(r"^text/|json$|yaml$|xml$|toml$|x-sh$|x-shellscript$")
 
 
 @app2.on_message(
-    filters.command("paste", prefixes=USERBOT_PREFIX) 
+    filters.command("paste", prefixes=USERBOT_PREFIX)
     & ~filters.forwarded
     & ~filters.via_bot
     & SUDOERS
@@ -52,7 +52,9 @@ async def paste_func(_, message: Message):
     r = message.reply_to_message
 
     if not r.text and not r.document:
-        return await eor(message, text="Only text and documents are supported.")
+        return await eor(
+            message, text="Only text and documents are supported."
+        )
 
     m = await eor(message, text="Pasting...")
 
