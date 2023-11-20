@@ -78,7 +78,9 @@ async def pipes_worker_userbot(_, message: Message):
         to_chat_id = pipes_list_bot[chat_id]
 
         if not message.text:
-            m, temp = await asyncio.gather(app.listen(USERBOT_ID), message.copy(BOT_ID))
+            m, temp = await asyncio.gather(
+                app.listen(USERBOT_ID), message.copy(BOT_ID)
+            )
             caption = f"{temp.caption}{caption}" if temp.caption else caption
 
             await app.copy_message(
@@ -155,6 +157,7 @@ async def show_pipes_func(_, message: Message):
     text = ""
     for count, pipe in enumerate(pipes_list_bot.items(), 1):
         text += (
-            f"**Pipe:** `{count}`\n**From:** `{pipe[0]}`\n" + f"**To:** `{pipe[1]}`\n\n"
+            f"**Pipe:** `{count}`\n**From:** `{pipe[0]}`\n"
+            + f"**To:** `{pipe[1]}`\n\n"
         )
     await message.reply_text(text)

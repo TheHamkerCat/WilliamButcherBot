@@ -87,7 +87,9 @@ def paginate_modules(page_n, module_dict, prefix, chat=None):
 
     # can only have a certain amount of buttons side by side
     if len(pairs) > COLUMN_SIZE:
-        pairs = pairs[modulo_page * COLUMN_SIZE : COLUMN_SIZE * (modulo_page + 1)] + [
+        pairs = pairs[
+            modulo_page * COLUMN_SIZE : COLUMN_SIZE * (modulo_page + 1)
+        ] + [
             (
                 EqInlineKeyboardButton(
                     "❮",
@@ -104,8 +106,10 @@ def paginate_modules(page_n, module_dict, prefix, chat=None):
             )
         ]
     else:
-        pairs = pairs[modulo_page * COLUMN_SIZE : COLUMN_SIZE * (modulo_page + 1)] + [
-            (   
+        pairs = pairs[
+            modulo_page * COLUMN_SIZE : COLUMN_SIZE * (modulo_page + 1)
+        ] + [
+            (
                 EqInlineKeyboardButton(
                     "Back",
                     callback_data="{}_home({})".format(prefix, modulo_page),

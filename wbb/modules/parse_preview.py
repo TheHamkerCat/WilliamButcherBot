@@ -42,7 +42,9 @@ async def parse(_, message: Message):
 
     body = {
         "Title": [wpp.title or "Null"],
-        "Description": [(wpp.description[:50] + "...") if wpp.description else "Null"],
+        "Description": [
+            (wpp.description[:50] + "...") if wpp.description else "Null"
+        ],
         "URL": [wpp.display_url or "Null"],
         "Author": [wpp.author or "Null"],
         "Site Name": [wpp.site_name or "Null"],

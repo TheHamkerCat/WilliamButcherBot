@@ -166,7 +166,9 @@ async def rtfm(_, message):
     await message.delete()
     if not message.reply_to_message:
         return await message.reply_text("Reply To A Message lol")
-    await message.reply_to_message.reply_text("Are You Lost? READ THE FUCKING DOCS!")
+    await message.reply_to_message.reply_text(
+        "Are You Lost? READ THE FUCKING DOCS!"
+    )
 
 
 @app.on_message(filters.command("runs"))
@@ -227,7 +229,9 @@ async def random(_, message):
     try:
         if 1 < int(length) < 1000:
             alphabet = string.ascii_letters + string.digits
-            password = "".join(secrets.choice(alphabet) for i in range(int(length)))
+            password = "".join(
+                secrets.choice(alphabet) for i in range(int(length))
+            )
             await message.reply_text(f"`{password}`")
         else:
             await message.reply_text("Specify A Length Between 1-1000")

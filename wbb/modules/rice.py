@@ -59,7 +59,9 @@ async def rice(_, message: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("Approve (Forward)", callback_data="forward"),
+                    InlineKeyboardButton(
+                        "Approve (Forward)", callback_data="forward"
+                    ),
                     InlineKeyboardButton("Ignore", callback_data="ignore"),
                 ]
             ]
@@ -75,7 +77,10 @@ async def callback_query_forward_rice(_, callback_query):
     u_approver = callback_query.from_user
     c_group = callback_query.message.chat
     approver_status = (await c_group.get_member(u_approver.id)).status
-    if not approver_status in (ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER):
+    if not approver_status in (
+        ChatMemberStatus.ADMINISTRATOR,
+        ChatMemberStatus.OWNER,
+    ):
         await callback_query.answer("Only admin can approve this!")
         return
     await callback_query.answer("Successfully approved")
@@ -88,11 +93,15 @@ async def callback_query_forward_rice(_, callback_query):
         arg_media = []
         for m in media_group:
             if m.photo and m.caption:
-                arg_media.append(InputMediaPhoto(m.photo.file_id, caption=arg_caption))
+                arg_media.append(
+                    InputMediaPhoto(m.photo.file_id, caption=arg_caption)
+                )
             elif m.photo:
                 arg_media.append(InputMediaPhoto(m.photo.file_id))
             elif m.video and m.caption:
-                arg_media.append(InputMediaVideo(m.video.file_id, caption=arg_caption))
+                arg_media.append(
+                    InputMediaVideo(m.video.file_id, caption=arg_caption)
+                )
             elif m.video:
                 arg_media.append(InputMediaVideo(m.video.file_id))
         m_cp = await app.send_media_group(RICE_CHANNEL, arg_media)
@@ -118,7 +127,10 @@ async def callback_query_ignore_rice(_, callback_query):
     u_op = m_op.from_user
     if u_disprover.id == u_op.id:
         await callback_query.answer("Ok, this rice won't be forwarded")
-    elif disprover_status in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER]:
+    elif disprover_status in [
+        ChatMemberStatus.ADMINISTRATOR,
+        ChatMemberStatus.OWNER,
+    ]:
         await m_op.reply_text(f"{u_disprover.mention} ignored this rice")
     else:
         return await callback_query.answer("Only admin or OP could ignore it")

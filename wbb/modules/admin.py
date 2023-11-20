@@ -449,7 +449,7 @@ async def promoteFunc(_, message: Message):
     user_id = await extract_user(message)
     if not user_id:
         return await message.reply_text("I can't find that user.")
-    
+
     bot = (await app.get_chat_member(message.chat.id, BOT_ID)).privileges
     if user_id == BOT_ID:
         return await message.reply_text("I can't promote myself.")
@@ -459,7 +459,7 @@ async def promoteFunc(_, message: Message):
         return await message.reply_text("I don't have enough permissions")
 
     umention = (await app.get_users(user_id)).mention
-    
+
     if message.command[0][0] == "f":
         await message.chat.promote_member(
             user_id=user_id,

@@ -44,9 +44,9 @@ from wbb.utils import formatter
 from wbb.utils.dbfunctions import (
     add_gban_user,
     get_served_chats,
+    get_served_users,
     is_gbanned_user,
     remove_gban_user,
-    get_served_users,
 )
 from wbb.utils.functions import extract_user, extract_user_and_reason, restart
 
@@ -191,7 +191,9 @@ async def broadcast_message(_, message):
 
     reply_markup = None
     if reply_message.reply_markup:
-        reply_markup = InlineKeyboardMarkup(reply_message.reply_markup.inline_keyboard)
+        reply_markup = InlineKeyboardMarkup(
+            reply_message.reply_markup.inline_keyboard
+        )
     sent = 0
     schats = await get_served_chats()
     chats = [int(chat["chat_id"]) for chat in schats]
@@ -226,7 +228,9 @@ async def update_restart(_, message):
         await message.reply_text(f"```{out}```")
     except Exception as e:
         return await message.reply_text(str(e))
-    m = await message.reply_text("**Updated with default branch, restarting now.**")
+    m = await message.reply_text(
+        "**Updated with default branch, restarting now.**"
+    )
     await restart(m)
 
 
@@ -242,7 +246,9 @@ async def broadcast_message(_, message):
 
     reply_markup = None
     if reply_message.reply_markup:
-        reply_markup = InlineKeyboardMarkup(reply_message.reply_markup.inline_keyboard)
+        reply_markup = InlineKeyboardMarkup(
+            reply_message.reply_markup.inline_keyboard
+        )
 
     m = await message.reply_text(
         f"Broadcast in progress, will take {len(chats) * sleep_time} seconds."

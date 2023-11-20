@@ -94,7 +94,9 @@ async def take_ss(_, message: Message):
         if not full:
             # Full size images have problem with reply_photo, that's why
             # we need to only use reply_photo if we're not using full size
-            await gather(*[message.reply_document(photo), message.reply_photo(photo)])
+            await gather(
+                *[message.reply_document(photo), message.reply_photo(photo)]
+            )
         else:
             await message.reply_document(photo)
         await m.delete()

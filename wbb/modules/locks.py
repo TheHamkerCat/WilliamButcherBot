@@ -101,7 +101,9 @@ async def tg_lock(message, permissions: list, perm: str, lock: bool):
     permissions = {perm: True for perm in list(set(permissions))}
 
     try:
-        await app.set_chat_permissions(message.chat.id, ChatPermissions(**permissions))
+        await app.set_chat_permissions(
+            message.chat.id, ChatPermissions(**permissions)
+        )
     except ChatNotModified:
         return await message.reply_text(
             "To unlock this, you have to unlock 'messages' first."

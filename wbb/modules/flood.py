@@ -57,7 +57,11 @@ def reset_flood(chat_id, user_id=0):
 
 
 @app.on_message(
-    ~filters.service & ~filters.me & ~filters.private & ~filters.channel & ~filters.bot,
+    ~filters.service
+    & ~filters.me
+    & ~filters.private
+    & ~filters.channel
+    & ~filters.bot,
     group=flood_group,
 )
 @capture_err

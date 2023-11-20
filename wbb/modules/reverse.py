@@ -54,7 +54,9 @@ async def get_soup(url: str, headers):
 @capture_err
 async def reverse_image_search(client, message: Message):
     if not message.reply_to_message:
-        return await eor(message, text="Reply to a message to reverse search it.")
+        return await eor(
+            message, text="Reply to a message to reverse search it."
+        )
     reply = message.reply_to_message
     if (
         not reply.document
@@ -81,7 +83,9 @@ async def reverse_image_search(client, message: Message):
             }
 
             def post_non_blocking():
-                return requests.post(search_url, files=multipart, allow_redirects=False)
+                return requests.post(
+                    search_url, files=multipart, allow_redirects=False
+                )
 
             loop = get_running_loop()
             response = await loop.run_in_executor(None, post_non_blocking)
@@ -106,9 +110,9 @@ async def reverse_image_search(client, message: Message):
 
     # Pass if no images detected
     try:
-        url = "https://google.com" + soup.find_all("a", {"class": "ekf0x hSQtef"})[
-            0
-        ].get("href")
+        url = "https://google.com" + soup.find_all(
+            "a", {"class": "ekf0x hSQtef"}
+        )[0].get("href")
 
         soup = await get_soup(url, headers=headers)
 

@@ -42,10 +42,11 @@ from pyrogram.types import (
     User,
 )
 
-from wbb import SUDOERS, WELCOME_DELAY_KICK_SEC, BOT_USERNAME, app
+from wbb import BOT_USERNAME, SUDOERS, WELCOME_DELAY_KICK_SEC, app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.keyboard import ikb
+from wbb.modules.notes import extract_urls
 from wbb.utils.dbfunctions import (
     captcha_off,
     captcha_on,
@@ -60,8 +61,11 @@ from wbb.utils.dbfunctions import (
     update_captcha_cache,
 )
 from wbb.utils.filter_groups import welcome_captcha_group
-from wbb.utils.functions import extract_text_and_keyb, generate_captcha, check_format
-from wbb.modules.notes import extract_urls
+from wbb.utils.functions import (
+    check_format,
+    extract_text_and_keyb,
+    generate_captcha,
+)
 
 __MODULE__ = "Greetings"
 __HELP__ = """
@@ -107,6 +111,7 @@ async def get_initial_captcha_cache():
 
 loop.create_task(get_initial_captcha_cache())
 
+
 async def handle_new_member(message: Message, member, chat):
     global answers_dicc
 
@@ -116,7 +121,7 @@ async def handle_new_member(message: Message, member, chat):
     # Mute new member and send message with button
     if not await is_captcha_on(message.chat.id):
         if member.is_bot:
-            return 
+            return
         return await send_welcome_message(message.chat, message.from_user.id)
 
     try:
@@ -129,7 +134,7 @@ async def handle_new_member(message: Message, member, chat):
                 chat.id,
                 f"{member.mention} was globally banned, and got removed,"
                 + " if you think this is a false gban, you can appeal"
-                + " for this ban in support chat."
+                + " for this ban in support chat.",
             )
             return
 
@@ -210,9 +215,12 @@ async def handle_new_member(message: Message, member, chat):
     await update_captcha_cache(answers_dicc)
 
     asyncio.create_task(
-        kick_restricted_after_delay(WELCOME_DELAY_KICK_SEC, button_message, member)
+        kick_restricted_after_delay(
+            WELCOME_DELAY_KICK_SEC, button_message, member
+        )
     )
     await asyncio.sleep(0.5)
+
 
 @app.on_message(filters.new_chat_members, group=welcome_captcha_group)
 @capture_err
@@ -221,6 +229,7 @@ async def welcome(_, message: Message):
     members = message.new_chat_members
     for member in members:
         return await handle_new_member(message, member, chat)
+
 
 async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
     welcome, raw_text, file_id = await get_welcome(chat.id)
@@ -291,7 +300,9 @@ async def callback_query_welcome_button(_, callback_query):
                 keyboard = i["keyboard"]
 
     if not (correct_answer and keyboard):
-        return await callback_query.answer("Something went wrong, Rejoin the " "chat!")
+        return await callback_query.answer(
+            "Something went wrong, Rejoin the " "chat!"
+        )
 
     if pending_user_id != pressed_user_id:
         return await callback_query.answer("This is not for you")
@@ -347,7 +358,9 @@ async def callback_query_welcome_button(_, callback_query):
     return await send_welcome_message(chat, pending_user_id, True)
 
 
-async def kick_restricted_after_delay(delay, button_message: Message, user: User):
+async def kick_restricted_after_delay(
+    delay, button_message: Message, user: User
+):
     """If the new member is still restricted after the delay, delete
     button message and join message and then kick him
     """
@@ -364,7 +377,9 @@ async def kick_restricted_after_delay(delay, button_message: Message, user: User
     await _ban_restricted_user_until_date(group_chat, user_id, duration=delay)
 
 
-async def _ban_restricted_user_until_date(group_chat, user_id: int, duration: int):
+async def _ban_restricted_user_until_date(
+    group_chat, user_id: int, duration: int
+):
     try:
         member = await group_chat.get_member(user_id)
         if member.status == ChatMemberStatus.RESTRICTED:
@@ -420,7 +435,7 @@ async def set_welcome_func(_, message):
         if replied_message.animation:
             welcome = "Animation"
             file_id = replied_message.animation.file_id
-            text = replied_message.caption      
+            text = replied_message.caption
             if not text:
                 return await message.reply_text(usage, reply_markup=key)
             raw_text = text.markdown
@@ -439,16 +454,25 @@ async def set_welcome_func(_, message):
         if replied_message.reply_markup and not "~" in raw_text:
             urls = extract_urls(replied_message.reply_markup)
             if urls:
-                response = "\n".join([f"{name}=[{text}, {url}]" for name, text, url in urls])
+                response = "\n".join(
+                    [f"{name}=[{text}, {url}]" for name, text, url in urls]
+                )
                 raw_text = raw_text + response
         raw_text = await check_format(ikb, raw_text)
         if raw_text:
             await set_welcome(chat_id, welcome, raw_text, file_id)
-            return await message.reply_text("Welcome message has been successfully set.")
+            return await message.reply_text(
+                "Welcome message has been successfully set."
+            )
         else:
-            return await message.reply_text("Wrong formatting, check the help section.\n\n**Usage:**\nText: `Text`\nText + Buttons: `Text ~ Buttons`", reply_markup=key)
+            return await message.reply_text(
+                "Wrong formatting, check the help section.\n\n**Usage:**\nText: `Text`\nText + Buttons: `Text ~ Buttons`",
+                reply_markup=key,
+            )
     except UnboundLocalError:
-        return await message.reply_text("**Only Text, Gif and Photo welcome message are supported.**")
+        return await message.reply_text(
+            "**Only Text, Gif and Photo welcome message are supported.**"
+        )
 
 
 @app.on_message(filters.command("del_welcome") & ~filters.private)
@@ -467,8 +491,12 @@ async def get_welcome_func(_, message):
     if not raw_text:
         return await message.reply_text("No welcome message set.")
     if not message.from_user:
-        return await message.reply_text("You're anon, can't send welcome message.")
+        return await message.reply_text(
+            "You're anon, can't send welcome message."
+        )
 
     await send_welcome_message(chat, message.from_user.id)
 
-    await message.reply_text(f'Welcome: {welcome}\n\nFile_id: `{file_id}`\n\n`{raw_text.replace("`", "")}`')
+    await message.reply_text(
+        f'Welcome: {welcome}\n\nFile_id: `{file_id}`\n\n`{raw_text.replace("`", "")}`'
+    )

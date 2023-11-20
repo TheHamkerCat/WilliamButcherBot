@@ -23,8 +23,8 @@ SOFTWARE.
 """
 import random
 from datetime import datetime
-import pytz
 
+import pytz
 from pyrogram import enums, filters
 
 from wbb import app
@@ -38,7 +38,7 @@ __HELP__ = "/detect_gay - To Choose Couple Of The Day"
 # Date and time
 def dt():
     # Set the timezone to Indian Standard Time
-    ist_timezone = pytz.timezone('Asia/Kolkata')
+    ist_timezone = pytz.timezone("Asia/Kolkata")
 
     # Get the current time in IST
     ist_now = datetime.now(ist_timezone)
