@@ -81,19 +81,33 @@ async def save_filters(_, message):
         if len(text) > 1:
             name = text[0]
             data = text[1].strip()
-            if replied_message and (replied_message.sticker or replied_message.video_note):
+            if replied_message and (
+                replied_message.sticker or replied_message.video_note
+            ):
                 data = None
         else:
-            if replied_message and (replied_message.sticker or replied_message.video_note):
+            if replied_message and (
+                replied_message.sticker or replied_message.video_note
+            ):
                 data = None
-            elif replied_message and not replied_message.text and not replied_message.caption:
+            elif (
+                replied_message
+                and not replied_message.text
+                and not replied_message.caption
+            ):
                 data = None
             else:
-                data = replied_message.text.markdown if replied_message.text else replied_message.caption.markdown
+                data = (
+                    replied_message.text.markdown
+                    if replied_message.text
+                    else replied_message.caption.markdown
+                )
                 match = "/filter " + name
                 if not message.reply_to_message and message.text:
                     if match == data:
-                        return await message.reply_text("**Usage:**\n__/filter [FILTER_NAME] [CONTENT]__\n`-----------OR-----------`\nReply to a message with.\n/filter [FILTER_NAME].")
+                        return await message.reply_text(
+                            "**Usage:**\n__/filter [FILTER_NAME] [CONTENT]__\n`-----------OR-----------`\nReply to a message with.\n/filter [FILTER_NAME]."
+                        )
                 elif not message.reply_to_message and not message.text:
                     if match == data:
                         data = None
@@ -127,12 +141,16 @@ async def save_filters(_, message):
         if replied_message.reply_markup and not "~" in data:
             urls = extract_urls(replied_message.reply_markup)
             if urls:
-                response = "\n".join([f"{name}=[{text}, {url}]" for name, text, url in urls])
+                response = "\n".join(
+                    [f"{name}=[{text}, {url}]" for name, text, url in urls]
+                )
                 data = data + response
         if data:
             data = await check_format(ikb, data)
             if not data:
-                return await message.reply_text("**Wrong formatting, check the help section.**")
+                return await message.reply_text(
+                    "**Wrong formatting, check the help section.**"
+                )
         name = name.replace("_", " ")
         _filter = {
             "type": _type,
@@ -142,7 +160,9 @@ async def save_filters(_, message):
         await save_filter(chat_id, name, _filter)
         return await message.reply_text(f"__**Saved filter {name}.**__")
     except UnboundLocalError:
-        return await message.reply_text("**Replied message is inaccessible.\n`Forward the message and try again`**")
+        return await message.reply_text(
+            "**Replied message is inaccessible.\n`Forward the message and try again`**"
+        )
 
 
 @app.on_message(filters.command("filters") & ~filters.private)
@@ -193,13 +213,15 @@ async def filters_re(_, message):
             _filter = await get_filter(chat_id, word)
             data_type = _filter["type"]
             data = _filter["data"]
-            file_id = _filter["file_id"]
+            file_id = _filter.get("file_id")
             keyb = None
             if data:
                 if "{chat}" in data:
                     data = data.replace("{chat}", (await app.get_chat(chat_id)).title)
                 if "{name}" in data:
-                    data = data.replace("{name}", (await app.get_users(user_id)).mention)
+                    data = data.replace(
+                        "{name}", (await app.get_users(user_id)).mention
+                    )
                 if re.findall(r"\[.+\,.+\]", data):
                     keyboard = extract_text_and_keyb(ikb, data)
                     if keyboard:
@@ -261,6 +283,7 @@ async def filters_re(_, message):
                     caption=data,
                     reply_markup=keyb,
                 )
+            return  # NOTE: Avoid filter spam
 
 
 @app.on_message(filters.command("stopall") & ~filters.private)
@@ -272,12 +295,16 @@ async def stop_all(_, message):
     else:
         keyboard = InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton("YES, DO IT", callback_data="stop_yes"), 
-                 InlineKeyboardButton("Cancel", callback_data="stop_no")
+                [
+                    InlineKeyboardButton("YES, DO IT", callback_data="stop_yes"),
+                    InlineKeyboardButton("Cancel", callback_data="stop_no"),
                 ]
             ]
         )
-        await message.reply_text("**Are you sure you want to delete all the filters in this chat forever ?.**", reply_markup=keyboard)
+        await message.reply_text(
+            "**Are you sure you want to delete all the filters in this chat forever ?.**",
+            reply_markup=keyboard,
+        )
 
 
 @app.on_callback_query(filters.regex("stop_(.*)"))
@@ -287,12 +314,17 @@ async def stop_all_cb(_, cb):
     permissions = await member_permissions(chat_id, from_user.id)
     permission = "can_change_info"
     if permission not in permissions:
-        return await cb.answer(f"You don't have the required permission.\n Permission: {permission}", show_alert=True)
+        return await cb.answer(
+            f"You don't have the required permission.\n Permission: {permission}",
+            show_alert=True,
+        )
     input = cb.data.split("_", 1)[1]
     if input == "yes":
         stoped_all = await deleteall_filters(chat_id)
         if stoped_all:
-            return await cb.message.edit("**Successfully deleted all filters on this chat.**")
+            return await cb.message.edit(
+                "**Successfully deleted all filters on this chat.**"
+            )
     if input == "no":
         await cb.message.reply_to_message.delete()
         await cb.message.delete()

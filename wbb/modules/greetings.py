@@ -107,6 +107,7 @@ async def get_initial_captcha_cache():
 
 loop.create_task(get_initial_captcha_cache())
 
+
 async def handle_new_member(message: Message, member, chat):
     global answers_dicc
 
@@ -116,7 +117,7 @@ async def handle_new_member(message: Message, member, chat):
     # Mute new member and send message with button
     if not await is_captcha_on(message.chat.id):
         if member.is_bot:
-            return 
+            return
         return await send_welcome_message(message.chat, message.from_user.id)
 
     try:
@@ -129,7 +130,7 @@ async def handle_new_member(message: Message, member, chat):
                 chat.id,
                 f"{member.mention} was globally banned, and got removed,"
                 + " if you think this is a false gban, you can appeal"
-                + " for this ban in support chat."
+                + " for this ban in support chat.",
             )
             return
 
@@ -214,6 +215,7 @@ async def handle_new_member(message: Message, member, chat):
     )
     await asyncio.sleep(0.5)
 
+
 @app.on_message(filters.new_chat_members, group=welcome_captcha_group)
 @capture_err
 async def welcome(_, message: Message):
@@ -221,6 +223,7 @@ async def welcome(_, message: Message):
     members = message.new_chat_members
     for member in members:
         return await handle_new_member(message, member, chat)
+
 
 async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
     welcome, raw_text, file_id = await get_welcome(chat.id)
@@ -420,7 +423,7 @@ async def set_welcome_func(_, message):
         if replied_message.animation:
             welcome = "Animation"
             file_id = replied_message.animation.file_id
-            text = replied_message.caption      
+            text = replied_message.caption
             if not text:
                 return await message.reply_text(usage, reply_markup=key)
             raw_text = text.markdown
@@ -439,16 +442,25 @@ async def set_welcome_func(_, message):
         if replied_message.reply_markup and not "~" in raw_text:
             urls = extract_urls(replied_message.reply_markup)
             if urls:
-                response = "\n".join([f"{name}=[{text}, {url}]" for name, text, url in urls])
+                response = "\n".join(
+                    [f"{name}=[{text}, {url}]" for name, text, url in urls]
+                )
                 raw_text = raw_text + response
         raw_text = await check_format(ikb, raw_text)
         if raw_text:
             await set_welcome(chat_id, welcome, raw_text, file_id)
-            return await message.reply_text("Welcome message has been successfully set.")
+            return await message.reply_text(
+                "Welcome message has been successfully set."
+            )
         else:
-            return await message.reply_text("Wrong formatting, check the help section.\n\n**Usage:**\nText: `Text`\nText + Buttons: `Text ~ Buttons`", reply_markup=key)
+            return await message.reply_text(
+                "Wrong formatting, check the help section.\n\n**Usage:**\nText: `Text`\nText + Buttons: `Text ~ Buttons`",
+                reply_markup=key,
+            )
     except UnboundLocalError:
-        return await message.reply_text("**Only Text, Gif and Photo welcome message are supported.**")
+        return await message.reply_text(
+            "**Only Text, Gif and Photo welcome message are supported.**"
+        )
 
 
 @app.on_message(filters.command("del_welcome") & ~filters.private)
@@ -471,4 +483,6 @@ async def get_welcome_func(_, message):
 
     await send_welcome_message(chat, message.from_user.id)
 
-    await message.reply_text(f'Welcome: {welcome}\n\nFile_id: `{file_id}`\n\n`{raw_text.replace("`", "")}`')
+    await message.reply_text(
+        f'Welcome: {welcome}\n\nFile_id: `{file_id}`\n\n`{raw_text.replace("`", "")}`'
+    )
