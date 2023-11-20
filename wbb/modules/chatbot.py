@@ -96,7 +96,11 @@ async def type_and_send(message: Message):
 
 
 @app.on_message(
-    filters.text & filters.reply & ~filters.bot & ~filters.via_bot & ~filters.forwarded,
+    filters.text
+    & filters.reply
+    & ~filters.bot
+    & ~filters.via_bot
+    & ~filters.forwarded,
     group=chatbot_group,
 )
 @capture_err
@@ -126,7 +130,8 @@ async def chatbot_talk(_, message: Message):
 async def chatbot_status_ubot(_, message: Message):
     if len(message.text.split()) != 2:
         return await eor(
-            message, text=f"**Usage:**\n{USERBOT_PREFIX}chatbot [ENABLE|DISABLE]"
+            message,
+            text=f"**Usage:**\n{USERBOT_PREFIX}chatbot [ENABLE|DISABLE]",
         )
     await chat_bot_toggle(message, is_userbot=True)
 

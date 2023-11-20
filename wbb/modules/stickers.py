@@ -146,14 +146,19 @@ async def kang(client, message: Message):
     if not message.reply_to_message:
         return await message.reply_text("Reply to a sticker/image to kang it.")
     if not message.from_user:
-        return await message.reply_text("You are anon admin, kang stickers in my pm.")
+        return await message.reply_text(
+            "You are anon admin, kang stickers in my pm."
+        )
     msg = await message.reply_text("Kanging Sticker..")
 
     # Find the proper emoji
     args = message.text.split()
     if len(args) > 1:
         sticker_emoji = str(args[1])
-    elif message.reply_to_message.sticker and message.reply_to_message.sticker.emoji:
+    elif (
+        message.reply_to_message.sticker
+        and message.reply_to_message.sticker.emoji
+    ):
         sticker_emoji = message.reply_to_message.sticker.emoji
     else:
         sticker_emoji = "🤔"
@@ -175,9 +180,13 @@ async def kang(client, message: Message):
             temp_file_path = await app.download_media(doc)
             image_type = imghdr.what(temp_file_path)
             if image_type not in SUPPORTED_TYPES:
-                return await msg.edit("Format not supported! ({})".format(image_type))
+                return await msg.edit(
+                    "Format not supported! ({})".format(image_type)
+                )
             try:
-                temp_file_path = await resize_file_to_sticker_size(temp_file_path)
+                temp_file_path = await resize_file_to_sticker_size(
+                    temp_file_path
+                )
             except OSError as e:
                 await msg.edit_text("Something wrong happened.")
                 raise Exception(

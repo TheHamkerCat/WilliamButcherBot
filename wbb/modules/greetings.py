@@ -42,10 +42,11 @@ from pyrogram.types import (
     User,
 )
 
-from wbb import SUDOERS, WELCOME_DELAY_KICK_SEC, BOT_USERNAME, app
+from wbb import BOT_USERNAME, SUDOERS, WELCOME_DELAY_KICK_SEC, app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.keyboard import ikb
+from wbb.modules.notes import extract_urls
 from wbb.utils.dbfunctions import (
     captcha_off,
     captcha_on,
@@ -60,8 +61,11 @@ from wbb.utils.dbfunctions import (
     update_captcha_cache,
 )
 from wbb.utils.filter_groups import welcome_captcha_group
-from wbb.utils.functions import extract_text_and_keyb, generate_captcha, check_format
-from wbb.modules.notes import extract_urls
+from wbb.utils.functions import (
+    check_format,
+    extract_text_and_keyb,
+    generate_captcha,
+)
 
 __MODULE__ = "Greetings"
 __HELP__ = """
@@ -211,7 +215,9 @@ async def handle_new_member(message: Message, member, chat):
     await update_captcha_cache(answers_dicc)
 
     asyncio.create_task(
-        kick_restricted_after_delay(WELCOME_DELAY_KICK_SEC, button_message, member)
+        kick_restricted_after_delay(
+            WELCOME_DELAY_KICK_SEC, button_message, member
+        )
     )
     await asyncio.sleep(0.5)
 
@@ -294,7 +300,9 @@ async def callback_query_welcome_button(_, callback_query):
                 keyboard = i["keyboard"]
 
     if not (correct_answer and keyboard):
-        return await callback_query.answer("Something went wrong, Rejoin the " "chat!")
+        return await callback_query.answer(
+            "Something went wrong, Rejoin the " "chat!"
+        )
 
     if pending_user_id != pressed_user_id:
         return await callback_query.answer("This is not for you")
@@ -350,7 +358,9 @@ async def callback_query_welcome_button(_, callback_query):
     return await send_welcome_message(chat, pending_user_id, True)
 
 
-async def kick_restricted_after_delay(delay, button_message: Message, user: User):
+async def kick_restricted_after_delay(
+    delay, button_message: Message, user: User
+):
     """If the new member is still restricted after the delay, delete
     button message and join message and then kick him
     """
@@ -367,7 +377,9 @@ async def kick_restricted_after_delay(delay, button_message: Message, user: User
     await _ban_restricted_user_until_date(group_chat, user_id, duration=delay)
 
 
-async def _ban_restricted_user_until_date(group_chat, user_id: int, duration: int):
+async def _ban_restricted_user_until_date(
+    group_chat, user_id: int, duration: int
+):
     try:
         member = await group_chat.get_member(user_id)
         if member.status == ChatMemberStatus.RESTRICTED:
@@ -479,7 +491,9 @@ async def get_welcome_func(_, message):
     if not raw_text:
         return await message.reply_text("No welcome message set.")
     if not message.from_user:
-        return await message.reply_text("You're anon, can't send welcome message.")
+        return await message.reply_text(
+            "You're anon, can't send welcome message."
+        )
 
     await send_welcome_message(chat, message.from_user.id)
 

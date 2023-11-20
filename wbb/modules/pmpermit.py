@@ -25,7 +25,16 @@ SOFTWARE.
 from pyrogram import filters
 from pyrogram.raw.functions.messages import DeleteHistory
 
-from wbb import BOT_ID, PM_PERMIT, SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2, eor
+from wbb import (
+    BOT_ID,
+    PM_PERMIT,
+    SUDOERS,
+    USERBOT_ID,
+    USERBOT_PREFIX,
+    app,
+    app2,
+    eor,
+)
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.dbfunctions import (
     approve_pmpermit,
@@ -70,7 +79,7 @@ async def pmpermit_func(_, message):
 
 @app2.on_message(
     filters.command("approve", prefixes=USERBOT_PREFIX)
-    & SUDOERS 
+    & SUDOERS
     & ~filters.via_bot
     & ~filters.forwarded
 )
@@ -87,13 +96,15 @@ async def pm_approve(_, message):
 
 @app2.on_message(
     filters.command("disapprove", prefixes=USERBOT_PREFIX)
-    & SUDOERS 
+    & SUDOERS
     & ~filters.via_bot
     & ~filters.forwarded
 )
 async def pm_disapprove(_, message):
     if not message.reply_to_message:
-        return await eor(message, text="Reply to a user's message to disapprove.")
+        return await eor(
+            message, text="Reply to a user's message to disapprove."
+        )
     user_id = message.reply_to_message.from_user.id
     if not await is_pmpermit_approved(user_id):
         await eor(message, text="User is already disapproved to pm")
@@ -126,7 +137,7 @@ async def block_user_func(_, message):
 
 @app2.on_message(
     filters.command("unblock", prefixes=USERBOT_PREFIX)
-    & SUDOERS 
+    & SUDOERS
     & ~filters.via_bot
     & ~filters.forwarded
 )

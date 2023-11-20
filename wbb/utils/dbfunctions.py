@@ -459,6 +459,7 @@ async def save_captcha_solved(chat_id: int, user_id: int):
         upsert=True,
     )
 
+
 async def is_antiservice_on(chat_id: int) -> bool:
     chat = await antiservicedb.find_one({"chat_id": chat_id})
     if not chat:
@@ -505,8 +506,8 @@ async def get_welcome(chat_id: int) -> (str, str, str):
     data = await welcomedb.find_one({"chat_id": chat_id})
     if not data:
         return "", "", ""
-        
-    welcome = data.get("welcome", "")    
+
+    welcome = data.get("welcome", "")
     raw_text = data.get("raw_text", "")
     file_id = data.get("file_id", "")
 
@@ -514,12 +515,14 @@ async def get_welcome(chat_id: int) -> (str, str, str):
 
 
 async def set_welcome(chat_id: int, welcome: str, raw_text: str, file_id: str):
-    update_data = {"welcome": welcome, "raw_text": raw_text, "file_id": file_id}
+    update_data = {
+        "welcome": welcome,
+        "raw_text": raw_text,
+        "file_id": file_id,
+    }
 
     return await welcomedb.update_one(
-        {"chat_id": chat_id},
-        {"$set": update_data},
-        upsert=True
+        {"chat_id": chat_id}, {"$set": update_data}, upsert=True
     )
 
 
@@ -609,7 +612,10 @@ async def deactivate_pipe(from_chat_id: int, to_chat_id: int):
     if not pipes:
         return
     for pipe in pipes:
-        if pipe["from_chat_id"] == from_chat_id and pipe["to_chat_id"] == to_chat_id:
+        if (
+            pipe["from_chat_id"] == from_chat_id
+            and pipe["to_chat_id"] == to_chat_id
+        ):
             pipes.remove(pipe)
     return await pipesdb.update_one(
         {"pipe": "pipe"}, {"$set": {"pipes": pipes}}, upsert=True
@@ -618,7 +624,10 @@ async def deactivate_pipe(from_chat_id: int, to_chat_id: int):
 
 async def is_pipe_active(from_chat_id: int, to_chat_id: int) -> bool:
     for pipe in await show_pipes():
-        if pipe["from_chat_id"] == from_chat_id and pipe["to_chat_id"] == to_chat_id:
+        if (
+            pipe["from_chat_id"] == from_chat_id
+            and pipe["to_chat_id"] == to_chat_id
+        ):
             return True
 
 
@@ -774,7 +783,9 @@ async def add_chatbot(chat_id: int, is_userbot: bool = False):
         list_id["userbot"].append(chat_id)
     else:
         list_id["bot"].append(chat_id)
-    await chatbotdb.update_one({"chatbot": "chatbot"}, {"$set": list_id}, upsert=True)
+    await chatbotdb.update_one(
+        {"chatbot": "chatbot"}, {"$set": list_id}, upsert=True
+    )
 
 
 async def rm_chatbot(chat_id: int, is_userbot: bool = False):
@@ -783,4 +794,6 @@ async def rm_chatbot(chat_id: int, is_userbot: bool = False):
         list_id["userbot"].remove(chat_id)
     else:
         list_id["bot"].remove(chat_id)
-    await chatbotdb.update_one({"chatbot": "chatbot"}, {"$set": list_id}, upsert=True)
+    await chatbotdb.update_one(
+        {"chatbot": "chatbot"}, {"$set": list_id}, upsert=True
+    )

@@ -25,21 +25,25 @@ SOFTWARE.
 from re import findall
 
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from pyrogram.types import (
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
 
 from wbb import SUDOERS, USERBOT_ID, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.keyboard import ikb
+from wbb.modules.admin import member_permissions
 from wbb.utils.dbfunctions import (
     delete_note,
+    deleteall_notes,
     get_note,
     get_note_names,
     save_note,
-    deleteall_notes,
 )
-from wbb.modules.admin import member_permissions
-from wbb.utils.functions import extract_text_and_keyb, check_format
+from wbb.utils.functions import check_format, extract_text_and_keyb
 
 __MODULE__ = "Notes"
 __HELP__ = """/notes To Get All The Notes In The Chat.
@@ -88,10 +92,16 @@ async def save_notee(_, message):
             replied_message = message.reply_to_message
             if not replied_message:
                 replied_message = message
-            text = message.text.markdown if message.text else message.caption.markdown
+            text = (
+                message.text.markdown
+                if message.text
+                else message.caption.markdown
+            )
             name = text.split(None, 1)[1].strip()
             if not name:
-                return await eor(message, text="**Usage**\n__/save [NOTE_NAME]__")
+                return await eor(
+                    message, text="**Usage**\n__/save [NOTE_NAME]__"
+                )
             text = name.split(" ", 1)
             if len(text) > 1:
                 name = text[0]
@@ -250,7 +260,9 @@ async def get_one_note(_, message):
         if "{chat}" in data:
             data = data.replace("{chat}", (await app.get_chat(chat_id)).title)
         if "{name}" in data:
-            data = data.replace("{name}", (await app.get_users(user_id)).mention)
+            data = data.replace(
+                "{name}", (await app.get_users(user_id)).mention
+            )
         if findall(r"\[.+\,.+\]", data):
             keyboard = extract_text_and_keyb(ikb, data)
             if keyboard:
@@ -347,7 +359,9 @@ async def delete_all(_, message):
         keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("YES, DO IT", callback_data="delete_yes"),
+                    InlineKeyboardButton(
+                        "YES, DO IT", callback_data="delete_yes"
+                    ),
                     InlineKeyboardButton("Cancel", callback_data="delete_no"),
                 ]
             ]

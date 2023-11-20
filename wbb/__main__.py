@@ -56,9 +56,15 @@ async def start_bot():
 
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
-        if hasattr(imported_module, "__MODULE__") and imported_module.__MODULE__:
+        if (
+            hasattr(imported_module, "__MODULE__")
+            and imported_module.__MODULE__
+        ):
             imported_module.__MODULE__ = imported_module.__MODULE__
-            if hasattr(imported_module, "__HELP__") and imported_module.__HELP__:
+            if (
+                hasattr(imported_module, "__HELP__")
+                and imported_module.__HELP__
+            ):
                 HELPABLE[
                     imported_module.__MODULE__.replace(" ", "_").lower()
                 ] = imported_module
@@ -109,7 +115,9 @@ async def start_bot():
 home_keyboard_pm = InlineKeyboardMarkup(
     [
         [
-            InlineKeyboardButton(text="Commands ❓", callback_data="bot_commands"),
+            InlineKeyboardButton(
+                text="Commands ❓", callback_data="bot_commands"
+            ),
             InlineKeyboardButton(
                 text="Repo 🛠",
                 url="https://github.com/thehamkercat/WilliamButcherBot",
@@ -120,7 +128,9 @@ home_keyboard_pm = InlineKeyboardMarkup(
                 text="System Stats 🖥",
                 callback_data="stats_callback",
             ),
-            InlineKeyboardButton(text="Support 👨", url="http://t.me/WBBSupport"),
+            InlineKeyboardButton(
+                text="Support 👨", url="http://t.me/WBBSupport"
+            ),
         ],
         [
             InlineKeyboardButton(
@@ -163,12 +173,16 @@ keyboard = InlineKeyboardMarkup(
 @app.on_message(filters.command("start"))
 async def start(_, message):
     if message.chat.type != ChatType.PRIVATE:
-        return await message.reply("Pm Me For More Details.", reply_markup=keyboard)
+        return await message.reply(
+            "Pm Me For More Details.", reply_markup=keyboard
+        )
     if len(message.text.split()) > 1:
         name = (message.text.split(None, 1)[1]).lower()
         if name == "mkdwn_help":
             await message.reply(
-                MARKDOWN, parse_mode=ParseMode.HTML, disable_web_page_preview=True
+                MARKDOWN,
+                parse_mode=ParseMode.HTML,
+                disable_web_page_preview=True,
             )
         elif "_" in name:
             module = name.split("_", 1)[1]
@@ -212,9 +226,13 @@ async def help_command(_, message):
                     reply_markup=key,
                 )
             else:
-                await message.reply("PM Me For More Details.", reply_markup=keyboard)
+                await message.reply(
+                    "PM Me For More Details.", reply_markup=keyboard
+                )
         else:
-            await message.reply("Pm Me For More Details.", reply_markup=keyboard)
+            await message.reply(
+                "Pm Me For More Details.", reply_markup=keyboard
+            )
     else:
         if len(message.command) >= 2:
             name = (message.text.split(None, 1)[1]).replace(" ", "_").lower()
@@ -225,14 +243,18 @@ async def help_command(_, message):
                 )
                 await message.reply(text, disable_web_page_preview=True)
             else:
-                text, help_keyboard = await help_parser(message.from_user.first_name)
+                text, help_keyboard = await help_parser(
+                    message.from_user.first_name
+                )
                 await message.reply(
                     text,
                     reply_markup=help_keyboard,
                     disable_web_page_preview=True,
                 )
         else:
-            text, help_keyboard = await help_parser(message.from_user.first_name)
+            text, help_keyboard = await help_parser(
+                message.from_user.first_name
+            )
             await message.reply(
                 text, reply_markup=help_keyboard, disable_web_page_preview=True
             )
@@ -294,7 +316,9 @@ General command are:
     if mod_match:
         module = (mod_match.group(1)).replace(" ", "_")
         text = (
-            "{} **{}**:\n".format("Here is the help for", HELPABLE[module].__MODULE__)
+            "{} **{}**:\n".format(
+                "Here is the help for", HELPABLE[module].__MODULE__
+            )
             + HELPABLE[module].__HELP__
         )
 
@@ -335,7 +359,9 @@ General command are:
     elif back_match:
         await query.message.edit(
             text=top_text,
-            reply_markup=InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help")),
+            reply_markup=InlineKeyboardMarkup(
+                paginate_modules(0, HELPABLE, "help")
+            ),
             disable_web_page_preview=True,
         )
 

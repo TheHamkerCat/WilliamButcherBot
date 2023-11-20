@@ -25,23 +25,27 @@ SOFTWARE.
 import re
 
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from pyrogram.types import (
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
 
 from wbb import app
 from wbb.core.decorators.errors import capture_err
 from wbb.core.decorators.permissions import adminsOnly
 from wbb.core.keyboard import ikb
+from wbb.modules.admin import member_permissions
+from wbb.modules.notes import extract_urls
 from wbb.utils.dbfunctions import (
     delete_filter,
+    deleteall_filters,
     get_filter,
     get_filters_names,
     save_filter,
-    deleteall_filters,
 )
 from wbb.utils.filter_groups import chat_filters_group
-from wbb.utils.functions import extract_text_and_keyb, check_format
-from wbb.modules.admin import member_permissions
-from wbb.modules.notes import extract_urls
+from wbb.utils.functions import check_format, extract_text_and_keyb
 
 __MODULE__ = "Filters"
 __HELP__ = """/filters To Get All The Filters In The Chat.
@@ -72,10 +76,14 @@ async def save_filters(_, message):
         replied_message = message.reply_to_message
         if not replied_message:
             replied_message = message
-        text = message.text.markdown if message.text else message.caption.markdown
+        text = (
+            message.text.markdown if message.text else message.caption.markdown
+        )
         name = text.split(None, 1)[1].strip()
         if not name:
-            return await message.reply_text("**Usage:**\n__/filter [FILTER_NAME]__")
+            return await message.reply_text(
+                "**Usage:**\n__/filter [FILTER_NAME]__"
+            )
         chat_id = message.chat.id
         text = name.split(" ", 1)
         if len(text) > 1:
@@ -217,7 +225,9 @@ async def filters_re(_, message):
             keyb = None
             if data:
                 if "{chat}" in data:
-                    data = data.replace("{chat}", (await app.get_chat(chat_id)).title)
+                    data = data.replace(
+                        "{chat}", (await app.get_chat(chat_id)).title
+                    )
                 if "{name}" in data:
                     data = data.replace(
                         "{name}", (await app.get_users(user_id)).mention
@@ -296,7 +306,9 @@ async def stop_all(_, message):
         keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("YES, DO IT", callback_data="stop_yes"),
+                    InlineKeyboardButton(
+                        "YES, DO IT", callback_data="stop_yes"
+                    ),
                     InlineKeyboardButton("Cancel", callback_data="stop_no"),
                 ]
             ]
