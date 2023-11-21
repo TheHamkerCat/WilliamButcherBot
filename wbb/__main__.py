@@ -40,11 +40,13 @@ from wbb import (
     app,
     log,
 )
+from wbb.core.keyboard import ikb
 from wbb.modules import ALL_MODULES
 from wbb.modules.sudoers import bot_sys_stats
 from wbb.utils import paginate_modules
 from wbb.utils.constants import MARKDOWN
-from wbb.utils.dbfunctions import clean_restart_stage
+from wbb.utils.functions import extract_text_and_keyb
+from wbb.utils.dbfunctions import clean_restart_stage, get_rules
 
 loop = asyncio.get_event_loop()
 
@@ -177,7 +179,31 @@ async def start(_, message):
             "Pm Me For More Details.", reply_markup=keyboard
         )
     if len(message.text.split()) > 1:
+        user = await app.get_users(message.from_user.id)
         name = (message.text.split(None, 1)[1]).lower()
+        match = re.match(r"rules_(.*)", name)  
+        if match:
+            chat_id = match.group(1)
+            user_id = message.from_user.id
+            chat = await app.get_chat(int(chat_id))
+            text = f"**The rules for `{chat.title}` are:\n\n**"
+            rules = await get_rules(int(chat_id))
+            if rules:
+                text = text + rules
+                if "{chat}" in text:
+                    text = text.replace("{chat}", chat.title)
+                if "{name}" in text:
+                    text = text.replace("{name}", user.mention)
+                keyb = None
+                if "~" in text:
+                    text, keyb = extract_text_and_keyb(ikb, text)
+                await app.send_message(user_id, text=text, reply_markup=keyb)
+            else:
+                return await app.send_message(
+                    user_id,
+                    "The group admins haven't set any rules for this chat yet. "
+                    "This probably doesn't mean it's lawless though...!"
+                )
         if name == "mkdwn_help":
             await message.reply(
                 MARKDOWN,
