@@ -225,6 +225,9 @@ async def kickFunc(_, message: Message):
     if message.command[0][0] == "d":
         await message.reply_to_message.delete()
     await message.chat.ban_member(user_id)
+    replied_message = message.reply_to_message
+    if replied_message:
+        message = replied_message
     await message.reply_text(msg)
     await asyncio.sleep(1)
     await message.chat.unban_member(user_id)
@@ -279,6 +282,9 @@ async def banFunc(_, message: Message):
         with suppress(AttributeError):
             if len(time_value[:-1]) < 3:
                 await message.chat.ban_member(user_id, until_date=temp_ban)
+                replied_message = message.reply_to_message
+                if replied_message:
+                    message = replied_message
                 await message.reply_text(msg)
             else:
                 await message.reply_text("You can't use more than 99")
@@ -286,6 +292,9 @@ async def banFunc(_, message: Message):
     if reason:
         msg += f"**Reason:** {reason}"
     await message.chat.ban_member(user_id)
+    replied_message = message.reply_to_message
+    if replied_message:
+        message = replied_message
     await message.reply_text(msg)
 
 
@@ -314,6 +323,9 @@ async def unban_func(_, message: Message):
         )
     await message.chat.unban_member(user)
     umention = (await app.get_users(user)).mention
+    replied_message = message.reply_to_message
+    if replied_message:
+        message = replied_message
     await message.reply_text(f"Unbanned! {umention}")
 
 
@@ -589,6 +601,9 @@ async def mute(_, message: Message):
                     permissions=ChatPermissions(),
                     until_date=temp_mute,
                 )
+                replied_message = message.reply_to_message
+                if replied_message:
+                   message = replied_message
                 await message.reply_text(msg, reply_markup=keyboard)
             else:
                 await message.reply_text("You can't use more than 99")
@@ -598,6 +613,9 @@ async def mute(_, message: Message):
     if reason:
         msg += f"**Reason:** {reason}"
     await message.chat.restrict_member(user_id, permissions=ChatPermissions())
+    replied_message = message.reply_to_message
+    if replied_message:
+        message = replied_message
     await message.reply_text(msg, reply_markup=keyboard)
 
 
@@ -612,6 +630,9 @@ async def unmute(_, message: Message):
         return await message.reply_text("I can't find that user.")
     await message.chat.unban_member(user_id)
     umention = (await app.get_users(user_id)).mention
+    replied_message = message.reply_to_message
+    if replied_message:
+        message = replied_message
     await message.reply_text(f"Unmuted! {umention}")
 
 
@@ -685,6 +706,9 @@ async def warn_user(_, message: Message):
 **Warned By:** {message.from_user.mention if message.from_user else 'Anon'}
 **Reason:** {reason or 'No Reason Provided.'}
 **Warns:** {warns + 1}/3"""
+        replied_message = message.reply_to_message
+        if replied_message:
+            message = replied_message
         await message.reply_text(msg, reply_markup=keyboard)
         await add_warn(chat_id, await int_to_alpha(user_id), warn)
 

@@ -45,7 +45,7 @@ from wbb.utils.dbfunctions import (
     save_filter,
 )
 from wbb.utils.filter_groups import chat_filters_group
-from wbb.utils.functions import check_format, extract_text_and_keyb
+from wbb.utils.functions import check_format, extract_text_and_keyb, get_data_and_name
 
 __MODULE__ = "Filters"
 __HELP__ = """/filters To Get All The Filters In The Chat.
@@ -76,49 +76,11 @@ async def save_filters(_, message):
         replied_message = message.reply_to_message
         if not replied_message:
             replied_message = message
-        text = (
-            message.text.markdown if message.text else message.caption.markdown
-        )
-        name = text.split(None, 1)[1].strip()
-        if not name:
+        data, name = await get_data_and_name(replied_message, message)
+        if data == "error":
             return await message.reply_text(
-                "**Usage:**\n__/filter [FILTER_NAME]__"
-            )
-        chat_id = message.chat.id
-        text = name.split(" ", 1)
-        if len(text) > 1:
-            name = text[0]
-            data = text[1].strip()
-            if replied_message and (
-                replied_message.sticker or replied_message.video_note
-            ):
-                data = None
-        else:
-            if replied_message and (
-                replied_message.sticker or replied_message.video_note
-            ):
-                data = None
-            elif (
-                replied_message
-                and not replied_message.text
-                and not replied_message.caption
-            ):
-                data = None
-            else:
-                data = (
-                    replied_message.text.markdown
-                    if replied_message.text
-                    else replied_message.caption.markdown
+                    "**Usage:**\n__/filter [FILTER_NAME] [CONTENT]__\n`-----------OR-----------`\nReply to a message with.\n/filter [FILTER_NAME]."
                 )
-                match = "/filter " + name
-                if not message.reply_to_message and message.text:
-                    if match == data:
-                        return await message.reply_text(
-                            "**Usage:**\n__/filter [FILTER_NAME] [CONTENT]__\n`-----------OR-----------`\nReply to a message with.\n/filter [FILTER_NAME]."
-                        )
-                elif not message.reply_to_message and not message.text:
-                    if match == data:
-                        data = None
         if replied_message.text:
             _type = "text"
             file_id = None
@@ -165,6 +127,7 @@ async def save_filters(_, message):
             "data": data,
             "file_id": file_id,
         }
+        chat_id = message.chat.id
         await save_filter(chat_id, name, _filter)
         return await message.reply_text(f"__**Saved filter {name}.**__")
     except UnboundLocalError:
