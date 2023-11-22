@@ -55,6 +55,7 @@ blacklist_chatdb = db.blacklistChat
 restart_stagedb = db.restart_stage
 flood_toggle_db = db.flood_toggle
 rssdb = db.rss
+rulesdb = db.rules
 chatbotdb = db.chatbot
 
 
@@ -192,6 +193,26 @@ async def delete_filter(chat_id: int, name: str) -> bool:
 
 async def deleteall_filters(chat_id: int):
     return await filtersdb.delete_one({"chat_id": chat_id})
+
+
+async def get_rules(chat_id: int):
+    chat = await rulesdb.find_one({"chat_id": chat_id})
+    if not chat:
+        return ""
+    rules = chat.get("rules", "")
+    return rules
+
+
+async def set_chat_rules(chat_id: int, rules: str):
+    await rulesdb.update_one(
+        {"chat_id": chat_id}, 
+        {"$set": {"rules": rules}}, 
+        upsert=True,
+    )
+
+
+async def delete_rules(chat_id: int):
+    return await rulesdb.delete_one({"chat_id": chat_id})
 
 
 async def int_to_alpha(user_id: int) -> str:

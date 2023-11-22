@@ -28,7 +28,7 @@ from io import BytesIO
 from math import atan2, cos, radians, sin, sqrt
 from os import execvp
 from random import randint
-from re import findall
+from re import findall, search
 from re import sub as re_sub
 from sys import executable
 
@@ -331,6 +331,47 @@ async def check_format(ikb, raw_text: str):
             return raw_text
     else:
         return raw_text
+
+
+async def get_data_and_name(replied_message, message):
+    text = (
+        message.text.markdown if message.text else message.caption.markdown
+    )
+    name = text.split(None, 1)[1].strip()
+    text = name.split(" ", 1)
+    if len(text) > 1:
+        name = text[0]
+        data = text[1].strip()
+        if replied_message and (
+            replied_message.sticker or replied_message.video_note
+        ):
+            data = None
+    else:
+        if replied_message and (
+            replied_message.sticker or replied_message.video_note
+        ):
+            data = None
+        elif (
+            replied_message
+            and not replied_message.text
+            and not replied_message.caption
+        ):
+            data = None
+        else:
+            data = (
+                replied_message.text.markdown
+                if replied_message.text
+                else replied_message.caption.markdown
+            )
+            command = search(r'\[\'(.*?)\'(?:, \'(.*?)\')*\]', str(message.command)).group(1)
+            match = f"/{command} " + name
+            if not message.reply_to_message and message.text:
+                if match == data:
+                    data ="error"
+            elif not message.reply_to_message and not message.text:
+                if match == data:
+                    data = None
+    return data, name
 
 
 async def get_user_id_and_usernames(client) -> dict:
