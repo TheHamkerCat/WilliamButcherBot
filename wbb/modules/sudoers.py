@@ -120,8 +120,10 @@ async def ban_globally(_, message):
     number_of_chats = 0
     for served_chat in served_chats:
         try:
-            await app.ban_chat_member(served_chat["chat_id"], user.id)
-            number_of_chats += 1
+            chat_member = await app.get_chat_member(served_chat["chat_id"], user.id)
+            if chat_member.status == ChatMemberStatus.MEMBER:
+                await app.ban_chat_member(served_chat["chat_id"], user.id)
+                number_of_chats += 1
             await asyncio.sleep(1)
         except FloodWait as e:
             await asyncio.sleep(int(e.value))
@@ -207,8 +209,8 @@ async def broadcast_message(_, message):
                 text=text,
                 reply_markup=reply_markup,
             )
-            await asyncio.sleep(sleep_time)
             sent += 1
+            await asyncio.sleep(sleep_time)
         except FloodWait as e:
             await asyncio.sleep(int(e.value))
         except Exception:
@@ -261,8 +263,8 @@ async def broadcast_message(_, message):
                 text=text,
                 reply_markup=reply_markup,
             )
-            await asyncio.sleep(sleep_time)
             sent += 1
+            await asyncio.sleep(sleep_time)
         except FloodWait as e:
             await asyncio.sleep(int(e.value))
         except Exception:
