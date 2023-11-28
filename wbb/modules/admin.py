@@ -538,7 +538,7 @@ async def demote(_, message: Message):
             umention = (await app.get_users(user_id)).mention
             await message.reply_text(f"Demoted! {umention}")
         else:
-            await message.reply_text("The person you mention is not an admin.")
+            await message.reply_text("The person you mentioned is not an admin.")
     except Exception as e:
         await message.reply_text(e)
 
