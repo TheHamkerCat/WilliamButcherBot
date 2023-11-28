@@ -27,7 +27,7 @@ from contextlib import suppress
 from time import time
 
 from pyrogram import filters
-from pyrogram.enums import ChatMembersFilter, ChatType
+from pyrogram.enums import ChatMembersFilter, ChatType, ChatMemberStatus
 from pyrogram.errors import FloodWait
 from pyrogram.types import (
     CallbackQuery,
@@ -519,21 +519,28 @@ async def demote(_, message: Message):
         return await message.reply_text(
             "You wanna demote the elevated one?, RECONSIDER!"
         )
-    await message.chat.promote_member(
-        user_id=user_id,
-        privileges=ChatPrivileges(
-            can_change_info=False,
-            can_invite_users=False,
-            can_delete_messages=False,
-            can_restrict_members=False,
-            can_pin_messages=False,
-            can_promote_members=False,
-            can_manage_chat=False,
-            can_manage_video_chats=False,
-        ),
-    )
-    umention = (await app.get_users(user_id)).mention
-    await message.reply_text(f"Demoted! {umention}")
+    try:
+        member = await app.get_chat_member(message.chat.id, user_id)
+        if member.status ==  ChatMemberStatus.ADMINISTRATOR:
+            await message.chat.promote_member(
+                user_id=user_id,
+                privileges=ChatPrivileges(
+                    can_change_info=False,
+                    can_invite_users=False,
+                    can_delete_messages=False,
+                    can_restrict_members=False,
+                    can_pin_messages=False,
+                    can_promote_members=False,
+                    can_manage_chat=False,
+                    can_manage_video_chats=False,
+                ),
+            )
+            umention = (await app.get_users(user_id)).mention
+            await message.reply_text(f"Demoted! {umention}")
+        else:
+            await message.reply_text("The person you mentioned is not an admin.")
+    except Exception as e:
+        await message.reply_text(e)
 
 
 # Pin Messages
