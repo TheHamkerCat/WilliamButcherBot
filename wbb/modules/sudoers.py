@@ -30,6 +30,7 @@ import psutil
 from pyrogram import filters, types
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup
+from pyrogram.enums import ChatMemberStatus
 
 from wbb import (
     BOT_ID,
