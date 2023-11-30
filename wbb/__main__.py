@@ -52,7 +52,6 @@ loop = asyncio.get_event_loop()
 
 HELPABLE = {}
 
-
 async def start_bot():
     global HELPABLE
 
@@ -172,6 +171,22 @@ keyboard = InlineKeyboardMarkup(
 )
 
 
+FED_MARKUP = InlineKeyboardMarkup(
+    [
+        [
+            InlineKeyboardButton("Fed Owner Commands", callback_data="fed_owner"),
+            InlineKeyboardButton("Fed Admin Commands", callback_data="fed_admin"),
+        ],
+        [
+            InlineKeyboardButton("User Commands", callback_data="fed_user"),
+        ],
+        [
+            InlineKeyboardButton("Back", callback_data="help_back"),
+        ],
+    ]
+)
+
+
 @app.on_message(filters.command("start"))
 async def start(_, message):
     if message.chat.type != ChatType.PRIVATE:
@@ -216,7 +231,18 @@ async def start(_, message):
                 f"Here is the help for **{HELPABLE[module].__MODULE__}**:\n"
                 + HELPABLE[module].__HELP__
             )
-            await message.reply(text, disable_web_page_preview=True)
+            if module == "federation":
+                return await message.reply(
+                    text=text,
+                    reply_markup=FED_MARKUP,
+                    disable_web_page_preview=True,
+                )
+            await message.reply(
+                text,
+                reply_markup=InlineKeyboardMarkup(
+                    [[InlineKeyboardButton("back", callback_data="help_back")]]
+                ),
+                disable_web_page_preview=True)
         elif name == "help":
             text, keyb = await help_parser(message.from_user.first_name)
             await message.reply(
@@ -347,7 +373,12 @@ General command are:
             )
             + HELPABLE[module].__HELP__
         )
-
+        if module == "federation":
+            return await query.message.edit(
+                text=text,
+                reply_markup=FED_MARKUP,
+                disable_web_page_preview=True,
+            )
         await query.message.edit(
             text=text,
             reply_markup=InlineKeyboardMarkup(
