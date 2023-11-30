@@ -66,7 +66,7 @@ from wbb.utils.functions import (
     extract_text_and_keyb,
     generate_captcha,
 )
-from wbb.modules.feds import get_fed_id, check_banned_user
+from wbb.utils.dbfeds import get_fed_id, check_banned_user
 
 __MODULE__ = "Greetings"
 __HELP__ = """
@@ -118,7 +118,7 @@ async def handle_new_member(message: Message, member, chat):
 
     # Get cached answers from mongodb in case of bot's been restarted or crashed.
     answers_dicc = await get_captcha_cache()
-    
+
     # Mute new member and send message with button
     try:
         if member.id in SUDOERS:
