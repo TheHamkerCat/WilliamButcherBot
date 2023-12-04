@@ -69,6 +69,7 @@ async def new_fed(client, message):
                     "fed_name": str(fed_name),
                     "owner_id": int(user.id),
                     "fadmins": [],
+                    "owner_mention": user.mention,
                     "banned_users": [],
                     "chat_ids": [],
                     "log_group_id": LOG_GROUP_ID,
