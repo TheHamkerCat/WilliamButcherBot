@@ -452,6 +452,61 @@ async def fed_chat(client, message):
         )
 
 
+@app.on_message(filters.command("fedinfo"))
+@capture_err
+async def fed_info(client, message):
+    if len(message.command) < 2:
+        await message.reply_text("Please provide the Fed Id to get information!")
+        return
+
+    fed_id = message.text.split(" ", 1)[1].strip()
+    fed_info = await get_fed_info(fed_id)
+
+    if not fed_info:
+        return await message.reply_text("Federation not found.")
+
+    fed_name = fed_info.get("fed_name")
+    owner_mention = fed_info.get("owner_mention")
+    fadmin_count = len(fed_info.get("fadmins", []))
+    banned_users_count = len(fed_info.get("banned_users", []))
+    chat_ids_count = len(fed_info.get("chat_ids", []))
+
+    reply_text = (
+        f"**Federation Information:**\n\n"
+        f"**Fed Name:** {fed_name}\n"
+        f"**Owner:** {owner_mention}\n"
+        f"**Number of Fed Admins:** {fadmin_count}\n"
+        f"**Number of Banned Users:** {banned_users_count}\n"
+        f"**Number of Chats:** {chat_ids_count}"
+    )
+
+    await message.reply_text(reply_text)
+    
+    
+@app.on_message(filters.command("fedadmins"))
+@capture_err
+async def get_all_fadmins_mentions(client, message):
+    if len(message.command) < 2:
+        await message.reply_text("Please provide me the Fed Id to search!")
+        return
+    fed_id = message.text.split(" ", 1)[1].strip()
+    fed_info = await get_fed_info(fed_id)
+    if not fed_info:
+        return await message.reply_text("Federation not found.")
+    fadmin_ids = fed_info.get("fadmins", [])
+    if not fadmin_ids:
+        return await message.reply_text(f"**Owner: {fed_info['owner_mention']}\n\nNo fadmins found in the federation.")
+    user_mentions = []
+    for user_id in fadmin_ids:
+        try:
+            user = await app.get_users(int(user_id))
+            user_mentions.append(f"● {user.mention}[`{user.id}`]")
+        except Exception:
+            user_mentions.append(f"● `Admin🥷`[`{user_id}`]")
+    reply_text = f"**Owner: {fed_info['owner_mention']}\n\nList of fadmins:**\n" + "\n".join(user_mentions)
+    await message.reply_text(reply_text)
+
+
 @app.on_message(filters.command("fpromote"))
 @capture_err
 async def fpromote(client, message):
@@ -848,11 +903,6 @@ async def fbroadcast_message(client, message):
         except Exception:
             pass
     await m.edit(f"**Broadcasted Message In {sent} Chats.**")
-
-
-@app.on_message(filters.command(["fedinfo", "fedadmins"]))
-async def to_do(client, message):
-    await message.reply_text("**Feel free to use your coding skills and open a pull request.**")
 
 
 @app.on_callback_query(filters.regex("rmfed_(.*)"))
