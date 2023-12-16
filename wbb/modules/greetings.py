@@ -66,6 +66,7 @@ from wbb.utils.functions import (
     extract_text_and_keyb,
     generate_captcha,
 )
+from wbb.utils.dbfeds import get_fed_id, check_banned_user
 
 __MODULE__ = "Greetings"
 __HELP__ = """
@@ -119,15 +120,20 @@ async def handle_new_member(message: Message, member, chat):
     answers_dicc = await get_captcha_cache()
 
     # Mute new member and send message with button
-    if not await is_captcha_on(message.chat.id):
-        if member.is_bot:
-            return
-        return await send_welcome_message(message.chat, message.from_user.id)
-
     try:
         if member.id in SUDOERS:
-            return  # Ignore sudo users
-
+            return# Ignore sudo users
+        fed_id = await get_fed_id(chat.id)
+        if fed_id:
+            check_user = await check_banned_user(fed_id, member.id)
+            if check_user:
+                reason = check_user["reason"]
+                date = check_user["date"]
+                await message.chat.ban_member(member.id)
+                return await app.send_message(
+                    chat.id,
+                    f"**User {member.mention} was Fed Banned.\n\nReason: {reason}.\nDate: {date}.**"
+                )
         if await is_gbanned_user(member.id):
             await message.chat.ban_member(member.id)
             await app.send_message(
@@ -137,9 +143,10 @@ async def handle_new_member(message: Message, member, chat):
                 + " for this ban in support chat.",
             )
             return
-
         if member.is_bot:
             return  # Ignore bots
+        if not await is_captcha_on(message.chat.id):
+            return await send_welcome_message(message.chat, message.from_user.id)
 
         # Ignore user if he has already solved captcha in this group
         # someday
