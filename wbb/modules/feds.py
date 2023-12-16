@@ -485,13 +485,16 @@ async def get_all_fadmins_mentions(client, message):
     if len(message.command) < 2:
         await message.reply_text("Please provide me the Fed Id to search!")
         return
+
     fed_id = message.text.split(" ", 1)[1].strip()
     fed_info = await get_fed_info(fed_id)
     if not fed_info:
         return await message.reply_text("Federation not found.")
+
     fadmin_ids = fed_info.get("fadmins", [])
     if not fadmin_ids:
         return await message.reply_text(f"**Owner: {fed_info['owner_mention']}\n\nNo fadmins found in the federation.")
+
     user_mentions = []
     for user_id in fadmin_ids:
         try:
@@ -500,6 +503,7 @@ async def get_all_fadmins_mentions(client, message):
         except Exception:
             user_mentions.append(f"● `Admin🥷`[`{user_id}`]")
     reply_text = f"**Owner: {fed_info['owner_mention']}\n\nList of fadmins:**\n" + "\n".join(user_mentions)
+
     await message.reply_text(reply_text)
 
 
