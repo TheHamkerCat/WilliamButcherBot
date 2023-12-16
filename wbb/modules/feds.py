@@ -412,22 +412,19 @@ async def fed_chat(client, message):
     chat = message.chat
     user = message.from_user
     if message.chat.type != ChatType.PRIVATE:
-        await message.reply_text(
+        return await message.reply_text(
             "Fedchats can only be checked by privately messaging me."
         )
-        return
     if len(message.command) < 2:
-        await message.reply_text(
+        return await message.reply_text(
             "Please write the Id of the federation!\n\nUsage:\n/fedchats fed_id"
         )
-        return
     args = message.text.split(" ", 1)
     if len(args) > 1:
         fed_id = args[1].strip()
         info = await get_fed_info(fed_id)
         if info is False:
-            await message.reply_text("This federation does not exist.")
-            return
+            return await message.reply_text("This federation does not exist.")
         fed_owner = info["owner_id"]
         fed_admins = info["fadmins"]
         all_admins = [fed_owner] + fed_admins + [int(BOT_ID)]
@@ -456,8 +453,7 @@ async def fed_chat(client, message):
 @capture_err
 async def fed_info(client, message):
     if len(message.command) < 2:
-        await message.reply_text("Please provide the Fed Id to get information!")
-        return
+        return await message.reply_text("Please provide the Fed Id to get information!")
 
     fed_id = message.text.split(" ", 1)[1].strip()
     fed_info = await get_fed_info(fed_id)
