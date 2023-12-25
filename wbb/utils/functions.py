@@ -369,7 +369,7 @@ async def get_data_and_name(replied_message, message):
                 if replied_message.text
                 else replied_message.caption.markdown
             )
-            command = search(r'\[\'(.*?)\'(?:, \'(.*?)\')*\]', str(message.command)).group(1)
+            command = message.command[0]
             match = f"/{command} " + name
             if not message.reply_to_message and message.text:
                 if match == data:
