@@ -1,7 +1,8 @@
-import pytz
 from datetime import datetime
-from wbb import SUDOERS, db
 
+import pytz
+
+from wbb import SUDOERS, db
 
 fedsdb = db.feds
 
@@ -86,7 +87,11 @@ async def search_fed_by_id(fed_id):
 def chat_join_fed(fed_id, chat_name, chat_id):
     return fedsdb.update_one(
         {"fed_id": fed_id},
-        {"$push": {"chat_ids": {"chat_id": int(chat_id), "chat_name": chat_name}}},
+        {
+            "$push": {
+                "chat_ids": {"chat_id": int(chat_id), "chat_name": chat_name}
+            }
+        },
     )
 
 
@@ -103,7 +108,9 @@ async def chat_leave_fed(chat_id):
 
 async def user_join_fed(fed_id, user_id):
     result = await fedsdb.update_one(
-        {"fed_id": fed_id}, {"$addToSet": {"fadmins": int(user_id)}}, upsert=True
+        {"fed_id": fed_id},
+        {"$addToSet": {"fadmins": int(user_id)}},
+        upsert=True,
     )
     if result.modified_count > 0:
         return True
@@ -164,12 +171,15 @@ async def add_fban_user(fed_id, user_id, reason):
 
 async def remove_fban_user(fed_id, user_id):
     await fedsdb.update_one(
-        {"fed_id": fed_id}, {"$pull": {"banned_users": {"user_id": int(user_id)}}}
+        {"fed_id": fed_id},
+        {"$pull": {"banned_users": {"user_id": int(user_id)}}},
     )
 
 
 async def check_banned_user(fed_id, user_id):
-    result = await fedsdb.find_one({"fed_id": fed_id, "banned_users.user_id": user_id})
+    result = await fedsdb.find_one(
+        {"fed_id": fed_id, "banned_users.user_id": user_id}
+    )
     if result and "banned_users" in result:
         for user in result["banned_users"]:
             if user.get("user_id") == user_id:

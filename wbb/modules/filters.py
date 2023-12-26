@@ -45,7 +45,11 @@ from wbb.utils.dbfunctions import (
     save_filter,
 )
 from wbb.utils.filter_groups import chat_filters_group
-from wbb.utils.functions import check_format, extract_text_and_keyb, get_data_and_name
+from wbb.utils.functions import (
+    check_format,
+    extract_text_and_keyb,
+    get_data_and_name,
+)
 
 __MODULE__ = "Filters"
 __HELP__ = """/filters To Get All The Filters In The Chat.
@@ -79,8 +83,8 @@ async def save_filters(_, message):
         data, name = await get_data_and_name(replied_message, message)
         if data == "error":
             return await message.reply_text(
-                    "**Usage:**\n__/filter [FILTER_NAME] [CONTENT]__\n`-----------OR-----------`\nReply to a message with.\n/filter [FILTER_NAME]."
-                )
+                "**Usage:**\n__/filter [FILTER_NAME] [CONTENT]__\n`-----------OR-----------`\nReply to a message with.\n/filter [FILTER_NAME]."
+            )
         if replied_message.text:
             _type = "text"
             file_id = None
@@ -212,6 +216,9 @@ async def filters_re(_, message):
                     reply_markup=keyb,
                     disable_web_page_preview=True,
                 )
+            else:
+                if not file_id:
+                    continue
             if data_type == "sticker":
                 await message.reply_sticker(
                     sticker=file_id,

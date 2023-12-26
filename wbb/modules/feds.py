@@ -22,16 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import uuid
 import asyncio
-from wbb.utils.dbfeds import *
-from wbb import app, SUDOERS, LOG_GROUP_ID, BOT_ID
+import uuid
+
 from pyrogram import filters
 from pyrogram.enums import ChatMemberStatus, ChatType, ParseMode
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from wbb.utils.functions import extract_user, extract_user_and_reason
 from pyrogram.errors import FloodWait
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+from wbb import BOT_ID, LOG_GROUP_ID, SUDOERS, app
 from wbb.core.decorators.errors import capture_err
+from wbb.utils.dbfeds import *
+from wbb.utils.functions import extract_user, extract_user_and_reason
 
 __MODULE__ = "Federation"
 __HELP__ = """
@@ -94,13 +96,17 @@ async def new_fed(client, message):
         try:
             await app.send_message(
                 LOG_GROUP_ID,
-                "New Federation: <b>{}</b>\nID: <pre>{}</pre>".format(fed_name, fed_id),
+                "New Federation: <b>{}</b>\nID: <pre>{}</pre>".format(
+                    fed_name, fed_id
+                ),
                 parse_mode=ParseMode.HTML,
             )
         except:
             log.info("Cannot send a message to EVENT_LOGS")
     else:
-        await message.reply_text("Please write down the name of the federation")
+        await message.reply_text(
+            "Please write down the name of the federation"
+        )
 
 
 @app.on_message(filters.command("delfed"))
@@ -162,7 +168,9 @@ async def fedtransfer(client, message):
         return
     is_feds = await get_feds_by_owner(int(user.id))
     if not is_feds:
-        return await message.reply_text("**You haven't created any federations.**")
+        return await message.reply_text(
+            "**You haven't created any federations.**"
+        )
     if len(message.command) < 2:
         return await message.reply_text(
             "**You needed to specify a user or reply to their message!**"
@@ -236,7 +244,9 @@ async def rename_fed(client, message):
             {"$set": {"fed_name": str(newname), "owner_id": int(user.id)}},
             upsert=True,
         )
-        await msg.reply_text(f"Successfully renamed your fed name to {newname}!")
+        await msg.reply_text(
+            f"Successfully renamed your fed name to {newname}!"
+        )
     else:
         await msg.reply_text("Only federation owner can do this!")
 
@@ -272,7 +282,9 @@ async def fed_log(client, message):
                 log_group_id = chat.id
             loged = await set_log_chat(fed_id, log_group_id)
             if "/unsetfedlog" in message.text:
-                return await message.reply_text("log channel removed successfully.")
+                return await message.reply_text(
+                    "log channel removed successfully."
+                )
             else:
                 await message.reply_text("log channel set successfully.")
     else:
@@ -295,7 +307,9 @@ async def fed_chat(client, message):
     ):
         pass
     else:
-        await message.reply_text("You must be an admin to execute this command")
+        await message.reply_text(
+            "You must be an admin to execute this command"
+        )
         return
 
     if not fed_id:
@@ -329,10 +343,14 @@ async def join_fed(client, message):
         if member.status == ChatMemberStatus.OWNER:
             pass
         else:
-            await message.reply_text("Only group creators can use this command!")
+            await message.reply_text(
+                "Only group creators can use this command!"
+            )
             return
     if fed_id:
-        await message.reply_text("You cannot join two federations from one chat")
+        await message.reply_text(
+            "You cannot join two federations from one chat"
+        )
         return
     args = message.text.split(" ", 1)
     if len(args) > 1:
@@ -360,7 +378,9 @@ async def join_fed(client, message):
             )
 
         await message.reply_text(
-            "This group has joined the federation: {}!".format(getfed["fed_name"])
+            "This group has joined the federation: {}!".format(
+                getfed["fed_name"]
+            )
         )
     else:
         await message.reply_text(
@@ -396,7 +416,9 @@ async def leave_fed(client, message):
                     parse_mode=ParseMode.MARKDOWN,
                 )
             await message.reply_text(
-                "This group has left the federation {}!".format(fed_info["fed_name"]),
+                "This group has left the federation {}!".format(
+                    fed_info["fed_name"]
+                ),
             )
         else:
             await message.reply_text(
@@ -437,7 +459,9 @@ async def fed_chat(client, message):
 
         chat_ids, chat_names = await chat_id_and_names_in_fed(fed_id)
         if not chat_ids:
-            return await message.reply_text("There are no chats in this federation!")
+            return await message.reply_text(
+                "There are no chats in this federation!"
+            )
         text = "\n".join(
             [
                 f"${chat_name} [`{chat_id}`]"
@@ -453,7 +477,9 @@ async def fed_chat(client, message):
 @capture_err
 async def fed_info(client, message):
     if len(message.command) < 2:
-        return await message.reply_text("Please provide the Fed Id to get information!")
+        return await message.reply_text(
+            "Please provide the Fed Id to get information!"
+        )
 
     fed_id = message.text.split(" ", 1)[1].strip()
     fed_info = await get_fed_info(fed_id)
@@ -477,8 +503,8 @@ async def fed_info(client, message):
     )
 
     await message.reply_text(reply_text)
-    
-    
+
+
 @app.on_message(filters.command("fedadmins"))
 @capture_err
 async def get_all_fadmins_mentions(client, message):
@@ -493,7 +519,9 @@ async def get_all_fadmins_mentions(client, message):
 
     fadmin_ids = fed_info.get("fadmins", [])
     if not fadmin_ids:
-        return await message.reply_text(f"**Owner: {fed_info['owner_mention']}\n\nNo fadmins found in the federation.")
+        return await message.reply_text(
+            f"**Owner: {fed_info['owner_mention']}\n\nNo fadmins found in the federation."
+        )
 
     user_mentions = []
     for user_id in fadmin_ids:
@@ -502,7 +530,10 @@ async def get_all_fadmins_mentions(client, message):
             user_mentions.append(f"● {user.mention}[`{user.id}`]")
         except Exception:
             user_mentions.append(f"● `Admin🥷`[`{user_id}`]")
-    reply_text = f"**Owner: {fed_info['owner_mention']}\n\nList of fadmins:**\n" + "\n".join(user_mentions)
+    reply_text = (
+        f"**Owner: {fed_info['owner_mention']}\n\nList of fadmins:**\n"
+        + "\n".join(user_mentions)
+    )
 
     await message.reply_text(reply_text)
 
@@ -530,7 +561,9 @@ async def fpromote(client, message):
         user_id = await extract_user(msg)
 
         if user_id is None:
-            await message.reply_text("Failed to extract user from the message.")
+            await message.reply_text(
+                "Failed to extract user from the message."
+            )
             return
         check_user = await check_banned_user(fed_id, user_id)
         if check_user:
@@ -594,7 +627,9 @@ async def fdemote(client, message):
         user_id = await extract_user(msg)
 
         if user_id is None:
-            await message.reply_text("Failed to extract user from the message.")
+            await message.reply_text(
+                "Failed to extract user from the message."
+            )
             return
 
         if user_id == BOT_ID:
@@ -625,11 +660,15 @@ async def fban_user(client, message):
     chat = message.chat
     from_user = message.from_user
     if message.chat.type == ChatType.PRIVATE:
-        await message.reply_text("This command is specific to groups, not our pm!.")
+        await message.reply_text(
+            "This command is specific to groups, not our pm!."
+        )
         return
     fed_id = await get_fed_id(chat.id)
     if not fed_id:
-        return await message.reply_text("**This chat is not a part of any federation.")
+        return await message.reply_text(
+            "**This chat is not a part of any federation."
+        )
     info = await get_fed_info(fed_id)
     fed_owner = info["owner_id"]
     fed_admins = info["fadmins"]
@@ -722,11 +761,15 @@ async def funban_user(client, message):
     chat = message.chat
     from_user = message.from_user
     if message.chat.type == ChatType.PRIVATE:
-        await message.reply_text("This command is specific to groups, not our pm!.")
+        await message.reply_text(
+            "This command is specific to groups, not our pm!."
+        )
         return
     fed_id = await get_fed_id(chat.id)
     if not fed_id:
-        return await message.reply_text("**This chat is not a part of any federation.")
+        return await message.reply_text(
+            "**This chat is not a part of any federation."
+        )
     info = await get_fed_info(fed_id)
     fed_owner = info["owner_id"]
     fed_admins = info["fadmins"]
@@ -746,7 +789,9 @@ async def funban_user(client, message):
     if not user_id:
         return await message.reply_text("I can't find that user.")
     if user_id in all_admins or user_id in SUDOERS:
-        return await message.reply_text("**How can an admin ever be banned!.**")
+        return await message.reply_text(
+            "**How can an admin ever be banned!.**"
+        )
     check_user = await check_banned_user(fed_id, user_id)
     if not check_user:
         return await message.reply_text(
@@ -855,11 +900,15 @@ async def fbroadcast_message(client, message):
     from_user = message.from_user
     reply_message = message.reply_to_message
     if message.chat.type == ChatType.PRIVATE:
-        await message.reply_text("This command is specific to groups, not our pm!.")
+        await message.reply_text(
+            "This command is specific to groups, not our pm!."
+        )
         return
     fed_id = await get_fed_id(chat.id)
     if not fed_id:
-        return await message.reply_text("**This chat is not a part of any federation.")
+        return await message.reply_text(
+            "**This chat is not a part of any federation."
+        )
     info = await get_fed_info(fed_id)
     fed_owner = info["owner_id"]
     fed_admins = info["fadmins"]
@@ -879,11 +928,15 @@ async def fbroadcast_message(client, message):
     if reply_message.text:
         text = reply_message.text.markdown
     else:
-        return await message.reply_text("You can only Broadcast text messages.")
+        return await message.reply_text(
+            "You can only Broadcast text messages."
+        )
 
     reply_markup = None
     if reply_message.reply_markup:
-        reply_markup = InlineKeyboardMarkup(reply_message.reply_markup.inline_keyboard)
+        reply_markup = InlineKeyboardMarkup(
+            reply_message.reply_markup.inline_keyboard
+        )
     sent = 0
     chats, _ = await chat_id_and_names_in_fed(fed_id)
     m = await message.reply_text(

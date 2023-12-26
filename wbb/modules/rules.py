@@ -24,14 +24,14 @@ SOFTWARE.
 
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from wbb import app, BOT_USERNAME
-from wbb.core.keyboard import ikb
-from wbb.core.decorators.permissions import adminsOnly
-from wbb.utils.dbfunctions import set_chat_rules, get_rules, delete_rules
-from wbb.utils.functions import check_format
-from wbb.modules.notes import extract_urls
-from wbb.modules.admin import member_permissions
 
+from wbb import BOT_USERNAME, app
+from wbb.core.decorators.permissions import adminsOnly
+from wbb.core.keyboard import ikb
+from wbb.modules.admin import member_permissions
+from wbb.modules.notes import extract_urls
+from wbb.utils.dbfunctions import delete_rules, get_rules, set_chat_rules
+from wbb.utils.functions import check_format
 
 __MODULE__ = "Rules"
 __HELP__ = """
@@ -55,7 +55,8 @@ async def send_rules(_, message):
             [
                 [
                     InlineKeyboardButton(
-                        "rules", url=f"t.me/{BOT_USERNAME}?start=rules_{chat_id}"
+                        "rules",
+                        url=f"t.me/{BOT_USERNAME}?start=rules_{chat_id}",
                     )
                 ]
             ]
@@ -70,7 +71,9 @@ async def set_rules(_, message):
         chat_id = message.chat.id
         replied_message = message.reply_to_message
         if len(message.command) < 2 and not replied_message:
-            return await message.reply("**Reply to a message to set new rules.**")
+            return await message.reply(
+                "**Reply to a message to set new rules.**"
+            )
         if len(message.command) < 2 and replied_message.text:
             rules = replied_message.text.markdown
             if replied_message.reply_markup:
@@ -89,9 +92,13 @@ async def set_rules(_, message):
                 "**Wrong formatting, check the help section.**"
             )
         await set_chat_rules(chat_id, rules)
-        return await message.reply_text("**Successfully set new rules for this chat.**")
+        return await message.reply_text(
+            "**Successfully set new rules for this chat.**"
+        )
     except Exception:
-        await message.reply_text("**You can only set text messages as rules.**")
+        await message.reply_text(
+            "**You can only set text messages as rules.**"
+        )
 
 
 @app.on_message(filters.command("clearrules") & ~filters.private)
@@ -104,13 +111,16 @@ async def delete_rules_cmd(_, message):
         keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("YES, DO IT", callback_data="drules_yes"),
+                    InlineKeyboardButton(
+                        "YES, DO IT", callback_data="drules_yes"
+                    ),
                     InlineKeyboardButton("Cancel", callback_data="drules_no"),
                 ]
             ]
         )
         await message.reply_text(
-            "**Are you sure to delete the current rules ?.**", reply_markup=keyboard
+            "**Are you sure to delete the current rules ?.**",
+            reply_markup=keyboard,
         )
 
 
@@ -129,7 +139,9 @@ async def delete_rules_cb(_, cb):
     if input == "yes":
         deleted = await delete_rules(chat_id)
         if deleted:
-            return await cb.message.edit("**Successfully deleted rules of this chat.**")
+            return await cb.message.edit(
+                "**Successfully deleted rules of this chat.**"
+            )
     if input == "no":
         await cb.message.reply_to_message.delete()
         await cb.message.delete()

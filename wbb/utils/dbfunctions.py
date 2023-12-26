@@ -205,8 +205,8 @@ async def get_rules(chat_id: int):
 
 async def set_chat_rules(chat_id: int, rules: str):
     await rulesdb.update_one(
-        {"chat_id": chat_id}, 
-        {"$set": {"rules": rules}}, 
+        {"chat_id": chat_id},
+        {"$set": {"rules": rules}},
         upsert=True,
     )
 

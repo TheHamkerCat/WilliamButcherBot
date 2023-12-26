@@ -45,12 +45,13 @@ from wbb.modules import ALL_MODULES
 from wbb.modules.sudoers import bot_sys_stats
 from wbb.utils import paginate_modules
 from wbb.utils.constants import MARKDOWN
-from wbb.utils.functions import extract_text_and_keyb
 from wbb.utils.dbfunctions import clean_restart_stage, get_rules
+from wbb.utils.functions import extract_text_and_keyb
 
 loop = asyncio.get_event_loop()
 
 HELPABLE = {}
+
 
 async def start_bot():
     global HELPABLE
@@ -174,8 +175,12 @@ keyboard = InlineKeyboardMarkup(
 FED_MARKUP = InlineKeyboardMarkup(
     [
         [
-            InlineKeyboardButton("Fed Owner Commands", callback_data="fed_owner"),
-            InlineKeyboardButton("Fed Admin Commands", callback_data="fed_admin"),
+            InlineKeyboardButton(
+                "Fed Owner Commands", callback_data="fed_owner"
+            ),
+            InlineKeyboardButton(
+                "Fed Admin Commands", callback_data="fed_admin"
+            ),
         ],
         [
             InlineKeyboardButton("User Commands", callback_data="fed_user"),
@@ -196,7 +201,7 @@ async def start(_, message):
     if len(message.text.split()) > 1:
         user = await app.get_users(message.from_user.id)
         name = (message.text.split(None, 1)[1]).lower()
-        match = re.match(r"rules_(.*)", name)  
+        match = re.match(r"rules_(.*)", name)
         if match:
             chat_id = match.group(1)
             user_id = message.from_user.id
@@ -217,7 +222,7 @@ async def start(_, message):
                 return await app.send_message(
                     user_id,
                     "The group admins haven't set any rules for this chat yet. "
-                    "This probably doesn't mean it's lawless though...!"
+                    "This probably doesn't mean it's lawless though...!",
                 )
         if name == "mkdwn_help":
             await message.reply(
@@ -242,7 +247,8 @@ async def start(_, message):
                 reply_markup=InlineKeyboardMarkup(
                     [[InlineKeyboardButton("back", callback_data="help_back")]]
                 ),
-                disable_web_page_preview=True)
+                disable_web_page_preview=True,
+            )
         elif name == "help":
             text, keyb = await help_parser(message.from_user.first_name)
             await message.reply(

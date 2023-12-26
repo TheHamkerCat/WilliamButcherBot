@@ -28,9 +28,9 @@ import time
 
 import psutil
 from pyrogram import filters, types
+from pyrogram.enums import ChatMemberStatus
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup
-from pyrogram.enums import ChatMemberStatus
 
 from wbb import (
     BOT_ID,
@@ -121,7 +121,9 @@ async def ban_globally(_, message):
     number_of_chats = 0
     for served_chat in served_chats:
         try:
-            chat_member = await app.get_chat_member(served_chat["chat_id"], user.id)
+            chat_member = await app.get_chat_member(
+                served_chat["chat_id"], user.id
+            )
             if chat_member.status == ChatMemberStatus.MEMBER:
                 await app.ban_chat_member(served_chat["chat_id"], user.id)
                 number_of_chats += 1

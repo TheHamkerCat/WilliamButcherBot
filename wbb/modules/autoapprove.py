@@ -22,22 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from wbb import app, SUDOERS
-from wbb import db
 from pyrogram import filters
 from pyrogram.enums import ChatMembersFilter
 from pyrogram.types import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
     CallbackQuery,
-    Message,
     Chat,
     ChatJoinRequest,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
 )
-from wbb.modules.greetings import handle_new_member, send_welcome_message
-from wbb.core.keyboard import ikb
+
+from wbb import SUDOERS, app, db
 from wbb.core.decorators.permissions import adminsOnly
+from wbb.core.keyboard import ikb
 from wbb.modules.admin import member_permissions
+from wbb.modules.greetings import handle_new_member, send_welcome_message
 
 approvaldb = db.autoapprove
 
@@ -69,12 +69,15 @@ async def approval_command(client, message):
                 {"chat_id": chat_id},
                 {"$set": {"mode": mode}},
                 upsert=True,
-                   )
+            )
         if mode == "automatic":
             switch = "manual"
         else:
             switch = "automatic"
-        buttons = {"Turn OFF": "approval_off", f"{(mode.upper())}": f"approval_{switch}"}
+        buttons = {
+            "Turn OFF": "approval_off",
+            f"{(mode.upper())}": f"approval_{switch}",
+        }
         keyboard = ikb(buttons, 1)
         await message.reply(
             "**Autoapproval for this chat: Enabled.**", reply_markup=keyboard
@@ -107,7 +110,8 @@ async def approval_cb(client, cb):
             buttons = {"Turn ON": "approval_on"}
             keyboard = ikb(buttons, 1)
             return await cb.edit_message_text(
-                "**Autoapproval for this chat: Disabled.**", reply_markup=keyboard
+                "**Autoapproval for this chat: Disabled.**",
+                reply_markup=keyboard,
             )
     if option == "on":
         switch = "manual"
@@ -154,7 +158,9 @@ async def accept(client, message: ChatJoinRequest):
     if chat_id:
         mode = chat_id["mode"]
         if mode == "automatic":
-            await app.approve_chat_join_request(chat_id=chat.id, user_id=user.id)
+            await app.approve_chat_join_request(
+                chat_id=chat.id, user_id=user.id
+            )
             return await handle_new_member(message, user, chat_id)
         if mode == "manual":
             is_user_in_pending = await approvaldb.count_documents(
@@ -175,14 +181,17 @@ async def accept(client, message: ChatJoinRequest):
                 admin_data = [
                     i
                     async for i in app.get_chat_members(
-                        chat_id=message.chat.id, filter=ChatMembersFilter.ADMINISTRATORS
+                        chat_id=message.chat.id,
+                        filter=ChatMembersFilter.ADMINISTRATORS,
                     )
                 ]
                 for admin in admin_data:
                     if admin.user.is_bot or admin.user.is_deleted:
                         continue
                     text += f"[\u2063](tg://user?id={admin.user.id})"
-                return await app.send_message(chat.id, text, reply_markup=keyboard)
+                return await app.send_message(
+                    chat.id, text, reply_markup=keyboard
+                )
 
 
 @app.on_callback_query(filters.regex("manual_(.*)"))

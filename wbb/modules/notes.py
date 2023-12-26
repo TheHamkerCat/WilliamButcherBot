@@ -43,7 +43,11 @@ from wbb.utils.dbfunctions import (
     get_note_names,
     save_note,
 )
-from wbb.utils.functions import check_format, extract_text_and_keyb, get_data_and_name
+from wbb.utils.functions import (
+    check_format,
+    extract_text_and_keyb,
+    get_data_and_name,
+)
 
 __MODULE__ = "Notes"
 __HELP__ = """/notes To Get All The Notes In The Chat.

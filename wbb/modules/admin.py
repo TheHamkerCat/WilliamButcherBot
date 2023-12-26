@@ -27,7 +27,7 @@ from contextlib import suppress
 from time import time
 
 from pyrogram import filters
-from pyrogram.enums import ChatMembersFilter, ChatType, ChatMemberStatus
+from pyrogram.enums import ChatMembersFilter, ChatMemberStatus, ChatType
 from pyrogram.errors import FloodWait
 from pyrogram.types import (
     CallbackQuery,
@@ -521,7 +521,7 @@ async def demote(_, message: Message):
         )
     try:
         member = await app.get_chat_member(message.chat.id, user_id)
-        if member.status ==  ChatMemberStatus.ADMINISTRATOR:
+        if member.status == ChatMemberStatus.ADMINISTRATOR:
             await message.chat.promote_member(
                 user_id=user_id,
                 privileges=ChatPrivileges(
@@ -538,7 +538,9 @@ async def demote(_, message: Message):
             umention = (await app.get_users(user_id)).mention
             await message.reply_text(f"Demoted! {umention}")
         else:
-            await message.reply_text("The person you mentioned is not an admin.")
+            await message.reply_text(
+                "The person you mentioned is not an admin."
+            )
     except Exception as e:
         await message.reply_text(e)
 
@@ -610,7 +612,7 @@ async def mute(_, message: Message):
                 )
                 replied_message = message.reply_to_message
                 if replied_message:
-                   message = replied_message
+                    message = replied_message
                 await message.reply_text(msg, reply_markup=keyboard)
             else:
                 await message.reply_text("You can't use more than 99")

@@ -35,9 +35,9 @@ from sys import executable
 import aiofiles
 import speedtest
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from pyrogram import errors
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
-from pyrogram import errors
 
 from wbb import aiohttpsession as aiosession
 from wbb.utils.dbfunctions import start_restart_stage
@@ -340,9 +340,7 @@ async def check_format(ikb, raw_text: str):
 
 
 async def get_data_and_name(replied_message, message):
-    text = (
-        message.text.markdown if message.text else message.caption.markdown
-    )
+    text = message.text.markdown if message.text else message.caption.markdown
     name = text.split(None, 1)[1].strip()
     text = name.split(" ", 1)
     if len(text) > 1:
@@ -373,7 +371,7 @@ async def get_data_and_name(replied_message, message):
             match = f"/{command} " + name
             if not message.reply_to_message and message.text:
                 if match == data:
-                    data ="error"
+                    data = "error"
             elif not message.reply_to_message and not message.text:
                 if match == data:
                     data = None
