@@ -7,8 +7,8 @@ from wbb import SUDOERS, db
 fedsdb = db.feds
 
 
-def get_fed_info(fed_id):
-    get = fedsdb.find_one({"fed_id": str(fed_id)})
+async def get_fed_info(fed_id):
+    get = await fedsdb.find_one({"fed_id": str(fed_id)})
     if get is None:
         return False
     return get
