@@ -53,13 +53,13 @@ async def new_fed(client, message):
     chat = message.chat
     user = message.from_user
     if message.chat.type != ChatType.PRIVATE:
-        await message.reply_text(
+        return await message.reply_text(
             "Federations can only be created by privately messaging me."
         )
-        return
+
     if len(message.command) < 2:
-        await message.reply_text("Please write the name of the federation!")
-        return
+        return await message.reply_text("Please write the name of the federation!")
+
     fednam = message.text.split(None, 1)[1]
     if not fednam == "":
         fed_id = str(uuid.uuid4())
@@ -80,10 +80,9 @@ async def new_fed(client, message):
             upsert=True,
         )
         if not x:
-            await message.reply_text(
+            return await message.reply_text(
                 f"Can't federate! Please contact {SUPPORT_CHAT} if the problem persist."
             )
-            return
 
         await message.reply_text(
             "**You have succeeded in creating a new federation!**"
@@ -115,29 +114,29 @@ async def del_fed(client, message):
     chat = message.chat
     user = message.from_user
     if message.chat.type != ChatType.PRIVATE:
-        await message.reply_text(
+        return await message.reply_text(
             "Federations can only be deleted by privately messaging me."
         )
-        return
+
     args = message.text.split(" ", 1)
     if len(args) > 1:
         is_fed_id = args[1].strip()
         getinfo = await get_fed_info(is_fed_id)
         if getinfo is False:
-            await message.reply_text("This federation does not exist.")
-            return
+            return await message.reply_text("This federation does not exist.")
+
         if getinfo["owner_id"] == user.id or user.id == SUDOERS:
             fed_id = is_fed_id
         else:
-            await message.reply_text("Only federation owners can do this!")
-            return
+            return await message.reply_text("Only federation owners can do this!")
+
     else:
-        await message.reply_text("What should I delete?")
-        return
+        return await message.reply_text("What should I delete?")
+
     is_owner = await is_user_fed_owner(fed_id, user.id)
     if is_owner is False:
-        await message.reply_text("Only federation owners can do this!")
-        return
+        return await message.reply_text("Only federation owners can do this!")
+
     await message.reply_text(
         "You sure you want to delete your federation? This cannot be reverted, you will lose your entire ban list, and '{}' will be permanently lost.".format(
             getinfo["fed_name"]
@@ -162,10 +161,10 @@ async def fedtransfer(client, message):
     chat = message.chat
     user = message.from_user
     if message.chat.type != ChatType.PRIVATE:
-        await message.reply_text(
+        return await message.reply_text(
             "Federations can only be transferred by privately messaging me."
         )
-        return
+
     is_feds = await get_feds_by_owner(int(user.id))
     if not is_feds:
         return await message.reply_text(
@@ -184,8 +183,8 @@ async def fedtransfer(client, message):
         )
     is_owner = await is_user_fed_owner(fed_id, user.id)
     if is_owner is False:
-        await message.reply_text("Only federation owners can do this!")
-        return
+        return await message.reply_text("Only federation owners can do this!")
+
     await message.reply_text(
         "**You sure you want to transfer your federation? This cannot be reverted.**",
         reply_markup=InlineKeyboardMarkup(
@@ -257,10 +256,10 @@ async def fed_log(client, message):
     chat = message.chat
     user = message.from_user
     if message.chat.type == ChatType.PRIVATE:
-        await message.reply_text(
+        return await message.reply_text(
             "Send this command on the chat which you need to set as fed log channel."
         )
-        return
+
     member = await app.get_chat_member(chat.id, user.id)
     if (
         member.status == ChatMemberStatus.OWNER
@@ -273,8 +272,8 @@ async def fed_log(client, message):
         fed_id = message.text.split(" ", 1)[1].strip()
         info = await get_fed_info(fed_id)
         if info is False:
-            await message.reply_text("This federation does not exist.")
-            return
+            return await message.reply_text("This federation does not exist.")
+
         if await is_user_fed_owner(fed_id, user.id):
             if "/unsetfedlog" in message.text:
                 log_group_id = LOG_GROUP_ID
@@ -307,14 +306,13 @@ async def fed_chat(client, message):
     ):
         pass
     else:
-        await message.reply_text(
+        return await message.reply_text(
             "You must be an admin to execute this command"
         )
-        return
 
     if not fed_id:
-        await message.reply_text("This group is not in any federation!")
-        return
+        return await message.reply_text("This group is not in any federation!")
+
     info = await get_fed_info(fed_id)
 
     text = "This group is part of the following federation:"
@@ -329,10 +327,9 @@ async def join_fed(client, message):
     chat = message.chat
     user = message.from_user
     if message.chat.type == ChatType.PRIVATE:
-        await message.reply_text(
+        return await message.reply_text(
             "This command is specific to groups, not our pm!",
         )
-        return
 
     member = await app.get_chat_member(chat.id, user.id)
     fed_id = await get_fed_id(int(chat.id))
@@ -343,29 +340,28 @@ async def join_fed(client, message):
         if member.status == ChatMemberStatus.OWNER:
             pass
         else:
-            await message.reply_text(
+            return await message.reply_text(
                 "Only group creators can use this command!"
             )
-            return
+
     if fed_id:
-        await message.reply_text(
+        return await message.reply_text(
             "You cannot join two federations from one chat"
         )
-        return
+
     args = message.text.split(" ", 1)
     if len(args) > 1:
         fed_id = args[1].strip()
         getfed = await search_fed_by_id(fed_id)
         if getfed is False:
-            await message.reply_text("Please enter a valid federation ID")
-            return
+            return await message.reply_text("Please enter a valid federation ID")
+ 
 
         x = await chat_join_fed(fed_id, chat.title, chat.id)
         if not x:
-            await message.reply_text(
+            return await message.reply_text(
                 f"Failed to join federation! Please contact {SUPPORT_CHAT} if this problem persists!"
             )
-            return
 
         get_fedlog = getfed["log_group_id"]
         if get_fedlog:
@@ -395,10 +391,9 @@ async def leave_fed(client, message):
     user = message.from_user
 
     if message.chat.type == ChatType.PRIVATE:
-        await message.reply_text(
+        return await message.reply_text(
             "This command is specific to groups, not our pm!",
         )
-        return
 
     fed_id = await get_fed_id(int(chat.id))
     fed_info = await get_fed_info(fed_id)
@@ -464,7 +459,7 @@ async def fed_chat(client, message):
             )
         text = "\n".join(
             [
-                f"${chat_name} [`{chat_id}`]"
+                f"$ {chat_name} [`{chat_id}`]"
                 for chat_id, chat_name in zip(chat_ids, chat_names)
             ]
         )
@@ -509,8 +504,7 @@ async def fed_info(client, message):
 @capture_err
 async def get_all_fadmins_mentions(client, message):
     if len(message.command) < 2:
-        await message.reply_text("Please provide me the Fed Id to search!")
-        return
+        return await message.reply_text("Please provide me the Fed Id to search!")
 
     fed_id = message.text.split(" ", 1)[1].strip()
     fed_info = await get_fed_info(fed_id)
@@ -546,10 +540,9 @@ async def fpromote(client, message):
     msg = message
 
     if message.chat.type == ChatType.PRIVATE:
-        await message.reply_text(
+        return await message.reply_text(
             "This command is specific to groups, not our pm!",
         )
-        return
 
     fed_id = await get_fed_id(chat.id)
     if not fed_id:
@@ -561,10 +554,10 @@ async def fpromote(client, message):
         user_id = await extract_user(msg)
 
         if user_id is None:
-            await message.reply_text(
+            return await message.reply_text(
                 "Failed to extract user from the message."
             )
-            return
+
         check_user = await check_banned_user(fed_id, user_id)
         if check_user:
             user = await app.get_users(user_id)
@@ -579,22 +572,20 @@ async def fpromote(client, message):
         get_owner = info["owner_id"]
 
         if user_id == get_owner:
-            await message.reply_text(
+            return await message.reply_text(
                 "You do know that the user is the federation owner, right? RIGHT?"
             )
-            return
 
         if getuser:
-            await message.reply_text(
+            return await message.reply_text(
                 "I cannot promote users who are already federation admins! Can remove them if you want!"
             )
-            return
 
         if user_id == BOT_ID:
-            await message.reply_text(
+            return await message.reply_text(
                 "I already am a federation admin in all federations!"
             )
-            return
+
         res = await user_join_fed(str(fed_id), user_id)
         if res:
             await message.reply_text("Successfully Promoted!")
@@ -612,10 +603,9 @@ async def fdemote(client, message):
     msg = message
 
     if message.chat.type == ChatType.PRIVATE:
-        await message.reply_text(
+        return await message.reply_text(
             "This command is specific to groups, not our pm!",
         )
-        return
 
     fed_id = await get_fed_id(chat.id)
     if not fed_id:
@@ -627,22 +617,19 @@ async def fdemote(client, message):
         user_id = await extract_user(msg)
 
         if user_id is None:
-            await message.reply_text(
+            return await message.reply_text(
                 "Failed to extract user from the message."
             )
-            return
 
         if user_id == BOT_ID:
-            update.effective_message.reply_text(
+            return await message.reply_text(
                 "The thing you are trying to demote me from will fail to work without me! Just saying."
             )
-            return
 
         if await search_user_in_fed(fed_id, user_id) is False:
-            await message.reply_text(
+            return await message.reply_text(
                 "I cannot demote people who are not federation admins!"
             )
-            return
 
         res = await user_demote_fed(fed_id, user_id)
         if res is True:
@@ -650,8 +637,7 @@ async def fdemote(client, message):
         else:
             await message.reply_text("Demotion failed!")
     else:
-        await message.reply_text("Only federation owners can do this!")
-        return
+        return await message.reply_text("Only federation owners can do this!")
 
 
 @app.on_message(filters.command(["fban", "sfban"]))
@@ -660,10 +646,10 @@ async def fban_user(client, message):
     chat = message.chat
     from_user = message.from_user
     if message.chat.type == ChatType.PRIVATE:
-        await message.reply_text(
+        return await message.reply_text(
             "This command is specific to groups, not our pm!."
         )
-        return
+
     fed_id = await get_fed_id(chat.id)
     if not fed_id:
         return await message.reply_text(
@@ -761,10 +747,10 @@ async def funban_user(client, message):
     chat = message.chat
     from_user = message.from_user
     if message.chat.type == ChatType.PRIVATE:
-        await message.reply_text(
+        return await message.reply_text(
             "This command is specific to groups, not our pm!."
         )
-        return
+
     fed_id = await get_fed_id(chat.id)
     if not fed_id:
         return await message.reply_text(
@@ -860,13 +846,13 @@ __**New Federation UnBan**__
 async def fedstat(client, message):
     user = message.from_user
     if message.chat.type != ChatType.PRIVATE:
-        await message.reply_text(
+        return await message.reply_text(
             "Federation Ban status can only be checked by privately messaging me."
         )
-        return
+
     if len(message.command) < 2:
-        await message.reply_text("Please provide me the user name and Fed Id!")
-        return
+        return await message.reply_text("Please provide me the user name and Fed Id!")
+
     user_id, fed_id = await extract_user_and_reason(message)
     if not user_id:
         user_id = message.from_user.id
@@ -900,10 +886,10 @@ async def fbroadcast_message(client, message):
     from_user = message.from_user
     reply_message = message.reply_to_message
     if message.chat.type == ChatType.PRIVATE:
-        await message.reply_text(
+        return await message.reply_text(
             "This command is specific to groups, not our pm!."
         )
-        return
+
     fed_id = await get_fed_id(chat.id)
     if not fed_id:
         return await message.reply_text(
@@ -987,8 +973,8 @@ async def fedtransfer_button(client, cb):
     data = query.split("_")[1]
 
     if data == "cancel":
-        await cb.message.edit_text("Federation deletion cancelled")
-        return
+        return await cb.message.edit_text("Federation deletion cancelled")
+
     data2 = data.split("|", 1)
     new_owner_id = int(data2[0])
     fed_id = data2[1]
