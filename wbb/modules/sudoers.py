@@ -239,6 +239,14 @@ async def update_restart(_, message):
     await restart(m)
 
 
+@app.on_message(filters.command("restart") & SUDOERS)
+async def update_restart(_, message):
+    m = await message.reply_text(
+        "**Bot is restarting now.**"
+    )
+    await restart(m)
+
+
 @app.on_message(filters.command("ubroadcast") & SUDOERS)
 @capture_err
 async def broadcast_message(_, message):
