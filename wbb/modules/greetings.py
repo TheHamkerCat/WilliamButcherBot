@@ -87,7 +87,7 @@ For text welcome message just send the text. Then reply with the command
 The format should be something like below.
 
 ```
-**Hi** {name} Welcome to {chat}
+**Hi** {name} [{id}] Welcome to {chat}
 
 ~ #This separater (~) should be there between text and buttons, remove this comment also
 
@@ -254,6 +254,8 @@ async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
         text = text.replace("{chat}", chat.title)
     if "{name}" in text:
         text = text.replace("{name}", (await app.get_users(user_id)).mention)
+    if "{id}" in text:
+        text = text.replace("{id}", f"`{user_id}`")
 
     async def _send_wait_delete():
         if welcome == "Text":
