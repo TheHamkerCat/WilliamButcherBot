@@ -297,6 +297,11 @@ async def fed_log(client, message):
 async def fed_chat(client, message):
     chat = message.chat
     user = message.from_user
+    if message.chat.type == ChatType.PRIVATE:
+        return await message.reply_text(
+            "This command is specific to groups, not our pm!",
+        )
+
     fed_id = await get_fed_id(chat.id)
 
     member = await app.get_chat_member(chat.id, user.id)
