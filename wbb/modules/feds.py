@@ -210,7 +210,7 @@ async def myfeds(client, message):
     if is_feds:
         response_text = "\n\n".join(
             [
-                f"{i + 1}.\n**Fed Name:** {fed['fed_name']}\n**Fed Id:** `{fed['fed_id']}`"
+                f"{i + 1}) **Fed Name:** {fed['fed_name']}\n  **Fed Id:** `{fed['fed_id']}`"
                 for i, fed in enumerate(is_feds)
             ]
         )
@@ -847,7 +847,25 @@ __**New Federation UnBan**__
         )
 
 
+async def status(message, user_id):
+    status = await get_user_fstatus(user_id)
+    user = await app.get_users(user_id)
+    if status:
+        response_text = "\n\n".join(
+            [
+                f"{i + 1}) **Fed Name:** {fed['fed_name']}\n  **Fed Id:** `{fed['fed_id']}`"
+                for i, fed in enumerate(status)
+            ]
+        )
+        await message.reply_text(
+            f"**Here are the list of federations {user.mention} where Banned in:**\n\n{response_text}"
+        )
+    else:
+        return await message.reply_text(f"**{user.mention} is not banned in any federations.**")
+
+
 @app.on_message(filters.command("fedstat"))
+@capture_err
 async def fedstat(client, message):
     user = message.from_user
     if message.chat.type != ChatType.PRIVATE:
@@ -856,16 +874,16 @@ async def fedstat(client, message):
         )
 
     if len(message.command) < 2:
-        return await message.reply_text("Please provide me the user name and Fed Id!")
+        user_id = user.id
+        return await status(message, user_id)
 
     user_id, fed_id = await extract_user_and_reason(message)
     if not user_id:
         user_id = message.from_user.id
         fed_id = message.text.split(" ", 1)[1].strip()
     if not fed_id:
-        return await message.reply_text(
-            "provide me a Fed Id along with the command to search for."
-        )
+        return await status(message, user_id)
+
     info = await get_fed_info(fed_id)
     if not info:
         await message.reply_text("Please enter a valid fed id")
@@ -1023,6 +1041,8 @@ async def fed_owner_help(client, cb):
 • /fedadmins <FedID>: List the admins in a federation.
 • /joinfed <FedID>: Join the current chat to a federation. A chat can only join one federation. Chat owners only.
 • /leavefed: Leave the current federation. Only chat owners can do this.
+• /fedstat: List all the federations that you have been banned in.
+• /fedstat <user ID>: List all the federations that a user has been banned in.
 • /fedstat <FedID>: Gives information about your ban in a federation.
 • /fedstat <user ID> <FedID>: Gives information about a user's ban in a federation.
 • /chatfed: Information about the federation the current chat is in.
