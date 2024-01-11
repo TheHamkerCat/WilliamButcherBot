@@ -186,3 +186,14 @@ async def check_banned_user(fed_id, user_id):
                 return {"reason": user.get("reason"), "date": user.get("date")}
 
     return False
+
+
+async def get_user_fstatus(user_id):
+    cursor = fedsdb.find({"banned_users.user_id": user_id})
+    feds = await cursor.to_list(length=None)
+    if not feds:
+        return False
+    federations = [
+        {"fed_id": fed["fed_id"], "fed_name": fed["fed_name"]} for fed in feds
+    ]
+    return federations

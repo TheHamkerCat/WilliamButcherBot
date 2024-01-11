@@ -175,6 +175,8 @@ async def del_filter(_, message):
 )
 @capture_err
 async def filters_re(_, message):
+    if not message.from_user:
+        return
     user_id = message.from_user.id
     chat_id = message.chat.id
     text = message.text.lower().strip()
