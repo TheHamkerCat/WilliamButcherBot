@@ -858,7 +858,7 @@ async def status(message, user_id):
             ]
         )
         await message.reply_text(
-            f"**Here are the list of federations {user.mention} where Banned in:**\n\n{response_text}"
+            f"**Here is the list of federations that {user.mention} were banned in:**\n\n{response_text}"
         )
     else:
         return await message.reply_text(f"**{user.mention} is not banned in any federations.**")
