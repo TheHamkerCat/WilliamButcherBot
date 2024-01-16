@@ -161,7 +161,7 @@ async def accept(client, message: ChatJoinRequest):
             await app.approve_chat_join_request(
                 chat_id=chat.id, user_id=user.id
             )
-            return await handle_new_member(message, user, chat_id)
+            return await handle_new_member(user, chat)
         if mode == "manual":
             is_user_in_pending = await approvaldb.count_documents(
                 {"chat_id": chat.id, "pending_users": int(user.id)}
