@@ -33,9 +33,11 @@ from pyrogram.errors.exceptions.bad_request_400 import (
     ChatAdminRequired,
     UserNotParticipant,
 )
+from pyrogram.enums import ChatMemberStatus as CMS
 from pyrogram.types import (
     Chat,
     ChatPermissions,
+    ChatMemberUpdated,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     Message,
@@ -113,7 +115,7 @@ async def get_initial_captcha_cache():
 loop.create_task(get_initial_captcha_cache())
 
 
-async def handle_new_member(message: Message, member, chat):
+async def handle_new_member(member, chat):
     global answers_dicc
 
     # Get cached answers from mongodb in case of bot's been restarted or crashed.
@@ -129,13 +131,13 @@ async def handle_new_member(message: Message, member, chat):
             if check_user:
                 reason = check_user["reason"]
                 date = check_user["date"]
-                await message.chat.ban_member(member.id)
+                await chat.ban_member(member.id)
                 return await app.send_message(
                     chat.id,
                     f"**User {member.mention} was Fed Banned.\n\nReason: {reason}.\nDate: {date}.**",
                 )
         if await is_gbanned_user(member.id):
-            await message.chat.ban_member(member.id)
+            await chat.ban_member(member.id)
             await app.send_message(
                 chat.id,
                 f"{member.mention} was globally banned, and got removed,"
@@ -145,17 +147,17 @@ async def handle_new_member(message: Message, member, chat):
             return
         if member.is_bot:
             return  # Ignore bots
-        if not await is_captcha_on(message.chat.id):
+        if not await is_captcha_on(chat.id):
             return await send_welcome_message(
-                message.chat, message.from_user.id
+                chat, member.id
             )
 
         # Ignore user if he has already solved captcha in this group
         # someday
-        if await has_solved_captcha_once(message.chat.id, member.id):
+        if await has_solved_captcha_once(chat.id, member.id):
             return
 
-        await message.chat.restrict_member(member.id, ChatPermissions())
+        await chat.restrict_member(member.id, ChatPermissions())
         text = (
             f"{(member.mention())} Are you human?\n"
             f"Solve this captcha in {WELCOME_DELAY_KICK_SEC} "
@@ -231,13 +233,22 @@ async def handle_new_member(message: Message, member, chat):
     await asyncio.sleep(0.5)
 
 
-@app.on_message(filters.new_chat_members, group=welcome_captcha_group)
+
+@app.on_chat_member_updated(filters.group, group=welcome_captcha_group)
 @capture_err
-async def welcome(_, message: Message):
-    chat = message.chat
-    members = message.new_chat_members
-    for member in members:
-        return await handle_new_member(message, member, chat)
+async def welcome(_, user: ChatMemberUpdated):
+    if (
+        user.new_chat_member
+        and user.new_chat_member.status not in {CMS.BANNED, CMS.LEFT, CMS.RESTRICTED}
+        and not user.old_chat_member
+    ):
+        pass
+    else:
+        return
+
+    member = user.new_chat_member.user if user.new_chat_member else user.from_user
+    chat = user.chat
+    return await handle_new_member(member, chat)
 
 
 async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
