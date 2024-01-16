@@ -27,7 +27,7 @@ import uuid
 
 from pyrogram import filters
 from pyrogram.enums import ChatMemberStatus, ChatType, ParseMode
-from pyrogram.errors import FloodWait
+from pyrogram.errors import FloodWait, PeerIdInvalid
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from wbb import BOT_ID, LOG_GROUP_ID, SUDOERS, app
@@ -62,7 +62,7 @@ async def new_fed(client, message):
 
     fednam = message.text.split(None, 1)[1]
     if not fednam == "":
-        fed_id = str(uuid.uuid4())
+        fed_id = f"{user.id}:{uuid.uuid4()}"
         fed_name = fednam
         x = await fedsdb.update_one(
             {"fed_id": str(fed_id)},
@@ -675,7 +675,10 @@ async def fban_user(client, message):
             "**You needed to specify a user or reply to their message!**"
         )
     user_id, reason = await extract_user_and_reason(message)
-    user = await app.get_users(user_id)
+    try:
+        user = await app.get_users(user_id)
+    except PeerIdInvalid:
+        return await message.reply_msg("Sorry, i never meet this user. So i cannot fban.")
     if not user_id:
         return await message.reply_text("I can't find that user.")
     if user_id in all_admins or user_id in SUDOERS:
@@ -996,7 +999,7 @@ async def fedtransfer_button(client, cb):
     data = query.split("_")[1]
 
     if data == "cancel":
-        return await cb.message.edit_text("Federation deletion cancelled")
+        return await cb.message.edit_text("Federation transfer cancelled")
 
     data2 = data.split("|", 1)
     new_owner_id = int(data2[0])
