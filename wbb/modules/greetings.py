@@ -237,13 +237,11 @@ async def handle_new_member(member, chat):
 @app.on_chat_member_updated(filters.group, group=welcome_captcha_group)
 @capture_err
 async def welcome(_, user: ChatMemberUpdated):
-    if (
+    if not (
         user.new_chat_member
         and user.new_chat_member.status not in {CMS.BANNED}
         and not user.old_chat_member
     ):
-        pass
-    else:
         return
 
     member = user.new_chat_member.user if user.new_chat_member else user.from_user
