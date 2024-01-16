@@ -678,7 +678,7 @@ async def fban_user(client, message):
     try:
         user = await app.get_users(user_id)
     except PeerIdInvalid:
-        return await message.reply_msg("Sorry, i never meet this user. So i cannot fban.")
+        return await message.reply_msg("Sorry, I've never met this user.")
     if not user_id:
         return await message.reply_text("I can't find that user.")
     if user_id in all_admins or user_id in SUDOERS:
