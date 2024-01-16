@@ -239,7 +239,7 @@ async def handle_new_member(member, chat):
 async def welcome(_, user: ChatMemberUpdated):
     if (
         user.new_chat_member
-        and user.new_chat_member.status not in {CMS.BANNED, CMS.LEFT, CMS.RESTRICTED}
+        and user.new_chat_member.status not in {CMS.BANNED}
         and not user.old_chat_member
     ):
         pass
