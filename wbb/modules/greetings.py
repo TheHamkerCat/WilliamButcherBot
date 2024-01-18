@@ -204,7 +204,7 @@ async def handle_new_member(member, chat):
     keyboard = [temp_keyboard_1, temp_keyboard_2, temp_keyboard_3]
     shuffle(keyboard)
     verification_data = {
-        "chat_id": message.chat.id,
+        "chat_id": chat.id,
         "user_id": member.id,
         "answer": captcha_answer,
         "keyboard": keyboard,
