@@ -27,7 +27,7 @@ import uuid
 
 from pyrogram import filters
 from pyrogram.enums import ChatMemberStatus, ChatType, ParseMode
-from pyrogram.errors import FloodWait, PeerIdInvalid
+from pyrogram.errors import FloodWait, PeerIdInvalid, ChatAdminRequired
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from wbb import BOT_ID, LOG_GROUP_ID, SUDOERS, app
@@ -256,40 +256,53 @@ async def fed_log(client, message):
     chat = message.chat
     user = message.from_user
     if message.chat.type == ChatType.PRIVATE:
-        return await message.reply_text(
-            "Send this command on the chat which you need to set as fed log channel."
-        )
+        if len(message.command) < 3:
+            return await message.reply_text(
+                f"Usage:\n\n /{message.command[0]} [channel_id] [fed_id]."
+            )
+        ids = message.text.split(" ", 2)
+        chat_id = ids[1]
+        fed_id = ids[2]
 
-    member = await app.get_chat_member(chat.id, user.id)
-    if (
-        member.status == ChatMemberStatus.OWNER
-        or member.status == ChatMemberStatus.ADMINISTRATOR
-    ):
+    else:
+        chat_id = chat.id 
         if len(message.command) < 2:
             return await message.reply_text(
                 "Please provide the Id of the federation with the command!"
             )
         fed_id = message.text.split(" ", 1)[1].strip()
-        info = await get_fed_info(fed_id)
-        if info is False:
-            return await message.reply_text("This federation does not exist.")
 
-        if await is_user_fed_owner(fed_id, user.id):
-            if "/unsetfedlog" in message.text:
-                log_group_id = LOG_GROUP_ID
-            else:
-                log_group_id = chat.id
-            loged = await set_log_chat(fed_id, log_group_id)
-            if "/unsetfedlog" in message.text:
-                return await message.reply_text(
-                    "log channel removed successfully."
-                )
-            else:
-                await message.reply_text("log channel set successfully.")
-    else:
-        await message.reply_text(
-            "You need to be the chat owner or admin to use this command."
+    try:
+        chat_member = await app.get_chat_member(chat_id, user.id)
+        
+    except ChatAdminRequired:
+        return await message.reply_text("I need to be an admin in the channel")
+        
+    except Exception as e:
+        print(e)
+        return
+        
+    if not chat_member.status in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER]:
+        return await message.reply_text(
+            "You need to be the channel owner or admin to use this command"
         )
+
+    info = await get_fed_info(fed_id)
+    if info is False:
+        return await message.reply_text("This federation does not exist.")
+
+    if await is_user_fed_owner(fed_id, user.id):
+        if "/unsetfedlog" in message.text:
+            log_group_id = LOG_GROUP_ID
+        else:
+            log_group_id = chat_id
+        loged = await set_log_chat(fed_id, log_group_id)
+        if "/unsetfedlog" in message.text:
+            return await message.reply_text(
+                "log channel removed successfully."
+            )
+        else:
+            await message.reply_text("log channel set successfully.")
 
 
 @app.on_message(filters.command("chatfed"))

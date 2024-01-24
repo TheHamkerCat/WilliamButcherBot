@@ -40,9 +40,14 @@ def section(
     text = (bold_ul(title) + n) if underline else bold(title) + n
 
     for key, value in body.items():
-        text += (
-            indent * w
-            + bold(key)
-            + ((value[0] + n) if isinstance(value, list) else mono(value))
-        )
+        if value is not None:
+            text += (
+                indent * w
+                + bold(key)
+                + (
+                    (value[0] + n)
+                    if isinstance(value, list) and isinstance(value[0], str)
+                    else mono(value)
+                )
+            )
     return text

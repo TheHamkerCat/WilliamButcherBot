@@ -67,6 +67,8 @@ __HELP__ = """
 
 /update - To Update And Restart The Bot
 
+/restart - To Restart the bot
+
 /eval - Execute Python Code
 
 /sh - Execute Shell Code
