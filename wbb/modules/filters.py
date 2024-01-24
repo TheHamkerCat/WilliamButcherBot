@@ -170,7 +170,7 @@ async def del_filter(_, message):
 
 
 @app.on_message(
-    filters.text & ~filters.private & ~filters.via_bot & ~filters.forwarded,
+    filters.text & ~filters.private & ~filters.channel & ~filters.via_bot & ~filters.forwarded,
     group=chat_filters_group,
 )
 @capture_err

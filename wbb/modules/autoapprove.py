@@ -206,14 +206,12 @@ async def manual(app, cb):
                 f"You don't have the required permission.\n Permission: {permission}",
                 show_alert=True,
             )
-    datas = cb.data.split("_", 1)[1]
-    data = datas.split("_", 1)
-    dis = data[0]
-    id = data[1]
+    datas = cb.data.split("_", 2)
+    dis = datas[1]
+    id = datas[2]
     if dis == "approve":
         await app.approve_chat_join_request(chat_id=chat.id, user_id=id)
         # No need to verify user as admin is the one who accept the request
-        await send_welcome_message(chat, id, True)
     if dis == "decline":
         await app.decline_chat_join_request(chat_id=chat.id, user_id=id)
     await approvaldb.update_one(
