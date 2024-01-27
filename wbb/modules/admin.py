@@ -811,8 +811,6 @@ async def report_user(_, message):
     user_id = (
         message.from_user.id if message.from_user else message.sender_chat.id
     )
-    if reply_id == user_id:
-        return await message.reply_text("Why are you reporting yourself ?")
 
     list_of_admins = await list_admins(message.chat.id)
     linked_chat = (await app.get_chat(message.chat.id)).linked_chat
