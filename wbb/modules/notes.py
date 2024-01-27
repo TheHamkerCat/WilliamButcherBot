@@ -209,7 +209,6 @@ async def get_one_note_userbot(_, message):
 @app.on_message(filters.regex(r"^#.+") & filters.text & ~filters.private)
 @capture_err
 async def get_one_note(_, message):
-    user_id = message.from_user.id
     chat_id = message.chat.id
     name = message.text.replace("#", "", 1)
     if not name:
@@ -223,10 +222,10 @@ async def get_one_note(_, message):
     keyb = None
     if data:
         if "{chat}" in data:
-            data = data.replace("{chat}", (await app.get_chat(chat_id)).title)
+            data = data.replace("{chat}", message.chat.title)
         if "{name}" in data:
             data = data.replace(
-                "{name}", (await app.get_users(user_id)).mention
+                "{name}", message.from_user.mention
             )
         if findall(r"\[.+\,.+\]", data):
             keyboard = extract_text_and_keyb(ikb, data)

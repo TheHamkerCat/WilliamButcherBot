@@ -177,7 +177,6 @@ async def del_filter(_, message):
 async def filters_re(_, message):
     if not message.from_user:
         return
-    user_id = message.from_user.id
     chat_id = message.chat.id
     text = message.text.lower().strip()
     if not text:
@@ -195,11 +194,11 @@ async def filters_re(_, message):
             if data:
                 if "{chat}" in data:
                     data = data.replace(
-                        "{chat}", (await app.get_chat(chat_id)).title
+                        "{chat}", message.chat.title
                     )
                 if "{name}" in data:
                     data = data.replace(
-                        "{name}", (await app.get_users(user_id)).mention
+                        "{name}", message.from_user.mention
                     )
                 if re.findall(r"\[.+\,.+\]", data):
                     keyboard = extract_text_and_keyb(ikb, data)
