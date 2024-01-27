@@ -950,30 +950,18 @@ async def fbroadcast_message(client, message):
         )
     sleep_time = 0.1
 
-    if reply_message.text:
-        text = reply_message.text.markdown
-    else:
-        return await message.reply_text(
-            "You can only Broadcast text messages."
-        )
-
-    reply_markup = None
-    if reply_message.reply_markup:
-        reply_markup = InlineKeyboardMarkup(
-            reply_message.reply_markup.inline_keyboard
-        )
     sent = 0
     chats, _ = await chat_id_and_names_in_fed(fed_id)
     m = await message.reply_text(
         f"Broadcast in progress, will take {len(chats) * sleep_time} seconds."
     )
+    to_copy = not reply_message.poll
     for i in chats:
         try:
-            await app.send_message(
-                i,
-                text=text,
-                reply_markup=reply_markup,
-            )
+            if to_copy:
+                await reply_message.copy(i)
+            else:
+                await reply_message.forward(i)
             sent += 1
             await asyncio.sleep(sleep_time)
         except FloodWait as e:
