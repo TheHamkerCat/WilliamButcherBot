@@ -946,7 +946,7 @@ async def fbroadcast_message(client, message):
         )
     if not reply_message:
         return await message.reply_text(
-            "**You need to reply to a text message to Broadcasted it.**"
+            "**You need to reply to a message to Broadcasted it.**"
         )
     sleep_time = 0.1
 
