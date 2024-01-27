@@ -256,6 +256,7 @@ async def broadcast_message(_, message):
         f"Broadcast in progress, will take {len(chats) * sleep_time} seconds."
     )
 
+    to_copy = not reply_message.poll
     for i in chats:
         try:
             if to_copy:
