@@ -83,7 +83,7 @@ def extract_urls(reply_markup):
     return urls
 
 
-@app2.on_message(filters.command("save", prefixes=USERBOT_PREFIX) & SUDOERS)
+@app2.on_message(filters.command("save", prefixes=USERBOT_PREFIX) & SUDOERS & ~filters.via_bot)
 @app.on_message(filters.command("save") & ~filters.private)
 @adminsOnly("can_change_info")
 async def save_notee(_, message):
