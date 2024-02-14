@@ -83,6 +83,7 @@ def extract_urls(reply_markup):
     return urls
 
 
+@app2.on_message(filters.command("save", prefixes=USERBOT_PREFIX) & SUDOERS & ~filters.via_bot)
 @app.on_message(filters.command("save") & ~filters.private)
 @adminsOnly("can_change_info")
 async def save_notee(_, message):
@@ -146,7 +147,7 @@ async def save_notee(_, message):
                 "data": data,
                 "file_id": file_id,
             }
-            chat_id = message.chat.id
+            chat_id = USERBOT_ID if message.text.startswith(USERBOT_PREFIX) else message.chat.id
             await save_note(chat_id, name, note)
             await eor(message, text=f"__**Saved note {name}.**__")
     except UnboundLocalError:
@@ -195,15 +196,11 @@ async def get_one_note_userbot(_, message):
     if not _note:
         return await eor(message, text="No such note.")
 
-    if _note["type"] == "text":
-        data = _note["data"]
-        await eor(
-            message,
-            text=data,
-            disable_web_page_preview=True,
-        )
-    else:
-        await message.reply_sticker(_note["data"])
+    type = _note["type"]
+    data = _note["data"]
+    file_id = _note.get("file_id")
+    keyb = None
+    await get_reply(message, type, file_id, data, keyb, protect)
 
 
 @app.on_message(filters.regex(r"^#.+") & filters.text & ~filters.private)
@@ -235,6 +232,10 @@ async def get_one_note(_, message):
     if replied_message:
         if replied_message.from_user.id != message.from_user.id:
             message = replied_message
+    await get_reply(message, type, file_id, data, keyb)
+
+
+async def get_reply(message, type, file_id, data, keyb):
     if type == "text":
         await message.reply_text(
             text=data,
