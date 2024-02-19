@@ -24,7 +24,7 @@ SOFTWARE.
 
 import asyncio
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from random import shuffle
 
 from pyrogram import filters
@@ -239,7 +239,7 @@ async def handle_new_member(member, chat):
 async def welcome(_, user: ChatMemberUpdated):
     if not (
         user.new_chat_member
-        and user.new_chat_member.status not in {CMS.BANNED}
+        and user.new_chat_member.status in {CMS.RESTRICTED}
         and not user.old_chat_member
     ):
         return
@@ -403,7 +403,7 @@ async def _ban_restricted_user_until_date(
     try:
         member = await group_chat.get_member(user_id)
         if member.status == ChatMemberStatus.RESTRICTED:
-            until_date = int(datetime.utcnow().timestamp() + duration)
+            until_date = (datetime.now() + timedelta(seconds=duration))
             await group_chat.ban_member(user_id, until_date=until_date)
     except UserNotParticipant:
         pass
