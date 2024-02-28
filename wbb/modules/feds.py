@@ -263,6 +263,10 @@ async def fed_log(client, message):
         ids = message.text.split(" ", 2)
         chat_id = ids[1]
         fed_id = ids[2]
+        try:
+            await app.get_chat(chat_id)
+        except Exception as e:
+            return await message.reply_text(e)
 
     else:
         chat_id = chat.id 
@@ -490,11 +494,11 @@ async def fed_chat(client, message):
 @capture_err
 async def fed_info(client, message):
     if len(message.command) < 2:
-        return await message.reply_text(
-            "Please provide the Fed Id to get information!"
-        )
-
-    fed_id = message.text.split(" ", 1)[1].strip()
+        fed_id = await get_fed_id(message.chat.id)
+        if not fed_id:
+            return await message.reply_text("Please provide the Fed Id to get information!")
+    else:
+        fed_id = message.text.split(" ", 1)[1].strip()
     fed_info = await get_fed_info(fed_id)
 
     if not fed_info:
@@ -522,9 +526,11 @@ async def fed_info(client, message):
 @capture_err
 async def get_all_fadmins_mentions(client, message):
     if len(message.command) < 2:
-        return await message.reply_text("Please provide me the Fed Id to search!")
-
-    fed_id = message.text.split(" ", 1)[1].strip()
+        fed_id = await get_fed_id(message.chat.id)
+        if not fed_id:
+            return await message.reply_text("Please provide me the Fed Id to search!")
+    else:
+        fed_id = message.text.split(" ", 1)[1].strip()
     fed_info = await get_fed_info(fed_id)
     if not fed_info:
         return await message.reply_text("Federation not found.")
