@@ -331,9 +331,6 @@ async def check_format(ikb, raw_text: str):
     if keyb and not "~" in raw_text:
         raw_text = raw_text.replace("button=", "\n~\nbutton=")
         return raw_text
-    if "~" in raw_text and not keyb:
-        raw_text = raw_text.replace("~", "")
-        return raw_text
     if "~" in raw_text and keyb:
         if not extract_text_and_keyb(ikb, raw_text):
             return ""
