@@ -305,7 +305,11 @@ def extract_text_and_keyb(ikb, text: str, row_width: int = 2):
         if text.endswith("`"):
             text = text[:-1]
 
+        if "~~" in text:
+            text = text.replace("~~", "¤¤")
         text, keyb = text.split("~")
+        if "¤¤" in text:
+            text = text.replace("¤¤", "~~")
 
         keyb = findall(r"\[.+\,.+\]", keyb)
         for btn_str in keyb:
