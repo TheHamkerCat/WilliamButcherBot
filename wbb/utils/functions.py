@@ -305,7 +305,11 @@ def extract_text_and_keyb(ikb, text: str, row_width: int = 2):
         if text.endswith("`"):
             text = text[:-1]
 
+        if "~~" in text:
+            text = text.replace("~~", "¤¤")
         text, keyb = text.split("~")
+        if "¤¤" in text:
+            text = text.replace("¤¤", "~~")
 
         keyb = findall(r"\[.+\,.+\]", keyb)
         for btn_str in keyb:
@@ -326,9 +330,6 @@ async def check_format(ikb, raw_text: str):
     keyb = findall(r"\[.+\,.+\]", raw_text)
     if keyb and not "~" in raw_text:
         raw_text = raw_text.replace("button=", "\n~\nbutton=")
-        return raw_text
-    if "~" in raw_text and not keyb:
-        raw_text = raw_text.replace("~", "")
         return raw_text
     if "~" in raw_text and keyb:
         if not extract_text_and_keyb(ikb, raw_text):

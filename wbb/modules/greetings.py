@@ -24,6 +24,7 @@ SOFTWARE.
 
 import asyncio
 import os
+from re import findall
 from datetime import datetime, timedelta
 from random import shuffle
 
@@ -256,7 +257,7 @@ async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
         return
     text = raw_text
     keyb = None
-    if "~" in raw_text:
+    if findall(r"\[.+\,.+\]", raw_text):
         text, keyb = extract_text_and_keyb(ikb, raw_text)
 
     if "{chat}" in text:
