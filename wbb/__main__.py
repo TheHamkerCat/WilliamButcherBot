@@ -215,7 +215,7 @@ async def start(_, message):
                 if "{name}" in text:
                     text = text.replace("{name}", user.mention)
                 keyb = None
-                if "~" in text:
+                if re.findall(r"\[.+\,.+\]", text):
                     text, keyb = extract_text_and_keyb(ikb, text)
                 await app.send_message(user_id, text=text, reply_markup=keyb)
             else:
