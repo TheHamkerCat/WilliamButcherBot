@@ -194,7 +194,9 @@ async def unban_globally(_, message):
 async def broadcast_message(_, message):
     sleep_time = 0.1
     reply_message = message.reply_to_message
-
+    if not reply_message:
+        return await message.reply_text("Reply to a message to broadcast it")
+        
     sent = 0
     schats = await get_served_chats()
     chats = [int(chat["chat_id"]) for chat in schats]
@@ -251,6 +253,8 @@ async def broadcast_message(_, message):
     schats = await get_served_users()
     chats = [int(chat["user_id"]) for chat in schats]
     reply_message = message.reply_to_message
+    if not reply_message:
+        return await message.reply_text("Reply to a message to broadcast it")
 
     m = await message.reply_text(
         f"Broadcast in progress, will take {len(chats) * sleep_time} seconds."
