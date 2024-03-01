@@ -175,8 +175,8 @@ async def del_filter(_, message):
 )
 @capture_err
 async def filters_re(_, message):
-    if not message.from_user:
-        return
+    from_user = message.from_user if message.from_user else message.sender_chat
+    user_id = from_user.id
     chat_id = message.chat.id
     text = message.text.lower().strip()
     if not text:
@@ -198,7 +198,7 @@ async def filters_re(_, message):
                     )
                 if "{name}" in data:
                     data = data.replace(
-                        "{name}", message.from_user.mention
+                        "{name}", (from_user.mention if message.from_user else from_user.title)
                     )
                 if re.findall(r"\[.+\,.+\]", data):
                     keyboard = extract_text_and_keyb(ikb, data)
@@ -206,9 +206,10 @@ async def filters_re(_, message):
                         data, keyb = keyboard
             replied_message = message.reply_to_message
             if replied_message:
+                replied_user = replied_message.from_user if replied_message.from_user else replied_message.sender_chat
                 if text.startswith("~"):
                     await message.delete()
-                if replied_message.from_user.id != message.from_user.id:
+                if replied_user.id != from_user.id:
                     message = replied_message
 
             if data_type == "text":

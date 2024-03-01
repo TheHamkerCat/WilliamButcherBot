@@ -206,11 +206,12 @@ async def get_one_note_userbot(_, message):
 @app.on_message(filters.regex(r"^#.+") & filters.text & ~filters.private)
 @capture_err
 async def get_one_note(_, message):
+    from_user = message.from_user if message.from_user else message.sender_chat
     chat_id = message.chat.id
     name = message.text.replace("#", "", 1)
     if not name:
         return
-    _note = await get_note(message.chat.id, name)
+    _note = await get_note(chat_id, name)
     if not _note:
         return
     type = _note["type"]
@@ -222,7 +223,7 @@ async def get_one_note(_, message):
             data = data.replace("{chat}", message.chat.title)
         if "{name}" in data:
             data = data.replace(
-                "{name}", message.from_user.mention
+                "{name}", (from_user.mention if message.from_user else from_user.title)
             )
         if findall(r"\[.+\,.+\]", data):
             keyboard = extract_text_and_keyb(ikb, data)
@@ -230,7 +231,8 @@ async def get_one_note(_, message):
                 data, keyb = keyboard
     replied_message = message.reply_to_message
     if replied_message:
-        if replied_message.from_user.id != message.from_user.id:
+        replied_user = replied_message.from_user if replied_message.from_user else replied_message.sender_chat
+        if replied_user.id != from_user.id:
             message = replied_message
     await get_reply(message, type, file_id, data, keyb)
 
