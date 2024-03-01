@@ -240,7 +240,7 @@ async def handle_new_member(member, chat):
 async def welcome(_, user: ChatMemberUpdated):
     if not (
         user.new_chat_member
-        and user.new_chat_member.status in {CMS.RESTRICTED}
+        and user.new_chat_member.status not in {CMS.RESTRICTED}
         and not user.old_chat_member
     ):
         return
