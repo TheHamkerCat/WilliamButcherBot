@@ -50,6 +50,7 @@ async def get_user_info(user, already=False):
     photo_id = user.photo.big_file_id if user.photo else None
     is_gbanned = await is_gbanned_user(user_id)
     is_sudo = user_id in SUDOERS
+    is_premium = user.is_premium
     karma = await user_global_karma(user_id)
     body = {
         "ID": user_id,
@@ -58,6 +59,7 @@ async def get_user_info(user, already=False):
         "Username": [("@" + username) if username else "Null"],
         "Mention": [mention],
         "Sudo": is_sudo,
+        "Premium": is_premium,
         "Karma": karma,
         "Gbanned": is_gbanned,
     }
@@ -71,7 +73,7 @@ async def get_chat_info(chat, already=False):
     chat_id = chat.id
     username = chat.username
     title = chat.title
-    type_ = chat.type
+    type_ = str(chat.type).split(".", 1)[1]
     is_scam = chat.is_scam
     description = chat.description
     members = chat.members_count
@@ -122,17 +124,16 @@ async def info_func(_, message: Message):
 
 @app.on_message(filters.command("chat_info"))
 async def chat_info_func(_, message: Message):
-    try:
-        if len(message.command) > 2:
+    splited = message.text.split()
+    if len(splited) == 1:
+        chat = message.chat.id
+        if chat == message.from_user.id:
             return await message.reply_text(
                 "**Usage:**/chat_info [USERNAME|ID]"
             )
-
-        if len(message.command) == 1:
-            chat = message.chat.id
-        elif len(message.command) == 2:
-            chat = message.text.split(None, 1)[1]
-
+    else:
+        chat = splited[1]
+    try:
         m = await message.reply_text("Processing")
 
         info_caption, photo_id = await get_chat_info(chat)
