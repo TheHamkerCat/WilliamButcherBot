@@ -801,12 +801,15 @@ async def check_warns(_, message: Message):
 )
 @capture_err
 async def report_user(_, message):
-    if not message.reply_to_message:
+    if len(message.text.split()) <= 1 and not message.reply_to_message:
         return await message.reply_text(
             "Reply to a message to report that user."
         )
 
-    reply = message.reply_to_message
+    if message.reply_to_message:
+        reply = message.reply_to_message
+    else:
+        reply = message
     reply_id = reply.from_user.id if reply.from_user else reply.sender_chat.id
     user_id = (
         message.from_user.id if message.from_user else message.sender_chat.id
@@ -832,7 +835,7 @@ async def report_user(_, message):
     user_mention = (
         reply.from_user.mention if reply.from_user else reply.sender_chat.title
     )
-    text = f"Reported {user_mention} to admins!"
+    text = f"Reported {user_mention} to admins!."
     admin_data = [
         i
         async for i in app.get_chat_members(
@@ -845,7 +848,7 @@ async def report_user(_, message):
             continue
         text += f"[\u2063](tg://user?id={admin.user.id})"
 
-    await message.reply_to_message.reply_text(text)
+    await reply.reply_text(text)
 
 
 @app.on_message(filters.command("invite"))
