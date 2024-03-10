@@ -806,10 +806,7 @@ async def report_user(_, message):
             "Reply to a message to report that user."
         )
 
-    if message.reply_to_message:
-        reply = message.reply_to_message
-    else:
-        reply = message
+    reply = message.reply_to_message if message.reply_to_message else message
     reply_id = reply.from_user.id if reply.from_user else reply.sender_chat.id
     user_id = (
         message.from_user.id if message.from_user else message.sender_chat.id
