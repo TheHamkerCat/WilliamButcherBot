@@ -472,7 +472,7 @@ async def set_welcome_func(_, message):
             file_id = None
             text = replied_message.text
             raw_text = text.markdown
-        if replied_message.reply_markup and not "~" in raw_text:
+        if replied_message.reply_markup and not findall(r"\[.+\,.+\]", raw_text):
             urls = extract_urls(replied_message.reply_markup)
             if urls:
                 response = "\n".join(
