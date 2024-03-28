@@ -129,7 +129,7 @@ async def save_notee(_, message):
             if replied_message.voice:
                 _type = "voice"
                 file_id = replied_message.voice.file_id
-            if replied_message.reply_markup and not "~" in data:
+            if replied_message.reply_markup and not findall(r"\[.+\,.+\]", data):
                 urls = extract_urls(replied_message.reply_markup)
                 if urls:
                     response = "\n".join(
