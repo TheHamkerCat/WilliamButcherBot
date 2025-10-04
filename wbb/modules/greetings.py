@@ -23,7 +23,6 @@ SOFTWARE.
 """
 
 import asyncio
-import os
 from re import findall
 from datetime import datetime, timedelta
 from random import shuffle
@@ -221,7 +220,6 @@ async def handle_new_member(member, chat):
         caption=text,
         reply_markup=keyboard,
     )
-    os.remove(captcha_image)
 
     # Save captcha answers etc in mongodb in case the bot gets crashed or restarted.
     await update_captcha_cache(answers_dicc)
