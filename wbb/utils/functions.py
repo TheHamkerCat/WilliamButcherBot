@@ -91,7 +91,7 @@ def generate_captcha():
     image.save(buf, "JPEG")
     buf.name = "captcha.jpg"
     buf.seek(0)
-    return [filename, correct_answer, wrong_answers]
+    return [buf, correct_answer, wrong_answers]
 
 
 def test_speedtest():
