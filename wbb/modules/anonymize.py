@@ -25,7 +25,7 @@ from asyncio import gather
 from io import BytesIO
 from json import loads
 from os import remove
-from random import choice
+from secrets import choice
 from traceback import format_exc
 
 from pyrogram import filters
