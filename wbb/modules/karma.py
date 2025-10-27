@@ -43,14 +43,14 @@ from wbb.utils.filter_groups import karma_negative_group, karma_positive_group
 from wbb.utils.functions import get_specific_usernames
 
 __MODULE__ = "Karma"
-__HELP__ = """[UPVOTE] - Use upvote keywords like "+", "+1", "thanks", etc to upvote a message.
-[DOWNVOTE] - Use downvote keywords like "-", "-1", etc to downvote a message.
-/karma_toggle [ENABLE|DISABLE] - Enable or Disable Karma System In Your Chat.
-Reply to a message with /karma to check a user's karma
-Send /karma without replying to any message to check karma list of top 10 users"""
+__HELP__ = """[UPVOTE] - Используйте "+", "+1", "спасибо", "👍" и проч. для поднятия рейтинга.
+[DOWNVOTE] - Используйте "-", "-1", и проч. для понижения рейтинга.
+/karma_toggle [ENABLE|DISABLE] - Включение или отключение функции рейтинга.
+Киньте реплай с коммандой /karma для информации о рейтинге юзера
+Отправьте /karma без реплая, что бы получить топ юзеров по уровню рейтинга"""
 
-regex_upvote = r"^(\++|\+1|thx|tnx|tq|ty|thankyou|thank you|thanx|thanks|pro|cool|good|agree|👍|\++ .+)$"
-regex_downvote = r"^(-+|-1|not cool|disagree|worst|bad|👎|-+ .+)$"
+regex_upvote = r"^(\++|\+1|спс|спас|благодарю|спасябки|соглы|согласен|респект|респектос|круто|класс|кайф|говноед|👍|\++ .+)$"
+regex_downvote = r"^(-+|-1|не согласен|минус|bad|👎|-+ .+)$"
 
 
 @app.on_message(
