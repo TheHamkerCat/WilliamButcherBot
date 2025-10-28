@@ -49,7 +49,7 @@ __HELP__ = """[UPVOTE] - Используйте "+", "+1", "спасибо", "�
 Киньте реплай с коммандой /karma для информации о рейтинге юзера
 Отправьте /karma без реплая, что бы получить топ юзеров по уровню рейтинга"""
 
-regex_upvote = r"^(\++|\+1|спс|спас|благодарю|спасябки|соглы|согласен|респект|респектос|круто|класс|кайф|говноед|👍|\++ .+)$"
+regex_upvote = r"^(\++|\+1|спс|спас|благодарю|спасябки|соглы|согласен|респект|респектос|круто|класс|кайф|спасибо|👍|\++ .+)$"
 regex_downvote = r"^(-+|-1|не согласен|минус|bad|👎|-+ .+)$"
 
 
@@ -87,7 +87,7 @@ async def upvote(_, message):
         new_karma = {"karma": karma}
         await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
     await message.reply_text(
-        f"Incremented Karma of {user_mention} By 1 \nTotal Points: {karma}"
+        f"Рейтинг пользователя {user_mention} повышен \nТеперь у него: {karma}"
     )
 
 
@@ -138,7 +138,7 @@ async def downvote(_, message):
         new_karma = {"karma": karma}
         await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
     await message.reply_text(
-        f"Decremented Karma of {user_mention} By 1 \nTotal Points: {karma}"
+        f"Рейтинг пользователя {user_mention} понижен \nТеперь у него: {karma}"
     )
 
 
@@ -198,7 +198,7 @@ async def command_karma(_, message):
             if not karma_display:
                 return await m.edit("No valid users found with karma.")
             
-            msg = f"Karma list of {message.chat.title}"
+            msg = f"Таблица лидеров рейтинга"
             await m.edit(section(msg, karma_display))
             
         except Exception as e:
