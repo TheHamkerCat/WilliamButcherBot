@@ -125,4 +125,4 @@ async def some_function(_, message):
    And put that file in wbb/modules/, restart and test your bot.
 </h3>
 
-<b>Discover more awesome plugin add-ons for this repo</b> [@WilliamButcherBot-Add-ons](https://github.com/si-nn-er-ls/WilliamButcherBot-Add-ons).
+<b>Discover more awesome plugin add-ons for this repo</b> [@WilliamButcherBot-Add-ons](https://github.com/si-nn-er-ls/WilliamButcherBot-Add-ons)
