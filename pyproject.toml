@@ -9,7 +9,7 @@ dependencies = [
     "aiofiles~=23.2.1",
     "ffmpeg-python~=0.2.0",
     "gTTS~=2.5.1",
-    "dnspython==2.1.0",
+    "dnspython==2.6.1",
     "future~=1.0.0",
     "googletrans~=4.0.0rc1",
     "motor~=3.6",

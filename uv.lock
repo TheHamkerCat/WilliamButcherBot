@@ -266,11 +266,11 @@ wheels = [
 
 [[package]]
 name = "dnspython"
-version = "2.1.0"
+version = "2.6.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/13/27/5277de856f605f3429d752a39af3588e29d10181a3aa2e2ee471d817485a/dnspython-2.1.0.zip", hash = "sha256:e4a87f0b573201a0f3727fa18a516b055fd1107e0e5477cded4a2de497df1dd4", size = 389021, upload-time = "2021-01-07T17:23:59.941Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/37/7d/c871f55054e403fdfd6b8f65fd6d1c4e147ed100d3e9f9ba1fe695403939/dnspython-2.6.1.tar.gz", hash = "sha256:e8f0f9c23a7b7cb99ded64e6c3a6f3e701d78f50c55e002b839dea7225cff7cc", size = 332727, upload-time = "2024-02-18T18:48:48.952Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f5/2d/ae9e172b4e5e72fa4b3cfc2517f38b602cc9ba31355f9669c502b4e9c458/dnspython-2.1.0-py3-none-any.whl", hash = "sha256:95d12f6ef0317118d2a1a6fc49aac65ffec7eb8087474158f42f26a639135216", size = 241997, upload-time = "2021-01-07T17:23:58.136Z" },
+    { url = "https://files.pythonhosted.org/packages/87/a1/8c5287991ddb8d3e4662f71356d9656d91ab3a36618c3dd11b280df0d255/dnspython-2.6.1-py3-none-any.whl", hash = "sha256:5ef3b9680161f6fa89daf8ad451b5f1a33b18ae8a1c6778cdf4b43f08c0a6e50", size = 307696, upload-time = "2024-02-18T18:48:46.786Z" },
 ]
 
 [[package]]
@@ -1203,7 +1203,7 @@ requires-dist = [
     { name = "aiofiles", specifier = "~=23.2.1" },
     { name = "aiohttp", specifier = "~=3.13.3" },
     { name = "bs4", specifier = "~=0.0.2" },
-    { name = "dnspython", specifier = "==2.1.0" },
+    { name = "dnspython", specifier = "==2.6.1" },
     { name = "feedparser", specifier = "~=6.0.11" },
     { name = "ffmpeg-python", specifier = "~=0.2.0" },
     { name = "future", specifier = "~=1.0.0" },
