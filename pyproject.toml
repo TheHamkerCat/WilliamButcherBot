@@ -5,7 +5,7 @@ description = "A Telegram Bot for group management and more."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "aiohttp~=3.9.4",
+    "aiohttp~=3.13.3",
     "aiofiles~=23.2.1",
     "ffmpeg-python~=0.2.0",
     "gTTS~=2.5.1",
