@@ -255,7 +255,9 @@ async def send_welcome_message(chat: Chat, user_id: int, delete: bool = False):
     text = raw_text
     keyb = None
     if findall(r"\[.+\,.+\]", raw_text):
-        text, keyb = extract_text_and_keyb(ikb, raw_text)
+        result = extract_text_and_keyb(ikb, raw_text)
+        if result:
+            text, keyb = result
 
     if "{chat}" in text:
         text = text.replace("{chat}", chat.title)

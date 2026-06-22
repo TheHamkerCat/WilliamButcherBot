@@ -344,7 +344,7 @@ def extract_text_and_keyb(ikb, text: str, row_width: int = 2):
 
         if "~~" in text:
             text = text.replace("~~", "¤¤")
-        text, keyb = text.split("~")
+        text, keyb = text.split("~", 1)
         if "¤¤" in text:
             text = text.replace("¤¤", "~~")
 
