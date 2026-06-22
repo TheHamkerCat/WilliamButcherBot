@@ -26,7 +26,7 @@ import pickle
 from string import ascii_lowercase
 from typing import Dict, List, Union
 
-from wbb import db
+from wbb import db, db_pool
 
 # SOME THINGS ARE FUCKED UP HERE, LIKE TOGGLEABLES HAVE THEIR OWN COLLECTION
 # (SHOULD FIX IT WITH SOMETHING LIKE TOGGLEDB), MOST OF THE CODE IS BAD AF
@@ -199,14 +199,14 @@ async def get_rules(chat_id: int):
     chat = await rulesdb.find_one({"chat_id": chat_id})
     if not chat:
         return ""
-    rules = chat.get("rules", "")
+    rules = chat.get("rules_text", chat.get("rules", ""))
     return rules
 
 
 async def set_chat_rules(chat_id: int, rules: str):
     await rulesdb.update_one(
         {"chat_id": chat_id},
-        {"$set": {"rules": rules}},
+        {"$set": {"rules_text": rules}},
         upsert=True,
     )
 
@@ -553,21 +553,21 @@ async def del_welcome(chat_id: int):
 
 async def update_captcha_cache(captcha_dict):
     pickle = obj_to_str(captcha_dict)
-    await captcha_cachedb.delete_one({"captcha": "cache"})
+    await captcha_cachedb.delete_one({"cache_key": "cache"})
     if not pickle:
         return
     await captcha_cachedb.update_one(
-        {"captcha": "cache"},
-        {"$set": {"pickled": pickle}},
+        {"cache_key": "cache"},
+        {"$set": {"pickled_data": pickle}},
         upsert=True,
     )
 
 
 async def get_captcha_cache():
-    cache = await captcha_cachedb.find_one({"captcha": "cache"})
+    cache = await captcha_cachedb.find_one({"cache_key": "cache"})
     if not cache:
         return []
-    return str_to_obj(cache["pickled"])
+    return str_to_obj(cache["pickled_data"])
 
 
 async def get_blacklist_filters_count() -> dict:
@@ -616,70 +616,56 @@ async def delete_blacklist_filter(chat_id: int, word: str) -> bool:
 
 
 async def activate_pipe(from_chat_id: int, to_chat_id: int, fetcher: str):
-    pipes = await show_pipes()
-    pipe = {
+    await pipesdb.insert_one({
         "from_chat_id": from_chat_id,
         "to_chat_id": to_chat_id,
         "fetcher": fetcher,
-    }
-    pipes.append(pipe)
-    return await pipesdb.update_one(
-        {"pipe": "pipe"}, {"$set": {"pipes": pipes}}, upsert=True
-    )
+    })
 
 
 async def deactivate_pipe(from_chat_id: int, to_chat_id: int):
-    pipes = await show_pipes()
-    if not pipes:
-        return
-    for pipe in pipes:
-        if (
-            pipe["from_chat_id"] == from_chat_id
-            and pipe["to_chat_id"] == to_chat_id
-        ):
-            pipes.remove(pipe)
-    return await pipesdb.update_one(
-        {"pipe": "pipe"}, {"$set": {"pipes": pipes}}, upsert=True
+    await db_pool.execute(
+        "DELETE FROM pipes WHERE from_chat_id = $1 AND to_chat_id = $2",
+        from_chat_id, to_chat_id
     )
 
 
 async def is_pipe_active(from_chat_id: int, to_chat_id: int) -> bool:
-    for pipe in await show_pipes():
-        if (
-            pipe["from_chat_id"] == from_chat_id
-            and pipe["to_chat_id"] == to_chat_id
-        ):
-            return True
+    row = await db_pool.fetchrow(
+        "SELECT id FROM pipes WHERE from_chat_id = $1 AND to_chat_id = $2",
+        from_chat_id, to_chat_id
+    )
+    return bool(row)
 
 
 async def show_pipes() -> list:
-    pipes = await pipesdb.find_one({"pipe": "pipe"})
-    if not pipes:
-        return []
-    return pipes["pipes"]
+    rows = await db_pool.fetch("SELECT from_chat_id, to_chat_id, fetcher FROM pipes")
+    return [{"from_chat_id": r["from_chat_id"], "to_chat_id": r["to_chat_id"], "fetcher": r["fetcher"]} for r in rows]
 
 
 async def get_sudoers() -> list:
-    sudoers = await sudoersdb.find_one({"sudo": "sudo"})
+    sudoers = await sudoersdb.find_one({"id": 1})
     if not sudoers:
         return []
-    return sudoers["sudoers"]
+    return list(sudoers.get("sudoers") or [])
 
 
 async def add_sudo(user_id: int) -> bool:
     sudoers = await get_sudoers()
-    sudoers.append(user_id)
+    if user_id not in sudoers:
+        sudoers.append(user_id)
     await sudoersdb.update_one(
-        {"sudo": "sudo"}, {"$set": {"sudoers": sudoers}}, upsert=True
+        {"id": 1}, {"sudoers": [int(x) for x in sudoers]}, upsert=True
     )
     return True
 
 
 async def remove_sudo(user_id: int) -> bool:
     sudoers = await get_sudoers()
-    sudoers.remove(user_id)
+    if user_id in sudoers:
+        sudoers.remove(user_id)
     await sudoersdb.update_one(
-        {"sudo": "sudo"}, {"$set": {"sudoers": sudoers}}, upsert=True
+        {"id": 1}, {"sudoers": [int(x) for x in sudoers]}, upsert=True
     )
     return True
 
@@ -706,27 +692,20 @@ async def whitelist_chat(chat_id: int) -> bool:
 
 
 async def start_restart_stage(chat_id: int, message_id: int):
-    await restart_stagedb.update_one(
-        {"something": "something"},
-        {
-            "$set": {
-                "chat_id": chat_id,
-                "message_id": message_id,
-            }
-        },
-        upsert=True,
+    # Delete any existing restart stage, then insert new one
+    await db_pool.execute("DELETE FROM restart_stage")
+    await db_pool.execute(
+        "INSERT INTO restart_stage (chat_id, message_id) VALUES ($1, $2)",
+        chat_id, message_id
     )
 
 
 async def clean_restart_stage() -> dict:
-    data = await restart_stagedb.find_one({"something": "something"})
-    if not data:
+    row = await db_pool.fetchrow("SELECT chat_id, message_id FROM restart_stage LIMIT 1")
+    if not row:
         return {}
-    await restart_stagedb.delete_one({"something": "something"})
-    return {
-        "chat_id": data["chat_id"],
-        "message_id": data["message_id"],
-    }
+    await db_pool.execute("DELETE FROM restart_stage")
+    return {"chat_id": row["chat_id"], "message_id": row["message_id"]}
 
 
 async def is_flood_on(chat_id: int) -> bool:
@@ -792,29 +771,64 @@ async def get_rss_feeds_count() -> int:
 
 
 async def check_chatbot():
-    return await chatbotdb.find_one({"chatbot": "chatbot"}) or {
-        "bot": [],
-        "userbot": [],
+    row = await db_pool.fetchrow("SELECT bot_chats, userbot_chats FROM chatbot LIMIT 1")
+    if not row:
+        return {"bot": [], "userbot": []}
+    return {
+        "bot": list(row["bot_chats"] or []),
+        "userbot": list(row["userbot_chats"] or []),
     }
 
 
 async def add_chatbot(chat_id: int, is_userbot: bool = False):
-    list_id = await check_chatbot()
-    if is_userbot:
-        list_id["userbot"].append(chat_id)
+    existing = await db_pool.fetchrow("SELECT id, bot_chats, userbot_chats FROM chatbot LIMIT 1")
+    if existing:
+        if is_userbot:
+            chats = list(existing["userbot_chats"] or [])
+            if chat_id not in chats:
+                chats.append(chat_id)
+            await db_pool.execute(
+                "UPDATE chatbot SET userbot_chats = $1::bigint[] WHERE id = $2",
+                chats, existing["id"]
+            )
+        else:
+            chats = list(existing["bot_chats"] or [])
+            if chat_id not in chats:
+                chats.append(chat_id)
+            await db_pool.execute(
+                "UPDATE chatbot SET bot_chats = $1::bigint[] WHERE id = $2",
+                chats, existing["id"]
+            )
     else:
-        list_id["bot"].append(chat_id)
-    await chatbotdb.update_one(
-        {"chatbot": "chatbot"}, {"$set": list_id}, upsert=True
-    )
+        if is_userbot:
+            await db_pool.execute(
+                "INSERT INTO chatbot (bot_chats, userbot_chats) VALUES ($1::bigint[], $2::bigint[])",
+                [], [chat_id]
+            )
+        else:
+            await db_pool.execute(
+                "INSERT INTO chatbot (bot_chats, userbot_chats) VALUES ($1::bigint[], $2::bigint[])",
+                [chat_id], []
+            )
 
 
 async def rm_chatbot(chat_id: int, is_userbot: bool = False):
-    list_id = await check_chatbot()
+    existing = await db_pool.fetchrow("SELECT id, bot_chats, userbot_chats FROM chatbot LIMIT 1")
+    if not existing:
+        return
     if is_userbot:
-        list_id["userbot"].remove(chat_id)
+        chats = list(existing["userbot_chats"] or [])
+        if chat_id in chats:
+            chats.remove(chat_id)
+        await db_pool.execute(
+            "UPDATE chatbot SET userbot_chats = $1::bigint[] WHERE id = $2",
+            chats, existing["id"]
+        )
     else:
-        list_id["bot"].remove(chat_id)
-    await chatbotdb.update_one(
-        {"chatbot": "chatbot"}, {"$set": list_id}, upsert=True
-    )
+        chats = list(existing["bot_chats"] or [])
+        if chat_id in chats:
+            chats.remove(chat_id)
+        await db_pool.execute(
+            "UPDATE chatbot SET bot_chats = $1::bigint[] WHERE id = $2",
+            chats, existing["id"]
+        )

@@ -335,64 +335,238 @@ class DatabaseSchema:
 
 class MongoCompatibilityLayer:
     """Provides MongoDB-like interface for PostgreSQL queries.
-    
-    Simplifies migration by maintaining similar API to MongoDB operations.
+
+    Handles MongoDB-style patterns:
+    - $set operator in update dicts
+    - $lt, $gt, $exists operators in filter dicts
+    - Dummy sentinel filters (e.g. {"pipe": "pipe"}) that match any row
+    - BIGINT[] coercion for list-of-int values
+    - async for iteration over find() results
     """
+
+    # Columns that are real database columns (not dummy sentinel keys)
+    # Sentinel keys are ones whose value equals the key name itself
+    # and the column doesn't exist in the table — handled as "get first row"
 
     def __init__(self, pool: DatabasePool, table_name: str):
         self.pool = pool
         self.table_name = table_name
 
+    # ── Value coercion ──────────────────────────────────────────────────────
+
+    @staticmethod
+    def _coerce_value(value: Any) -> Any:
+        """Convert Python lists to typed bigint lists for asyncpg."""
+        if isinstance(value, (list, tuple)):
+            return [int(v) if isinstance(v, int) else v for v in value]
+        return value
+
+    @staticmethod
+    def _is_sentinel_filter(query: Dict[str, Any]) -> bool:
+        """Return True if every key maps to itself (e.g. {"pipe": "pipe"}).
+
+        These are MongoDB hacks to reference a singleton document; in
+        PostgreSQL we just select / update / delete the first (or only) row.
+        """
+        return bool(query) and all(
+            isinstance(v, str) and k == v for k, v in query.items()
+        )
+
+    # ── WHERE-clause builder ────────────────────────────────────────────────
+
+    def _build_where(
+        self, query: Dict[str, Any], start_idx: int = 1
+    ) -> tuple:
+        """Build a WHERE clause and matching param list from a query dict.
+
+        Handles:
+        - Plain equality:   {"col": val}
+        - $lt / $gt:        {"col": {"$lt": val}}
+        - $exists:          {"col": {"$exists": 1}}  →  col IS NOT NULL
+
+        Returns (sql_fragment, params_list).
+        """
+        conditions: List[str] = []
+        params: List[Any] = []
+        idx = start_idx
+
+        for key, val in query.items():
+            if isinstance(val, dict):
+                op, op_val = next(iter(val.items()))
+                if op == "$lt":
+                    conditions.append(f"{key} < ${idx}")
+                    params.append(self._coerce_value(op_val))
+                    idx += 1
+                elif op == "$gt":
+                    conditions.append(f"{key} > ${idx}")
+                    params.append(self._coerce_value(op_val))
+                    idx += 1
+                elif op == "$exists":
+                    conditions.append(f"{key} IS NOT NULL")
+                else:
+                    conditions.append(f"{key} = ${idx}")
+                    params.append(self._coerce_value(val))
+                    idx += 1
+            else:
+                conditions.append(f"{key} = ${idx}")
+                params.append(self._coerce_value(val))
+                idx += 1
+
+        where = " AND ".join(conditions) if conditions else "TRUE"
+        return where, params
+
+    # ── SET-clause builder ──────────────────────────────────────────────────
+
+    def _build_set(
+        self, update_dict: Dict[str, Any], start_idx: int = 1
+    ) -> tuple:
+        """Extract the actual field→value map from an update dict.
+
+        If the dict has a single "$set" key we unwrap it; otherwise we treat
+        the whole dict as field→value pairs.  Returns (set_sql, params, next_idx).
+        """
+        if "$set" in update_dict:
+            fields = update_dict["$set"]
+        else:
+            fields = update_dict
+
+        parts: List[str] = []
+        params: List[Any] = []
+        idx = start_idx
+
+        for col, val in fields.items():
+            coerced = self._coerce_value(val)
+            if isinstance(coerced, list) and all(isinstance(x, int) for x in coerced):
+                parts.append(f"{col} = ${idx}::bigint[]")
+            else:
+                parts.append(f"{col} = ${idx}")
+            params.append(coerced)
+            idx += 1
+
+        return ", ".join(parts), params, idx
+
+    # ── Public API ──────────────────────────────────────────────────────────
+
     async def find_one(self, query: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Find single document."""
-        where_clause = self._build_where_clause(query)
-        sql = f"SELECT * FROM {self.table_name} WHERE {where_clause} LIMIT 1"
-        params = list(query.values())
-        row = await self.pool.fetchrow(sql, *params)
+        """Find single document. Handles sentinel and operator filters."""
+        if self._is_sentinel_filter(query):
+            sql = f"SELECT * FROM {self.table_name} LIMIT 1"
+            row = await self.pool.fetchrow(sql)
+        else:
+            where, params = self._build_where(query)
+            sql = f"SELECT * FROM {self.table_name} WHERE {where} LIMIT 1"
+            row = await self.pool.fetchrow(sql, *params)
         return dict(row) if row else None
 
-    async def find(self, query: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """Find multiple documents."""
-        where_clause = self._build_where_clause(query)
-        sql = f"SELECT * FROM {self.table_name} WHERE {where_clause}"
-        params = list(query.values())
-        rows = await self.pool.fetch(sql, *params)
-        return [dict(row) for row in rows]
+    def find(self, query: Dict[str, Any]):
+        """Return an async-iterable of matching rows."""
+        return _AsyncFind(self.pool, self.table_name, query, self._build_where, self._is_sentinel_filter)
 
     async def insert_one(self, document: Dict[str, Any]) -> str:
-        """Insert single document."""
+        """Insert a single document."""
         columns = ", ".join(document.keys())
-        placeholders = ", ".join([f"${i+1}" for i in range(len(document))])
-        sql = f"INSERT INTO {self.table_name} ({columns}) VALUES ({placeholders}) RETURNING id"
-        result = await self.pool.fetchval(sql, *document.values())
+        values = [self._coerce_value(v) for v in document.values()]
+        placeholders = []
+        for i, v in enumerate(values):
+            if isinstance(v, list) and all(isinstance(x, int) for x in v):
+                placeholders.append(f"${i+1}::bigint[]")
+            else:
+                placeholders.append(f"${i+1}")
+        sql = (
+            f"INSERT INTO {self.table_name} ({columns})"
+            f" VALUES ({', '.join(placeholders)}) RETURNING id"
+        )
+        result = await self.pool.fetchval(sql, *values)
         return str(result)
 
     async def update_one(
-        self, filter_dict: Dict[str, Any], update_dict: Dict[str, Any], upsert: bool = False
+        self,
+        filter_dict: Dict[str, Any],
+        update_dict: Dict[str, Any],
+        upsert: bool = False,
     ) -> None:
-        """Update single document or insert if not exists (upsert)."""
+        """Update a document (or upsert). Handles $set and sentinel filters."""
         existing = await self.find_one(filter_dict)
-        
+
         if existing:
-            where_clause = self._build_where_clause(filter_dict)
-            set_clause = ", ".join([f"{k}=${i+1}" for i, k in enumerate(update_dict.keys())])
-            sql = f"UPDATE {self.table_name} SET {set_clause} WHERE {where_clause}"
-            params = list(update_dict.values()) + list(filter_dict.values())
-            await self.pool.execute(sql, *params)
+            set_sql, set_params, next_idx = self._build_set(update_dict, start_idx=1)
+
+            if self._is_sentinel_filter(filter_dict):
+                # Update first/only row using primary key
+                pk = existing.get("id")
+                if pk is not None:
+                    sql = f"UPDATE {self.table_name} SET {set_sql} WHERE id = ${next_idx}"
+                    await self.pool.execute(sql, *set_params, pk)
+                else:
+                    sql = f"UPDATE {self.table_name} SET {set_sql}"
+                    await self.pool.execute(sql, *set_params)
+            else:
+                where, where_params = self._build_where(filter_dict, start_idx=next_idx)
+                sql = f"UPDATE {self.table_name} SET {set_sql} WHERE {where}"
+                await self.pool.execute(sql, *set_params, *where_params)
+
         elif upsert:
-            doc = {**filter_dict, **update_dict}
+            # Build the document to insert
+            if "$set" in update_dict:
+                fields = update_dict["$set"]
+            else:
+                fields = update_dict
+
+            if not self._is_sentinel_filter(filter_dict):
+                doc = {**filter_dict, **fields}
+            else:
+                doc = dict(fields)
+
             await self.insert_one(doc)
 
     async def delete_one(self, filter_dict: Dict[str, Any]) -> None:
-        """Delete single document."""
-        where_clause = self._build_where_clause(filter_dict)
-        sql = f"DELETE FROM {self.table_name} WHERE {where_clause}"
-        await self.pool.execute(sql, *filter_dict.values())
+        """Delete a single document."""
+        if self._is_sentinel_filter(filter_dict):
+            # Delete the first row (sentinel tables have one row)
+            sql = f"DELETE FROM {self.table_name} WHERE id = (SELECT id FROM {self.table_name} LIMIT 1)"
+            await self.pool.execute(sql)
+        else:
+            where, params = self._build_where(filter_dict)
+            sql = f"DELETE FROM {self.table_name} WHERE id = (SELECT id FROM {self.table_name} WHERE {where} LIMIT 1)"
+            await self.pool.execute(sql, *params)
 
-    @staticmethod
-    def _build_where_clause(query: Dict[str, Any]) -> str:
-        """Build WHERE clause from query dict."""
-        conditions = []
-        for i, key in enumerate(query.keys(), 1):
-            conditions.append(f"{key} = ${i}")
-        return " AND ".join(conditions)
+
+class _AsyncFind:
+    """Async-iterable wrapper returned by MongoCompatibilityLayer.find()."""
+
+    def __init__(self, pool, table_name, query, build_where_fn, is_sentinel_fn):
+        self._pool = pool
+        self._table_name = table_name
+        self._query = query
+        self._build_where = build_where_fn
+        self._is_sentinel = is_sentinel_fn
+        self._rows: Optional[List[Any]] = None
+        self._idx = 0
+
+    async def _load(self):
+        if self._rows is None:
+            if self._is_sentinel(self._query):
+                sql = f"SELECT * FROM {self._table_name}"
+                self._rows = await self._pool.fetch(sql)
+            else:
+                where, params = self._build_where(self._query)
+                sql = f"SELECT * FROM {self._table_name} WHERE {where}"
+                self._rows = await self._pool.fetch(sql, *params)
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        await self._load()
+        if self._idx >= len(self._rows):
+            raise StopAsyncIteration
+        row = dict(self._rows[self._idx])
+        self._idx += 1
+        return row
+
+    def __await__(self):
+        """Allow `await db.find(...)` to return a plain list."""
+        async def _collect():
+            await self._load()
+            return [dict(r) for r in self._rows]
+        return _collect().__await__()

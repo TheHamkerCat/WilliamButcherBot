@@ -5,3 +5,27 @@ stack = "BEST_EFFORT_FALLBACK"
 
 [nix]
 channel = "stable-25_05"
+packages = ["cacert", "cargo", "exiftool", "ffmpeg-full", "freetype", "ghostscript", "imagemagickBig", "lcms2", "libiconv", "libimagequant", "libjpeg", "libtiff", "libuv", "libwebp", "libxcrypt", "mupdf", "netpbm", "openjpeg", "openssl", "pkg-config", "poppler_utils", "postgresql", "rustc", "tcl", "tk", "zlib"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python -m wbb"
+
+[workflows.workflow.metadata]
+outputType = "console"

@@ -31,14 +31,14 @@ from pyrogram.enums import ChatType, ParseMode
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from uvloop import install
 
+import wbb
 from wbb import (
-    BOT_NAME,
-    BOT_USERNAME,
-    LOG_GROUP_ID,
-    USERBOT_NAME,
-    aiohttpsession,
     app,
+    app2,
     log,
+    LOG_GROUP_ID,
+    ARQ_API_URL,
+    ANTHROPIC_API_KEY,
 )
 from wbb.core.keyboard import ikb
 from wbb.modules import ALL_MODULES
@@ -52,24 +52,130 @@ loop = asyncio.get_event_loop()
 
 HELPABLE = {}
 
+FED_MARKUP = InlineKeyboardMarkup(
+    [
+        [
+            InlineKeyboardButton("Fed Owner Commands", callback_data="fed_owner"),
+            InlineKeyboardButton("Fed Admin Commands", callback_data="fed_admin"),
+        ],
+        [InlineKeyboardButton("User Commands", callback_data="fed_user")],
+        [InlineKeyboardButton("Back", callback_data="help_back")],
+    ]
+)
+
+
+def get_home_keyboard():
+    return InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(text="Commands ❓", callback_data="bot_commands"),
+                InlineKeyboardButton(
+                    text="Repo 🛠",
+                    url="https://github.com/thehamkercat/WilliamButcherBot",
+                ),
+            ],
+            [
+                InlineKeyboardButton(text="System Stats 🖥", callback_data="stats_callback"),
+                InlineKeyboardButton(text="Support 👨", url="http://t.me/WBBSupport"),
+            ],
+            [
+                InlineKeyboardButton(
+                    text="Add Me To Your Group 🎉",
+                    url=f"http://t.me/{wbb.BOT_USERNAME}?startgroup=new",
+                )
+            ],
+        ]
+    )
+
+
+def get_keyboard():
+    return InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    text="Help ❓",
+                    url=f"t.me/{wbb.BOT_USERNAME}?start=help",
+                ),
+                InlineKeyboardButton(
+                    text="Repo 🛠",
+                    url="https://github.com/thehamkercat/WilliamButcherBot",
+                ),
+            ],
+            [
+                InlineKeyboardButton(text="System Stats 💻", callback_data="stats_callback"),
+                InlineKeyboardButton(text="Support 👨", url="t.me/WBBSupport"),
+            ],
+        ]
+    )
+
+
+def get_home_text():
+    return (
+        f"Hey there! My name is {wbb.BOT_NAME}. I can manage your "
+        "group with lots of useful features, feel free to "
+        "add me to your group."
+    )
+
 
 async def start_bot():
     global HELPABLE
 
+    # Initialize aiohttp session and ARQ inside the running event loop
+    from aiohttp import ClientSession
+    from Python_ARQ import ARQ
+    from telegraph import Telegraph
+
+    wbb.aiohttpsession = ClientSession()
+    wbb.arq = ARQ(ARQ_API_URL, ANTHROPIC_API_KEY, wbb.aiohttpsession)
+
+    # Start Pyrogram clients
+    log.info("Starting bot client")
+    await app.start()
+
+    log.info("Starting userbot client")
+    userbot_ok = False
+    try:
+        await app2.start()
+        userbot_ok = True
+    except Exception as e:
+        log.error(f"Userbot failed to start (SESSION_STRING may be invalid or v1 format): {e}")
+        log.info("Bot will run without userbot features.")
+
+    # Gather profile info
+    log.info("Gathering profile info")
+    x = await app.get_me()
+
+    wbb.BOT_ID = x.id
+    wbb.BOT_NAME = x.first_name + (x.last_name or "")
+    wbb.BOT_USERNAME = x.username
+    wbb.BOT_MENTION = x.mention
+    wbb.BOT_DC_ID = x.dc_id
+
+    if userbot_ok:
+        y = await app2.get_me()
+        wbb.USERBOT_ID = y.id
+        wbb.USERBOT_NAME = y.first_name + (y.last_name or "")
+        wbb.USERBOT_USERNAME = y.username
+        wbb.USERBOT_MENTION = y.mention
+        wbb.USERBOT_DC_ID = y.dc_id
+        if wbb.USERBOT_ID not in wbb.SUDOERS:
+            wbb.SUDOERS.add(wbb.USERBOT_ID)
+    else:
+        wbb.USERBOT_NAME = "N/A (userbot disabled)"
+
+    log.info("Initializing Telegraph client")
+    wbb.telegraph = Telegraph(domain="graph.org")
+    wbb.telegraph.create_account(short_name=wbb.BOT_USERNAME)
+
     for module in ALL_MODULES:
         imported_module = importlib.import_module("wbb.modules." + module)
-        if (
-            hasattr(imported_module, "__MODULE__")
-            and imported_module.__MODULE__
-        ):
+        if hasattr(imported_module, "__MODULE__") and imported_module.__MODULE__:
             imported_module.__MODULE__ = imported_module.__MODULE__
-            if (
-                hasattr(imported_module, "__HELP__")
-                and imported_module.__HELP__
-            ):
+            if hasattr(imported_module, "__HELP__") and imported_module.__HELP__:
                 HELPABLE[
                     imported_module.__MODULE__.replace(" ", "_").lower()
                 ] = imported_module
+
     bot_modules = ""
     j = 1
     for i in ALL_MODULES:
@@ -84,8 +190,8 @@ async def start_bot():
     print("+===============+===============+===============+===============+")
     print(bot_modules)
     print("+===============+===============+===============+===============+")
-    log.info(f"BOT STARTED AS {BOT_NAME}!")
-    log.info(f"USERBOT STARTED AS {USERBOT_NAME}!")
+    log.info(f"BOT STARTED AS {wbb.BOT_NAME}!")
+    log.info(f"USERBOT STARTED AS {wbb.USERBOT_NAME}!")
 
     restart_data = await clean_restart_stage()
 
@@ -97,7 +203,6 @@ async def start_bot():
                 restart_data["message_id"],
                 "**Restarted Successfully**",
             )
-
         else:
             await app.send_message(LOG_GROUP_ID, "Bot started!")
     except Exception:
@@ -105,7 +210,8 @@ async def start_bot():
 
     await idle()
 
-    await aiohttpsession.close()
+    if wbb.aiohttpsession:
+        await wbb.aiohttpsession.close()
     log.info("Stopping clients")
     await app.stop()
     log.info("Cancelling asyncio tasks")
@@ -114,89 +220,11 @@ async def start_bot():
     log.info("Dead!")
 
 
-home_keyboard_pm = InlineKeyboardMarkup(
-    [
-        [
-            InlineKeyboardButton(
-                text="Commands ❓", callback_data="bot_commands"
-            ),
-            InlineKeyboardButton(
-                text="Repo 🛠",
-                url="https://github.com/thehamkercat/WilliamButcherBot",
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="System Stats 🖥",
-                callback_data="stats_callback",
-            ),
-            InlineKeyboardButton(
-                text="Support 👨", url="http://t.me/WBBSupport"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="Add Me To Your Group 🎉",
-                url=f"http://t.me/{BOT_USERNAME}?startgroup=new",
-            )
-        ],
-    ]
-)
-
-home_text_pm = (
-    f"Hey there! My name is {BOT_NAME}. I can manage your "
-    + "group with lots of useful features, feel free to "
-    + "add me to your group."
-)
-
-keyboard = InlineKeyboardMarkup(
-    [
-        [
-            InlineKeyboardButton(
-                text="Help ❓",
-                url=f"t.me/{BOT_USERNAME}?start=help",
-            ),
-            InlineKeyboardButton(
-                text="Repo 🛠",
-                url="https://github.com/thehamkercat/WilliamButcherBot",
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="System Stats 💻",
-                callback_data="stats_callback",
-            ),
-            InlineKeyboardButton(text="Support 👨", url="t.me/WBBSupport"),
-        ],
-    ]
-)
-
-
-FED_MARKUP = InlineKeyboardMarkup(
-    [
-        [
-            InlineKeyboardButton(
-                "Fed Owner Commands", callback_data="fed_owner"
-            ),
-            InlineKeyboardButton(
-                "Fed Admin Commands", callback_data="fed_admin"
-            ),
-        ],
-        [
-            InlineKeyboardButton("User Commands", callback_data="fed_user"),
-        ],
-        [
-            InlineKeyboardButton("Back", callback_data="help_back"),
-        ],
-    ]
-)
-
-
 @app.on_message(filters.command("start"))
 async def start(_, message):
     if message.chat.type != ChatType.PRIVATE:
         return await message.reply(
-            "Pm Me For More Details.", reply_markup=keyboard
+            "Pm Me For More Details.", reply_markup=get_keyboard()
         )
     if len(message.text.split()) > 1:
         user = await app.get_users(message.from_user.id)
@@ -251,14 +279,11 @@ async def start(_, message):
             )
         elif name == "help":
             text, keyb = await help_parser(message.from_user.first_name)
-            await message.reply(
-                text,
-                reply_markup=keyb,
-            )
+            await message.reply(text, reply_markup=keyb)
     else:
         await message.reply(
-            home_text_pm,
-            reply_markup=home_keyboard_pm,
+            get_home_text(),
+            reply_markup=get_home_keyboard(),
         )
     return
 
@@ -274,7 +299,7 @@ async def help_command(_, message):
                         [
                             InlineKeyboardButton(
                                 text="Click here",
-                                url=f"t.me/{BOT_USERNAME}?start=help_{name}",
+                                url=f"t.me/{wbb.BOT_USERNAME}?start=help_{name}",
                             )
                         ],
                     ]
@@ -285,11 +310,11 @@ async def help_command(_, message):
                 )
             else:
                 await message.reply(
-                    "PM Me For More Details.", reply_markup=keyboard
+                    "PM Me For More Details.", reply_markup=get_keyboard()
                 )
         else:
             await message.reply(
-                "Pm Me For More Details.", reply_markup=keyboard
+                "Pm Me For More Details.", reply_markup=get_keyboard()
             )
     else:
         if len(message.command) >= 2:
@@ -329,7 +354,7 @@ You can choose an option below, by clicking a button.
 Also you can ask anything in Support Group.
 """.format(
             first_name=name,
-            bot_name=BOT_NAME,
+            bot_name=wbb.BOT_NAME,
         ),
         keyboard,
     )
@@ -337,13 +362,12 @@ Also you can ask anything in Support Group.
 
 @app.on_callback_query(filters.regex("bot_commands"))
 async def commands_callbacc(_, CallbackQuery):
-    text, keyboard = await help_parser(CallbackQuery.from_user.mention)
+    text, kb = await help_parser(CallbackQuery.from_user.mention)
     await app.send_message(
         CallbackQuery.message.chat.id,
         text=text,
-        reply_markup=keyboard,
+        reply_markup=kb,
     )
-
     await CallbackQuery.message.delete()
 
 
@@ -362,7 +386,7 @@ async def help_button(client, query):
     back_match = re.match(r"help_back", query.data)
     create_match = re.match(r"help_create", query.data)
     top_text = f"""
-Hello {query.from_user.first_name}, My name is {BOT_NAME}.
+Hello {query.from_user.first_name}, My name is {wbb.BOT_NAME}.
 I'm a group management bot with some useful features.
 You can choose an option below, by clicking a button.
 Also you can ask anything in Support Group.
@@ -395,8 +419,8 @@ General command are:
     elif home_match:
         await app.send_message(
             query.from_user.id,
-            text=home_text_pm,
-            reply_markup=home_keyboard_pm,
+            text=get_home_text(),
+            reply_markup=get_home_keyboard(),
         )
         await query.message.delete()
     elif prev_match:
@@ -408,7 +432,6 @@ General command are:
             ),
             disable_web_page_preview=True,
         )
-
     elif next_match:
         next_page = int(next_match.group(1))
         await query.message.edit(
@@ -418,7 +441,6 @@ General command are:
             ),
             disable_web_page_preview=True,
         )
-
     elif back_match:
         await query.message.edit(
             text=top_text,
@@ -427,12 +449,11 @@ General command are:
             ),
             disable_web_page_preview=True,
         )
-
     elif create_match:
-        text, keyboard = await help_parser(query)
+        text, kb = await help_parser(query)
         await query.message.edit(
             text=text,
-            reply_markup=keyboard,
+            reply_markup=kb,
             disable_web_page_preview=True,
         )
 
@@ -444,4 +465,4 @@ if __name__ == "__main__":
     with closing(loop):
         with suppress(asyncio.exceptions.CancelledError):
             loop.run_until_complete(start_bot())
-        loop.run_until_complete(asyncio.sleep(3.0))  # task cancel wait
+        loop.run_until_complete(asyncio.sleep(3.0))
