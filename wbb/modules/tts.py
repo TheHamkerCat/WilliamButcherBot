@@ -25,7 +25,7 @@ import traceback
 from asyncio import get_running_loop
 from io import BytesIO
 
-from googletrans import Translator
+from google_trans_new import google_translator
 from gtts import gTTS
 from pyrogram import filters
 from pyrogram.types import Message
@@ -35,8 +35,9 @@ from wbb import app
 
 def convert(text):
     audio = BytesIO()
-    i = Translator().translate(text, dest="en")
-    lang = i.src
+    translator = google_translator()
+    detection = translator.detect(text)
+    lang = detection[0] if isinstance(detection, (list, tuple)) else "en"
     tts = gTTS(text, lang=lang)
     audio.name = lang + ".mp3"
     tts.write_to_fp(audio)

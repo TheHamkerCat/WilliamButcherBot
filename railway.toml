@@ -5,6 +5,3 @@ builder = "nixpacks"
 startCommand = "python -m wbb"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
-
-[[services]]
-name = "WilliamButcherBot"

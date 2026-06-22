@@ -1,8 +1,11 @@
 [phases.setup]
-nixPkgs = ["python312", "ffmpeg", "gcc", "curl", "git", "zip", "postgresql"]
+nixPkgs = ["python312", "python312Packages.pip", "ffmpeg", "gcc", "curl", "git", "zip", "postgresql_15"]
 
 [phases.install]
-cmds = ["pip install -r requirements.txt"]
+cmds = [
+    "pip install --no-cache-dir --upgrade pip",
+    "pip install --no-cache-dir -r requirements.txt"
+]
 
 [start]
 cmd = "python -m wbb"
