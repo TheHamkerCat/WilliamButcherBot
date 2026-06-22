@@ -1,8 +1,57 @@
+version: '3.8'
+
 services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: wbb-postgres
+    environment:
+      POSTGRES_USER: wbb_user
+      POSTGRES_PASSWORD: wbb_password
+      POSTGRES_DB: wbb
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.UTF-8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wbb_user -d wbb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
   wbb:
     build: .
-    restart: always
+    container_name: williambutcherbot
     environment:
-      - PYTHONUNBUFFERED=1
+      PYTHONUNBUFFERED: 1
+      TZ: Asia/Amman
+      DATABASE_URL: postgresql://wbb_user:wbb_password@postgres:5432/wbb
+      BOT_TOKEN: ${BOT_TOKEN}
+      API_ID: ${API_ID}
+      API_HASH: ${API_HASH}
+      SESSION_STRING: ${SESSION_STRING:-}
+      PHONE_NUMBER: ${PHONE_NUMBER:-}
+      SUDO_USERS_ID: ${SUDO_USERS_ID}
+      LOG_GROUP_ID: ${LOG_GROUP_ID}
+      GBAN_LOG_GROUP_ID: ${GBAN_LOG_GROUP_ID}
+      MESSAGE_DUMP_CHAT: ${MESSAGE_DUMP_CHAT}
+      ARQ_API_URL: ${ARQ_API_URL:-https://arq.hamker.dev}
+      ARQ_API_KEY: ${ARQ_API_KEY}
+      WELCOME_DELAY_KICK_SEC: ${WELCOME_DELAY_KICK_SEC:-300}
+      LOG_MENTIONS: ${LOG_MENTIONS:-0}
+      RSS_DELAY: ${RSS_DELAY:-300}
+      PM_PERMIT: ${PM_PERMIT:-1}
+      MAX_CONCURRENT_TASKS: ${MAX_CONCURRENT_TASKS:-2}
+      LOG_LEVEL: ${LOG_LEVEL:-false}
     volumes:
       - ./sessions:/wbb/sessions
+      - ./logs:/wbb/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
