@@ -102,11 +102,6 @@ log.info("Initializing PostgreSQL database connection")
 from wbb.core.database import DatabasePool
 from wbb.utils.db_migrate import DatabaseMigrator
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
-if not DATABASE_URL:
-    log.error("DATABASE_URL environment variable not set!")
-    raise RuntimeError("DATABASE_URL is required")
-
 db_pool = DatabasePool(DATABASE_URL)
 
 
