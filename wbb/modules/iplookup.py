@@ -9,7 +9,7 @@ from wbb.utils import http
 # For /help menu
 __MODULE__ = "iplookup"
 __HELP__ = """
-/iplookup [ip address] to get the details about that ip
+/iplookup [عنوان IP] للحصول على تفاصيل عنوان IP المحدد
 """
 
 

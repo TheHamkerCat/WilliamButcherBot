@@ -6,7 +6,7 @@ from wbb import SUDOERS, USERBOT_PREFIX, app, app2
 __MODULE__ = "Dice"
 __HELP__ = """
 /dice
-    Roll a dice.
+    رمي نرد.
 """
 
 

@@ -39,58 +39,58 @@ from wbb.utils.http import get
 __MODULE__ = "Misc"
 __HELP__ = """
 /asq
-    Ask a question
+    اطرح سؤالاً
 
 /commit
-    Generate Funny Commit Messages
+    توليد رسائل كوميدية للـ commit
 
 /runs
-    Idk Test Yourself
+    جرّب بنفسك
 
 /id
-    Get Chat_ID or User_ID
+    الحصول على معرّف المحادثة أو المستخدم
 
-/random [Length]
-    Generate Random Complex Passwords
+/random [الطول]
+    توليد كلمات مرور عشوائية معقدة
 
-/cheat [Language] [Query]
-    Get Programming Related Help
+/cheat [اللغة] [الاستعلام]
+    مساعدة في البرمجة
 
-/tr [LANGUAGE_CODE]
-    Translate A Message
-    Ex: /tr en
+/tr [رمز_اللغة]
+    ترجمة رسالة
+    مثال: /tr ar
 
 /arq
-    Statistics Of ARQ API.
+    إحصائيات ARQ API.
 
-/webss | .webss [URL] [FULL_SIZE?, use (y|yes|true) to get full size image. (optional)]
-    Take A Screenshot Of A Webpage
+/webss | .webss [الرابط] [حجم كامل؟ استخدم (y|yes|true) للصورة كاملة الحجم. (اختياري)]
+    التقاط لقطة شاشة لصفحة ويب
 
 /reverse
-    Reverse search an image.
+    البحث العكسي عن صورة.
 
 /carbon
-    Make Carbon from code.
+    إنشاء صورة Carbon من الكود.
 
 /tts
-    Convert Text To Speech.
+    تحويل النص إلى كلام.
 
-/autocorrect [Reply to a message]
-    Autocorrects the text in replied message.
+/autocorrect [رد على رسالة]
+    تصحيح النص في الرسالة المردود عليها.
 
-/pdf [Reply to an image (as document) or a group of images.]
-    Convert images to PDF, helpful for online classes.
+/pdf [رد على صورة (كمستند) أو مجموعة صور.]
+    تحويل الصور إلى PDF، مفيد للفصول الدراسية.
 
 /markdownhelp
-    Sends mark down and formatting help.
+    إرسال تعليمات التنسيق والماركداون.
 
 /backup
-    Backup database
+    نسخ احتياطي لقاعدة البيانات
 
 /ping
-    Check ping of all 5 DCs.
-    
-#RTFM - Tell noobs to read the manual
+    التحقق من ping لجميع الـ 5 DCs.
+
+#RTFM - أخبر المبتدئين بقراءة الوثائق
 """
 
 ASQ_LOCK = Lock()

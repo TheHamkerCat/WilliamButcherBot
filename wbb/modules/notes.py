@@ -50,20 +50,20 @@ from wbb.utils.functions import (
 )
 
 __MODULE__ = "Notes"
-__HELP__ = """/notes To Get All The Notes In The Chat.
+__HELP__ = """/notes لعرض جميع الملاحظات في المحادثة.
 
-/save [NOTE_NAME] To Save A Note.
+/save [اسم_الملاحظة] لحفظ ملاحظة.
 
-Supported note types are Text, Animation, Photo, Document, Video, video notes, Audio, Voice.
+أنواع الملاحظات المدعومة: نص، حركة، صورة، مستند، فيديو، ملاحظات فيديو، صوت، رسالة صوتية.
 
-To change caption of any files use.\n/save [NOTE_NAME] [NEW_CAPTION].
+لتغيير تعليق أي ملف، استخدم:\n/save [اسم_الملاحظة] [تعليق_جديد].
 
-#NOTE_NAME To Get A Note.
+#اسم_الملاحظة للحصول على ملاحظة.
 
-/delete [NOTE_NAME] To Delete A Note.
-/deleteall To delete all the notes in a chat (permanently).
+/delete [اسم_الملاحظة] لحذف ملاحظة.
+/deleteall لحذف جميع الملاحظات في المحادثة (نهائياً).
 
-Checkout /markdownhelp to know more about formattings and other syntax.
+راجع /markdownhelp لمعرفة المزيد عن التنسيق والصياغة.
 """
 
 

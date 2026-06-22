@@ -30,17 +30,17 @@ from wbb.utils.dbfunctions import add_sudo, get_sudoers, remove_sudo
 
 __MODULE__ = "Sudo"
 __HELP__ = """
-**THIS MODULE IS ONLY FOR DEVS**
+**هذه الوحدة للمطورين فقط**
 
-.useradd - To Add A User In Sudoers.
-.userdel - To Remove A User From Sudoers.
-.sudoers - To List Sudo Users.
+.useradd - لإضافة مستخدم لقائمة السودو.
+.userdel - لإزالة مستخدم من قائمة السودو.
+.sudoers - لعرض مستخدمي السودو.
 
-**NOTE:**
+**ملاحظة:**
 
-Never add anyone to sudoers unless you trust them,
-sudo users can do anything with your account, they
-can even delete your account.
+لا تضف أحداً للسودو إلا إذا كنت تثق به تماماً،
+يمكن لمستخدمي السودو فعل أي شيء بحسابك،
+بما في ذلك حذف حسابك.
 """
 
 

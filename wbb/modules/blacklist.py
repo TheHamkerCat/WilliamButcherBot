@@ -40,9 +40,9 @@ from wbb.utils.filter_groups import blacklist_filters_group
 
 __MODULE__ = "Blacklist"
 __HELP__ = """
-/blacklisted - Get All The Blacklisted Words In The Chat.
-/blacklist [WORD|SENTENCE] - Blacklist A Word Or A Sentence.
-/whitelist [WORD|SENTENCE] - Whitelist A Word Or A Sentence.
+/blacklisted - عرض جميع الكلمات المحظورة في المحادثة.
+/blacklist [كلمة|جملة] - حظر كلمة أو جملة.
+/whitelist [كلمة|جملة] - رفع الحظر عن كلمة أو جملة.
 """
 
 

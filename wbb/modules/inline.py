@@ -33,9 +33,9 @@ from wbb.utils.inlinefuncs import *
 __MODULE__ = "Inline"
 __HELP__ = f"""
 
-Send /inline for help related to inline.
+أرسل /inline للحصول على مساعدة حول الاستخدام المضمّن.
 
-**Example Usage:**
+**مثال على الاستخدام:**
 `@{BOT_USERNAME} google github`
 """
 
@@ -49,7 +49,7 @@ async def inline(_, message):
             for i in keywords_list
         ]
     )
-    text = "**Here are the commands available for inline**"
+    text = "**إليك الأوامر المتاحة للاستخدام المضمّن**"
     await message.reply_text(text=text, reply_markup=buttons)
 
 
@@ -73,7 +73,7 @@ async def inline_query_handler(client, query):
                 return await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text="Translator | tr [LANG] [TEXT]",
+                    switch_pm_text="المترجم | tr [اللغة] [النص]",
                     switch_pm_parameter="inline",
                 )
             lang = text.split()[1]
@@ -88,7 +88,7 @@ async def inline_query_handler(client, query):
                 return await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text="Urban Dictionary | ud [QUERY]",
+                    switch_pm_text="قاموس Urban | ud [استعلام]",
                     switch_pm_parameter="inline",
                 )
             tex = text.split(None, 1)[1].strip()
@@ -102,7 +102,7 @@ async def inline_query_handler(client, query):
                 return await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text="Google Search | google [QUERY]",
+                    switch_pm_text="بحث Google | google [استعلام]",
                     switch_pm_parameter="inline",
                 )
             tex = text.split(None, 1)[1].strip()
@@ -118,7 +118,7 @@ async def inline_query_handler(client, query):
                     query.id,
                     results=answers,
                     is_gallery=True,
-                    switch_pm_text="Wallpapers Search | wall [QUERY]",
+                    switch_pm_text="بحث عن خلفيات | wall [استعلام]",
                     switch_pm_parameter="inline",
                 )
             tex = text.split(None, 1)[1].strip()
@@ -132,7 +132,7 @@ async def inline_query_handler(client, query):
                 return await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text="Torrent Search | torrent [QUERY]",
+                    switch_pm_text="بحث Torrent | torrent [استعلام]",
                     switch_pm_parameter="inline",
                 )
             tex = text.split(None, 1)[1].strip()
@@ -147,7 +147,7 @@ async def inline_query_handler(client, query):
                 return await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text="YouTube Search | yt [QUERY]",
+                    switch_pm_text="بحث YouTube | yt [استعلام]",
                     switch_pm_parameter="inline",
                 )
             tex = text.split(None, 1)[1].strip()
@@ -159,7 +159,7 @@ async def inline_query_handler(client, query):
                 return await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text="Lyrics Search | lyrics [QUERY]",
+                    switch_pm_text="بحث عن كلمات أغنية | lyrics [استعلام]",
                     switch_pm_parameter="inline",
                 )
             tex = text.split(None, 1)[1].strip()
@@ -171,7 +171,7 @@ async def inline_query_handler(client, query):
                 return await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text="Global Message Search. | search [QUERY]",
+                    switch_pm_text="بحث عالمي عن رسائل | search [استعلام]",
                     switch_pm_parameter="inline",
                 )
             user_id = query.from_user.id
@@ -186,7 +186,7 @@ async def inline_query_handler(client, query):
                 return await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text="Music Search | music [QUERY]",
+                    switch_pm_text="بحث عن موسيقى | music [استعلام]",
                     switch_pm_parameter="inline",
                 )
             tex = text.split(None, 1)[1].strip()
@@ -200,7 +200,7 @@ async def inline_query_handler(client, query):
                 return await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text="Wikipedia | wiki [QUERY]",
+                    switch_pm_text="ويكيبيديا | wiki [استعلام]",
                     switch_pm_parameter="inline",
                 )
             tex = text.split(None, 1)[1].strip()
@@ -234,7 +234,7 @@ async def inline_query_handler(client, query):
                 return await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text="YT Music | ytmusic [url]",
+                    switch_pm_text="موسيقى يوتيوب | ytmusic [رابط]",
                     switch_pm_parameter="inline",
                 )
             tex = query.query.split(None, 1)[1].strip()
@@ -248,7 +248,7 @@ async def inline_query_handler(client, query):
                 return await client.answer_inline_query(
                     query.id,
                     results=answers,
-                    switch_pm_text="User Info | info [USERNAME|ID]",
+                    switch_pm_text="معلومات المستخدم | info [اسم_المستخدم|المعرف]",
                     switch_pm_parameter="inline",
                 )
             tex = text.split()[1].strip()
@@ -263,7 +263,7 @@ async def inline_query_handler(client, query):
                 return await client.answer_inline_query(
                     query.id,
                     results=answerss,
-                    switch_pm_text="TMDB Search | tmdb [QUERY]",
+                    switch_pm_text="بحث TMDB | tmdb [استعلام]",
                     switch_pm_parameter="inline",
                 )
             tex = text.split()[1].strip()
@@ -278,7 +278,7 @@ async def inline_query_handler(client, query):
                     query.id,
                     results=answers,
                     is_gallery=True,
-                    switch_pm_text="Image Search | image [QUERY]",
+                    switch_pm_text="بحث عن صور | image [استعلام]",
                     switch_pm_parameter="inline",
                 )
             tex = text.split(None, 1)[1].strip()

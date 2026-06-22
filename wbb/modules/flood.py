@@ -42,9 +42,9 @@ from wbb.utils.filter_groups import flood_group
 
 __MODULE__ = "Flood"
 __HELP__ = """
-Anti-Flood system, the one who sends more than 10 messages in a row, gets muted for an hour (Except for admins).
+نظام مكافحة الفيضان، من يرسل أكثر من 10 رسائل متتالية يُكتم لمدة ساعة (باستثناء المشرفين).
 
-/flood [ENABLE|DISABLE] - Turn flood detection on or off
+/flood [ENABLE|DISABLE] - تشغيل أو إيقاف نظام مكافحة الفيضان
 """
 
 DB = {}  # TODO Use mongodb instead of a fucking dict.

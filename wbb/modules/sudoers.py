@@ -53,25 +53,25 @@ from wbb.utils.functions import extract_user, extract_user_and_reason, restart
 
 __MODULE__ = "Sudoers"
 __HELP__ = """
-/stats - To Check System Status.
+/stats - التحقق من حالة النظام.
 
-/gstats - To Check Bot's Global Stats.
+/gstats - عرض الإحصائيات العامة للبوت.
 
-/gban - To Ban A User Globally.
+/gban - حظر مستخدم بشكل عالمي.
 
-/clean_db - Clean database.
+/clean_db - تنظيف قاعدة البيانات.
 
-/broadcast - To Broadcast A Message To All Groups.
+/broadcast - إرسال رسالة جماعية لجميع المجموعات.
 
-/ubroadcast - To Broadcast A Message To All Users.
+/ubroadcast - إرسال رسالة جماعية لجميع المستخدمين.
 
-/update - To Update And Restart The Bot
+/update - تحديث وإعادة تشغيل البوت
 
-/restart - To Restart the bot
+/restart - إعادة تشغيل البوت
 
-/eval - Execute Python Code
+/eval - تنفيذ كود Python
 
-/sh - Execute Shell Code
+/sh - تنفيذ أوامر Shell
 """
 
 

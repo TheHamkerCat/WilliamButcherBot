@@ -8,8 +8,8 @@ from wbb.utils.http import get
 
 __MODULE__ = "Crypto"
 __HELP__ = """
-/crypto [currency]
-        Get Real Time value from currency given.
+/crypto [العملة]
+        الحصول على القيمة الفورية للعملة المطلوبة.
 """
 
 

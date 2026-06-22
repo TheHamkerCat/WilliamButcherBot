@@ -38,14 +38,14 @@ from wbb.utils.functions import extract_user, extract_user_and_reason
 
 __MODULE__ = "Federation"
 __HELP__ = """
-Everything is fun, until a spammer starts entering your group, and you have to block it. Then you need to start banning more, and more, and it hurts.
-But then you have many groups, and you don't want this spammer to be in one of your groups - how can you deal? Do you have to manually block it, in all your groups?\n
-**No longer!** With Federation, you can make a ban in one chat overlap with all other chats.\n
-You can even designate federation admins, so your trusted admin can ban all the spammers from chats you want to protect.\n\n
+كل شيء ممتع، حتى يبدأ مرسل البريد العشوائي بدخول مجموعتك وتضطر لحظره. ثم تحتاج لحظر المزيد، وهذا مؤلم.
+وإذا كان لديك مجموعات متعددة، وتريد منع هذا المزعج من الانضمام إليها جميعاً، فكيف تتعامل مع ذلك؟ هل يجب عليك حظره يدوياً في كل مجموعة؟\n
+**لا بعد الآن!** مع الاتحادات، يمكنك جعل الحظر في محادثة واحدة يمتد لجميع المحادثات الأخرى.\n
+يمكنك أيضاً تعيين مشرفي اتحاد، حتى يتمكن مشرفوك الموثوقون من حظر جميع المزعجين من المحادثات التي تريد حمايتها.\n\n
 """
 
 
-SUPPORT_CHAT = "@WBBSupport"
+SUPPORT_CHAT = "@shaheen_ys"
 
 
 @app.on_message(filters.command("newfed"))

@@ -43,11 +43,11 @@ from wbb.utils.filter_groups import karma_negative_group, karma_positive_group
 from wbb.utils.functions import get_specific_usernames
 
 __MODULE__ = "Karma"
-__HELP__ = """[UPVOTE] - Use upvote keywords like "+", "+1", "thanks", etc to upvote a message.
-[DOWNVOTE] - Use downvote keywords like "-", "-1", etc to downvote a message.
-/karma_toggle [ENABLE|DISABLE] - Enable or Disable Karma System In Your Chat.
-Reply to a message with /karma to check a user's karma
-Send /karma without replying to any message to check karma list of top 10 users"""
+__HELP__ = """[تصويت إيجابي] - استخدم كلمات مثل "+", "+1", "شكراً", "thanks" للتصويت الإيجابي على رسالة.
+[تصويت سلبي] - استخدم كلمات مثل "-", "-1" للتصويت السلبي على رسالة.
+/karma_toggle [ENABLE|DISABLE] - تفعيل أو تعطيل نظام الكارما في محادثتك.
+رد على رسالة بـ /karma للتحقق من كارما مستخدم
+أرسل /karma بدون رد لعرض قائمة أفضل 10 مستخدمين كارما"""
 
 regex_upvote = r"^(\++|\+1|thx|tnx|tq|ty|thankyou|thank you|thanx|thanks|pro|cool|good|agree|👍|\++ .+)$"
 regex_downvote = r"^(-+|-1|not cool|disagree|worst|bad|👎|-+ .+)$"

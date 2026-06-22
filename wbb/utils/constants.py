@@ -7,36 +7,36 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from wbb import BOT_USERNAME, app
 
 MARKDOWN = """
-Read the below text carefully to find out how formatting works!
+اقرأ النص أدناه بعناية لمعرفة كيفية عمل التنسيق!
 
-<u>Supported Fillings:</u>
+<u>الوسوم المدعومة:</u>
 
-<code>{name}</code> - This will mention the user with their name.
-<code>{chat}</code> - This will fill with the current chat name.
+<code>{name}</code> - سيذكر المستخدم باسمه.
+<code>{chat}</code> - سيُعبّأ باسم المحادثة الحالية.
 
-NOTE: Fillings only works in greetings module.
-
-
-<u>Supported formatting:</u>
-
-<code>**Bold**</code> : This will show as <b>bold</b> text.
-<code>~~strike~~</code>: This will show as <strike>strike</strike> text.
-<code>__italic__</code>: This will show as <i>italic</i> text.
-<code>--underline--</code>: This will show as <u>underline</u> text.
-<code>`code words`</code>: This will show as <code>code</code> text.
-<code>||spoiler||</code>: This will show as <spoiler>Spoiler</spoiler> text.
-<code>[hyperlink](google.com)</code>: This will create a <a href='https://www.google.com'>hyperlink</a> text.
-<b>Note:</b> You can use both markdown & html tags.
+ملاحظة: الوسوم تعمل فقط في وحدة رسائل الترحيب.
 
 
-<u>Button formatting:</u>
+<u>التنسيق المدعوم:</u>
 
--> text ~ [button text, button link]
+<code>**عريض**</code> : سيظهر كنص <b>عريض</b>.
+<code>~~مشطوب~~</code>: سيظهر كنص <strike>مشطوب</strike>.
+<code>__مائل__</code>: سيظهر كنص <i>مائل</i>.
+<code>--تحته خط--</code>: سيظهر كنص <u>تحته خط</u>.
+<code>`كود`</code>: سيظهر كنص <code>كود</code>.
+<code>||مخفي||</code>: سيظهر كنص <spoiler>مخفي</spoiler>.
+<code>[رابط](google.com)</code>: سيُنشئ نصاً <a href='https://www.google.com'>كرابط</a>.
+<b>ملاحظة:</b> يمكنك استخدام كلٍّ من markdown وعلامات html.
 
 
-<u>Example:</u>
+<u>تنسيق الأزرار:</u>
 
-<b>example</b> <i>button with markdown</i> <code>formatting</code> ~ [button text, https://google.com]
+-> نص ~ [نص الزر, رابط الزر]
+
+
+<u>مثال:</u>
+
+<b>مثال</b> <i>زر مع markdown</i> <code>تنسيق</code> ~ [نص الزر, https://google.com]
 """
 
 
@@ -46,7 +46,7 @@ async def mkdwnhelp(_, m: Message):
         [
             [
                 InlineKeyboardButton(
-                    text="Click Here!",
+                    text="اضغط هنا!",
                     url=f"http://t.me/{BOT_USERNAME}?start=mkdwn_help",
                 )
             ]
@@ -54,7 +54,7 @@ async def mkdwnhelp(_, m: Message):
     )
     if m.chat.type != ChatType.PRIVATE:
         await m.reply(
-            "Click on the below button to get markdown usage syntax in pm!",
+            "اضغط على الزر أدناه للحصول على توضيح صياغة الماركداون في الخاص!",
             reply_markup=keyb,
         )
     else:

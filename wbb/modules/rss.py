@@ -28,13 +28,13 @@ from wbb.utils.rss import Feed
 
 __MODULE__ = "RSS"
 __HELP__ = f"""
-/add_feed [URL] - Add a feed to chat
-/rm_feed - Remove feed from chat
+/add_feed [الرابط] - إضافة خلاصة إلى المحادثة
+/rm_feed - إزالة خلاصة من المحادثة
 
-**Note:**
-    - This will check for updates every {RSS_DELAY // 60} minutes.
-    - You can only add one feed per chat.
-    - Currently RSS and ATOM feeds are supported.
+**ملاحظة:**
+    - سيتحقق من التحديثات كل {RSS_DELAY // 60} دقيقة.
+    - يمكنك إضافة خلاصة واحدة فقط لكل محادثة.
+    - يدعم حالياً خلاصات RSS و ATOM.
 """
 
 

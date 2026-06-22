@@ -35,11 +35,11 @@ from wbb.utils.functions import check_format
 
 __MODULE__ = "Rules"
 __HELP__ = """
- • /rules: get the rules for this chat.
+ • /rules: عرض قواعد هذه المحادثة.
 
-**Admins only:**
- • /setrules: Reply to a message to set the rules for the chat.
- • /clearrules: clear the rules for this chat.
+**للمشرفين فقط:**
+ • /setrules: رد على رسالة لتعيين قواعد المحادثة.
+ • /clearrules: مسح قواعد هذه المحادثة.
 """
 
 

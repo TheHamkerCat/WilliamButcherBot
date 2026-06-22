@@ -33,16 +33,16 @@ from wbb.utils.functions import get_urls_from_text
 
 __MODULE__ = "Locks"
 __HELP__ = """
-Commands: /lock | /unlock | /locks [No Parameters Required]
+الأوامر: /lock | /unlock | /locks [لا تتطلب معاملات]
 
-Parameters:
+المعاملات:
     messages | stickers | gifs | media | games | polls
 
     inline  | url | group_info | user_add | pin
 
-You can only pass the "all" parameter with /lock, not with /unlock
+يمكنك تمرير معامل "all" مع /lock فقط، وليس مع /unlock
 
-Example:
+مثال:
     /lock all
 """
 

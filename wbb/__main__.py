@@ -55,11 +55,11 @@ HELPABLE = {}
 FED_MARKUP = InlineKeyboardMarkup(
     [
         [
-            InlineKeyboardButton("Fed Owner Commands", callback_data="fed_owner"),
-            InlineKeyboardButton("Fed Admin Commands", callback_data="fed_admin"),
+            InlineKeyboardButton("أوامر مالك الاتحاد", callback_data="fed_owner"),
+            InlineKeyboardButton("أوامر مشرف الاتحاد", callback_data="fed_admin"),
         ],
-        [InlineKeyboardButton("User Commands", callback_data="fed_user")],
-        [InlineKeyboardButton("Back", callback_data="help_back")],
+        [InlineKeyboardButton("أوامر المستخدم", callback_data="fed_user")],
+        [InlineKeyboardButton("رجوع", callback_data="help_back")],
     ]
 )
 
@@ -68,19 +68,19 @@ def get_home_keyboard():
     return InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton(text="Commands ❓", callback_data="bot_commands"),
+                InlineKeyboardButton(text="الأوامر ❓", callback_data="bot_commands"),
                 InlineKeyboardButton(
-                    text="Repo 🛠",
-                    url="https://github.com/thehamkercat/WilliamButcherBot",
+                    text="المستودع 🛠",
+                    url="https://github.com/yousefshaheen113-blip/WilliamButcherBot",
                 ),
             ],
             [
-                InlineKeyboardButton(text="System Stats 🖥", callback_data="stats_callback"),
-                InlineKeyboardButton(text="Support 👨", url="http://t.me/WBBSupport"),
+                InlineKeyboardButton(text="إحصائيات النظام 🖥", callback_data="stats_callback"),
+                InlineKeyboardButton(text="الدعم 👨", url="http://t.me/shaheen_ys"),
             ],
             [
                 InlineKeyboardButton(
-                    text="Add Me To Your Group 🎉",
+                    text="أضفني لمجموعتك 🎉",
                     url=f"http://t.me/{wbb.BOT_USERNAME}?startgroup=new",
                 )
             ],
@@ -93,17 +93,17 @@ def get_keyboard():
         [
             [
                 InlineKeyboardButton(
-                    text="Help ❓",
+                    text="المساعدة ❓",
                     url=f"t.me/{wbb.BOT_USERNAME}?start=help",
                 ),
                 InlineKeyboardButton(
-                    text="Repo 🛠",
-                    url="https://github.com/thehamkercat/WilliamButcherBot",
+                    text="المستودع 🛠",
+                    url="https://github.com/yousefshaheen113-blip/WilliamButcherBot",
                 ),
             ],
             [
-                InlineKeyboardButton(text="System Stats 💻", callback_data="stats_callback"),
-                InlineKeyboardButton(text="Support 👨", url="t.me/WBBSupport"),
+                InlineKeyboardButton(text="إحصائيات النظام 💻", callback_data="stats_callback"),
+                InlineKeyboardButton(text="الدعم 👨", url="t.me/shaheen_ys"),
             ],
         ]
     )
@@ -111,9 +111,9 @@ def get_keyboard():
 
 def get_home_text():
     return (
-        f"Hey there! My name is {wbb.BOT_NAME}. I can manage your "
-        "group with lots of useful features, feel free to "
-        "add me to your group."
+        f"مرحباً! اسمي {wbb.BOT_NAME}. أستطيع إدارة مجموعتك "
+        "بالعديد من الميزات المفيدة، لا تتردد في "
+        "إضافتي إلى مجموعتك."
     )
 
 
@@ -201,10 +201,10 @@ async def start_bot():
             await app.edit_message_text(
                 restart_data["chat_id"],
                 restart_data["message_id"],
-                "**Restarted Successfully**",
+                "**تم إعادة التشغيل بنجاح ✅**",
             )
         else:
-            await app.send_message(LOG_GROUP_ID, "Bot started!")
+            await app.send_message(LOG_GROUP_ID, "تم تشغيل البوت! ✅")
     except Exception:
         pass
 
@@ -224,7 +224,7 @@ async def start_bot():
 async def start(_, message):
     if message.chat.type != ChatType.PRIVATE:
         return await message.reply(
-            "Pm Me For More Details.", reply_markup=get_keyboard()
+            "راسلني في الخاص للمزيد من التفاصيل.", reply_markup=get_keyboard()
         )
     if len(message.text.split()) > 1:
         user = await app.get_users(message.from_user.id)
@@ -234,7 +234,7 @@ async def start(_, message):
             chat_id = match.group(1)
             user_id = message.from_user.id
             chat = await app.get_chat(int(chat_id))
-            text = f"**The rules for `{chat.title}` are:\n\n**"
+            text = f"**قواعد `{chat.title}` هي:\n\n**"
             rules = await get_rules(int(chat_id))
             if rules:
                 text = text + rules
@@ -249,8 +249,7 @@ async def start(_, message):
             else:
                 return await app.send_message(
                     user_id,
-                    "The group admins haven't set any rules for this chat yet. "
-                    "This probably doesn't mean it's lawless though...!",
+                    "لم يقم مشرفو المجموعة بتعيين أي قواعد لهذه المحادثة بعد.",
                 )
         if name == "mkdwn_help":
             await message.reply(
@@ -261,7 +260,7 @@ async def start(_, message):
         elif "_" in name:
             module = name.split("_", 1)[1]
             text = (
-                f"Here is the help for **{HELPABLE[module].__MODULE__}**:\n"
+                f"إليك المساعدة الخاصة بـ **{HELPABLE[module].__MODULE__}**:\n"
                 + HELPABLE[module].__HELP__
             )
             if module == "federation":
@@ -273,7 +272,7 @@ async def start(_, message):
             await message.reply(
                 text,
                 reply_markup=InlineKeyboardMarkup(
-                    [[InlineKeyboardButton("back", callback_data="help_back")]]
+                    [[InlineKeyboardButton("رجوع", callback_data="help_back")]]
                 ),
                 disable_web_page_preview=True,
             )
@@ -298,30 +297,30 @@ async def help_command(_, message):
                     [
                         [
                             InlineKeyboardButton(
-                                text="Click here",
+                                text="اضغط هنا",
                                 url=f"t.me/{wbb.BOT_USERNAME}?start=help_{name}",
                             )
                         ],
                     ]
                 )
                 await message.reply(
-                    f"Click on the below button to get help about {name}",
+                    f"اضغط على الزر أدناه للحصول على مساعدة حول {name}",
                     reply_markup=key,
                 )
             else:
                 await message.reply(
-                    "PM Me For More Details.", reply_markup=get_keyboard()
+                    "راسلني في الخاص للمزيد من التفاصيل.", reply_markup=get_keyboard()
                 )
         else:
             await message.reply(
-                "Pm Me For More Details.", reply_markup=get_keyboard()
+                "راسلني في الخاص للمزيد من التفاصيل.", reply_markup=get_keyboard()
             )
     else:
         if len(message.command) >= 2:
             name = (message.text.split(None, 1)[1]).replace(" ", "_").lower()
             if str(name) in HELPABLE:
                 text = (
-                    f"Here is the help for **{HELPABLE[name].__MODULE__}**:\n"
+                    f"إليك المساعدة الخاصة بـ **{HELPABLE[name].__MODULE__}**:\n"
                     + HELPABLE[name].__HELP__
                 )
                 await message.reply(text, disable_web_page_preview=True)
@@ -348,10 +347,10 @@ async def help_parser(name, keyboard=None):
     if not keyboard:
         keyboard = InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help"))
     return (
-        """Hello {first_name}, My name is {bot_name}.
-I'm a group management bot with some useful features.
-You can choose an option below, by clicking a button.
-Also you can ask anything in Support Group.
+        """مرحباً {first_name}، اسمي {bot_name}.
+أنا بوت لإدارة المجموعات يتميز بالعديد من الميزات المفيدة.
+يمكنك اختيار أحد الخيارات أدناه بالضغط على زر.
+يمكنك أيضاً طرح أي استفسار في مجموعة الدعم.
 """.format(
             first_name=name,
             bot_name=wbb.BOT_NAME,
@@ -386,20 +385,20 @@ async def help_button(client, query):
     back_match = re.match(r"help_back", query.data)
     create_match = re.match(r"help_create", query.data)
     top_text = f"""
-Hello {query.from_user.first_name}, My name is {wbb.BOT_NAME}.
-I'm a group management bot with some useful features.
-You can choose an option below, by clicking a button.
-Also you can ask anything in Support Group.
+مرحباً {query.from_user.first_name}، اسمي {wbb.BOT_NAME}.
+أنا بوت لإدارة المجموعات يتميز بالعديد من الميزات المفيدة.
+يمكنك اختيار أحد الخيارات أدناه بالضغط على زر.
+يمكنك أيضاً طرح أي استفسار في مجموعة الدعم.
 
-General command are:
- - /start: Start the bot
- - /help: Give this message
+الأوامر العامة:
+ - /start: تشغيل البوت
+ - /help: عرض هذه الرسالة
  """
     if mod_match:
         module = (mod_match.group(1)).replace(" ", "_")
         text = (
             "{} **{}**:\n".format(
-                "Here is the help for", HELPABLE[module].__MODULE__
+                "إليك المساعدة الخاصة بـ", HELPABLE[module].__MODULE__
             )
             + HELPABLE[module].__HELP__
         )
@@ -412,7 +411,7 @@ General command are:
         await query.message.edit(
             text=text,
             reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("back", callback_data="help_back")]]
+                [[InlineKeyboardButton("رجوع", callback_data="help_back")]]
             ),
             disable_web_page_preview=True,
         )

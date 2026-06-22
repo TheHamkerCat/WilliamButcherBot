@@ -52,20 +52,20 @@ from wbb.utils.functions import (
 )
 
 __MODULE__ = "Filters"
-__HELP__ = """/filters To Get All The Filters In The Chat.
-/filter [FILTER_NAME] To Save A Filter(reply to a message).
+__HELP__ = """/filters لعرض جميع الفلاتر في المحادثة.
+/filter [اسم_الفلتر] لحفظ فلتر (رد على رسالة).
 
-Supported filter types are Text, Animation, Photo, Document, Video, video notes, Audio, Voice.
+أنواع الفلاتر المدعومة: نص، حركة، صورة، مستند، فيديو، ملاحظات فيديو، صوت، رسالة صوتية.
 
-To use more words in a filter use.
-`/filter Hey_there` To filter "Hey there".
+لاستخدام عدة كلمات في الفلتر:
+`/filter مرحبا_بك` لفلترة "مرحبا بك".
 
-/stop [FILTER_NAME] To Stop A Filter.
-/stopall To delete all the filters in a chat (permanently).
+/stop [اسم_الفلتر] لإيقاف فلتر.
+/stopall لحذف جميع الفلاتر في المحادثة (نهائياً).
 
-You can use markdown or html to save text too.
+يمكنك استخدام markdown أو html لحفظ النص.
 
-Checkout /markdownhelp to know more about formattings and other syntax.
+راجع /markdownhelp لمعرفة المزيد عن التنسيق والصياغة.
 """
 
 

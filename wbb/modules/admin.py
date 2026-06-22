@@ -54,31 +54,31 @@ from wbb.utils.functions import (
 )
 
 __MODULE__ = "Admin"
-__HELP__ = """/ban - Ban A User
-/dban - Delete the replied message banning its sender
-/tban - Ban A User For Specific Time
-/unban - Unban A User
-/listban - Ban a user from groups listed in a message
-/listunban - Unban a user from groups listed in a message
-/warn - Warn A User
-/dwarn - Delete the replied message warning its sender
-/rmwarns - Remove All Warning of A User
-/warns - Show Warning Of A User
-/kick - Kick A User
-/dkick - Delete the replied message kicking its sender
-/purge - Purge Messages
-/purge [n] - Purge "n" number of messages from replied message
-/del - Delete Replied Message
-/promote - Promote A Member
-/fullpromote - Promote A Member With All Rights
-/demote - Demote A Member
-/pin - Pin A Message
-/mute - Mute A User
-/tmute - Mute A User For Specific Time
-/unmute - Unmute A User
-/ban_ghosts - Ban Deleted Accounts
-/report | @admins | @admin - Report A Message To Admins.
-/invite - Send Group/SuperGroup Invite Link."""
+__HELP__ = """/ban - حظر مستخدم
+/dban - حذف الرسالة المردود عليها وحظر مرسلها
+/tban - حظر مستخدم لمدة محددة
+/unban - رفع الحظر عن مستخدم
+/listban - حظر مستخدم من مجموعات مذكورة في رسالة
+/listunban - رفع حظر مستخدم من مجموعات مذكورة في رسالة
+/warn - تحذير مستخدم
+/dwarn - حذف الرسالة المردود عليها وتحذير مرسلها
+/rmwarns - إزالة جميع تحذيرات مستخدم
+/warns - عرض تحذيرات مستخدم
+/kick - طرد مستخدم
+/dkick - حذف الرسالة المردود عليها وطرد مرسلها
+/purge - حذف الرسائل
+/purge [n] - حذف "n" رسالة من الرسالة المردود عليها
+/del - حذف الرسالة المردود عليها
+/promote - ترقية عضو
+/fullpromote - ترقية عضو بجميع الصلاحيات
+/demote - تخفيض رتبة عضو
+/pin - تثبيت رسالة
+/mute - كتم مستخدم
+/tmute - كتم مستخدم لمدة محددة
+/unmute - رفع الكتم عن مستخدم
+/ban_ghosts - حظر الحسابات المحذوفة
+/report | @admins | @admin - الإبلاغ عن رسالة للمشرفين.
+/invite - إرسال رابط دعوة للمجموعة."""
 
 
 async def member_permissions(chat_id: int, user_id: int):

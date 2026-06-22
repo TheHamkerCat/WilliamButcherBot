@@ -94,19 +94,19 @@ async def inline_help_func(__HELP__):
     )
     answerss = [
         InlineQueryResultArticle(
-            title="Inline Commands",
-            description="Help Related To Inline Usage.",
+            title="الأوامر المضمّنة",
+            description="مساعدة حول الاستخدام المضمّن.",
             input_message_content=InputTextMessageContent(
-                "Click A Button To Get Started."
+                "اضغط على زر للبدء."
             ),
             thumb_url="https://hamker.me/cy00x5x.png",
             reply_markup=buttons,
         ),
         InlineQueryResultArticle(
-            title="Github Repo",
-            description="Get Github Respository Of Bot.",
+            title="مستودع GitHub",
+            description="احصل على رابط مستودع البوت.",
             input_message_content=InputTextMessageContent(
-                "https://github.com/thehamkercat/WilliamButcherBot"
+                "https://github.com/yousefshaheen113-blip/WilliamButcherBot"
             ),
             thumb_url="https://hamker.me/gjc9fo3.png",
         ),
@@ -117,29 +117,29 @@ async def inline_help_func(__HELP__):
 
 async def alive_function(answers):
     buttons = InlineKeyboard(row_width=2)
-    bot_state = "Dead" if not await app.get_me() else "Alive"
-    ubot_state = "Dead" if not await app2.get_me() else "Alive"
+    bot_state = "متوقف" if not await app.get_me() else "يعمل"
+    ubot_state = "متوقف" if not await app2.get_me() else "يعمل"
     buttons.add(
-        InlineKeyboardButton("Stats", callback_data="stats_callback"),
+        InlineKeyboardButton("الإحصائيات", callback_data="stats_callback"),
         InlineKeyboardButton(
-            "Go Inline!", switch_inline_query_current_chat=""
+            "وضع مضمّن!", switch_inline_query_current_chat=""
         ),
     )
 
     msg = f"""
-**[William✨](https://github.com/thehamkercat/WilliamButcherBot):**
-**MainBot:** `{bot_state}`
-**UserBot:** `{ubot_state}`
+**[البوت✨](https://github.com/yousefshaheen113-blip/WilliamButcherBot):**
+**البوت الرئيسي:** `{bot_state}`
+**بوت المستخدم:** `{ubot_state}`
 **Python:** `{pyver.split()[0]}`
 **Pyrogram:** `{pyrover}`
-**Database:** `PostgreSQL/asyncpg`
-**Platform:** `{sys.platform}`
-**Profiles:** [BOT](t.me/{BOT_USERNAME}) | [UBOT](t.me/{USERBOT_USERNAME})
+**قاعدة البيانات:** `PostgreSQL/asyncpg`
+**المنصة:** `{sys.platform}`
+**الملفات الشخصية:** [BOT](t.me/{BOT_USERNAME}) | [UBOT](t.me/{USERBOT_USERNAME})
 """
     answers.append(
         InlineQueryResultArticle(
-            title="Alive",
-            description="Check Bot's Stats",
+            title="يعمل",
+            description="تحقق من إحصائيات البوت",
             thumb_url="https://static2.aniimg.com/upload/20170515/414/c/d/7/cd7EEF.jpg",
             input_message_content=InputTextMessageContent(
                 msg, disable_web_page_preview=True
@@ -381,21 +381,21 @@ async def lyrics_func(answers, text):
 
 async def tg_search_func(answers, text, user_id):
     if user_id not in SUDOERS:
-        msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
+        msg = "**خطأ**\n__هذه الميزة مخصصة لمستخدمي سودو فقط__"
         answers.append(
             InlineQueryResultArticle(
-                title="ERROR",
-                description="THIS FEATURE IS ONLY FOR SUDO USERS",
+                title="خطأ",
+                description="هذه الميزة مخصصة لمستخدمي سودو فقط",
                 input_message_content=InputTextMessageContent(msg),
             )
         )
         return answers
     if str(text)[-1] != ":":
-        msg = "**ERROR**\n__Put A ':' After The Text To Search__"
+        msg = "**خطأ**\n__ضع ':' بعد النص للبحث__"
         answers.append(
             InlineQueryResultArticle(
-                title="ERROR",
-                description="Put A ':' After The Text To Search",
+                title="خطأ",
+                description="ضع ':' بعد النص للبحث",
                 input_message_content=InputTextMessageContent(msg),
             )
         )
@@ -517,23 +517,23 @@ async def speedtest_init(query):
     answers = []
     user_id = query.from_user.id
     if user_id not in SUDOERS:
-        msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
+        msg = "**خطأ**\n__هذه الميزة مخصصة لمستخدمي سودو فقط__"
         answers.append(
             InlineQueryResultArticle(
-                title="ERROR",
-                description="THIS FEATURE IS ONLY FOR SUDO USERS",
+                title="خطأ",
+                description="هذه الميزة مخصصة لمستخدمي سودو فقط",
                 input_message_content=InputTextMessageContent(msg),
             )
         )
         return answers
-    msg = "**Click The Button Below To Perform A Speedtest**"
+    msg = "**اضغط على الزر أدناه لإجراء اختبار السرعة**"
     button = InlineKeyboard(row_width=1)
     button.add(
-        InlineKeyboardButton(text="Test", callback_data="test_speedtest")
+        InlineKeyboardButton(text="اختبار", callback_data="test_speedtest")
     )
     answers.append(
         InlineQueryResultArticle(
-            title="Click Here",
+            title="اضغط هنا",
             input_message_content=InputTextMessageContent(msg),
             reply_markup=button,
         )

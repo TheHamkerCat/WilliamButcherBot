@@ -72,34 +72,33 @@ from wbb.utils.functions import (
 
 __MODULE__ = "Greetings"
 __HELP__ = """
-/captcha [ENABLE|DISABLE] - Enable/Disable captcha.
+/captcha [ENABLE|DISABLE] - تفعيل/تعطيل الكابتشا.
 
-/set_welcome - Reply this to a message containing correct
-format for a welcome message, check end of this message.
+/set_welcome - رد بهذا الأمر على رسالة تحتوي على تنسيق صحيح لرسالة الترحيب.
 
-/del_welcome - Delete the welcome message.
-/get_welcome - Get the welcome message.
+/del_welcome - حذف رسالة الترحيب.
+/get_welcome - الحصول على رسالة الترحيب.
 
-**SET_WELCOME ->**
+**ضبط رسالة الترحيب ->**
 
-**To set a photo or gif as welcome message. Add your welcome message as caption to the photo or gif. The caption muse be in the format given below.**
+**لضبط صورة أو GIF كرسالة ترحيب، أضف رسالتك كتعليق على الصورة أو GIF بالتنسيق أدناه.**
 
-For text welcome message just send the text. Then reply with the command 
+لرسالة ترحيب نصية، أرسل النص فقط ثم رد بالأمر.
 
-The format should be something like below.
+يجب أن يكون التنسيق كما يلي:
 
 ```
-**Hi** {name} [{id}] Welcome to {chat}
+**مرحباً** {name} [{id}] في {chat}
 
-~ #This separater (~) should be there between text and buttons, remove this comment also
+~ #يجب وضع هذا الفاصل (~) بين النص والأزرار، احذف هذا التعليق أيضاً
 
 button=[Duck, https://duckduckgo.com]
 button2=[Github, https://github.com]
 ```
 
-**NOTES ->**
+**ملاحظات ->**
 
-Checkout /markdownhelp to know more about formattings and other syntax.
+راجع /markdownhelp لمعرفة المزيد عن التنسيق والصياغة.
 """
 
 answers_dicc = []

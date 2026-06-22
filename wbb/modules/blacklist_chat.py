@@ -11,14 +11,13 @@ from wbb.utils.dbfunctions import (
 
 __MODULE__ = "Blacklist Chat"
 __HELP__ = """
-**THIS MODULE IS ONLY FOR DEVS**
+**هذه الوحدة للمطورين فقط**
 
-Use this module to make the bot leave some chats
-in which you don't want it to be in.
+استخدم هذه الوحدة لجعل البوت يغادر بعض المحادثات التي لا تريده فيها.
 
-/blacklist_chat [CHAT_ID] - Blacklist a chat.
-/whitelist_chat [CHAT_ID] - Whitelist a chat.
-/blacklisted - Show blacklisted chats.
+/blacklist_chat [معرف_المحادثة] - حظر محادثة.
+/whitelist_chat [معرف_المحادثة] - رفع الحظر عن محادثة.
+/blacklisted - عرض المحادثات المحظورة.
 """
 
 

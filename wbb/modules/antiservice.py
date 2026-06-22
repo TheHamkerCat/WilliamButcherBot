@@ -13,7 +13,7 @@ from wbb.utils.dbfunctions import (
 
 __MODULE__ = "AntiService"
 __HELP__ = """
-Plugin to delete service messages in a chat!
+وحدة لحذف رسائل الخدمة في المحادثة!
 
 /antiservice [enable|disable]
 """

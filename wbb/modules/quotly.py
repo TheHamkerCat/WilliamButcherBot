@@ -32,11 +32,11 @@ from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "Quotly"
 __HELP__ = """
-/q - To quote a message.
-/q [INTEGER] - To quote more than 1 messages.
-/q r - to quote a message with it's reply
+/q - لاقتباس رسالة.
+/q [عدد] - لاقتباس أكثر من رسالة.
+/q r - لاقتباس رسالة مع ردّها.
 
-Use .q to quote using userbot
+استخدم .q للاقتباس عبر بوت المستخدم.
 """
 
 

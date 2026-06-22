@@ -31,30 +31,28 @@ from wbb.core.decorators.errors import capture_err
 
 __MODULE__ = "Pipes"
 __HELP__ = """
-**THIS MODULE IS ONLY FOR DEVS**
+**هذه الوحدة للمطورين فقط**
 
-Use this module to create a pipe that will forward messages of one chat/channel to another.
+استخدم هذه الوحدة لإنشاء أنبوب يُعيد توجيه رسائل محادثة/قناة إلى أخرى.
 
 
 /activate_pipe [FROM_CHAT_ID] [TO_CHAT_ID] [BOT|USERBOT]
 
-    Active a pipe.
+    تفعيل أنبوب.
 
-    choose 'BOT' or 'USERBOT' according to your needs,
-    this will decide which client will fetch the
-    message from 'FROM_CHAT'.
+    اختر 'BOT' أو 'USERBOT' حسب احتياجك،
+    هذا يحدد أي عميل سيجلب الرسالة من المحادثة المصدر.
 
 
 /deactivate_pipe [FROM_CHAT_ID]
-    Deactivete a pipe.
+    إيقاف أنبوب.
 
 
 /show_pipes
-    Show all the active pipes.
+    عرض جميع الأنابيب النشطة.
 
-**NOTE:**
-    These pipes are only temporary, and will be destroyed
-    on restart.
+**ملاحظة:**
+    هذه الأنابيب مؤقتة وستُحذف عند إعادة التشغيل.
 """
 pipes_list_bot = {}
 pipes_list_userbot = {}

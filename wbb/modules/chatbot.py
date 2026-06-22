@@ -43,10 +43,10 @@ from wbb.utils.filter_groups import chatbot_group
 
 __MODULE__ = "ChatBot"
 __HELP__ = """
-/chatbot [ENABLE|DISABLE] To Enable Or Disable ChatBot In Your Chat.
+/chatbot [ENABLE|DISABLE] لتفعيل أو تعطيل ChatBot في محادثتك.
 
-There's one module of this available for userbot also
-check userbot module help."""
+تتوفر وحدة مماثلة لبوت المستخدم أيضاً،
+راجع مساعدة وحدة userbot."""
 
 
 async def chat_bot_toggle(message: Message, is_userbot: bool):

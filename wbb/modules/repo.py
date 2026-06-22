@@ -28,14 +28,14 @@ from wbb.core.decorators.errors import capture_err
 from wbb.utils.http import get
 
 __MODULE__ = "Repo"
-__HELP__ = "/repo - To Get My Github Repository Link " "And Support Group Link"
+__HELP__ = "/repo - للحصول على رابط مستودع البوت على GitHub ورابط مجموعة الدعم"
 
 
 @app.on_message(filters.command("repo"))
 @capture_err
 async def repo(_, message):
     users = await get(
-        "https://api.github.com/repos/thehamkercat/williambutcherbot/contributors"
+        "https://api.github.com/repos/yousefshaheen113-blip/WilliamButcherBot/contributors"
     )
     list_of_users = ""
     count = 1
@@ -45,9 +45,9 @@ async def repo(_, message):
         )
         count += 1
 
-    text = f"""[Github](https://github.com/thehamkercat/WilliamButcherBot) | [Group](t.me/PatheticProgrammers)
+    text = f"""[GitHub](https://github.com/yousefshaheen113-blip/WilliamButcherBot) | [الدعم](t.me/shaheen_ys)
 ```----------------
-| Contributors |
+| المساهمون |
 ----------------```
 {list_of_users}"""
     await app.send_message(

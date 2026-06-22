@@ -54,11 +54,11 @@ from wbb.utils.stickerset import (
 __MODULE__ = "Stickers"
 __HELP__ = """
 /sticker_id
-    To get FileID of a Sticker.
+    للحصول على معرف ملف الملصق.
 /get_sticker
-    To get sticker as a photo and document.
+    الحصول على الملصق كصورة ومستند.
 /kang
-    To kang a Sticker or an Image."""
+    سرقة ملصق أو صورة."""
 
 MAX_STICKERS = (
     120  # would be better if we could fetch this limit directly from telegram
