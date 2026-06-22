@@ -2,6 +2,6 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "python -m wbb"
+startCommand = "uv run python -m wbb"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10

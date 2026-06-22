@@ -1,11 +1,8 @@
 [phases.setup]
-nixPkgs = ["python312", "python312Packages.pip", "ffmpeg", "gcc", "curl", "git", "zip", "postgresql_15"]
+nixPkgs = ["python312", "uv", "ffmpeg", "gcc", "curl", "git", "zip", "postgresql_15"]
 
 [phases.install]
-cmds = [
-    "pip install --no-cache-dir --upgrade pip",
-    "pip install --no-cache-dir -r requirements.txt"
-]
+cmds = ["uv sync --no-dev --frozen"]
 
 [start]
-cmd = "python -m wbb"
+cmd = "uv run python -m wbb"

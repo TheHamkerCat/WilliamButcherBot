@@ -6,50 +6,44 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     # ============ CORE TELEGRAM ============
-    "pyrogram>=2.0.0",  # FIXED: Was missing
-    "TgCrypto~=1.2.5",
+    "pyrogram>=2.0.0", # FIXED: Was missing
+    "tgcrypto~=1.2.5",
     "pyromod~=3.1.6",
     "kurigram==2.2.12",
-
     # ============ DATABASE (PostgreSQL) ============
-    "asyncpg>=0.29.0",  # NEW: PostgreSQL async driver (replaces motor)
+    "asyncpg>=0.29.0", # NEW: PostgreSQL async driver (replaces motor)
     # Note: Removed 'motor' dependency
-
     # ============ ASYNC & HTTP ============
     "aiohttp~=3.13.3",
     "aiofiles~=23.2.1",
     "uvloop~=0.19.0",
-
     # ============ MEDIA & PROCESSING ============
     "ffmpeg-python~=0.2.0",
-    "gTTS~=2.5.1",
-    "Pillow>=10.0.0",  # Updated version
+    "gtts~=2.5.1",
+    "pillow>=10.0.0", # Updated version
     "img2pdf~=0.5.1",
-    "yt-dlp>=2024.1.0",  # FIXED: Replaced deprecated youtube_dl
-
+    "yt-dlp>=2024.1.0", # FIXED: Replaced deprecated youtube_dl
     # ============ TRANSLATION & SEARCH ============
-    "google-trans-new>=1.1.9",  # FIXED: Replaced googletrans RC version
+    "google-trans-new>=1.1.9", # FIXED: Replaced googletrans RC version
     "search-engine-parser~=0.6.8",
-
     # ============ UTILITIES ============
     "future~=1.0.0",
     "requests~=2.32.4",
-    "psutil>=5.9.0",  # Updated version
+    "psutil>=5.9.0", # Updated version
     "pytz~=2024.1",
     "speedtest-cli~=2.1.3",
-    "beautifulsoup4>=4.12.0",  # FIXED: Replaced bs4 meta package
+    "beautifulsoup4>=4.12.0", # FIXED: Replaced bs4 meta package
     "feedparser~=6.0.11",
     "fuzzysearch~=0.7.3",
     "python-dotenv~=1.0.1",
-
+    "cryptography>=42.0.0",
     # ============ TASK QUEUE ============
     "python-arq~=6.0.7",
-
     # ============ MISC ============
     "pykeyboard~=0.1.5",
     "telegraph~=2.2.0",
     "pytube~=15.0.0",
-    "dnspython>=2.4.0",  # FIXED: Updated from pinned 2.1.0
+    "dnspython>=2.4.0", # FIXED: Updated from pinned 2.1.0
 ]
 
 [dependency-groups]
