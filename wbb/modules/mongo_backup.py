@@ -21,13 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import os
 from os import remove
 from os import system as execute
 
 from pyrogram import enums, filters
 from pyrogram.types import Message
 
-from wbb import MONGO_URL, SUDOERS, app
+from wbb import DATABASE_URL, SUDOERS, app
 
 
 @app.on_message(filters.command("backup") & SUDOERS)
@@ -35,21 +36,27 @@ async def backup(_, message: Message):
     if message.chat.type != enums.ChatType.PRIVATE:
         return await message.reply("This command can only be used in private")
 
-    m = await message.reply("Backing up data...")
+    m = await message.reply("Backing up PostgreSQL database...")
 
-    code = execute(f'mongodump --uri "{MONGO_URL}"')
+    backup_file = "backup.sql"
+    code = execute(f'pg_dump "{DATABASE_URL}" -f {backup_file}')
     if int(code) != 0:
         return await m.edit(
-            "Looks like you don't have mongo-database-tools installed "
-            + "grab it from mongodb.com/try/download/database-tools"
+            "Backup failed. Make sure `pg_dump` is installed and DATABASE_URL is valid."
         )
 
-    code = execute("zip backup.zip -r9 dump/*")
-    if int(code) != 0:
+    zip_code = execute(f"zip backup.zip {backup_file}")
+    if int(zip_code) != 0:
+        if os.path.exists(backup_file):
+            remove(backup_file)
         return await m.edit(
             "Looks like you don't have `zip` package installed, BACKUP FAILED!"
         )
 
     await message.reply_document("backup.zip")
     await m.delete()
-    remove("backup.zip")
+
+    if os.path.exists(backup_file):
+        remove(backup_file)
+    if os.path.exists("backup.zip"):
+        remove("backup.zip")

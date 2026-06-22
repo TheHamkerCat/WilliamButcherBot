@@ -31,7 +31,6 @@ from sys import version as pyver
 from time import ctime, time
 
 from fuzzysearch import find_near_matches
-from motor import version as mongover
 from pykeyboard import InlineKeyboard
 from pyrogram import __version__ as pyrover
 from pyrogram import enums, filters
@@ -133,7 +132,7 @@ async def alive_function(answers):
 **UserBot:** `{ubot_state}`
 **Python:** `{pyver.split()[0]}`
 **Pyrogram:** `{pyrover}`
-**MongoDB:** `{mongover}`
+**Database:** `PostgreSQL/asyncpg`
 **Platform:** `{sys.platform}`
 **Profiles:** [BOT](t.me/{BOT_USERNAME}) | [UBOT](t.me/{USERBOT_USERNAME})
 """

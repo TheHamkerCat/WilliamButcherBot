@@ -37,7 +37,7 @@ if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is required")
 
 # ============ EXTERNAL SERVICES ============
-ARQ_API_KEY = os.environ.get("ARQ_API_KEY")
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 ARQ_API_URL = os.environ.get("ARQ_API_URL", "https://arq.hamker.dev")
 
 # ============ BOT FEATURES ============

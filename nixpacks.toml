@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["python312", "ffmpeg", "gcc", "curl", "git", "zip", "postgresql"]
+
+[phases.install]
+cmds = ["pip install -r requirements.txt"]
+
+[start]
+cmd = "python -m wbb"

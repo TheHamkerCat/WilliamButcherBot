@@ -16,7 +16,7 @@ from aiohttp import ClientSession
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from pyromod import listen
-from python_arq import ARQ
+from Python_ARQ import ARQ
 from telegraph import Telegraph
 
 # ============ CONFIGURATION LOADING ============
@@ -198,7 +198,7 @@ else:
     )
 
 aiohttpsession = ClientSession()
-arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
+arq = ARQ(ARQ_API_URL, ANTHROPIC_API_KEY, aiohttpsession)
 app = Client("sessions/wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
 
 log.info("Starting bot client")
