@@ -1,4 +1,4 @@
-modules = ["python-3.12"]
+modules = ["python-3.12", "nix"]
 [agent]
 expertMode = true
 stack = "BEST_EFFORT_FALLBACK"
