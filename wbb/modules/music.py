@@ -22,15 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import datetime
 import os
+import re
 from asyncio import get_running_loop
 from functools import partial
 from io import BytesIO
 
+import yt_dlp
 from pyrogram import filters
-from pytube import YouTube
-from requests import get
 
 from wbb import aiohttpsession as session
 from wbb import app, arq
@@ -47,33 +46,46 @@ __HELP__ = """
 is_downloading = False
 
 
-def download_youtube_audio(arq_resp):
-    r = arq_resp.result[0]
+def download_youtube_audio(query):
+    # Prefix bare search terms with ytsearch1: so yt-dlp resolves them.
+    is_url = query.startswith("http://") or query.startswith("https://")
+    target = query if is_url else f"ytsearch1:{query}"
 
-    title = r.title
-    performer = r.channel
+    ydl_opts = {
+        "format": "bestaudio/best",
+        "outtmpl": "%(id)s.%(ext)s",
+        "postprocessors": [{
+            "key": "FFmpegExtractAudio",
+            "preferredcodec": "mp3",
+            "preferredquality": "192",
+        }],
+        "writethumbnail": True,
+        "quiet": True,
+        "no_warnings": True,
+        "noplaylist": True,
+    }
 
-    m, s = r.duration.split(":")
-    duration = int(
-        datetime.timedelta(minutes=int(m), seconds=int(s)).total_seconds()
-    )
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(target, download=True)
+        # For search results yt-dlp wraps entries in a playlist dict.
+        if "entries" in info:
+            info = info["entries"][0]
 
-    if duration > 1800:
-        return
+        duration = int(info.get("duration") or 0)
+        if duration > 1800:
+            return None
 
-    thumb = get(r.thumbnails[0]).content
-    with open("thumbnail.png", "wb") as f:
-        f.write(thumb)
-    thumbnail_file = "thumbnail.png"
-
-    url = f"https://youtube.com{r.url_suffix}"
-    yt = YouTube(url)
-    audio = yt.streams.filter(only_audio=True).get_audio_only()
-
-    out_file = audio.download()
-    base, _ = os.path.splitext(out_file)
-    audio_file = base + ".mp3"
-    os.rename(out_file, audio_file)
+        title = info.get("title", "Unknown")
+        performer = info.get("uploader") or info.get("channel", "Unknown")
+        # Sanitize ID to prevent path traversal.
+        safe_id = re.sub(r"[^\w\-]", "_", info["id"])
+        audio_file = f"{safe_id}.mp3"
+        # yt-dlp writes the thumbnail as <id>.<ext>; find whatever it wrote.
+        thumbnail_file = next(
+            (f"{safe_id}.{ext}" for ext in ("webp", "jpg", "png")
+             if os.path.exists(f"{safe_id}.{ext}")),
+            None,
+        )
 
     return [title, performer, duration, audio_file, thumbnail_file]
 
@@ -91,14 +103,11 @@ async def music(_, message):
             "Another download is in progress, try again after sometime."
         )
     is_downloading = True
-    m = await message.reply_text(
-        f"Downloading {url}", disable_web_page_preview=True
-    )
+    m = await message.reply_text(f"Downloading {url}", disable_web_page_preview=True)
     try:
         loop = get_running_loop()
-        arq_resp = await arq.youtube(url)
         music = await loop.run_in_executor(
-            None, partial(download_youtube_audio, arq_resp)
+            None, partial(download_youtube_audio, url)
         )
 
         if not music:
@@ -122,7 +131,8 @@ async def music(_, message):
     )
     await m.delete()
     os.remove(audio_file)
-    os.remove(thumbnail_file)
+    if thumbnail_file and os.path.exists(thumbnail_file):
+        os.remove(thumbnail_file)
     is_downloading = False
 
 

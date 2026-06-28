@@ -21,14 +21,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import os
-from asyncio import gather, get_running_loop
+from asyncio import gather
 from base64 import b64decode
 from io import BytesIO
 from random import randint
 
 import aiofiles
-import requests
+import httpx
 from bs4 import BeautifulSoup
 from pyrogram import filters
 from pyrogram.types import InputMediaPhoto, Message
@@ -54,9 +55,7 @@ async def get_soup(url: str, headers):
 @capture_err
 async def reverse_image_search(client, message: Message):
     if not message.reply_to_message:
-        return await eor(
-            message, text="Reply to a message to reverse search it."
-        )
+        return await eor(message, text="Reply to a message to reverse search it.")
     reply = message.reply_to_message
     if (
         not reply.document
@@ -77,18 +76,14 @@ async def reverse_image_search(client, message: Message):
     async with aiofiles.open(image, "rb") as f:
         if image:
             search_url = "http://www.google.com/searchbyimage/upload"
-            multipart = {
-                "encoded_image": (image, await f.read()),
-                "image_content": "",
-            }
+            multipart = {"encoded_image": (image, await f.read())}
 
-            def post_non_blocking():
-                return requests.post(
-                    search_url, files=multipart, allow_redirects=False
+            async with httpx.AsyncClient(follow_redirects=False) as client_session:
+                response = await client_session.post(
+                    search_url,
+                    data={"image_content": ""},
+                    files=multipart,
                 )
-
-            loop = get_running_loop()
-            response = await loop.run_in_executor(None, post_non_blocking)
             location = response.headers.get("Location")
             os.remove(image)
         else:
@@ -110,9 +105,9 @@ async def reverse_image_search(client, message: Message):
 
     # Pass if no images detected
     try:
-        url = "https://google.com" + soup.find_all(
-            "a", {"class": "ekf0x hSQtef"}
-        )[0].get("href")
+        url = "https://google.com" + soup.find_all("a", {"class": "ekf0x hSQtef"})[
+            0
+        ].get("href")
 
         soup = await get_soup(url, headers=headers)
 

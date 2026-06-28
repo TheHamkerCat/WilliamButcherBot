@@ -81,8 +81,13 @@ mongo_client = MongoClient(MONGO_URL)
 db = mongo_client.wbb
 
 
-async def load_sudoers():
-    global SUDOERS
+aiohttpsession = None
+
+
+async def initialize():
+    global aiohttpsession, SUDOERS
+    aiohttpsession = ClientSession()
+
     log.info("Loading sudoers")
     sudoersdb = db.sudoers
     sudoers = await sudoersdb.find_one({"sudo": "sudo"})
@@ -102,7 +107,7 @@ async def load_sudoers():
 
 
 loop = asyncio.get_event_loop()
-loop.run_until_complete(load_sudoers())
+loop.run_until_complete(initialize())
 
 if not SESSION_STRING:
     app2 = Client(
@@ -115,8 +120,6 @@ else:
     app2 = Client(
         name="sessions/userbot", api_id=API_ID, api_hash=API_HASH, session_string=SESSION_STRING
     )
-
-aiohttpsession = ClientSession()
 
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
 

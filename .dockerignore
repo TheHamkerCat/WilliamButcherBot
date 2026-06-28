@@ -10,6 +10,7 @@ background.png
 temp.png
 # python
 venv/
+.venv/
 __pycache__/
 # tgbot
 config.py
