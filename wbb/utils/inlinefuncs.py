@@ -441,7 +441,17 @@ async def tg_search_func(answers, text, user_id):
     return answers
 
 
-async def music_inline_func(answers, query):
+async def music_inline_func(answers, query, user_id):
+    if user_id not in SUDOERS:
+        msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
+        answers.append(
+            InlineQueryResultArticle(
+                title="ERROR",
+                description="THIS FEATURE IS ONLY FOR SUDO USERS",
+                input_message_content=InputTextMessageContent(msg),
+            )
+        )
+        return answers
     chat_id = -1001445180719
     group_invite = "https://t.me/joinchat/vSDE2DuGK4Y4Nzll"
     try:
@@ -613,7 +623,17 @@ async def ping_func(answers):
     return answers
 
 
-async def yt_music_func(answers, url):
+async def yt_music_func(answers, url, user_id):
+    if user_id not in SUDOERS:
+        msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
+        answers.append(
+            InlineQueryResultArticle(
+                title="ERROR",
+                description="THIS FEATURE IS ONLY FOR SUDO USERS",
+                input_message_content=InputTextMessageContent(msg),
+            )
+        )
+        return answers
     arq_resp = await arq.youtube(url)
     loop = asyncio.get_running_loop()
     music = await loop.run_in_executor(None, download_youtube_audio, arq_resp)
@@ -761,6 +781,19 @@ async def image_func(answers, query):
 
 
 async def execute_code(query):
+    user_id = query.from_user.id
+    if user_id not in SUDOERS:
+        msg = "**ERROR**\n__THIS FEATURE IS ONLY FOR SUDO USERS__"
+        return await query.answer(
+            results=[
+                InlineQueryResultArticle(
+                    title="ERROR",
+                    description="THIS FEATURE IS ONLY FOR SUDO USERS",
+                    input_message_content=InputTextMessageContent(msg),
+                )
+            ],
+            cache_time=1,
+        )
     text = query.query.strip()
     offset = int((query.offset or 0))
     answers = []
