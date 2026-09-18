@@ -1,5 +1,5 @@
 # ============= BASE STAGE =============
-FROM python:3.12-slim-bullseye AS base
+FROM python:3.12-slim-bookworm AS base
 
 WORKDIR /wbb
 
