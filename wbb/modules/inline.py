@@ -238,7 +238,9 @@ async def inline_query_handler(client, query):
                     switch_pm_parameter="inline",
                 )
             tex = query.query.split(None, 1)[1].strip()
-            answerss = await yt_music_func(answers, tex)
+            answerss = await yt_music_func(
+                answers, tex, query.from_user.id
+            )
             await client.answer_inline_query(
                 query.id, results=answerss, cache_time=2
             )

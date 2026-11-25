@@ -38,8 +38,9 @@ from sys import executable
 from typing import Dict
 from urllib.parse import urlparse
 
-import aiofiles
 import speedtest
+from aiohttp.abc import AbstractResolver
+from aiohttp.resolver import DefaultResolver
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from pyrogram import errors
 from pyrogram.enums import MessageEntityType
@@ -47,7 +48,7 @@ from pyrogram.types import Message
 
 from wbb import aiohttpsession as aiosession
 from wbb.utils.dbfunctions import start_restart_stage
-from wbb.utils.http import get, post
+from wbb.utils.http import get
 
 
 async def restart(m: Message):
@@ -115,28 +116,12 @@ def test_speedtest():
     return [speed_convert(download), speed_convert(upload), info]
 
 
-async def get_http_status_code(url: str) -> int:
-    async with aiosession.head(url) as resp:
-        return resp.status
-
-
 async def make_carbon(code):
     url = "https://carbonara.solopov.dev/api/cook"
     async with aiosession.post(url, json={"code": code}) as resp:
         image = BytesIO(await resp.read())
     image.name = "carbon.png"
     return image
-
-
-async def transfer_sh(file_or_message):
-    if isinstance(file_or_message, Message):
-        file_or_message = await file_or_message.download()
-    file = file_or_message
-    async with aiofiles.open(file, "rb") as f:
-        params = {file: await f.read()}
-        resp = await post("https://transfer.sh/", data=params)
-        url = resp.strip()
-    return url
 
 
 async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
@@ -159,12 +144,15 @@ async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
 
 def is_safe_url(url: str) -> bool:
     """
-    Check if a URL is safe to fetch (prevents SSRF).
-    It ensures the URL uses http/https and that all resolved IPs are public.
+    Check URL syntax and reject credentials, non-standard ports and
+    non-public IP literals. Hostnames are checked again at connect time.
     """
     try:
         parsed = urlparse(url.strip())
         if parsed.scheme not in {"http", "https"}:
+            return False
+
+        if parsed.username or parsed.password:
             return False
 
         hostname = parsed.hostname
@@ -174,21 +162,39 @@ def is_safe_url(url: str) -> bool:
         port = parsed.port
         if port is None:
             port = 443 if parsed.scheme == "https" else 80
-
-        # Resolve all addresses (IPv4 + IPv6). URL is safe only if all are public.
-        address_info = socket.getaddrinfo(hostname, port, type=socket.SOCK_STREAM)
-        resolved_ips = {item[4][0] for item in address_info}
-        if not resolved_ips:
+        if port not in {80, 443}:
             return False
 
-        for ip_addr in resolved_ips:
-            ip = ipaddress.ip_address(ip_addr)
-            if not ip.is_global:
-                return False
-
-        return True
+        try:
+            address = ipaddress.ip_address(hostname)
+        except ValueError:
+            return True
+        return address.is_global
     except (ValueError, OSError):
         return False
+
+
+class SafeResolver(AbstractResolver):
+    """Reject non-public addresses before the connection is made."""
+
+    def __init__(self):
+        self._resolver = DefaultResolver()
+
+    async def resolve(self, host, port=0, family=socket.AF_INET):
+        results = await self._resolver.resolve(host, port, family)
+        if not results:
+            raise OSError(f"Could not resolve {host}")
+        for result in results:
+            try:
+                address = ipaddress.ip_address(result["host"])
+            except ValueError as exc:
+                raise OSError(f"Invalid address for {host}") from exc
+            if not address.is_global:
+                raise OSError(f"Blocked non-public address for {host}")
+        return results
+
+    async def close(self):
+        await self._resolver.close()
 
 
 def get_urls_from_text(text: str) -> bool:

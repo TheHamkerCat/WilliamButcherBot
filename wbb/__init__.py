@@ -24,7 +24,7 @@ SOFTWARE.
 import asyncio
 import time
 from inspect import getfullargspec
-from os import path
+from os import getenv, path
 from pathlib import Path
 
 from aiohttp import ClientSession
@@ -42,7 +42,8 @@ if is_config:
 else:
     from sample_config import *
 
-Path("sessions").mkdir(exist_ok=True)
+if not path.exists("sessions"):
+    Path("sessions").mkdir()
 
 USERBOT_PREFIX = USERBOT_PREFIX
 GBAN_LOG_GROUP_ID = GBAN_LOG_GROUP_ID
@@ -60,20 +61,32 @@ class Log:
         self.save_to_file = save_to_file
         self.file_name = file_name
 
+    def _write(self, level, msg):
+        if not self.save_to_file:
+            return
+        try:
+            with open(self.file_name, "a") as f:
+                f.write(f"[{level}]({time.ctime(time.time())}): {msg}\n")
+        except OSError:
+            self.save_to_file = False
+
     def info(self, msg):
         print(f"[+]: {msg}")
-        if self.save_to_file:
-            with open(self.file_name, "a") as f:
-                f.write(f"[INFO]({time.ctime(time.time())}): {msg}\n")
+        self._write("INFO", msg)
 
     def error(self, msg):
         print(f"[-]: {msg}")
-        if self.save_to_file:
-            with open(self.file_name, "a") as f:
-                f.write(f"[ERROR]({time.ctime(time.time())}): {msg}\n")
+        self._write("ERROR", msg)
 
 
-log = Log(True, "bot.log")
+log_file = Path(getenv("WBB_LOG_FILE", "/data/bot.log"))
+try:
+    log_file.parent.mkdir(parents=True, exist_ok=True)
+    with log_file.open("a"):
+        pass
+except OSError:
+    log_file = Path("bot.log")
+log = Log(True, str(log_file))
 
 # MongoDB client
 log.info("Initializing MongoDB client")

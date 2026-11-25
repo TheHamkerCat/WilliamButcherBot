@@ -1,0 +1,37 @@
+machine:
+  name: williambutcherbot
+  backend: apple-container
+  cpus: 4
+  memory: 4096          # MB
+
+network:
+  nat: true             # full internet: Kurigram (a Pyrogram fork) reaches Telegram over raw TCP, which an allowlist proxy cannot pass
+
+docker-host:
+  ssh: hamker@archlinux.mesh.hamker.dev   # no mirror: the only bind mount, sessions/, holds the bot's session files, which stay on the Docker host
+
+provision:
+  - run: apt-get update -q && apt-get install -y -q git curl ca-certificates unzip ripgrep jq tmux neovim htop trash-cli
+  # gh from GitHub's apt repository (Debian's is 2.46); apt upgrade keeps it current
+  - run: |
+      set -eu
+      key=/etc/apt/keyrings/githubcli-archive-keyring.gpg
+      mkdir -p -m 755 /etc/apt/keyrings
+      curl -fsSL --connect-timeout 15 --retry 3 https://cli.github.com/packages/githubcli-archive-keyring.gpg -o "$key"
+      chmod 644 "$key"
+      echo "deb [arch=$(dpkg --print-architecture) signed-by=$key] https://cli.github.com/packages stable main" > /etc/apt/sources.list.d/github-cli.list
+      apt-get update -q && apt-get install -y -q gh
+
+agents:
+  claude:
+    sessions: share
+    after-exit: shell
+  opencode:
+    sessions: copy
+    after-exit: shell
+    auth: copy
+  agy:
+    after-exit: shell
+
+apple-container:
+  image: debian:13

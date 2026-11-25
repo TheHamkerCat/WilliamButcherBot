@@ -24,6 +24,8 @@ SOFTWARE.
 
 import os
 import re
+import shutil
+import tempfile
 from asyncio import get_running_loop
 from functools import partial
 from io import BytesIO
@@ -31,7 +33,7 @@ from io import BytesIO
 import yt_dlp
 from pyrogram import filters
 
-from wbb import aiohttpsession as session
+from wbb import SUDOERS, aiohttpsession as session
 from wbb import app, arq
 from wbb.core.decorators.errors import capture_err
 from wbb.utils.pastebin import paste
@@ -46,14 +48,28 @@ __HELP__ = """
 is_downloading = False
 
 
+def reserve_download() -> bool:
+    global is_downloading
+    if is_downloading:
+        return False
+    is_downloading = True
+    return True
+
+
+def release_download():
+    global is_downloading
+    is_downloading = False
+
+
 def download_youtube_audio(query):
     # Prefix bare search terms with ytsearch1: so yt-dlp resolves them.
     is_url = query.startswith("http://") or query.startswith("https://")
     target = query if is_url else f"ytsearch1:{query}"
+    temp_dir = tempfile.mkdtemp(prefix="wbb-yt-")
 
     ydl_opts = {
         "format": "bestaudio/best",
-        "outtmpl": "%(id)s.%(ext)s",
+        "outtmpl": os.path.join(temp_dir, "%(id)s.%(ext)s"),
         "postprocessors": [{
             "key": "FFmpegExtractAudio",
             "preferredcodec": "mp3",
@@ -63,48 +79,69 @@ def download_youtube_audio(query):
         "quiet": True,
         "no_warnings": True,
         "noplaylist": True,
+        "max_filesize": 50 * 1024 * 1024,
+        "cachedir": False,
     }
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(target, download=True)
-        # For search results yt-dlp wraps entries in a playlist dict.
-        if "entries" in info:
-            info = info["entries"][0]
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(target, download=True)
+            # For search results yt-dlp wraps entries in a playlist dict.
+            if "entries" in info:
+                info = info["entries"][0]
 
-        duration = int(info.get("duration") or 0)
-        if duration > 1800:
-            return None
+            duration = int(info.get("duration") or 0)
+            if duration > 1800:
+                shutil.rmtree(temp_dir, ignore_errors=True)
+                return None
 
-        title = info.get("title", "Unknown")
-        performer = info.get("uploader") or info.get("channel", "Unknown")
-        # Sanitize ID to prevent path traversal.
-        safe_id = re.sub(r"[^\w\-]", "_", info["id"])
-        audio_file = f"{safe_id}.mp3"
-        # yt-dlp writes the thumbnail as <id>.<ext>; find whatever it wrote.
-        thumbnail_file = next(
-            (f"{safe_id}.{ext}" for ext in ("webp", "jpg", "png")
-             if os.path.exists(f"{safe_id}.{ext}")),
-            None,
-        )
+            title = info.get("title", "Unknown")
+            performer = info.get("uploader") or info.get("channel", "Unknown")
+            # Sanitize ID to prevent path traversal.
+            safe_id = re.sub(r"[^\w\-]", "_", info["id"])
+            audio_file = os.path.join(temp_dir, f"{safe_id}.mp3")
+            # yt-dlp writes the thumbnail as <id>.<ext>; find whatever it wrote.
+            thumbnail_file = next(
+                (
+                    os.path.join(temp_dir, f"{safe_id}.{ext}")
+                    for ext in ("webp", "jpg", "png")
+                    if os.path.exists(
+                        os.path.join(temp_dir, f"{safe_id}.{ext}")
+                    )
+                ),
+                None,
+            )
 
-    return [title, performer, duration, audio_file, thumbnail_file]
+        return [
+            title,
+            performer,
+            duration,
+            audio_file,
+            thumbnail_file,
+            temp_dir,
+        ]
+    except Exception:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        raise
 
 
-@app.on_message(filters.command("ytmusic"))
+@app.on_message(filters.command("ytmusic") & SUDOERS)
 @capture_err
 async def music(_, message):
-    global is_downloading
     if len(message.command) < 2:
         return await message.reply_text("/ytmusic needs a query as argument")
 
     url = message.text.split(None, 1)[1]
-    if is_downloading:
+    if not reserve_download():
         return await message.reply_text(
             "Another download is in progress, try again after sometime."
         )
-    is_downloading = True
-    m = await message.reply_text(f"Downloading {url}", disable_web_page_preview=True)
+    m = None
+    temp_dir = None
     try:
+        m = await message.reply_text(
+            f"Downloading {url}", disable_web_page_preview=True
+        )
         loop = get_running_loop()
         music = await loop.run_in_executor(
             None, partial(download_youtube_audio, url)
@@ -118,22 +155,24 @@ async def music(_, message):
             duration,
             audio_file,
             thumbnail_file,
+            temp_dir,
         ) = music
+        await message.reply_audio(
+            audio_file,
+            duration=duration,
+            performer=performer,
+            title=title,
+            thumb=thumbnail_file,
+        )
+        await m.delete()
     except Exception as e:
-        is_downloading = False
-        return await m.edit(str(e))
-    await message.reply_audio(
-        audio_file,
-        duration=duration,
-        performer=performer,
-        title=title,
-        thumb=thumbnail_file,
-    )
-    await m.delete()
-    os.remove(audio_file)
-    if thumbnail_file and os.path.exists(thumbnail_file):
-        os.remove(thumbnail_file)
-    is_downloading = False
+        if m:
+            return await m.edit(str(e))
+        return await message.reply_text(str(e))
+    finally:
+        release_download()
+        if temp_dir:
+            shutil.rmtree(temp_dir, ignore_errors=True)
 
 
 async def download_song(url):

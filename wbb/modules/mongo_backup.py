@@ -21,8 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from os import remove
-from os import system as execute
+import subprocess
+import tempfile
+from os import path
 
 from pyrogram import enums, filters
 from pyrogram.types import Message
@@ -37,19 +38,39 @@ async def backup(_, message: Message):
 
     m = await message.reply("Backing up data...")
 
-    code = execute(f'mongodump --uri "{MONGO_URL}"')
-    if int(code) != 0:
-        return await m.edit(
-            "Looks like you don't have mongo-database-tools installed "
-            + "grab it from mongodb.com/try/download/database-tools"
-        )
+    with tempfile.TemporaryDirectory() as temp_dir:
+        try:
+            dump = subprocess.run(
+                ["mongodump", "--uri", MONGO_URL],
+                cwd=temp_dir,
+                capture_output=True,
+                text=True,
+            )
+        except FileNotFoundError:
+            return await m.edit(
+                "mongodump is not installed. Install mongo-database-tools "
+                + "from mongodb.com/try/download/database-tools"
+            )
+        if dump.returncode != 0:
+            return await m.edit(
+                "Looks like you don't have mongo-database-tools installed "
+                + "grab it from mongodb.com/try/download/database-tools"
+            )
 
-    code = execute("zip backup.zip -r9 dump/*")
-    if int(code) != 0:
-        return await m.edit(
-            "Looks like you don't have `zip` package installed, BACKUP FAILED!"
-        )
+        try:
+            archive = subprocess.run(
+                ["zip", "-r", "-9", "backup.zip", "dump"],
+                cwd=temp_dir,
+                capture_output=True,
+                text=True,
+            )
+        except FileNotFoundError:
+            return await m.edit("`zip` is not installed, BACKUP FAILED!")
+        if archive.returncode != 0:
+            return await m.edit(
+                "Looks like you don't have `zip` package installed, BACKUP FAILED!"
+            )
 
-    await message.reply_document("backup.zip")
+        await message.reply_document(path.join(temp_dir, "backup.zip"))
+
     await m.delete()
-    remove("backup.zip")

@@ -28,10 +28,9 @@ dependencies = [
     "feedparser~=6.0.12",
     "pyromod~=3.1.6",
     "fuzzysearch~=0.7.3",
-    "img2pdf~=0.5.1",
     "telegraph~=2.2.0",
     "pytz~=2024.1",
-    "kurigram==2.2.12",
+    "kurigram==2.2.27",
 ]
 
 [dependency-groups]

@@ -26,7 +26,6 @@ import os
 from asyncio import gather
 from base64 import b64decode
 from io import BytesIO
-from random import randint
 
 import aiofiles
 import httpx
@@ -36,6 +35,7 @@ from pyrogram.types import InputMediaPhoto, Message
 
 from wbb import MESSAGE_DUMP_CHAT, SUDOERS, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
+from wbb.utils.download import safe_download
 from wbb.utils.functions import get_file_id_from_message
 from wbb.utils.http import get
 
@@ -72,22 +72,23 @@ async def reverse_image_search(client, message: Message):
     file_id = get_file_id_from_message(reply)
     if not file_id:
         return await m.edit("Can't reverse that")
-    image = await client.download_media(file_id, f"{randint(1000, 10000)}.jpg")
-    async with aiofiles.open(image, "rb") as f:
-        if image:
+    image = await safe_download(client, file_id, suffix=".jpg")
+    try:
+        async with aiofiles.open(image, "rb") as f:
             search_url = "http://www.google.com/searchbyimage/upload"
             multipart = {"encoded_image": (image, await f.read())}
 
-            async with httpx.AsyncClient(follow_redirects=False) as client_session:
+            async with httpx.AsyncClient(
+                follow_redirects=False
+            ) as client_session:
                 response = await client_session.post(
                     search_url,
                     data={"image_content": ""},
                     files=multipart,
                 )
             location = response.headers.get("Location")
-            os.remove(image)
-        else:
-            return await m.edit("Something wrong happened.")
+    finally:
+        os.remove(image)
     headers = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:58.0) Gecko/20100101 Firefox/58.0"
     }

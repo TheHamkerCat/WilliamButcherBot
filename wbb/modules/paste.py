@@ -31,6 +31,7 @@ from pyrogram.types import Message
 from wbb import SUDOERS, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
 from wbb.core.keyboard import ikb
+from wbb.utils.download import safe_download
 from wbb.utils.pastebin import paste
 
 __MODULE__ = "Paste"
@@ -67,12 +68,15 @@ async def paste_func(_, message: Message):
         if not pattern.search(r.document.mime_type):
             return await m.edit("Only text files can be pasted.")
 
-        doc = await message.reply_to_message.download()
+        doc = await safe_download(
+            _, message.reply_to_message, suffix=".txt"
+        )
 
-        async with aiofiles.open(doc, mode="r") as f:
-            content = await f.read()
-
-        os.remove(doc)
+        try:
+            async with aiofiles.open(doc, mode="r") as f:
+                content = await f.read()
+        finally:
+            os.remove(doc)
 
     link = await paste(content)
     kb = ikb({"Paste Link": link})

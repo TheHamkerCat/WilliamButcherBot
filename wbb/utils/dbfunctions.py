@@ -21,12 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import codecs
-import pickle
+import time
 from string import ascii_lowercase
 from typing import Dict, List, Union
 
-from wbb import db
+from pyrogram.types import InlineKeyboardButton
+
+from wbb import WELCOME_DELAY_KICK_SEC, db
 
 # SOME THINGS ARE FUCKED UP HERE, LIKE TOGGLEABLES HAVE THEIR OWN COLLECTION
 # (SHOULD FIX IT WITH SOMETHING LIKE TOGGLEDB), MOST OF THE CODE IS BAD AF
@@ -57,18 +58,6 @@ flood_toggle_db = db.flood_toggle
 rssdb = db.rss
 rulesdb = db.rules
 chatbotdb = db.chatbot
-
-
-def obj_to_str(obj):
-    if not obj:
-        return False
-    string = codecs.encode(pickle.dumps(obj), "base64").decode()
-    return string
-
-
-def str_to_obj(string: str):
-    obj = pickle.loads(codecs.decode(string.encode(), "base64"))
-    return obj
 
 
 async def get_notes_count() -> dict:
@@ -551,14 +540,33 @@ async def del_welcome(chat_id: int):
     return await welcomedb.delete_one({"chat_id": chat_id})
 
 
+def _button_to_dict(button: InlineKeyboardButton) -> dict:
+    return {"text": button.text, "callback_data": button.callback_data}
+
+
+def _button_from_dict(data: dict) -> InlineKeyboardButton:
+    return InlineKeyboardButton(
+        text=data["text"], callback_data=data.get("callback_data")
+    )
+
+
 async def update_captcha_cache(captcha_dict):
-    pickle = obj_to_str(captcha_dict)
     await captcha_cachedb.delete_one({"captcha": "cache"})
-    if not pickle:
+    if not captcha_dict:
         return
+
+    serialized = []
+    for entry in captcha_dict:
+        item = dict(entry)
+        item["keyboard"] = [
+            [_button_to_dict(button) for button in row]
+            for row in entry["keyboard"]
+        ]
+        serialized.append(item)
+
     await captcha_cachedb.update_one(
         {"captcha": "cache"},
-        {"$set": {"pickled": pickle}},
+        {"$set": {"data": serialized}},
         upsert=True,
     )
 
@@ -567,7 +575,43 @@ async def get_captcha_cache():
     cache = await captcha_cachedb.find_one({"captcha": "cache"})
     if not cache:
         return []
-    return str_to_obj(cache["pickled"])
+    if "data" not in cache:
+        # Old entries are pickled; drop them and leave a marker for recovery.
+        await captcha_cachedb.delete_one({"captcha": "cache"})
+        await captcha_cachedb.update_one(
+            {"captcha": "legacy_captcha_cache"},
+            {
+                "$set": {
+                    "expires_at": time.time() + WELCOME_DELAY_KICK_SEC
+                }
+            },
+            upsert=True,
+        )
+        return []
+
+    captcha_dict = []
+    for entry in cache["data"]:
+        item = dict(entry)
+        item["keyboard"] = [
+            [_button_from_dict(button) for button in row]
+            for row in entry["keyboard"]
+        ]
+        captcha_dict.append(item)
+    return captcha_dict
+
+
+async def has_legacy_captcha_cache() -> bool:
+    marker = await captcha_cachedb.find_one(
+        {"captcha": "legacy_captcha_cache"}
+    )
+    if not marker:
+        return False
+    if marker.get("expires_at", 0) < time.time():
+        await captcha_cachedb.delete_one(
+            {"captcha": "legacy_captcha_cache"}
+        )
+        return False
+    return True
 
 
 async def get_blacklist_filters_count() -> dict:
@@ -792,29 +836,24 @@ async def get_rss_feeds_count() -> int:
 
 
 async def check_chatbot():
-    return await chatbotdb.find_one({"chatbot": "chatbot"}) or {
-        "bot": [],
-        "userbot": [],
-    }
+    data = await chatbotdb.find_one({"chatbot": "chatbot"}) or {"bot": []}
+    data.setdefault("bot", [])
+    return data
 
 
-async def add_chatbot(chat_id: int, is_userbot: bool = False):
-    list_id = await check_chatbot()
-    if is_userbot:
-        list_id["userbot"].append(chat_id)
-    else:
-        list_id["bot"].append(chat_id)
+async def add_chatbot(chat_id: int):
+    data = await check_chatbot()
+    if chat_id not in data["bot"]:
+        data["bot"].append(chat_id)
     await chatbotdb.update_one(
-        {"chatbot": "chatbot"}, {"$set": list_id}, upsert=True
+        {"chatbot": "chatbot"}, {"$set": {"bot": data["bot"]}}, upsert=True
     )
 
 
-async def rm_chatbot(chat_id: int, is_userbot: bool = False):
-    list_id = await check_chatbot()
-    if is_userbot:
-        list_id["userbot"].remove(chat_id)
-    else:
-        list_id["bot"].remove(chat_id)
+async def rm_chatbot(chat_id: int):
+    data = await check_chatbot()
+    if chat_id in data["bot"]:
+        data["bot"].remove(chat_id)
     await chatbotdb.update_one(
-        {"chatbot": "chatbot"}, {"$set": list_id}, upsert=True
+        {"chatbot": "chatbot"}, {"$set": {"bot": data["bot"]}}, upsert=True
     )

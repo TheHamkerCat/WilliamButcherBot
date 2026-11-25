@@ -27,6 +27,7 @@ from pyrogram import filters
 
 from wbb import app
 from wbb.core.decorators.permissions import adminsOnly
+from wbb.utils.download import safe_download
 
 __MODULE__ = "Admin Miscs"
 __HELP__ = """
@@ -92,7 +93,9 @@ async def set_chat_photo(_, message):
     if file.file_size > 5000000:
         return await message.reply("File size too large.")
 
-    photo = await reply.download()
-    await message.chat.set_photo(photo)
-    await message.reply_text("Successfully Changed Group Photo")
-    os.remove(photo)
+    photo = await safe_download(app, reply, suffix=".jpg")
+    try:
+        await message.chat.set_photo(photo)
+        await message.reply_text("Successfully Changed Group Photo")
+    finally:
+        os.remove(photo)

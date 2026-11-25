@@ -29,6 +29,7 @@ from pyrogram.types import Message
 from wbb import SUDOERS, app
 from wbb.core.sections import section
 from wbb.utils.dbfunctions import is_gbanned_user, user_global_karma
+from wbb.utils.download import safe_download
 
 __MODULE__ = "Info"
 __HELP__ = """
@@ -115,11 +116,13 @@ async def info_func(_, message: Message):
 
     if not photo_id:
         return await m.edit(info_caption, disable_web_page_preview=True)
-    photo = await app.download_media(photo_id)
+    photo = await safe_download(app, photo_id, suffix=".jpg")
 
-    await message.reply_photo(photo, caption=info_caption, quote=False)
-    await m.delete()
-    os.remove(photo)
+    try:
+        await message.reply_photo(photo, caption=info_caption, quote=False)
+        await m.delete()
+    finally:
+        os.remove(photo)
 
 
 @app.on_message(filters.command("chat_info"))
@@ -140,10 +143,13 @@ async def chat_info_func(_, message: Message):
         if not photo_id:
             return await m.edit(info_caption, disable_web_page_preview=True)
 
-        photo = await app.download_media(photo_id)
-        await message.reply_photo(photo, caption=info_caption, quote=False)
-
-        await m.delete()
-        os.remove(photo)
+        photo = await safe_download(app, photo_id, suffix=".jpg")
+        try:
+            await message.reply_photo(
+                photo, caption=info_caption, quote=False
+            )
+            await m.delete()
+        finally:
+            os.remove(photo)
     except Exception as e:
         await m.edit(e)

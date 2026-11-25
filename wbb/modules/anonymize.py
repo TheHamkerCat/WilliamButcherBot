@@ -35,6 +35,7 @@ from wbb import LOG_GROUP_ID, SUDOERS, USERBOT_ID, USERBOT_PREFIX
 from wbb import aiohttpsession as session
 from wbb import app, app2
 from wbb.modules.userbot import eor
+from wbb.utils.download import safe_download
 from wbb.utils.functions import extract_user
 
 
@@ -90,12 +91,16 @@ async def impersonate(_, message: Message):
         fname = user.first_name
         lname = user.last_name or ""
         bio = user.bio or ""
-        pfp, _ = await gather(
-            app2.download_media(user.photo.big_file_id),
-            app2.update_profile(fname, lname, bio),
+        pfp = await safe_download(
+            app2, user.photo.big_file_id, suffix=".jpg"
         )
-        await app2.set_profile_photo(photo=pfp)
-        remove(pfp)
+        try:
+            await gather(
+                app2.set_profile_photo(photo=pfp),
+                app2.update_profile(fname, lname, bio),
+            )
+        finally:
+            remove(pfp)
     except Exception as e:
         e = format_exc()
         err = await app.send_message(LOG_GROUP_ID, text=f"`{e}`")

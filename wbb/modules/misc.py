@@ -78,9 +78,6 @@ __HELP__ = """
 /autocorrect [Reply to a message]
     Autocorrects the text in replied message.
 
-/pdf [Reply to an image (as document) or a group of images.]
-    Convert images to PDF, helpful for online classes.
-
 /markdownhelp
     Sends mark down and formatting help.
 

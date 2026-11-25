@@ -2,7 +2,14 @@ services:
   wbb:
     build: .
     restart: always
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
     environment:
       - PYTHONUNBUFFERED=1
+      - XDG_CACHE_HOME=/tmp/.cache
     volumes:
       - ./sessions:/wbb/sessions
+      - ./data:/data
+    tmpfs:
+      - /tmp:mode=1777

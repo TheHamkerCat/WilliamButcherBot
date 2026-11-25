@@ -980,24 +980,37 @@ async def fbroadcast_message(client, message):
 
 @app.on_callback_query(filters.regex("rmfed_(.*)"))
 async def del_fed_button(client, cb):
-    query = cb.data
-    userid = cb.message.chat.id
-    fed_id = query.split("_")[1]
+    fed_id = cb.data.split("_", 1)[1]
 
     if fed_id == "cancel":
         await cb.message.edit_text("Federation deletion cancelled")
         return
 
-    getfed = await get_fed_info(fed_id)
-    if getfed:
-        delete = fedsdb.delete_one({"fed_id": str(fed_id)})
-        if delete:
-            await cb.message.edit_text(
-                "You have removed your Federation! Now all the Groups that are connected with `{}` do not have a Federation.".format(
-                    getfed["fed_name"]
-                ),
-                parse_mode=ParseMode.MARKDOWN,
-            )
+    if not cb.from_user or not await is_user_fed_owner(
+        fed_id, cb.from_user.id
+    ):
+        return await cb.answer(
+            "Only the federation owner can delete this federation.",
+            show_alert=True,
+        )
+
+    query = {"fed_id": str(fed_id)}
+    if cb.from_user.id not in SUDOERS:
+        query["owner_id"] = cb.from_user.id
+
+    getfed = await fedsdb.find_one_and_delete(query)
+    if not getfed:
+        return await cb.answer(
+            "Only the federation owner can delete this federation.",
+            show_alert=True,
+        )
+
+    await cb.message.edit_text(
+        "You have removed your Federation! Now all the Groups that are connected with `{}` do not have a Federation.".format(
+            getfed["fed_name"]
+        ),
+        parse_mode=ParseMode.MARKDOWN,
+    )
 
 
 @app.on_callback_query(filters.regex("trfed_(.*)"))

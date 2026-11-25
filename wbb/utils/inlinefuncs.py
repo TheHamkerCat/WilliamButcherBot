@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import asyncio
-import os
+import shutil
 import sys
 from contextlib import suppress
 from html import escape
@@ -60,7 +60,11 @@ from wbb import (
 from wbb.core.keyboard import ikb
 from wbb.core.tasks import _get_tasks_text, all_tasks, rm_task
 from wbb.modules.info import get_chat_info, get_user_info
-from wbb.modules.music import download_youtube_audio
+from wbb.modules.music import (
+    download_youtube_audio,
+    release_download,
+    reserve_download,
+)
 from wbb.utils.functions import test_speedtest
 from wbb.utils.pastebin import paste
 
@@ -613,43 +617,82 @@ async def ping_func(answers):
     return answers
 
 
-async def yt_music_func(answers, url):
-    arq_resp = await arq.youtube(url)
-    loop = asyncio.get_running_loop()
-    music = await loop.run_in_executor(None, download_youtube_audio, arq_resp)
-    if not music:
-        msg = "**ERROR**\n__MUSIC TOO LONG__"
+async def yt_music_func(answers, url, user_id):
+    if user_id not in SUDOERS:
         answers.append(
             InlineQueryResultArticle(
                 title="ERROR",
-                description="MUSIC TOO LONG",
-                input_message_content=InputTextMessageContent(msg),
+                description="Only sudo users can use this.",
+                input_message_content=InputTextMessageContent(
+                    "**ERROR**\n__Only sudo users can use this.__"
+                ),
             )
         )
         return answers
-    (
-        title,
-        performer,
-        duration,
-        audio,
-        thumbnail,
-    ) = music
-    m = await app.send_audio(
-        MESSAGE_DUMP_CHAT,
-        audio,
-        title=title,
-        duration=duration,
-        performer=performer,
-        thumb=thumbnail,
-    )
-    os.remove(audio)
-    os.remove(thumbnail)
-    answers.append(
-        InlineQueryResultCachedDocument(
-            title=title, document_file_id=m.audio.file_id
+    if not reserve_download():
+        answers.append(
+            InlineQueryResultArticle(
+                title="ERROR",
+                description="Another download is in progress.",
+                input_message_content=InputTextMessageContent(
+                    "**ERROR**\n__Another download is in progress.__"
+                ),
+            )
         )
-    )
-    return answers
+        return answers
+    try:
+        loop = asyncio.get_running_loop()
+        music = await loop.run_in_executor(
+            None, download_youtube_audio, url
+        )
+        if not music:
+            msg = "**ERROR**\n__MUSIC TOO LONG__"
+            answers.append(
+                InlineQueryResultArticle(
+                    title="ERROR",
+                    description="MUSIC TOO LONG",
+                    input_message_content=InputTextMessageContent(msg),
+                )
+            )
+            return answers
+        (
+            title,
+            performer,
+            duration,
+            audio,
+            thumbnail,
+            temp_dir,
+        ) = music
+        try:
+            m = await app.send_audio(
+                MESSAGE_DUMP_CHAT,
+                audio,
+                title=title,
+                duration=duration,
+                performer=performer,
+                thumb=thumbnail,
+            )
+            answers.append(
+                InlineQueryResultCachedDocument(
+                    title=title, document_file_id=m.audio.file_id
+                )
+            )
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+        return answers
+    except Exception:
+        answers.append(
+            InlineQueryResultArticle(
+                title="ERROR",
+                description="Download failed.",
+                input_message_content=InputTextMessageContent(
+                    "**ERROR**\n__Download failed.__"
+                ),
+            )
+        )
+        return answers
+    finally:
+        release_download()
 
 
 async def info_inline_func(answers, peer):

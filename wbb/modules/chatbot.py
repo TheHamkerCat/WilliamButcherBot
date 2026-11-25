@@ -26,43 +26,31 @@ from asyncio import gather, sleep
 from pyrogram import enums, filters
 from pyrogram.types import Message
 
-from wbb import (
-    BOT_ID,
-    SUDOERS,
-    USERBOT_ID,
-    USERBOT_PREFIX,
-    USERBOT_USERNAME,
-    app,
-    app2,
-    arq,
-    eor,
-)
+from wbb import BOT_ID, app, arq, eor
 from wbb.core.decorators.errors import capture_err
+from wbb.core.decorators.permissions import adminsOnly
 from wbb.utils.dbfunctions import add_chatbot, check_chatbot, rm_chatbot
 from wbb.utils.filter_groups import chatbot_group
 
 __MODULE__ = "ChatBot"
 __HELP__ = """
 /chatbot [ENABLE|DISABLE] To Enable Or Disable ChatBot In Your Chat.
-
-There's one module of this available for userbot also
-check userbot module help."""
+"""
 
 
-async def chat_bot_toggle(message: Message, is_userbot: bool):
+async def chat_bot_toggle(message: Message):
     status = message.text.split(None, 1)[1].lower()
     chat_id = message.chat.id
-    db = await check_chatbot()
-    db = db["userbot"] if is_userbot else db["bot"]
+    db = (await check_chatbot())["bot"]
     if status == "enable":
         if chat_id not in db:
-            await add_chatbot(chat_id, is_userbot=is_userbot)
+            await add_chatbot(chat_id)
             text = "Chatbot Enabled!"
             return await eor(message, text=text)
         await eor(message, text="ChatBot Is Already Enabled.")
     elif status == "disable":
         if chat_id in db:
-            await rm_chatbot(chat_id, is_userbot=is_userbot)
+            await rm_chatbot(chat_id)
             return await eor(message, text="Chatbot Disabled!")
         await eor(message, text="ChatBot Is Already Disabled.")
     else:
@@ -72,12 +60,13 @@ async def chat_bot_toggle(message: Message, is_userbot: bool):
 # Enabled | Disable Chatbot
 
 
-@app.on_message(filters.command("chatbot"))
+@app.on_message(filters.command("chatbot") & ~filters.private)
+@adminsOnly("can_change_info")
 @capture_err
 async def chatbot_status(_, message: Message):
     if len(message.command) != 2:
         return await eor(message, text="**Usage:**\n/chatbot [ENABLE|DISABLE]")
-    await chat_bot_toggle(message, is_userbot=False)
+    await chat_bot_toggle(message)
 
 
 async def lunaQuery(query: str, user_id: int):
@@ -98,6 +87,7 @@ async def type_and_send(message: Message):
 @app.on_message(
     filters.text
     & filters.reply
+    & ~filters.private
     & ~filters.bot
     & ~filters.via_bot
     & ~filters.forwarded,
@@ -113,60 +103,5 @@ async def chatbot_talk(_, message: Message):
     if not message.reply_to_message.from_user:
         return
     if message.reply_to_message.from_user.id != BOT_ID:
-        return
-    await type_and_send(message)
-
-
-# FOR USERBOT
-
-
-@app2.on_message(
-    filters.command("chatbot", prefixes=USERBOT_PREFIX)
-    & SUDOERS
-    & ~filters.forwarded
-    & ~filters.via_bot
-)
-@capture_err
-async def chatbot_status_ubot(_, message: Message):
-    if len(message.text.split()) != 2:
-        return await eor(
-            message,
-            text=f"**Usage:**\n{USERBOT_PREFIX}chatbot [ENABLE|DISABLE]",
-        )
-    await chat_bot_toggle(message, is_userbot=True)
-
-
-@app2.on_message(
-    ~filters.me & ~filters.private & filters.text,
-    group=chatbot_group,
-)
-@capture_err
-async def chatbot_talk_ubot(_, message: Message):
-    db = await check_chatbot()
-    if message.chat.id not in db["userbot"]:
-        return
-    username = "@" + str(USERBOT_USERNAME)
-    if message.reply_to_message:
-        if not message.reply_to_message.from_user:
-            return
-        if (
-            message.reply_to_message.from_user.id != USERBOT_ID
-            and username not in message.text
-        ):
-            return
-    else:
-        if username not in message.text:
-            return
-    await type_and_send(message)
-
-
-@app2.on_message(
-    filters.text & filters.private & ~filters.me,
-    group=(chatbot_group + 1),
-)
-@capture_err
-async def chatbot_talk_ubot_pm(_, message: Message):
-    db = await check_chatbot()
-    if message.chat.id not in db["userbot"]:
         return
     await type_and_send(message)

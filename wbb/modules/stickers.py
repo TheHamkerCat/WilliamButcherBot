@@ -39,6 +39,7 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from wbb import BOT_USERNAME, SUDOERS, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
+from wbb.utils.download import safe_download
 from wbb.utils.files import (
     get_document_from_file_id,
     resize_file_to_sticker_size,
@@ -92,17 +93,19 @@ async def sticker_image(_, message: Message):
         return await message.reply("Reply to a sticker.")
 
     m = await message.reply("Sending..")
-    f = await r.download(f"{r.sticker.file_unique_id}.png")
+    f = await safe_download(app, r.sticker, suffix=".png")
 
-    await gather(
-        *[
-            message.reply_photo(f),
-            message.reply_document(f),
-        ]
-    )
+    try:
+        await gather(
+            *[
+                message.reply_photo(f),
+                message.reply_document(f),
+            ]
+        )
 
-    await m.delete()
-    os.remove(f)
+        await m.delete()
+    finally:
+        os.remove(f)
 
 
 @app2.on_message(
@@ -177,27 +180,37 @@ async def kang(client, message: Message):
             if doc.file_size > 10000000:
                 return await msg.edit("File size too large.")
 
-            temp_file_path = await app.download_media(doc)
-            image_type = imghdr.what(temp_file_path)
-            if image_type not in SUPPORTED_TYPES:
-                return await msg.edit(
-                    "Format not supported! ({})".format(image_type)
-                )
-            try:
-                temp_file_path = await resize_file_to_sticker_size(
-                    temp_file_path
-                )
-            except OSError as e:
-                await msg.edit_text("Something wrong happened.")
-                raise Exception(
-                    f"Something went wrong while resizing the sticker (at {temp_file_path}); {e}"
-                )
-            sticker = await create_sticker(
-                await upload_document(client, temp_file_path, message.chat.id),
-                sticker_emoji,
+            temp_file_path = await safe_download(
+                app, doc, suffix=".img"
             )
-            if os.path.isfile(temp_file_path):
-                os.remove(temp_file_path)
+            try:
+                image_type = imghdr.what(temp_file_path)
+                if image_type not in SUPPORTED_TYPES:
+                    return await msg.edit(
+                        "Format not supported! ({})".format(image_type)
+                    )
+                try:
+                    temp_file_path = await resize_file_to_sticker_size(
+                        temp_file_path
+                    )
+                except OSError as e:
+                    await msg.edit_text("Something wrong happened.")
+                    raise Exception(
+                        f"Something went wrong while resizing the sticker (at {temp_file_path}); {e}"
+                    )
+                sticker = await create_sticker(
+                    await upload_document(
+                        client, temp_file_path, message.chat.id
+                    ),
+                    sticker_emoji,
+                )
+            finally:
+                for candidate in (
+                    temp_file_path,
+                    f"{temp_file_path}.png",
+                ):
+                    if os.path.isfile(candidate):
+                        os.remove(candidate)
         else:
             return await msg.edit("Nope, can't kang that.")
     except ShortnameOccupyFailed:

@@ -56,6 +56,7 @@ from wbb.utils.dbfunctions import (
     del_welcome,
     get_captcha_cache,
     get_welcome,
+    has_legacy_captcha_cache,
     has_solved_captcha_once,
     is_captcha_on,
     is_gbanned_user,
@@ -319,6 +320,20 @@ async def callback_query_welcome_button(_, callback_query):
                 keyboard = i["keyboard"]
 
     if not (correct_answer and keyboard):
+        if (
+            pending_user_id == pressed_user_id
+            and await has_legacy_captcha_cache()
+        ):
+            try:
+                await button_message.chat.unban_member(pending_user_id)
+                await button_message.delete()
+            except Exception:
+                return await callback_query.answer(
+                    "Something went wrong, Rejoin the chat!"
+                )
+            return await callback_query.answer(
+                "Captcha expired, you can rejoin the chat."
+            )
         return await callback_query.answer(
             "Something went wrong, Rejoin the " "chat!"
         )

@@ -29,10 +29,15 @@ from pyrogram import Client, raw
 from pyrogram.file_id import FileId
 
 STICKER_DIMENSIONS = (512, 512)
+MAX_IMAGE_PIXELS = 40_000_000
+Image.MAX_IMAGE_PIXELS = MAX_IMAGE_PIXELS
 
 
 async def resize_file_to_sticker_size(file_path: str) -> str:
     im = Image.open(file_path)
+    if im.width * im.height > MAX_IMAGE_PIXELS:
+        im.close()
+        raise ValueError("Image is too large")
     if (im.width, im.height) < STICKER_DIMENSIONS:
         size1 = im.width
         size2 = im.height

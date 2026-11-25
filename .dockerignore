@@ -12,8 +12,15 @@ temp.png
 venv/
 .venv/
 __pycache__/
+.git/
 # tgbot
 config.py
+.env
 *.session
 *.session-journal
 venv
+sessions/
+data/
+downloads/
+*.log
+tess.yml
