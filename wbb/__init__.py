@@ -33,6 +33,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from Python_ARQ import ARQ
 from telegraph import Telegraph
+import uvloop
 
 from wbb.core.listen import setup_listener
 
@@ -120,9 +121,6 @@ async def initialize():
             SUDOERS.add(user_id)
 
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(initialize())
-
 if not SESSION_STRING:
     app2 = Client(
         name="sessions/userbot",
@@ -135,20 +133,27 @@ else:
         name="sessions/userbot", api_id=API_ID, api_hash=API_HASH, session_string=SESSION_STRING
     )
 
-arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
-
 app = Client("sessions/wbb", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
 
-log.info("Starting bot client")
-app.start()
-log.info("Starting userbot client")
-app2.start()
-setup_listener(app)
-setup_listener(app2)
 
-log.info("Gathering profile info")
-x = app.get_me()
-y = app2.get_me()
+
+async def start_clients():
+    # Clients and Mongo must share one loop: each client keeps the loop it was started on
+    await initialize()
+    log.info("Starting bot client")
+    await app.start()
+    log.info("Starting userbot client")
+    await app2.start()
+    setup_listener(app)
+    setup_listener(app2)
+
+    log.info("Gathering profile info")
+    return await app.get_me(), await app2.get_me()
+
+
+loop = uvloop.new_event_loop()
+asyncio.set_event_loop(loop)
+x, y = loop.run_until_complete(start_clients())
 
 BOT_ID = x.id
 BOT_NAME = x.first_name + (x.last_name or "")
@@ -164,6 +169,8 @@ USERBOT_DC_ID = y.dc_id
 
 if USERBOT_ID not in SUDOERS:
     SUDOERS.add(USERBOT_ID)
+
+arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
 
 log.info("Initializing Telegraph client")
 telegraph = Telegraph(domain="graph.org")

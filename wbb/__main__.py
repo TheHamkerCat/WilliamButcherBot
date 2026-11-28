@@ -29,7 +29,6 @@ from contextlib import closing, suppress
 from pyrogram import filters, idle
 from pyrogram.enums import ChatType, ParseMode
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from uvloop import install
 
 from wbb import (
     BOT_NAME,
@@ -39,6 +38,7 @@ from wbb import (
     aiohttpsession,
     app,
     log,
+    loop,
 )
 from wbb.core.keyboard import ikb
 from wbb.modules import ALL_MODULES
@@ -47,8 +47,6 @@ from wbb.utils import paginate_modules
 from wbb.utils.constants import MARKDOWN
 from wbb.utils.dbfunctions import clean_restart_stage, get_rules
 from wbb.utils.functions import extract_text_and_keyb
-
-loop = asyncio.get_event_loop()
 
 HELPABLE = {}
 
@@ -440,7 +438,6 @@ General command are:
 
 
 if __name__ == "__main__":
-    install()
     with closing(loop):
         with suppress(asyncio.exceptions.CancelledError):
             loop.run_until_complete(start_bot())
