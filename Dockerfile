@@ -57,12 +57,13 @@ COPY --from=build /usr/local/bin/mongorestore /usr/local/bin/mongorestore
 COPY . .
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod 755 /usr/local/bin/docker-entrypoint.sh \
+    # COPY keeps host file modes; appuser must read the source whatever the host umask is
+    && find /wbb -path /wbb/.venv -prune -o -exec chmod a+rX {} + \
     && mongodump --version \
     && mongorestore --version
 
 RUN useradd --create-home --uid 1000 --shell /usr/sbin/nologin appuser \
     && mkdir -p /data /wbb/sessions \
-    && chown -R appuser:appuser /data /wbb/sessions \
-    && if [ -f /wbb/config.env ]; then chown appuser:appuser /wbb/config.env; fi
+    && chown -R appuser:appuser /data /wbb/sessions
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

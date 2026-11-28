@@ -11,5 +11,11 @@ services:
     volumes:
       - ./sessions:/wbb/sessions
       - ./data:/data
+      - type: bind
+        source: ./config.env
+        target: /wbb/config.env
+        read_only: true
+        bind:
+          create_host_path: false
     tmpfs:
       - /tmp:mode=1777
