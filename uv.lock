@@ -1,6 +1,9 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12"
+
+[manifest]
+overrides = [{ name = "pyrogram", marker = "sys_platform == 'never'" }]
 
 [[package]]
 name = "aiofiles"
@@ -933,16 +936,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/44/66/2c17bae31c906613795711fc78045c285048168919ace2220daa372c7d72/pyaes-1.6.1.tar.gz", hash = "sha256:02c1b1405c38d3c370b085fb952dd8bea3fadcee6411ad99f312cc129c536d8f", size = 28536, upload-time = "2017-09-20T21:17:54.23Z" }
 
 [[package]]
-name = "pykeyboard"
-version = "0.1.5"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pyrogram" },
-    { name = "tgcrypto" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/7d/7e/c49621c33ccbd5d04a6a12be2082b8f9941cf89b97f81e1aa42713a87829/pykeyboard-0.1.5.tar.gz", hash = "sha256:b77be4341129ae73e363d46fe1f3243132fc04932f4ad2f7f8234d0971de4de4", size = 7466, upload-time = "2022-02-01T12:20:20.589Z" }
-
-[[package]]
 name = "pymongo"
 version = "4.15.5"
 source = { registry = "https://pypi.org/simple" }
@@ -1011,7 +1004,7 @@ name = "pyromod"
 version = "3.1.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pyrogram" },
+    { name = "pyrogram", marker = "sys_platform == 'never'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/c4/11/b099d4b62c8295fe5f723b4549dad073980f440e6a13475ee96528c7e4d0/pyromod-3.1.6.tar.gz", hash = "sha256:e49bb65c1f77c1505b20aa463caa82546f6b3a01e6194a1b2d6f74de2005b197", size = 38394, upload-time = "2023-11-09T15:54:47.061Z" }
 
@@ -1032,7 +1025,7 @@ dependencies = [
     { name = "aiofiles" },
     { name = "aiohttp" },
     { name = "dotmap" },
-    { name = "pyrogram" },
+    { name = "pyrogram", marker = "sys_platform == 'never'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d5/0a/5b84aa41f4378c3ae00ea1cc0795eb62626cf7d790451ef5b1f1f9f74d2c/python_arq-6.0.7.tar.gz", hash = "sha256:e1176f5d784f9f065f7dee34cd4cbd5034642281d42a250127be086fe8fee089", size = 6971, upload-time = "2024-04-01T18:34:16.145Z" }
 wheels = [
@@ -1214,7 +1207,6 @@ dependencies = [
     { name = "motor" },
     { name = "pillow" },
     { name = "psutil" },
-    { name = "pykeyboard" },
     { name = "pyromod" },
     { name = "python-arq" },
     { name = "python-dotenv" },
@@ -1249,7 +1241,6 @@ requires-dist = [
     { name = "motor", specifier = "~=3.6" },
     { name = "pillow", specifier = ">=12.3,<13.1" },
     { name = "psutil", specifier = "~=5.9.8" },
-    { name = "pykeyboard", specifier = "~=0.1.5" },
     { name = "pyromod", specifier = "~=3.1.6" },
     { name = "python-arq", specifier = "~=6.0.7" },
     { name = "python-dotenv", specifier = "~=1.2.2" },

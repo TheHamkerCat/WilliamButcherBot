@@ -21,9 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from pykeyboard import InlineKeyboard
 from pyrogram.types import InlineKeyboardButton as Ikb
 
+from wbb.core.inline_keyboard import InlineKeyboard
 from wbb.utils.functions import get_urls_from_text as is_url
 
 

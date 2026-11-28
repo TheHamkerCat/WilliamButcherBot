@@ -32,7 +32,6 @@ from time import ctime, time
 
 from fuzzysearch import find_near_matches
 from motor import version as mongover
-from pykeyboard import InlineKeyboard
 from pyrogram import __version__ as pyrover
 from pyrogram import enums, filters
 from pyrogram.raw.functions import Ping
@@ -57,6 +56,7 @@ from wbb import (
     app2,
     arq,
 )
+from wbb.core.inline_keyboard import InlineKeyboard
 from wbb.core.keyboard import ikb
 from wbb.core.tasks import _get_tasks_text, all_tasks, rm_task
 from wbb.modules.info import get_chat_info, get_user_info
