@@ -31,9 +31,10 @@ from aiohttp import ClientSession
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from pyrogram import Client, filters
 from pyrogram.types import Message
-from pyromod import listen
 from Python_ARQ import ARQ
 from telegraph import Telegraph
+
+from wbb.core.listen import setup_listener
 
 is_config = path.exists("config.py")
 
@@ -142,6 +143,8 @@ log.info("Starting bot client")
 app.start()
 log.info("Starting userbot client")
 app2.start()
+setup_listener(app)
+setup_listener(app2)
 
 log.info("Gathering profile info")
 x = app.get_me()

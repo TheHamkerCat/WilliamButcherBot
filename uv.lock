@@ -1000,15 +1000,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pyromod"
-version = "3.1.6"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pyrogram", marker = "sys_platform == 'never'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/c4/11/b099d4b62c8295fe5f723b4549dad073980f440e6a13475ee96528c7e4d0/pyromod-3.1.6.tar.gz", hash = "sha256:e49bb65c1f77c1505b20aa463caa82546f6b3a01e6194a1b2d6f74de2005b197", size = 38394, upload-time = "2023-11-09T15:54:47.061Z" }
-
-[[package]]
 name = "pysocks"
 version = "1.7.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1207,7 +1198,6 @@ dependencies = [
     { name = "motor" },
     { name = "pillow" },
     { name = "psutil" },
-    { name = "pyromod" },
     { name = "python-arq" },
     { name = "python-dotenv" },
     { name = "pytz" },
@@ -1241,7 +1231,6 @@ requires-dist = [
     { name = "motor", specifier = "~=3.6" },
     { name = "pillow", specifier = ">=12.3,<13.1" },
     { name = "psutil", specifier = "~=5.9.8" },
-    { name = "pyromod", specifier = "~=3.1.6" },
     { name = "python-arq", specifier = "~=6.0.7" },
     { name = "python-dotenv", specifier = "~=1.2.2" },
     { name = "pytz", specifier = "~=2024.1" },

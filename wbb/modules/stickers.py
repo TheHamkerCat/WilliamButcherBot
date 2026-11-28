@@ -39,6 +39,7 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from wbb import BOT_USERNAME, SUDOERS, USERBOT_PREFIX, app, app2, eor
 from wbb.core.decorators.errors import capture_err
+from wbb.core.listen import listen
 from wbb.utils.download import safe_download
 from wbb.utils.files import (
     get_document_from_file_id,
@@ -124,14 +125,14 @@ async def userbot_kang(_, message: Message):
 
     # Send /kang message to bot and listen to his reply concurrently
     bot_reply, kang_m_bot = await gather(
-        app2.listen(BOT_USERNAME, filters=~filters.me),
+        listen(app2, BOT_USERNAME, filters=~filters.me),
         sticker_m.reply(message.text.replace(USERBOT_PREFIX, "/")),
     )
 
     # Edit init message of ubot with the reply of
     # bot we got in the previous block
     bot_reply, ub_m = await gather(
-        app2.listen(BOT_USERNAME, filters=~filters.me),
+        listen(app2, BOT_USERNAME, filters=~filters.me),
         eor(message, text=bot_reply.text.markdown),
     )
 

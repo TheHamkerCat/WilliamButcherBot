@@ -28,6 +28,7 @@ from pyrogram.types import Message
 
 from wbb import BOT_ID, SUDOERS, USERBOT_ID, app, app2
 from wbb.core.decorators.errors import capture_err
+from wbb.core.listen import listen
 
 __MODULE__ = "Pipes"
 __HELP__ = """
@@ -79,7 +80,7 @@ async def pipes_worker_userbot(_, message: Message):
 
         if not message.text:
             m, temp = await asyncio.gather(
-                app.listen(USERBOT_ID), message.copy(BOT_ID)
+                listen(app, USERBOT_ID), message.copy(BOT_ID)
             )
             caption = f"{temp.caption}{caption}" if temp.caption else caption
 
