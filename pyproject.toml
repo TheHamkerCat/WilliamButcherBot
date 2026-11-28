@@ -37,5 +37,9 @@ dev = [
 ]
 
 [tool.uv]
-# kurigram installs the pyrogram module; the original pyrogram package would overwrite its files
-override-dependencies = ["pyrogram; sys_platform == 'never'"]
+override-dependencies = [
+    # kurigram installs the pyrogram module; the original pyrogram package would overwrite its files
+    "pyrogram; sys_platform == 'never'",
+    # search-engine-parser 0.6.8 asks for lxml<5; lxml before 6.1.0 allows XXE in iterparse()
+    "lxml>=6.1.0",
+]
